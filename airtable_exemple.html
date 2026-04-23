@@ -1,312 +1,490 @@
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Airtable</title>
-  </head>
-
-
-  <body>
-    <script>
-      const TOKEN =
-        '';
-      const BASE_ID = 'appLWhCKR6pEGE02s';
-      const TABLE_LIVRET = 'Livret';
-      const TABLE_MAISON = 'Maison';
-      let data_formatted;
-
-const blockTemplates = {
-    // Utilise le champ 'Texte' pour le titre
-    titre: (fields) => `
-      <h1 class="title">${fields.Texte || ''}</h1>`,
-
-    // Utilise 'Texte' pour le nom de l'élément
-    paragraphe: (fields) => `
-      <div class="section">
-        <h2>${fields.Texte || ''}</h2>
-      </div>`,
-
-    // Utilise 'Photo' pour l'image
-    image_seule: (fields) => {
-      const url = fields.Photo?.[0]?.url || '';
-      return `
-      <div class="section">
-        <img src="${url}" alt="${fields.Texte || ''}">
-      </div>`;
-    },
-
-    // Structure mixte avec 'Photo' et 'Texte'
-    image_text_lateral: (fields) => {
-      const url = fields.Photo?.[0]?.url || '';
-      return `
-      <div class="section flex-row">
-        <div style="flex:1;">
-          <img src="${url}" alt="${fields.Texte || ''}">
-        </div>
-        <div style="flex:2;">
-          <h2>${fields.Texte || ''}</h2>
-        </div>
-      </div>`;
-    },
-/*
-        instructions: (fields) => {
-          const url = fields.Image?.[0]?.url || '';
-          const imgHtml = url
-            ? `<img src="${url}" alt="${fields.Appareil || ''}" style="margin-bottom:1em;">`
-            : '';
-          const items = Array.isArray(fields.Instruction)
-            ? fields.Instruction
-            : String(fields.Instruction || '')
-                .split('\n')
-                .filter(Boolean);
-
-          const listHtml = items
-            .map((item) => {
-              const sep = item.indexOf(' : ');
-              if (sep !== -1) {
-                return `<li><span class="bold-title">${item.slice(0, sep)}</span> : ${item.slice(sep + 3)}</li>`;
-              }
-              return `<li>${item}</li>`;
-            })
-            .join('\n      ');
-
-          return `
-    <div class="section">
-      <h2>${fields.Appareil || ''}</h2>
-      ${imgHtml}
-      <p>${fields.Description || ''}</p>
-      <ul class="checklist">
-        ${listHtml}
-      </ul>
-    </div>`;
-        },*/
-      };
-      function generateHref(description){
-        description = description.replace(
-          /(https?:\/\/[^\s]+)/g,
-          '<a href="$1" target="_blank">$1</a>'
-        );
-        return description;
-      }
-
-      function searchInPage() {
-            const value = document.getElementById("search").value;
-            const elements = document.querySelectorAll("body *");
-
-            for (let el of elements) {
-              let v = (el.textContent).toLowerCase();
-              if (el.children.length === 0 && v.includes(value.toLowerCase())) {
-                el.scrollIntoView({ behavior: "smooth", block: "center" });
-                break;
-              }
-            }
-      }
-
-
-
-      function selectTemplate(fields) {
-        fields.Description = generateHref(fields.Description);
-        //ralentit un peu la création
-
-        const hasImage = Array.isArray(fields.Image) && fields.Image.length > 0;
-        const hasInstruction =
-          fields.Instruction && String(fields.Instruction).trim() !== '';
-        const hasDescription =
-          fields.Description && String(fields.Description).trim() !== '';
-        const isTitle =
-          fields.Appareil &&
-          String(fields.Appareil).toLowerCase().includes('titre');
-
-        if (isTitle) return 'titre';
-        //if (hasInstruction) return 'instructions';
-        if (hasImage && hasDescription) return 'image_text_lateral';
-        if (hasImage && !hasDescription) return 'image_seule';
-        return 'paragraphe';
-      }
-
-      function renderBlock(fields) {
-        const templateName = selectTemplate(fields);
-        const templateFn = blockTemplates[templateName];
-        if (!templateFn) {
-          console.warn(`[livret-engine] Template inconnu : ${templateName}`);
-          return '';
-        }
-        return templateFn(fields);
-      }
-
-      function renderPage(pageBlocks, pageNum, nomVillage = '') {
-        const blocksHtml = pageBlocks
-          .map((fields) => renderBlock(fields))
-          .join('\n');
-
-        const footer = `
-  <div class="footer">
-    <span>PAGE ${pageNum} | ${nomVillage.toUpperCase()}</span>
-    <span>IDYLLIQ.FR</span>
-  </div>`;
-
-        return `
-<div class="page" id="page-${pageNum}">
-  ${blocksHtml}
-  ${footer}
-</div>`;
-      }
-
-
-
-
-
-
-      function makeLivret(IdMaisonCherchee, allRecords) {
-        const recordsMaison = allRecords
-          .map((r) => r.fields)
-          .filter((f) => f.IdMaison === IdMaisonCherchee);
-
-        if (recordsMaison.length === 0) {
-          console.warn(
-            `[livret-engine] Aucune donnée pour IdMaison="${IdMaisonCherchee}"`,
-          );
-          return '';
-        }
-
-
-        // regrouper par page
-        const pageMap = {};
-        recordsMaison.forEach((fields) => {
-          const pageNum = parseInt(fields.PageLivret, 10);
-          if (!pageMap[pageNum]) pageMap[pageNum] = [];
-          pageMap[pageNum].push(fields);
-        });
-
-        const pageNums = Object.keys(pageMap)
-          .map(Number)
-          .sort((a, b) => a - b);
-        const nomVillage = recordsMaison[0]?.NomVillage || IdMaisonCherchee;
-
-        const pagesHtml = pageNums
-          .map((num) => renderPage(pageMap[num], num, nomVillage))
-          .join('\n');
-
-        return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Livret ${IdMaisonCherchee}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;600;700&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
- @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;600;700&family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f0ede8; font-family: 'Open Sans', sans-serif; }
+    #loading { display: flex; align-items: center; justify-content: center; height: 300px; font-family: 'League Spartan', sans-serif; color: #1F6D67; font-size: 1.2rem; }
+    #livret-container { max-width: 960px; margin: 0 auto; background: white; }
 
-    :root {
-      --primary: #1F6D67;
-      --danger: #E3000F;
-      --text: #333333;
+    /* ── COVER PAGE ── */
+    .cover-page {
+      font-family: "Roboto", sans-serif;
     }
-
-
-
-    /* Styles par défaut (Ordinateur) */
-    body {
-      margin: 0 7rem;
-      color: var(--text);
+    .cover-main {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 1rem 2rem 0 0;
     }
-
-    h1 {
-      font-family: 'Julius Sans One', sans-serif;
-      font-size: 4rem;
-      color: var(--primary);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
+    .cover-left {
+      flex: 1 1 250px;
+      padding: 1rem 0 1rem 2rem;
     }
-
-    h2 {
-      font-family: 'League Spartan', sans-serif;
-      font-size: 2rem;
-      color: var(--primary);
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
+    .cover-right {
+      flex: 2 1 400px;
     }
-
-    p, li, span, div {
-      font-family: 'Open Sans', sans-serif;
-      line-height: 1.6rem;
-      font-size: 1.1rem;
+    #cover-title {
+      transform: rotate(270deg);
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      color: #1F6D67;
+      font-weight: 700;
+      margin-top: 4rem;
+      white-space: nowrap;
     }
-
-    img {
-      width: 30rem;
+    #cover-numero {
+      margin-top: 17rem;
+      color: #1F6D67;
+      font-size: clamp(1.5rem, 4vw, 4rem);
+      text-align: center;
+      font-weight: 700;
+    }
+    #cover-collection {
+      color: #111;
+      font-size: clamp(0.8rem, 2vw, 1.1rem);
+      text-align: center;
+      margin-top: 0.5rem;
+      letter-spacing: 2px;
+    }
+    .image-container {
+      display: grid;
+      width: 100%;
+    }
+    .image-container img,
+    .image-container .text-overlay {
+      grid-area: 1 / 1;
+    }
+    .image-container img {
+      width: 100%;
+      height: 50rem;
       border-radius: 15px;
       object-fit: cover;
+      object-position: center;
     }
-
-    .section { margin-top: 2rem; margin-bottom: 2rem; }
-
-    /* Utilitaires pour les grilles et flexbox */
-    .flex-row { display: flex; gap: 2rem; align-items: flex-start; }
-    .grid-2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-
-    /* Styles spécifiques aux composants */
-    .checklist { list-style: none; padding-left: 0; }
-    .checklist li { position: relative; padding-left: 2rem; margin-bottom: 1rem; }
-    .checklist li::before {
-      content: '☑'; /* Symbole de case cochée */
-      color: var(--primary);
-      position: absolute;
-      left: 0;
-      font-size: 1.5rem;
-      line-height: 1.5rem;
+    .text-overlay {
+      align-self: end;
+      background: rgba(0,0,0,0.35);
+      color: white;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      padding: 1.2rem 1.5rem;
+      width: 100%;
     }
+    .text-overlay h2 { font-size: clamp(1rem, 2.5vw, 1.8rem); color: white; margin-bottom: 0.1rem; }
+    .text-overlay p  { font-size: clamp(0.8rem, 2vw, 1rem); font-weight: 500; color: rgba(255,255,255,0.85); }
+    .dividor { width: 100%; background: rgba(255,255,255,0.4); height: 1px; margin: 0.6rem 0; }
 
-    .text-danger { color: var(--danger); font-weight: bold; text-transform: uppercase; }
-    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; font-size: 1.2rem;}
-
-    /* Footer */
-    .footer {
+    /* ── THEME PAGES ── */
+    .theme-page {
+      padding: 3rem 4rem 4rem;
+      border-bottom: 2px solid #e8e4de;
+      min-height: 60vh;
+    }
+    .theme-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 3px solid #1F6D67;
+    }
+    .theme-label {
+      font-family: 'League Spartan', sans-serif;
+      color: #999;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 0.3rem;
+    }
+    .theme-title {
+      font-family: 'Julius Sans One', sans-serif;
+      color: #1F6D67;
+      font-size: 2rem;
+      text-transform: uppercase;
+    }
+    .page-footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 4rem;
+      margin-top: 3rem;
       padding-top: 1rem;
       border-top: 1px solid #ccc;
       font-family: 'League Spartan', sans-serif;
-      color: var(--primary);
-      font-size: 0.9rem;
+      color: #1F6D67;
+      font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: 1px;
     }
 
-    /* Styles adaptés pour les téléphones */
-    @media (max-width: 768px) {
-      body { margin: 0 1.5rem; }
-      h1 { font-size: 2.5rem; }
-      h2 { font-size: 1.8rem; }
-      p, li { font-size: 1rem; }
-      .flex-row, .grid-2-cols { flex-direction: column; grid-template-columns: 1fr; }
+    /* ── CARD TEMPLATES ── */
+    .card { margin-bottom: 2rem; }
+
+    /* tpl: image + texte côte à côte */
+    .tpl-image-text {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
     }
-    #search {
-      position: fixed;
-      width: 40%;
-      opacity: 80%;
-      padding: 0.4rem;
-      border-radius: 7px;
-      border: 2px solid #111;
-      }
+    .tpl-image-text .card-img {
+      flex: 1;
+    }
+    .tpl-image-text .card-img img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      max-height: 240px;
+    }
+    .tpl-image-text .card-body { flex: 2; }
+
+    /* tpl: image pleine largeur */
+    .tpl-image-full img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      max-height: 320px;
+      display: block;
+    }
+    .tpl-image-full .card-body { margin-top: 1rem; }
+
+    /* tpl: texte seul */
+    .tpl-text-only {}
+
+    /* tpl: texte + instructions (checklist) */
+    .tpl-instructions {}
+
+    /* tpl: 2 images côte à côte */
+    .tpl-two-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .tpl-two-images img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      max-height: 220px;
+    }
+
+    /* tpl: image + 2 textes */
+    .tpl-image-two-text {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .tpl-image-two-text img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      max-height: 260px;
+    }
+
+    /* shared card elements */
+    .card-item-title {
+      font-family: 'League Spartan', sans-serif;
+      color: #1F6D67;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #444;
+    }
+    .card-desc a { color: #1F6D67; }
+    .card-desc img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    /* checklist */
+    .checklist { list-style: none; padding: 0; margin-top: 0.75rem; }
+    .checklist li {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: 0.75rem;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #444;
+    }
+    .checklist li::before {
+      content: '☑';
+      color: #1F6D67;
+      position: absolute;
+      left: 0;
+      font-size: 1.2rem;
+      line-height: 1.3;
+    }
+    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; }
+
+    /* card wrapper border */
+    .card-box {
+      border: 1px solid #e5e0d8;
+      border-radius: 14px;
+      padding: 1.5rem;
+      background: #fafaf8;
+    }
+
+    /* end page */
+    .end-page {
+      padding: 5rem 4rem;
+      text-align: center;
+      background: linear-gradient(135deg, #1F6D67, #155450);
+      color: white;
+    }
+    .end-page h1 {
+      font-family: 'Julius Sans One', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .end-page p {
+      font-family: 'League Spartan', sans-serif;
+      letter-spacing: 3px;
+      font-size: 0.85rem;
+      opacity: 0.6;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .cover-main { flex-direction: column; margin: 1rem; }
+      #cover-title { transform: rotate(0deg); text-align: center; margin-top: 0; }
+      #cover-numero { margin-top: 1rem; }
+      .image-container img { height: 40vh; }
+      .theme-page { padding: 2rem 1.5rem; }
+      .tpl-image-text { flex-direction: column; }
+      .tpl-two-images, .tpl-image-two-text { grid-template-columns: 1fr; }
+    }
+
+    .checklist { list-style: none; padding: 0; margin-top: 0.75rem; }
+    .checklist li {
+      margin-bottom: 0.75rem;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #444;
+    }
+    .check-icon {
+      color: #1F6D67;
+      font-size: 1.2rem;
+      margin: 0 0.3rem; /* Espacement autour de la case */
+      vertical-align: sub;
+    }
+    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; }
+    .checklist li.no-checkbox {
+      padding-left: 0;
+    }
+    .checklist li.no-checkbox::before {
+      content: none;
+    }
   </style>
 </head>
 <body>
 
-<input oninput="searchInPage()" type="search" name="search" id="search" placeholder="🔎 Faire une recherche sur les éléments dans la maison">
-${pagesHtml}
+<div id="loading">Chargement du livret…</div>
+<div id="livret-container"></div>
+<script>
+const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
+const BASE_ID = 'appLWhCKR6pEGE02s';
+const TABLE_MAISON  = 'Maison';
+const TABLE_LIVRET2 = 'Livret';
+const LISTE_MAISON  = 'ListeMaison';
+let nom_maison = '';
 
 
-<!-- ////////////////// -->
-<!-- ////////////////// -->
-<!-- PRESENTATION DU SITE STATIQUE -->
+async function fetchNomMaison(IdMaison) {
+  let records = [], offset = null;
+  do {
+    const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(LISTE_MAISON)}`);
+    if (offset) url.searchParams.set('offset', offset);
+    const res  = await fetch(url, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+
+    nom_maison = data.records[IdMaison]
+  } while (offset);
+  return records;
+}
+
+async function fetchAll(table) {
+  let records = [], offset = null;
+  do {
+    const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
+    if (offset) url.searchParams.set('offset', offset);
+    const res  = await fetch(url, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+    records = records.concat(data.records);
+    offset  = data.offset || null;
+  } while (offset);
+  return records;
+}
+
+function isImageUrl(url) {
+  return /\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i.test(url) || url.includes('airtableusercontent.com');
+}
+
+function parseDescription(text) {
+  if (!text) return '';
+  return text.replace(/\[?(https?:\/\/[^\]\s<]+)\]?/g, (match, url) => {
+    if (isImageUrl(url)) {
+      return `<img src="${url}" alt="">`;
+    }
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; font-weight: 600;">Ouvrir le lien</a>`;
+  });
+}
+
+function hasInstructions(desc) {
+  if (desc?.includes(' : ') || desc.trim().includes(':')){
+    return true;
+  }return false;
+}
+
+function renderChecklist(desc) {
+  return desc.split('\n').filter(Boolean).map(line => {
+    const sep = line.indexOf(' : ');
+    const sep2 = line.indexOf(':');
+    const sep3 = line.indexOf(': ');
+    const sep4 = line.indexOf(' :');
+    if (sep !== -1) {
+      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep)}</span> : ${line.slice(sep + 3)}</li>`;
+    }else if(sep2 !== -1){
+      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep2)}</span> : ${line.slice(sep2 + 3)}</li>`;
+    }else if(sep3 !== -1){
+      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep3)}</span> : ${line.slice(sep3 + 3)}</li>`;
+    }else if(sep4 !== -1){
+      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep4)}</span> : ${line.slice(sep4 + 3)}</li>`;
+    }
+    return `<li>${line}</li>`;
+  }).join('');
+}
+
+function selectTemplate(items) {
+  const withPhoto = items.filter(i => i._photos.length > 0);
+  const withDesc  = items.filter(i => i.Description && i.Description.trim());
+  const withInstr = items.filter(i => hasInstructions(i.Description));
+
+  if (withInstr.length > 0) return 'instructions';
+  if (items.length >= 3 && withPhoto.length >= 2) return 'image-two-text';
+  if (items.length === 2 && withPhoto.length === 2) return 'two-images';
+  if (withPhoto.length > 0 && withDesc.length > 0) return 'image-text';
+  if (withPhoto.length > 0 && withDesc.length === 0) return 'image-full';
+  return 'text-only';
+}
+
+// ── rendus des templates ────────────────────────────────────────
+function renderCard(items) {
+  const tpl = selectTemplate(items);
+
+  if (tpl === 'image-text') {
+    return items.map(item => {
+      const img  = item._photos[0] ? `<div class="card-img"><img src="${item._photos[0]}" alt="${item.Item}"></div>` : '';
+      const desc = item.Description ? `<div class="card-desc">${parseDescription(item.Description)}</div>` : '';
+      return `
+      <div class="card card-box tpl-image-text">
+        ${img}
+        <div class="card-body">
+          <div class="card-item-title">${item.Item}</div>
+          ${desc}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (tpl === 'image-full') {
+    return items.map(item => {
+      const img = item._photos[0] ? `<img src="${item._photos[0]}" alt="${item.Item}">` : '';
+      return `
+      <div class="card card-box tpl-image-full">
+        ${img}
+        <div class="card-body">
+          <div class="card-item-title">${item.Item}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (tpl === 'two-images') {
+    const imgs = items.map(i =>
+      `<div>
+        <img src="${i._photos[0]}" alt="${i.Item}">
+        <div class="card-item-title" style="margin-top:0.75rem;">${i.Item}</div>
+        ${i.Description ? `<div class="card-desc">${parseDescription(i.Description)}</div>` : ''}
+      </div>`
+    ).join('');
+    return `<div class="card tpl-two-images">${imgs}</div>`;
+  }
+
+  if (tpl === 'image-two-text') {
+    const first = items[0];
+    const rest  = items.slice(1);
+    const imgHtml = first._photos[0]
+      ? `<img src="${first._photos[0]}" alt="${first.Item}">`
+      : `<div class="card-item-title">${first.Item}</div>`;
+    const textCols = rest.map(i => `
+      <div>
+        <div class="card-item-title">${i.Item}</div>
+        ${i.Description ? `<div class="card-desc">${parseDescription(i.Description)}</div>` : ''}
+      </div>`).join('');
+    return `
+    <div class="card card-box tpl-image-two-text">
+      <div>${imgHtml}</div>
+      ${textCols}
+    </div>`;
+  }
+
+  if (tpl === 'instructions') {
+    return items.map(item => {
+      const img = item._photos[0] ? `<img src="${item._photos[0]}" alt="${item.Item}" style="width:100%;border-radius:10px;margin-bottom:1rem;">` : '';
+      const list = hasInstructions(item.Description)
+        ? `<ul class="checklist">${renderChecklist(item.Description)}</ul>`
+        : `<div class="card-desc">${parseDescription(item.Description)}</div>`;
+      return `
+      <div class="card card-box tpl-instructions">
+        <div class="card-item-title">${item.Item}</div>
+        ${img}
+        ${list}
+      </div>`;
+    }).join('');
+  }
+
+  // text-only (default)
+  return items.map(item => {
+    const desc = item.Description ? `<div class="card-desc">${parseDescription(item.Description)}</div>` : '';
+    return `
+    <div class="card card-box tpl-text-only">
+      <div class="card-item-title">${item.Item}</div>
+      ${desc}
+    </div>`;
+  }).join('');
+}
+
+function renderThemePage(theme, items, pageNum, totalPages) {
+  const cardsHtml = renderCard(items);
+  return `
+<div class="theme-page" id="page-${pageNum}">
+  <div class="theme-header">
+    <div class="theme-label">Thème</div>
+    <div class="theme-title">${theme}</div>
+  </div>
+  ${cardsHtml}
+  <div class="page-footer">
+    <span>PAGE ${pageNum} / ${totalPages}</span>
+    <span>IDYLLIQ.FR</span>
+  </div>
+</div>`;
+}
+
+function renderCollection(){
+  return `
 <style>
-      @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-
-      h1, h2, h3{
-        font-family: "League Spartan", sans-serif;
-        font-weight: 600;
-      }
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
       ul {
         line-height: 1.5rem;
@@ -314,7 +492,7 @@ ${pagesHtml}
       }
 
       body {
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Open Sans', sans-serif
         margin: 0 7rem 0 7rem;
       }
       img {
@@ -348,21 +526,22 @@ ${pagesHtml}
         margin: 0 5rem 0 5rem;
         text-align: center;
         color: #1f6d67;
+        margin: 2rem;
       }
       .img{
         margin-top: 2rem;
         text-align: center;
       }
-    #indication{
-      font-family: "Julius Sans One", sans-serif;
-      font-weight: 400
-    }
+      .presentation-end{
+        padding: 3rem;
+      }
     </style>
+  </head>
 
-    <main>
+    <div class="presentation-end">
       <h1 class="title">LA COLLECTION IDYLLIQ</h1>
       <strong
-        ><p>
+        ><p style="margin: 2rem;">
           Cette propriete fait partie de la Collection Idylliq, la premiere
           collection de maisons haut de gamme pensee pour les familles.
         </p></strong
@@ -388,152 +567,126 @@ courses, babysitter, traiteur ...</p>
         <div class="img">
           <img src="Idylliq.png" alt="">
         </div>
-
-<!-- ////////////////// -->
-<!-- ////////////////// -->
-<!-- MESSAGE DE REMERCIEMENT -->
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-
-    body {
-      margin: 0 7rem;
-    }
-    img {
-      width: 70%;
-      border-radius: 15px;
-    }
-    .title {
-      color: #1F6D67;
-    }
-    p {
-      line-height: 1.5rem;
-      font-size: 1.2rem;
-    }
-    h1{
-      font-size: 3rem;
-    }
-
-    h1, h2, h3{
-      font-family: "League Spartan", sans-serif;
-      font-weight: 600;
-    }
-
-    p{
-      font-family: "Open Sans", sans-serif;
-      font-weight: 400;
-    }
-    .section {
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-    }
-    h3 {
-      text-align: center;
-      color: #1F6D67;
-    }
-    h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      color: #1F6D67;
-    }
-    .fin{
-      text-align: center;
-      margin-top: 9rem;
-      margin-bottom: 9rem;
-    }
-
-    #indication{
-      font-family: "Julius Sans One", sans-serif;
-      font-weight: 400
-    }
-
-
-  </style>
-
-  <div class="fin">
-
-    <h1 class="title">TRÈS BEAU SÉJOUR ET À
-      BIENTÔT SUR</h1>
-      <h1 class="title">WWW.IDYLLIQ.FR</h1>
-
-
-      <img src="ecran accueil.png" alt="">
-      <div class="logo" style="text-align: center; margin-top: 5rem;">
-        <img src="0a98db0f-d968-4137-90fd-0d64d6a6d738.png" style="width: 30%; ">
-      </div>
-
-      <h2 id="indication">IDYLLIQ</h2>
-      <h3 id="indication" style="margin-top: 10px">COLLECTION DE MAISONS HAUT DE GAMME</h3>
     </div>
+  `;
+}
 
+function renderCover(nomMaison, numero, coverPhotoUrl) {
+  const imgSrc =  '1769094902415x988137661459857400-bubble-1769094882292.jpeg';
+  return `
+<div class="cover-page">
+  <div class="cover-main">
+    <div class="cover-left">
+      <h1 id="cover-title">${nomMaison}</h1>
+      <h1 id="cover-numero">${numero || ''}</h1>
+      <h3 id="cover-collection">Collection IDYLLIQ</h3>
+    </div>
+    <div class="cover-right">
+      <div class="image-container">
+        <img src="${imgSrc}" alt="${nomMaison}">
+        <div class="text-overlay">
+          <h2>VOTRE HÔTE</h2>
+          <p>MESSAGE DE BIENVENUE</p>
+          <div class="dividor"></div>
+          <h2>LA PROPRIÉTÉ</h2>
+          <p>TOUT SAVOIR SUR LA MAISON ET SON FONCTIONNEMENT</p>
+          <div class="dividor"></div>
+          <h2>LES ENVIRONS</h2>
+          <p>SUGGESTIONS D'ACTIVITÉS AUX ALENTOURS</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// ── main ────────────────────────────────────────────────────────
+async function buildLivret(IdMaison) {
+  const [maisonRecords, livretRecords] = await Promise.all([
+    fetchAll(TABLE_MAISON),
+    fetchAll(TABLE_LIVRET2)
+  ]);
+
+  const maisonItems = maisonRecords.filter(r => r.fields.IdMaison === IdMaison && r.fields.Livret);
+  if (!maisonItems.length) {
+    document.getElementById('loading').innerText = `Aucune donnée pour ${IdMaison}`;
+    return;
+  }
+
+  const livretById = {};
+  livretRecords.forEach(r => { livretById[r.id] = r.fields; });
+
+  const themeMap = {};
+  const nomMaison = maisonItems[0]?.fields?.NomVillage || IdMaison;
+  let coverPhoto  = null;
+  let maisonNumero = '';
+
+  maisonItems.forEach(record => {
+    const f      = record.fields;
+    const themes = f.Theme || ['Général'];
+    const l2ids  = f['Livret 2'] || [];
+    const mainPhoto = f.Photo?.[0]?.url || null;
+    if (!coverPhoto) coverPhoto = mainPhoto;
+
+    if (l2ids.length > 0) {
+      l2ids.forEach(lid => {
+        const lf = livretById[lid];
+        if (!lf) return;
+        let desc = lf.Description || '';
+        let itemPhotos = [];
+
+        // MISE À JOUR : Extrait uniquement les URL d'images, laisse les autres intactes
+        desc = desc.replace(/\[?(https?:\/\/[^\]\s<]+)\]?/g, (match, url) => {
+          if (isImageUrl(url)) {
+            itemPhotos.push(url);
+            return ''; // Retire le lien de l'image du texte
+          }
+          return match; // Laisse le lien normal (Google Maps, etc) intact dans le texte !
+        }).trim();
+
+        themes.forEach(theme => {
+          if (!themeMap[theme]) themeMap[theme] = [];
+          themeMap[theme].push({
+            Item: lf.Item || '',
+            Description: desc,
+            _photos: itemPhotos
+          });
+        });
+
+      });
+    } else {
+      const itemsTexte = (f.Texte || '').split(';').filter(Boolean);
+      themes.forEach(theme => {
+        if (!themeMap[theme]) themeMap[theme] = [];
+        itemsTexte.forEach(item => {
+          themeMap[theme].push({ Item: item.trim(), Description: '', _photos: mainPhoto ? [mainPhoto] : [] });
+        });
+      });
+    }
+  });
+
+  Object.keys(themeMap).forEach(t => {
+    const seen = new Set();
+    themeMap[t] = themeMap[t].filter(i => { if (seen.has(i.Item)) return false; seen.add(i.Item); return true; });
+  });
+
+  const themes     = Object.keys(themeMap);
+  const totalPages = themes.length;
+  //const nomMaison = fetchNomMaison(maisonNumero)
+  const cover = renderCover(nomMaison, maisonNumero, coverPhoto);
+
+  const pages = themes.map((th, i) => renderThemePage(th, themeMap[th], i + 1, totalPages)).join('\n');
+  const presentation = renderCollection();
+  const end   = `<div class="end-page"><h1>TRÈS BEAU SÉJOUR</h1><p>WWW.IDYLLIQ.FR</p></div>`;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('livret-container').innerHTML = cover + pages + presentation + end;
+}
+
+buildLivret('M64').catch(err => {
+  document.getElementById('loading').innerText = 'Erreur : ' + err.message;
+  console.error(err);
+});
+</script>
 </body>
-</html>`;
-      }
-
-      function addTemplate(name, renderFn) {
-        if (typeof renderFn !== 'function')
-          throw new Error('renderFn must be a function');
-        blockTemplates[name] = renderFn;
-      }
-
-      if (typeof window !== 'undefined') {
-        window.LivretEngine = {
-          makeLivret,
-          renderPage,
-          renderBlock,
-          selectTemplate,
-          addTemplate,
-        };
-      }
-
-      async function loadData() {
-        try {
-          const response = await fetch(
-            `https://api.airtable.com/v0/${BASE_ID}/${TABLE_MAISON}`,
-            { headers: { Authorization: `Bearer ${TOKEN}` } },
-          );
-          if (!response.ok) {
-            const err = await response.json();
-            console.error('Erreur Airtable :', err);
-            document.getElementById('result').innerText =
-              `Erreur ${response.status} : ${err.error?.message || JSON.stringify(err)}`;
-            return;
-          }
-          const data = await response.json();
-          data_formatted = data.records;
-          console.log("Données récup d'Airtable: ", data);
-        } catch (err) {
-          console.error('Erreur :', err);
-        }
-      }
-
-      async function loadDataLivret() {
-        try {
-          const response = await fetch(
-            `https://api.airtable.com/v0/${BASE_ID}/${TABLE_LIVRET}`,
-            { headers: { Authorization: `Bearer ${TOKEN}` } },
-          );
-          if (!response.ok) {
-            const err = await response.json();
-            console.error('Erreur Airtable :', err);
-            document.getElementById('result').innerText =
-              `Erreur ${response.status} : ${err.error?.message || JSON.stringify(err)}`;
-            return;
-          }
-          const data = await response.json();
-          data_formatted_house = data.records;
-          console.log("Données récup d'Airtable: ", data);
-        } catch (err) {
-          console.error('Erreur :', err);
-        }
-      }
-
-      async function name() {
-        await loadData();
-        await loadDataLivret();
-        const html = LivretEngine.makeLivret('M64', data_formatted);
-        document.body.innerHTML = html;
-      }
-      name()
-    </script>
-  </body>
 </html>
