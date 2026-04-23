@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Airtable</title>
+  </head>
+
+
+  <body>
+    <script>
+      const TOKEN =
+        '';
+      const BASE_ID = 'appLWhCKR6pEGE02s';
+      const TABLE_LIVRET = 'Livret';
+      const TABLE_MAISON = 'Maison';
+      let data_formatted;
+
+const blockTemplates = {
+    // Utilise le champ 'Texte' pour le titre
+    titre: (fields) => `
+      <h1 class="title">${fields.Texte || ''}</h1>`,
+
+    // Utilise 'Texte' pour le nom de l'élément
+    paragraphe: (fields) => `
+      <div class="section">
+        <h2>${fields.Texte || ''}</h2>
+      </div>`,
+
+    // Utilise 'Photo' pour l'image
+    image_seule: (fields) => {
+      const url = fields.Photo?.[0]?.url || '';
+      return `
+      <div class="section">
+        <img src="${url}" alt="${fields.Texte || ''}">
+      </div>`;
+    },
+
+    // Structure mixte avec 'Photo' et 'Texte'
+    image_text_lateral: (fields) => {
+      const url = fields.Photo?.[0]?.url || '';
+      return `
+      <div class="section flex-row">
+        <div style="flex:1;">
+          <img src="${url}" alt="${fields.Texte || ''}">
+        </div>
+        <div style="flex:2;">
+          <h2>${fields.Texte || ''}</h2>
+        </div>
+      </div>`;
+    },
+/*
+        instructions: (fields) => {
+          const url = fields.Image?.[0]?.url || '';
+          const imgHtml = url
+            ? `<img src="${url}" alt="${fields.Appareil || ''}" style="margin-bottom:1em;">`
+            : '';
+          const items = Array.isArray(fields.Instruction)
+            ? fields.Instruction
+            : String(fields.Instruction || '')
+                .split('\n')
+                .filter(Boolean);
+
+          const listHtml = items
+            .map((item) => {
+              const sep = item.indexOf(' : ');
+              if (sep !== -1) {
+                return `<li><span class="bold-title">${item.slice(0, sep)}</span> : ${item.slice(sep + 3)}</li>`;
+              }
+              return `<li>${item}</li>`;
+            })
+            .join('\n      ');
+
+          return `
+    <div class="section">
+      <h2>${fields.Appareil || ''}</h2>
+      ${imgHtml}
+      <p>${fields.Description || ''}</p>
+      <ul class="checklist">
+        ${listHtml}
+      </ul>
+    </div>`;
+        },*/
+      };
+      function generateHref(description){
+        description = description.replace(
+          /(https?:\/\/[^\s]+)/g,
+          '<a href="$1" target="_blank">$1</a>'
+        );
+        return description;
+      }
+
+      function searchInPage() {
+            const value = document.getElementById("search").value;
+            const elements = document.querySelectorAll("body *");
+
+            for (let el of elements) {
+              let v = (el.textContent).toLowerCase();
+              if (el.children.length === 0 && v.includes(value.toLowerCase())) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+              }
+            }
+      }
+
+
+
+      function selectTemplate(fields) {
+        fields.Description = generateHref(fields.Description);
+        //ralentit un peu la création
+
+        const hasImage = Array.isArray(fields.Image) && fields.Image.length > 0;
+        const hasInstruction =
+          fields.Instruction && String(fields.Instruction).trim() !== '';
+        const hasDescription =
+          fields.Description && String(fields.Description).trim() !== '';
+        const isTitle =
+          fields.Appareil &&
+          String(fields.Appareil).toLowerCase().includes('titre');
+
+        if (isTitle) return 'titre';
+        //if (hasInstruction) return 'instructions';
+        if (hasImage && hasDescription) return 'image_text_lateral';
+        if (hasImage && !hasDescription) return 'image_seule';
+        return 'paragraphe';
+      }
+
+      function renderBlock(fields) {
+        const templateName = selectTemplate(fields);
+        const templateFn = blockTemplates[templateName];
+        if (!templateFn) {
+          console.warn(`[livret-engine] Template inconnu : ${templateName}`);
+          return '';
+        }
+        return templateFn(fields);
+      }
+
+      function renderPage(pageBlocks, pageNum, nomVillage = '') {
+        const blocksHtml = pageBlocks
+          .map((fields) => renderBlock(fields))
+          .join('\n');
+
+        const footer = `
+  <div class="footer">
+    <span>PAGE ${pageNum} | ${nomVillage.toUpperCase()}</span>
+    <span>IDYLLIQ.FR</span>
+  </div>`;
+
+        return `
+<div class="page" id="page-${pageNum}">
+  ${blocksHtml}
+  ${footer}
+</div>`;
+      }
+
+
+
+
+
+
+      function makeLivret(IdMaisonCherchee, allRecords) {
+        const recordsMaison = allRecords
+          .map((r) => r.fields)
+          .filter((f) => f.IdMaison === IdMaisonCherchee);
+
+        if (recordsMaison.length === 0) {
+          console.warn(
+            `[livret-engine] Aucune donnée pour IdMaison="${IdMaisonCherchee}"`,
+          );
+          return '';
+        }
+
+
+        // regrouper par page
+        const pageMap = {};
+        recordsMaison.forEach((fields) => {
+          const pageNum = parseInt(fields.PageLivret, 10);
+          if (!pageMap[pageNum]) pageMap[pageNum] = [];
+          pageMap[pageNum].push(fields);
+        });
+
+        const pageNums = Object.keys(pageMap)
+          .map(Number)
+          .sort((a, b) => a - b);
+        const nomVillage = recordsMaison[0]?.NomVillage || IdMaisonCherchee;
+
+        const pagesHtml = pageNums
+          .map((num) => renderPage(pageMap[num], num, nomVillage))
+          .join('\n');
+
+        return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livret ${IdMaisonCherchee}</title>
+  <style>
+ @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;600;700&family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap');
+
+    :root {
+      --primary: #1F6D67;
+      --danger: #E3000F;
+      --text: #333333;
+    }
+
+
+
+    /* Styles par défaut (Ordinateur) */
+    body {
+      margin: 0 7rem;
+      color: var(--text);
+    }
+
+    h1 {
+      font-family: 'Julius Sans One', sans-serif;
+      font-size: 4rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 2rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    p, li, span, div {
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.6rem;
+      font-size: 1.1rem;
+    }
+
+    img {
+      width: 30rem;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+
+    .section { margin-top: 2rem; margin-bottom: 2rem; }
+
+    /* Utilitaires pour les grilles et flexbox */
+    .flex-row { display: flex; gap: 2rem; align-items: flex-start; }
+    .grid-2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+    /* Styles spécifiques aux composants */
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { position: relative; padding-left: 2rem; margin-bottom: 1rem; }
+    .checklist li::before {
+      content: '☑'; /* Symbole de case cochée */
+      color: var(--primary);
+      position: absolute;
+      left: 0;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+    }
+
+    .text-danger { color: var(--danger); font-weight: bold; text-transform: uppercase; }
+    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; font-size: 1.2rem;}
+
+    /* Footer */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ccc;
+      font-family: 'League Spartan', sans-serif;
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* Styles adaptés pour les téléphones */
+    @media (max-width: 768px) {
+      body { margin: 0 1.5rem; }
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 1.8rem; }
+      p, li { font-size: 1rem; }
+      .flex-row, .grid-2-cols { flex-direction: column; grid-template-columns: 1fr; }
+    }
+    #search {
+      position: fixed;
+      width: 40%;
+      opacity: 80%;
+      padding: 0.4rem;
+      border-radius: 7px;
+      border: 2px solid #111;
+      }
+  </style>
+</head>
+<body>
+
+<input oninput="searchInPage()" type="search" name="search" id="search" placeholder="🔎 Faire une recherche sur les éléments dans la maison">
+${pagesHtml}
+
+
+<!-- ////////////////// -->
+<!-- ////////////////// -->
+<!-- PRESENTATION DU SITE STATIQUE -->
+<style>
+      @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+      h1, h2, h3{
+        font-family: "League Spartan", sans-serif;
+        font-weight: 600;
+      }
+
+      ul {
+        line-height: 1.5rem;
+        font-size: 18px;
+      }
+
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0 7rem 0 7rem;
+      }
+      img {
+        width: 70%;
+        border-radius: 15px;
+      }
+      .title {
+        color: #1f6d67;
+      }
+      p {
+        line-height: 1.5rem;
+        font-size: 19px;
+      }
+      h1 {
+        font-size: 3rem;
+      }
+      .section {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+      h3 {
+        text-align: center;
+        color: #1f6d67;
+      }
+      h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #1f6d67;
+      }
+      #indication{
+        margin: 0 5rem 0 5rem;
+        text-align: center;
+        color: #1f6d67;
+      }
+      .img{
+        margin-top: 2rem;
+        text-align: center;
+      }
+    #indication{
+      font-family: "Julius Sans One", sans-serif;
+      font-weight: 400
+    }
+    </style>
+
+    <main>
+      <h1 class="title">LA COLLECTION IDYLLIQ</h1>
+      <strong
+        ><p>
+          Cette propriete fait partie de la Collection Idylliq, la premiere
+          collection de maisons haut de gamme pensee pour les familles.
+        </p></strong
+      >
+      <p>Toutes les maisons Idylliq</p>
+      <ul>
+        <li>Sont situees en pleine nature</li>
+        <li>
+          Disposent d'un grand jardin avec meubles de jardin, jeux extérieurs
+          ...
+        </li>
+        <li>
+          Possedent un interieur cozy et de bon standing, avec cheminee, jeux de
+          societe, et parfois babyfoot et piano dans les maisons les mieux
+          équipées
+        </li>
+      </ul>
+      <p>Vous beneficiez du support de l'equipe Idylliq tout au long de
+votre sejour, nous vous aidons a organiser activites, livraisons de
+courses, babysitter, traiteur ...</p>
+
+        <p id="indication">VOUS POUVEZ VOIR UN APERCU DE NOS MAISONS SUR WWW.IDYLLIQ.FR</p>
+        <div class="img">
+          <img src="Idylliq.png" alt="">
+        </div>
+
+<!-- ////////////////// -->
+<!-- ////////////////// -->
+<!-- MESSAGE DE REMERCIEMENT -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+    body {
+      margin: 0 7rem;
+    }
+    img {
+      width: 70%;
+      border-radius: 15px;
+    }
+    .title {
+      color: #1F6D67;
+    }
+    p {
+      line-height: 1.5rem;
+      font-size: 1.2rem;
+    }
+    h1{
+      font-size: 3rem;
+    }
+
+    h1, h2, h3{
+      font-family: "League Spartan", sans-serif;
+      font-weight: 600;
+    }
+
+    p{
+      font-family: "Open Sans", sans-serif;
+      font-weight: 400;
+    }
+    .section {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    h3 {
+      text-align: center;
+      color: #1F6D67;
+    }
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #1F6D67;
+    }
+    .fin{
+      text-align: center;
+      margin-top: 9rem;
+      margin-bottom: 9rem;
+    }
+
+    #indication{
+      font-family: "Julius Sans One", sans-serif;
+      font-weight: 400
+    }
+
+
+  </style>
+
+  <div class="fin">
+
+    <h1 class="title">TRÈS BEAU SÉJOUR ET À
+      BIENTÔT SUR</h1>
+      <h1 class="title">WWW.IDYLLIQ.FR</h1>
+
+
+      <img src="ecran accueil.png" alt="">
+      <div class="logo" style="text-align: center; margin-top: 5rem;">
+        <img src="0a98db0f-d968-4137-90fd-0d64d6a6d738.png" style="width: 30%; ">
+      </div>
+
+      <h2 id="indication">IDYLLIQ</h2>
+      <h3 id="indication" style="margin-top: 10px">COLLECTION DE MAISONS HAUT DE GAMME</h3>
+    </div>
+
+</body>
+</html>`;
+      }
+
+      function addTemplate(name, renderFn) {
+        if (typeof renderFn !== 'function')
+          throw new Error('renderFn must be a function');
+        blockTemplates[name] = renderFn;
+      }
+
+      if (typeof window !== 'undefined') {
+        window.LivretEngine = {
+          makeLivret,
+          renderPage,
+          renderBlock,
+          selectTemplate,
+          addTemplate,
+        };
+      }
+
+      async function loadData() {
+        try {
+          const response = await fetch(
+            `https://api.airtable.com/v0/${BASE_ID}/${TABLE_MAISON}`,
+            { headers: { Authorization: `Bearer ${TOKEN}` } },
+          );
+          if (!response.ok) {
+            const err = await response.json();
+            console.error('Erreur Airtable :', err);
+            document.getElementById('result').innerText =
+              `Erreur ${response.status} : ${err.error?.message || JSON.stringify(err)}`;
+            return;
+          }
+          const data = await response.json();
+          data_formatted = data.records;
+          console.log("Données récup d'Airtable: ", data);
+        } catch (err) {
+          console.error('Erreur :', err);
+        }
+      }
+
+      async function loadDataLivret() {
+        try {
+          const response = await fetch(
+            `https://api.airtable.com/v0/${BASE_ID}/${TABLE_LIVRET}`,
+            { headers: { Authorization: `Bearer ${TOKEN}` } },
+          );
+          if (!response.ok) {
+            const err = await response.json();
+            console.error('Erreur Airtable :', err);
+            document.getElementById('result').innerText =
+              `Erreur ${response.status} : ${err.error?.message || JSON.stringify(err)}`;
+            return;
+          }
+          const data = await response.json();
+          data_formatted_house = data.records;
+          console.log("Données récup d'Airtable: ", data);
+        } catch (err) {
+          console.error('Erreur :', err);
+        }
+      }
+
+      async function name() {
+        await loadData();
+        await loadDataLivret();
+        const html = LivretEngine.makeLivret('M64', data_formatted);
+        document.body.innerHTML = html;
+      }
+      name()
+    </script>
+  </body>
+</html>
