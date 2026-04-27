@@ -6,666 +6,468 @@
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;600;700&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-       :root {
-      --green:       #1F6D67;
-      --green-dark:  #155450;
-      --green-mid:   #2a8a83;
-      --green-light: #e8f4f3;
-      --green-pale:  #f2f8f7;
-      --warm:        #f7f3ee;
-      --warm-mid:    #ede8e0;
-      --warm-dark:   #c8bfb0;
-      --ink:         #2c2824;
-      --ink-mid:     #5a534a;
-      --ink-light:   #9a9088;
-      --white:       #ffffff;
-      --accent:      #d4956a;
-      --accent-pale: #faf0e8;
+    :root {
+      --green: #1F6D67; --green-dark: #155450; --green-mid: #2a8a83;
+      --green-light: #e8f4f3; --green-pale: #f2f8f7;
+      --warm: #f7f3ee; --warm-mid: #ede8e0; --warm-dark: #c8bfb0;
+      --ink: #2c2824; --ink-mid: #5a534a; --ink-light: #9a9088;
+      --white: #ffffff; --accent: #d4956a; --accent-pale: #faf0e8;
+      --shadow: 0 4px 20px rgba(31,109,103,0.12);
+      --shadow-hover: 0 8px 30px rgba(31,109,103,0.2);
+      --radius: 16px;
     }
     body { background: #f0ede8; font-family: 'Open Sans', sans-serif; }
-    #loading { display: flex; align-items: center; justify-content: center; height: 300px; font-family: 'League Spartan', sans-serif; color: #1F6D67; font-size: 1.2rem; }
+    #loading { display: flex; align-items: center; justify-content: center; height: 300px; font-family: 'League Spartan', sans-serif; color: var(--green); font-size: 1.2rem; }
     #livret-container { max-width: 960px; margin: 0 auto; background: white; }
 
-    .cover-page {
-      font-family: "Roboto", sans-serif;
+    /* ── COVER ── */
+    .cover-page { position: relative; min-height: 100vh; display: grid; grid-template-rows: 1fr auto; font-family: "Roboto", sans-serif; }
+    .cover-hero { position: relative; min-height: 88vh; overflow: hidden; }
+    .cover-hero img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; filter: brightness(0.72); }
+    .cover-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(21,84,80,0.55) 0%, rgba(21,84,80,0.15) 45%, rgba(0,0,0,0.45) 100%); }
+    .cover-brand { position: absolute; top: 3.5rem; left: 3rem; display: flex; align-items: center; gap: 0.75rem; }
+    .cover-brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+    .cover-brand-name { font-family: 'League Spartan', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+    .cover-content { position: absolute; bottom: 3.5rem; left: 3rem; right: 3rem; }
+    .cover-label { font-family: 'League Spartan', sans-serif; font-size: 0.65rem; font-weight: 500; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+    .cover-title { font-family: 'Julius Sans One', sans-serif; font-size: clamp(2.8rem, 7vw, 5rem); color: var(--white); line-height: 1.05; margin-bottom: 0.4rem; text-transform: uppercase; }
+    .cover-subtitle { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-style: italic; color: rgba(255,255,255,0.7); margin-bottom: 2rem; }
+    .cover-divider { width: 60px; height: 1.5px; background: var(--accent); margin-bottom: 1.8rem; }
+    .cover-chapters { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .cover-chapter { display: flex; align-items: center; gap: 0.6rem; }
+    .cover-chapter-num { font-family: 'League Spartan', sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
+    .cover-chapter-name { font-family: 'League Spartan', sans-serif; font-size: 0.78rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+    .cover-strip { background: var(--green-dark); padding: 1rem 3rem; display: flex; align-items: center; justify-content: space-between; }
+    .cover-strip-text { font-family: 'League Spartan', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+    .cover-strip-id { font-family: serif; font-size: 1.1rem; font-style: italic; color: rgba(255,255,255,0.6); }
+
+    .theme-page { padding: 3rem 4rem 4rem; border-bottom: 2px solid #e8e4de; min-height: 60vh; }
+    .theme-header { margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 3px solid var(--green); }
+    .theme-label { font-family: 'League Spartan', sans-serif; color: #999; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.3rem; }
+    .theme-title { font-family: 'Julius Sans One', sans-serif; color: var(--green); font-size: 2rem; text-transform: uppercase; }
+    .page-footer { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #ccc; font-family: 'League Spartan', sans-serif; color: var(--green); font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; }
+
+    .card { margin-bottom: 2.5rem; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-box { border-radius: var(--radius); padding: 1.75rem; background: linear-gradient(145deg, #fff, #fafaf8); box-shadow: var(--shadow); }
+
+    .img-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      position: relative;
     }
-.cover-main {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 5rem 2rem 0 0;
-  align-items: stretch;
-  gap: 2.5rem;
-}
-
-.cover-left {
-  flex: 0 0 clamp(200px, 25vw, 260px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Aligne les éléments en haut */
-  padding: 2rem 1rem;
-  gap: 0.5rem;
-}
-
-#cover-title {
-  position: static;
-  transform: none;
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  color: #1F6D67;
-  font-weight: 700;
-  text-align: left;
-  margin: 0;
-  line-height: 1.1;
-  writing-mode: horizontal-tb; /* Titre horizontal */
-}
-
-#cover-numero {
-  color: #1F6D67;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  text-align: left;
-  font-weight: 700;
-  margin: 0.3rem 0 0 0; /* Juste en dessous du titre */
-  writing-mode: horizontal-tb; /* Numéro horizontal */
-}
-
-#cover-collection {
-  color: #111;
-  font-size: clamp(0.75rem, 1.6vw, 1rem);
-  font-weight: 600;
-  letter-spacing: 3px;
-  margin: 1rem 0 0 0;
-
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg); /* Pour lire de bas en haut si souhaité */
-  text-align: center;
-  height: fit-content;
-  padding-left: 0.5rem;
-}
-
-.cover-right {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: stretch;
-}
-
-.image-container {
-  position: relative; /* 👈 Essentiel pour positionner l'overlay en absolu */
-  width: 100%;
-  display: block; /* 👈 Pas de grid ici, plus simple */
-}
-
-.image-container img {
-  width: 100%;
-  height: clamp(400px, 65vh, 650px);
-  border-radius: 15px;
-  object-fit: cover;
-  object-position: center;
-  display: block; /* 👈 Évite les espaces fantômes sous l'image */
-}
-.text-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.25));
-  color: white;
-
-  /* Coins arrondis uniquement en BAS */
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-
-  padding: 1rem 1.5rem 1.2rem;
-  z-index: 10;
-  width: calc(100% - 1.2rem);
+    .img-gallery img {
       width: 100%;
-  box-sizing: border-box;
-}
-.text-overlay h2 {
-  font-size: clamp(0.9rem, 2vw, 1.4rem);
-  color: white;
-  margin: 0.15rem 0;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-.text-overlay p {
-  font-size: clamp(0.7rem, 1.6vw, 0.9rem);
-  color: rgba(255,255,255,0.95);
-  margin: 0;
-  font-weight: 400;
-}
-.dividor {
-  width: 100%;
-  background: rgba(255,255,255,0.5);
-  height: 1px;
-  margin: 0.6rem 0;
-}
-    /* ── THEME PAGES ── */
-    .theme-page {
-      padding: 3rem 4rem 4rem;
-      border-bottom: 2px solid #e8e4de;
-      min-height: 60vh;
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      border: 2px solid transparent;
+      background: var(--warm-mid);
     }
-    .theme-header {
-      margin-bottom: 2.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 3px solid #1F6D67;
+    .img-gallery img:hover {
+      transform: scale(1.03);
+      filter: brightness(1.05);
+      border-color: var(--accent);
     }
-    .theme-label {
+    .img-gallery .photo-count {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(31,109,103,0.9);
+      color: white;
       font-family: 'League Spartan', sans-serif;
-      color: #999;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 0.3rem;
-    }
-    .theme-title {
-      font-family: 'Julius Sans One', sans-serif;
-      color: #1F6D67;
-      font-size: 2rem;
-      text-transform: uppercase;
-    }
-    .page-footer {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 3rem;
-      padding-top: 1rem;
-      border-top: 1px solid #ccc;
-      font-family: 'League Spartan', sans-serif;
-      color: #1F6D67;
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      letter-spacing: 1px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 20px;
+      z-index: 2;
     }
 
-    /* ── CARD TEMPLATES ── */
-    .card { margin-bottom: 2rem; }
-
-    /* tpl: image + texte côte à côte */
-    .tpl-image-text {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
+    /* Single large image */
+    .img-single {
+      margin-bottom: 1.25rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
     }
-    .tpl-image-text .card-img {
-      flex: 1;
-    }
-    .tpl-image-text .card-img img {
+    .img-single img {
       width: 100%;
-      border-radius: 12px;
+      max-height: 280px;
       object-fit: cover;
-      max-height: 240px;
-    }
-    .tpl-image-text .card-body { flex: 2; }
-
-    /* tpl: image pleine largeur */
-    .tpl-image-full img {
-      width: 100%;
-      border-radius: 12px;
-      object-fit: cover;
-      max-height: 320px;
       display: block;
+      transition: transform 0.4s ease;
     }
-    .tpl-image-full .card-body { margin-top: 1rem; }
+    .img-single:hover img { transform: scale(1.02); }
 
-    /* tpl: texte seul */
-    .tpl-text-only {}
+    /* Layout templates */
+    .tpl-image-text { display: flex; gap: 2rem; align-items: flex-start; }
+    .tpl-image-text .gallery-wrapper { flex-shrink: 0; width: 220px; }
 
-    /* tpl: texte + instructions (checklist) */
-    .tpl-instructions {}
+    .tpl-image-full .img-single { margin-bottom: 1rem; }
 
-    /* tpl: 2 images côte à côte */
-    .tpl-two-images {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    .tpl-two-images img {
-      width: 100%;
-      border-radius: 12px;
-      object-fit: cover;
-      max-height: 220px;
-    }
+    .tpl-two-images { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .tpl-two-images .img-single { margin: 0; }
 
-    /* tpl: image + 2 textes */
-    .tpl-image-two-text {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-    .tpl-image-two-text img {
-      width: 100%;
-      border-radius: 12px;
-      object-fit: cover;
-      max-height: 260px;
-    }
+    .tpl-image-two-text { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: start; }
+    .tpl-image-two-text .img-single { margin: 0 0 1rem 0; }
 
-    /* shared card elements */
+    /* Card content */
     .card-item-title {
       font-family: 'League Spartan', sans-serif;
-      color: #1F6D67;
+      color: var(--green);
       font-size: 1.25rem;
       text-transform: uppercase;
       margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
     }
     .card-desc {
       font-family: 'Open Sans', sans-serif;
       font-size: 0.95rem;
       line-height: 1.65;
-      color: #444;
+      color: var(--ink-mid);
     }
-    .card-desc a { color: #1F6D67; }
-    .card-desc img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 0.5rem;
-      display: block;
-    }
+    .card-desc a { color: var(--green); text-decoration: none; border-bottom: 1px dashed var(--green-mid); }
+    .card-desc a:hover { border-bottom-style: solid; }
+    .card-desc img { max-width: 100%; border-radius: 10px; margin-top: 0.75rem; display: block; box-shadow: var(--shadow); }
 
-    /* checklist */
+    /* Checklist */
     .checklist { list-style: none; padding: 0; margin-top: 0.75rem; }
     .checklist li {
-      position: relative;
-      padding-left: 2rem;
       margin-bottom: 0.75rem;
       font-family: 'Open Sans', sans-serif;
       font-size: 0.95rem;
       line-height: 1.55;
-      color: #444;
+      color: var(--ink-mid);
+      padding-left: 1.8rem;
+      position: relative;
     }
-    .checklist li::before {
-      content: '☑';
-      color: #1F6D67;
+    .checklist li.no-checkbox { padding-left: 0; }
+    .check-icon {
+      color: var(--green);
+      font-size: 1.1rem;
       position: absolute;
       left: 0;
-      font-size: 1.2rem;
-      line-height: 1.3;
+      top: 0.1rem;
+      font-weight: bold;
     }
-    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; }
+    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; color: var(--ink); }
 
-    .card-box {
-      border-radius: 14px;
-      padding: 1.5rem;
-      background: #fafaf8;
-    }
-
-    .end-page {
-      padding: 5rem 4rem;
-      text-align: center;
-      background: linear-gradient(135deg, #1F6D67, #155450);
-      color: white;
-    }
-    .end-page h1 {
-      font-family: 'Julius Sans One', sans-serif;
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-    }
-    .end-page p {
-      font-family: 'League Spartan', sans-serif;
-      letter-spacing: 3px;
-      font-size: 0.85rem;
-      opacity: 0.6;
-      margin-top: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-  .cover-main {
-    flex-direction: column;
-    margin: 1rem;
-    gap: 1.5rem;
-  }
-  .cover-left {
-    flex: 0 0 auto;
-    padding: 1rem 0;
-    align-items: center; /* Centre sur mobile */
-    margin-top: 5rem;
-  }
-  #cover-title, #cover-numero {
-    text-align: center;
-  }
-  #cover-collection {
-    writing-mode: horizontal-tb; /* Horizontal sur mobile pour lisibilité */
-    transform: none;
-    text-align: center;
-    padding: 0;
-    margin-top: 0.5rem;
-  }
-  .image-container img {
-    height: 40vh;
-  }
-  .text-overlay {
-    align-self: start;
-    border-radius: 10px; /* Coins arrondis partout sur petit écran */
-    width: 100%;
-  }
-}@media (max-width: 768px) {
-  .cover-main {
-    flex-direction: column;
-    margin: 1rem;
-    gap: 1.5rem;
-  }
-  .cover-left {
-    flex: 0 0 auto;
-    padding: 1rem 0;
-  }
-  #cover-title, #cover-numero, #cover-collection {
-    writing-mode: horizontal-tb; /* Force horizontal sur mobile */
-    text-align: center;
-  }
-  .image-container img {
-    height: 40vh;
-  }
-}
-
-    .checklist { list-style: none; padding: 0; margin-top: 0.75rem; }
-    .checklist li {
-      margin-bottom: 0.75rem;
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.95rem;
-      line-height: 1.55;
-      color: #444;
-    }
-    .check-icon {
-      color: #1F6D67;
-      font-size: 1.2rem;
-      margin: 0 0.3rem; /* Espacement autour de la case */
-      vertical-align: sub;
-    }
-    .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; }
-    .checklist li.no-checkbox {
-      padding-left: 0;
-    }
-    .checklist li.no-checkbox::before {
-      content: none;
-    }
-    #search{
-      width: 40%;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
-    border: 2px solid #111;
-    border: 1.5px solid #1F6D67;
-    text-align: center;
-    position: fixed;
-      outline: none;
-    font-family: 'Open Sans', sans-serif;
-    top: 10%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    padding: 0.6rem 1.2rem;
-    }
-
-    #search-button{
-    width: 10%;
-    z-index: 1000;
-    padding: 0.5rem;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-    border: transparent;
-    position: fixed;
-          border: none;
-    top: 10%;
-    left: 70%;
-    transform: translate(-50%, -50%);
-    background-color: #1F6D67;
-    border: 2.5px solid #1F6D67;
-    }
-      .cover-page {
-      position: relative;
-      min-height: 100vh;
-      display: grid;
-      grid-template-rows: 1fr auto;
-    }
-
-    .cover-hero {
-      position: relative;
-      min-height: 88vh;
-      overflow: hidden;
-    }
-
-    .cover-hero img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-      filter: brightness(0.72);
-    }
-
-    .cover-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        160deg,
-        rgba(21,84,80,0.55) 0%,
-        rgba(21,84,80,0.15) 45%,
-        rgba(0,0,0,0.45) 100%
-      );
-    }
-
-    .cover-brand {
-      position: absolute;
-      top: 2.5rem;
-      left: 3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .cover-brand-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-    }
-    .cover-brand-name {
-      font-family: 'League Spartan', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
-    }
-
-    .cover-content {
-      position: absolute;
-      bottom: 3.5rem;
-      left: 3rem;
-      right: 3rem;
-    }
-
-    .cover-label {
+    /* Badge */
+    .category-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green-light), var(--green-pale));
+      color: var(--green-dark);
       font-family: 'League Spartan', sans-serif;
       font-size: 0.65rem;
-      font-weight: 500;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.8rem;
-    }
-
-    .cover-title {
-      font-family: 'Julius Sans One', sans-serif;
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      color: var(--white);
-      line-height: 1.05;
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-    }
-
-    .cover-subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-      font-style: italic;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 2rem;
-    }
-
-    .cover-divider {
-      width: 60px;
-      height: 1.5px;
-      background: var(--accent);
-      margin-bottom: 1.8rem;
-    }
-
-    .cover-chapters {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .cover-chapter {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .cover-chapter-num {
-      font-family: 'League Spartan', sans-serif;
-      font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 2px;
-      color: var(--accent);
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 2px 8px rgba(31,109,103,0.1);
     }
 
-    .cover-chapter-name {
+    /* Piscine section */
+    .piscine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .piscine-info {
+      background: linear-gradient(145deg, var(--green-pale), var(--white));
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.9rem;
+      border: 1px solid var(--green-light);
+      transition: transform 0.2s ease;
+    }
+    .piscine-info:hover { transform: translateY(-2px); }
+    .piscine-info .label {
       font-family: 'League Spartan', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 500;
+      font-size: 0.7rem;
+      text-transform: uppercase;
       letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
+      color: var(--green);
+      margin-bottom: 0.35rem;
     }
+    .piscine-info .value { font-weight: 600; color: var(--ink); }
 
-    .cover-strip {
-      background: var(--green-dark);
-      padding: 1rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    /* End page */
+    .end-page { padding: 5rem 4rem; text-align: center; background: linear-gradient(135deg, var(--green), var(--green-dark)); color: white; }
+    .end-page h1 { font-family: 'Julius Sans One', sans-serif; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .end-page p { font-family: 'League Spartan', sans-serif; letter-spacing: 3px; font-size: 0.85rem; opacity: 0.85; margin-top: 0.5rem; }
+
+    /* Collection */
+    .presentation-end { padding: 3rem 4rem; }
+    .presentation-end h1 { font-family: 'Julius Sans One', sans-serif; color: var(--green); font-size: 2rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+    .presentation-end p { font-family: 'Open Sans', sans-serif; font-size: 0.95rem; line-height: 1.65; color: var(--ink-mid); margin-bottom: 1rem; }
+    .presentation-end ul { list-style: none; padding: 0; margin: 0 0 1.5rem 0; }
+    .presentation-end ul li {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--ink-mid);
+      padding-left: 1.75rem;
+      position: relative;
+      margin-bottom: 0.5rem;
     }
-
-    .cover-strip-text {
+    .presentation-end ul li::before {
+      content: '✦';
+      color: var(--accent);
+      position: absolute;
+      left: 0;
+      font-size: 0.7rem;
+      top: 0.25rem;
+    }
+    .presentation-end #indication {
+      text-align: center;
+      color: var(--green);
       font-family: 'League Spartan', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2.5rem 0 1rem;
+      padding: 1rem;
+      background: var(--accent-pale);
+      border-radius: 12px;
+      border-left: 4px solid var(--accent);
     }
 
-    .cover-strip-id {
-      font-family: 'Cormorant Garamond', serif;
+    /* Search */
+    #search {
+      width: 40%;
+      border-top-left-radius: 15px;
+      border-bottom-left-radius: 15px;
+      text-align: center;
+      border: 1.5px solid var(--green);
+      position: fixed;
+      outline: none;
+      font-family: 'Open Sans', sans-serif;
+      top: 3.5%;
+      left: 45%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      padding: 0.6rem 1.2rem;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    #search-button {
+      width: 10%;
+      z-index: 1000;
+      padding: 0.5rem;
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+      border: 0px solid var(--green);
+      position: fixed;
+      top: 3.5%;
+          left: 69.98%;
+      transform: translate(-50%, -50%);
+      background-color: var(--green);
+      color: white;
+      cursor: pointer;
       font-size: 1.1rem;
-      font-style: italic;
-      color: rgba(255,255,255,0.6);
+      transition: background 0.2s ease;
+    }
+    #search-button:hover { background-color: var(--green-dark); }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(21,84,80,0.92);
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .lightbox.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: zoomIn 0.3s ease;
+    }
+    @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      font-weight: 300;
+      transition: transform 0.2s ease;
+    }
+    .lightbox-close:hover { transform: scale(1.2); }
+
+    .lightbox-counter {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.85);
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
     }
 
+    /* Responsive */
+    @media (max-width: 768px) {
+      .theme-page { padding: 2rem 1.5rem; }
+      .tpl-image-text { flex-direction: column; }
+      .tpl-image-text .gallery-wrapper { width: 100%; }
+      .tpl-two-images, .tpl-image-two-text { grid-template-columns: 1fr; }
+      .piscine-grid { grid-template-columns: 1fr; }
+      .cover-content { left: 1.5rem; right: 1.5rem; bottom: 2rem; }
+      .cover-brand { left: 1.5rem; }
+      .cover-strip { padding: 1rem 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+      #search { width: 70%; left: 50%; }
+      #search-button { left: 85%; width: 15%; }
+      .img-gallery { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+    }
   </style>
 </head>
 <body>
 
 <div id="loading">Chargement de votre livret…</div>
 <div id="livret-container"></div>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-content">
+    <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+    <img id="lightbox-img" src="" alt="Agrandir">
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+  </div>
+</div>
+
 <script>
+ const icons = [
+    {"name": "ping", "url": "https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67"},
+    {"name": "piscine", "url": "https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67"},
+    {"name": "barbecue", "url": "https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67"},
+    {"name": "jacuzzi", "url": "https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67"},
+    {"name": "cafe", "url": "https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67"},
+    {"name": "jeux", "url": "https://img.icons8.com/?size=100&id=epti7VmcQ7XO&format=png&color=1F6D67"}
+]
+let liste_icon = [];
 const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
 const BASE_ID = 'appLWhCKR6pEGE02s';
-const TABLE_MAISON  = 'Maison';
-const TABLE_LIVRET2 = 'Livret';
-const LISTE_MAISON  = 'ListeMaison';
-let nom_maison = '';
+const TABLE_MAISON = 'Maison';
+const TABLE_LIVRET = 'Livret';
+const TABLE_PISCINE = 'Piscine';
+const TABLE_EQUIPEMENT = 'equipement';
+const TABLE_LISTE_MAISON = 'ListeMaison';
 
-
-async function fetchNomMaison(IdMaison) {
-  console.log(IdMaison)
-
-    const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(LISTE_MAISON)}`);
-    const res  = await fetch(url, {
-      headers: { Authorization: `Bearer ${TOKEN}` }
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
-    let ret = "";
-    //nom_maison = data.records[IdMaison]
-    data.records.forEach(element => {
-      if(element.fields.IdMaison === IdMaison){
-        console.log("final", element.fields.NomMaison);
-        console.log("final", element.fields.IdMaison);
-        ret = element.fields.NomMaison;
-      }
-    });
-    return ret;
+function openLightbox(src, count, index) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const counter = document.getElementById('lightbox-counter');
+  img.src = src;
+  counter.textContent = count > 1 ? `${index + 1} / ${count}` : '';
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
 async function fetchAll(table) {
   let records = [], offset = null;
   do {
     const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
     if (offset) url.searchParams.set('offset', offset);
-    const res  = await fetch(url, {
-      headers: { Authorization: `Bearer ${TOKEN}` }
-    });
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
     const data = await res.json();
-    console.log(data);
     if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
     records = records.concat(data.records);
-    offset  = data.offset || null;
+    offset = data.offset || null;
   } while (offset);
   return records;
 }
 
-function isImageUrl(url) {
-  return  url.includes('airtableusercontent.com');
+async function fetchNomMaison(IdMaison) {
+  const records = await fetchAll(TABLE_LISTE_MAISON);
+  const found = records.find(r => r.fields.IdMaison === IdMaison);
+  return found ? found.fields.NomMaison : IdMaison;
 }
+
+function isImageUrl(url) { return url?.includes('airtableusercontent.com'); }
 
 function parseDescription(text) {
   if (!text) return '';
-
   return text.replace(/\[?(https?:\/\/[^\]\s<]+)\]?/g, (match, url) => {
-    if (isImageUrl(url)) {
-      console.log(url);
-      return `<img src="${url}" alt="">`;
-    }
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; font-weight: 600;">${url}</a>`;
+    if (isImageUrl(url)) return `<img src="${url}" alt="" loading="lazy">`;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 }
 
 function hasInstructions(desc) {
-  if (desc?.includes(' : ') || desc.trim().includes(':')){
-    return true;
-  }return false;
+  if (!desc) return false;
+  return desc.includes(' : ') || desc.includes(': ') || desc.includes(' :');
 }
 
 function renderChecklist(desc) {
   return desc.split('\n').filter(Boolean).map(line => {
     const sep = line.indexOf(' : ');
-    const sep3 = line.indexOf(': ');
-    const sep4 = line.indexOf(' :');
-    if (sep !== -1) {
-      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep)}</span> : ${line.slice(sep + 3)}</li>`;
-    }else if(sep3 !== -1){
-      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep3)}</span> : ${line.slice(sep3 + 3)}</li>`;
-    }else if(sep4 !== -1){
-      return `<li class="no-checkbox"><span class="bold-title">${line.slice(0, sep4)}</span> : ${line.slice(sep4 + 3)}</li>`;
-    }
-    return `<li>${line}</li>`;
+    const sep2 = line.indexOf(': ');
+    const sep3 = line.indexOf(' :');
+    if (sep !== -1) return `<li class="no-checkbox"><span class="bold-title">${line.slice(0,sep)}</span> : ${line.slice(sep+3)}</li>`;
+    if (sep2 !== -1) return `<li class="no-checkbox"><span class="bold-title">${line.slice(0,sep2)}</span> : ${line.slice(sep2+2)}</li>`;
+    if (sep3 !== -1) return `<li class="no-checkbox"><span class="bold-title">${line.slice(0,sep3)}</span> : ${line.slice(sep3+2)}</li>`;
+    return `<li><span class="check-icon">☑</span>${line}</li>`;
   }).join('');
 }
 
-function selectTemplate(items) {
-  const withPhoto = items.filter(i => i._photos.length > 0);
-  const withDesc  = items.filter(i => i.Description && i.Description.trim());
-  const withInstr = items.filter(i => hasInstructions(i.Description));
+function renderImageGallery(photos, itemName = '') {
+  if (!photos || photos.length === 0) return '';
 
-  if (withInstr.length > 0) return 'instructions';
+  if (photos.length === 1) {
+    return `<div class="img-single">
+      <img src="${photos[0]}" alt="${itemName}" loading="lazy" onclick="openLightbox('${photos[0]}', 1, 0)">
+    </div>`;
+  }
+
+  let html = `<div class="img-gallery">`;
+  photos.forEach((photo, i) => {
+    html += `<img src="${photo}" alt="${itemName} - Photo ${i+1}" loading="lazy" onclick="openLightbox('${photo}', ${photos.length}, ${i})">`;
+  });
+  html += `<span class="photo-count">+${photos.length}</span></div>`;
+  return html;
+}
+
+function selectTemplate(items) {
+  const withPhoto = items.filter(i => i._photos?.length > 0);
+  if (items.some(i => hasInstructions(i.Description))) return 'instructions';
   if (items.length >= 3 && withPhoto.length >= 2) return 'image-two-text';
   if (items.length === 2 && withPhoto.length === 2) return 'two-images';
-  if (withPhoto.length > 0 && withDesc.length > 0) return 'image-text';
-  if (withPhoto.length > 0 && withDesc.length === 0) return 'image-full';
+  if (withPhoto.length > 0 && items.some(i => i.Description)) return 'image-text';
+  if (withPhoto.length > 0) return 'image-full';
   return 'text-only';
+}
+
+function searchIcon(text){
+  icons.forEach((items) => {
+    if(text.toLowerCase().includes((items.name).toLowerCase())){
+      liste_icon.push(items.name);
+    }
+  });
 }
 
 function renderCard(items) {
@@ -673,12 +475,14 @@ function renderCard(items) {
 
   if (tpl === 'image-text') {
     return items.map(item => {
-      const img  = item._photos[0] ? `<div class="card-img"><img src="${item._photos[0]}" alt="${item.Item}"></div>` : '';
+      searchIcon(item.Description);
+      const imgHtml = renderImageGallery(item._photos, item.Item);
       const desc = item.Description ? `<div class="card-desc">${parseDescription(item.Description)}</div>` : '';
-      return `
-      <div class="card card-box tpl-image-text">
-        ${img}
-        <div class="card-body">
+      const badge = item.Categorie ? `<span class="category-badge">${item.Categorie}</span>` : '';
+      return `<div class="card card-box tpl-image-text">
+        ${imgHtml ? `<div class="gallery-wrapper">${imgHtml}</div>` : ''}
+        <div class="card-body" style="flex:1;min-width:0;">
+          ${badge}
           <div class="card-item-title">${item.Item}</div>
           ${desc}
         </div>
@@ -688,11 +492,12 @@ function renderCard(items) {
 
   if (tpl === 'image-full') {
     return items.map(item => {
-      const img = item._photos[0] ? `<img src="${item._photos[0]}" alt="${item.Item}">` : '';
-      return `
-      <div class="card card-box tpl-image-full">
-        ${img}
+      const imgHtml = renderImageGallery(item._photos, item.Item);
+      const badge = item.Categorie ? `<span class="category-badge">${item.Categorie}</span>` : '';
+      return `<div class="card card-box tpl-image-full">
+        ${imgHtml}
         <div class="card-body">
+          ${badge}
           <div class="card-item-title">${item.Item}</div>
         </div>
       </div>`;
@@ -700,316 +505,249 @@ function renderCard(items) {
   }
 
   if (tpl === 'two-images') {
-    const imgs = items.map(i =>
-      `<div>
-        <img src="${i._photos[0]}" alt="${i.Item}">
-        <div class="card-item-title" style="margin-top:0.75rem;">${i.Item}</div>
+    const imgs = items.map(i => {
+      const imgHtml = i._photos?.[0]
+        ? `<div class="img-single"><img src="${i._photos[0]}" alt="${i.Item}" loading="lazy" onclick="openLightbox('${i._photos[0]}', 1, 0)"></div>`
+        : '';
+      return `<div>
+        ${imgHtml}
+        ${i.Categorie ? `<span class="category-badge" style="margin-top:0.5rem;">${i.Categorie}</span>` : ''}
+        <div class="card-item-title" style="margin-top:0.5rem;">${i.Item}</div>
         ${i.Description ? `<div class="card-desc">${parseDescription(i.Description)}</div>` : ''}
-      </div>`
-    ).join('');
+      </div>`;
+    }).join('');
     return `<div class="card tpl-two-images">${imgs}</div>`;
   }
 
   if (tpl === 'image-two-text') {
     const first = items[0];
-    const rest  = items.slice(1);
-    const imgHtml = first._photos[0]
-      ? `<img src="${first._photos[0]}" alt="${first.Item}">`
+    const rest = items.slice(1);
+    const imgHtml = first._photos?.[0]
+      ? `<div class="img-single"><img src="${first._photos[0]}" alt="${first.Item}" loading="lazy" onclick="openLightbox('${first._photos[0]}', 1, 0)"></div>`
       : `<div class="card-item-title">${first.Item}</div>`;
     const textCols = rest.map(i => `
       <div>
+        ${i.Categorie ? `<span class="category-badge">${i.Categorie}</span>` : ''}
         <div class="card-item-title">${i.Item}</div>
         ${i.Description ? `<div class="card-desc">${parseDescription(i.Description)}</div>` : ''}
       </div>`).join('');
-    return `
-    <div class="card card-box tpl-image-two-text">
-      <div>${imgHtml}</div>
+    return `<div class="card card-box tpl-image-two-text">
+      <div style="flex-shrink:0;">${imgHtml}</div>
       ${textCols}
     </div>`;
   }
 
   if (tpl === 'instructions') {
     return items.map(item => {
-      const img = item._photos[0] ? `<img src="${item._photos[0]}" alt="${item.Item}" style="width:100%;border-radius:10px;margin-bottom:1rem;">` : '';
+      const badge = item.Categorie ? `<span class="category-badge">${item.Categorie}</span>` : '';
+      const imgHtml = item._photos?.[0]
+        ? `<div class="img-single" style="margin:1rem 0;"><img src="${item._photos[0]}" alt="${item.Item}" loading="lazy" onclick="openLightbox('${item._photos[0]}', 1, 0)"></div>`
+        : '';
       const list = hasInstructions(item.Description)
         ? `<ul class="checklist">${renderChecklist(item.Description)}</ul>`
         : `<div class="card-desc">${parseDescription(item.Description)}</div>`;
-      return `
-      <div class="card card-box tpl-instructions">
+      return `<div class="card card-box tpl-instructions">
+        ${badge}
         <div class="card-item-title">${item.Item}</div>
-        ${img}
+        ${imgHtml}
         ${list}
       </div>`;
     }).join('');
   }
 
-  // text-only (default)
+  // text-only
   return items.map(item => {
+    const badge = item.Categorie ? `<span class="category-badge">${item.Categorie}</span>` : '';
     const desc = item.Description ? `<div class="card-desc">${parseDescription(item.Description)}</div>` : '';
-    return `
-    <div class="card card-box tpl-text-only">
+    return `<div class="card card-box tpl-text-only">
+      ${badge}
       <div class="card-item-title">${item.Item}</div>
       ${desc}
     </div>`;
   }).join('');
 }
 
-function renderThemePage(theme, items, pageNum, totalPages) {
-  const cardsHtml = renderCard(items);
+function renderPiscinePage(piscineRecord, pageNum, totalPages) {
+  const f = piscineRecord.fields;
+  const photos = (f.Photo || []).map(p => p.url);
+  const taille = f.taille ? `${f.taille} m²` : '–';
+  const photoHtml = renderImageGallery(photos, 'Piscine');
+  liste_icon.push("piscine")
+
+  const infos = [
+    { label: 'Taille', value: taille },
+    { label: 'Chauffage', value: (f.Chauffage || []).join(', ') || '–' },
+    { label: 'Désinfectant', value: (f.Desinfectant || []).join(', ') || '–' },
+    { label: 'Gestion produits', value: (f.Produit || []).join(', ') || '–' },
+  ].map(i => `<div class="piscine-info"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+
+  const instructionSections = [
+    { label: 'Instruction d\'ouverture', content: f.InstructionOuverture },
+    { label: 'Instruction de fermeture', content: f.InstructionFermeture },
+    { label: 'Comment l\'entretenir', content: f.InstructionEntretien },
+  ].filter(s => s.content).map(s => `
+    <div class="card card-box tpl-instructions" style="margin-bottom:1rem;">
+      <div class="card-item-title">${s.label}</div>
+      <ul class="checklist">${renderChecklist(s.content)}</ul>
+    </div>`).join('');
+
   return `
-<div class="theme-page" id="page-${pageNum}">
-  <div class="theme-header">
-    <div class="theme-label">Thème</div>
-    <div class="theme-title">${theme}</div>
-  </div>
-  ${cardsHtml}
-  <div class="page-footer">
-    <span>PAGE ${pageNum} / ${totalPages}</span>
-    <span>IDYLLIQ.FR</span>
-  </div>
-</div>`;
-}
-
-function renderCollection(){
-  return `
-<style>
-      @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
-      ul {
-        line-height: 1.5rem;
-        font-size: 18px;
-      }
-
-      body {
-        font-family: 'Open Sans', sans-serif
-        margin: 0 7rem 0 7rem;
-      }
-      img {
-        width: 70%;
-      }
-      .title {
-        color: #1f6d67;
-      }
-      p {
-        line-height: 1.5rem;
-        font-size: 19px;
-      }
-      h1 {
-        font-size: 3rem;
-      }
-      .section {
-        margin-top: 2rem;
-        margin-bottom: 2rem;
-      }
-      h3 {
-        text-align: center;
-        color: #1f6d67;
-      }
-      h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        color: #1f6d67;
-      }
-      #indication{
-        margin: 0 5rem 0 5rem;
-        text-align: center;
-        color: #1f6d67;
-        margin: 2rem;
-      }
-      .img{
-        margin-top: 2rem;
-        text-align: center;
-      }
-      .presentation-end{
-        padding: 3rem;
-      }
-    </style>
-  </head>
-
-    <div class="presentation-end">
-      <h1 class="title">LA COLLECTION IDYLLIQ</h1>
-      <strong
-        ><p style="margin: 2rem;">
-          Cette propriete fait partie de la Collection Idylliq, la premiere
-          collection de maisons haut de gamme pensee pour les familles.
-        </p></strong
-      >
-      <p>Toutes les maisons Idylliq</p>
-      <ul>
-        <li>Sont situees en pleine nature</li>
-        <li>
-          Disposent d'un grand jardin avec meubles de jardin, jeux extérieurs
-          ...
-        </li>
-        <li>
-          Possedent un interieur cozy et de bon standing, avec cheminee, jeux de
-          societe, et parfois babyfoot et piano dans les maisons les mieux
-          équipées
-        </li>
-      </ul>
-      <p>Vous beneficiez du support de l'equipe Idylliq tout au long de
-votre sejour, nous vous aidons a organiser activites, livraisons de
-courses, babysitter, traiteur ...</p>
-
-        <p id="indication">VOUS POUVEZ VOIR UN APERCU DE NOS MAISONS SUR WWW.IDYLLIQ.FR</p>
-        <div class="img">
-          <img src="Idylliq.png" alt="">
-        </div>
+  <div class="theme-page" id="page-${pageNum}">
+    <div class="theme-header">
+      <div class="theme-label">Équipement</div>
+      <div class="theme-title">Piscine</div>
     </div>
-  `;
+    ${photoHtml}
+    <div class="piscine-grid">${infos}</div>
+    ${instructionSections}
+    <div class="page-footer"><span>PAGE ${pageNum} / ${totalPages}</span><span>IDYLLIQ.FR</span></div>
+  </div>`;
 }
 
-function renderCover(nomMaison, numero, coverPhotoUrl) {
+function renderThemePage(theme, items, pageNum, totalPages) {
+  return `
+  <div class="theme-page" id="page-${pageNum}">
+    <div class="theme-header">
+      <div class="theme-label">Thème</div>
+      <div class="theme-title">${theme}</div>
+    </div>
+    ${renderCard(items)}
+    <div class="page-footer"><span>PAGE ${pageNum} / ${totalPages}</span><span>IDYLLIQ.FR</span></div>
+  </div>`;
+}
+
+function renderCover(nomMaison, numero) {
   const imgSrc = '1769094902415x988137661459857400-bubble-1769094882292.jpeg';
   return `
-<div class="cover-page">
-  <div class="cover-hero">
-    <img src="${imgSrc}" alt="${nomMaison}">
-    <div class="cover-overlay"></div>
-    <div class="cover-brand">
-      <div class="cover-brand-dot"></div>
-      <div class="cover-brand-name">Collection Idylliq</div>
-    </div>
-    <div class="cover-content">
-      <div class="cover-label">Livret de bienvenue</div>
-      <h1 class="cover-title">${nomMaison}</h1>
-      <div class="cover-subtitle">Votre séjour, à portée de main</div>
-      <div class="cover-divider"></div>
-      <div class="cover-chapters">
-        <div class="cover-chapter">
-          <div class="cover-chapter-num">01</div>
-          <div class="cover-chapter-name">Votre hôte</div>
-        </div>
-        <div class="cover-chapter">
-          <div class="cover-chapter-num">02</div>
-          <div class="cover-chapter-name">La propriété</div>
-        </div>
-        <div class="cover-chapter">
-          <div class="cover-chapter-num">03</div>
-          <div class="cover-chapter-name">Les environs</div>
+  <div class="cover-page">
+    <div class="cover-hero">
+      <img src="${imgSrc}" alt="${nomMaison}" loading="eager">
+      <div class="cover-overlay"></div>
+      <div class="cover-brand">
+        <div class="cover-brand-dot"></div>
+        <div class="cover-brand-name">Collection Idylliq</div>
+      </div>
+      <div class="cover-content">
+        <div class="cover-label">Livret de bienvenue</div>
+        <h1 class="cover-title">${nomMaison}</h1>
+        <div class="cover-subtitle">Votre séjour, à portée de main</div>
+        <div class="cover-divider"></div>
+        <div class="cover-chapters">
+          <div class="cover-chapter"><div class="cover-chapter-num">01</div><div class="cover-chapter-name">Équipements</div></div>
+          <div class="cover-chapter"><div class="cover-chapter-num">02</div><div class="cover-chapter-name">Piscine</div></div>
+          <div class="cover-chapter"><div class="cover-chapter-num">03</div><div class="cover-chapter-name">La Collection</div></div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="cover-strip">
-    <div class="cover-strip-text">Réf. maison</div>
-    <div class="cover-strip-id">${numero || ''}</div>
-    <div class="cover-strip-text">Idylliq.fr</div>
-  </div>
-</div>`;
+    <div class="cover-strip">
+      <div class="cover-strip-text">Réf. maison</div>
+      <div class="cover-strip-id">${numero || ''}</div>
+      <div class="cover-strip-text">Idylliq.fr</div>
+    </div>
+  </div>`;
 }
 
-
-function generateSeachInput(){
+function renderCollection() {
   return `
-  <div style="display: flex">
-    <input type="search" name="search" id="search" placeholder="Rechercher dans le livret..." onchange="seachInPage()" >
-    <button id="search-button" onclick="seachInPage()">🔍</button>
-  </div>
-  `;
+  <div class="presentation-end">
+    <h1>La Collection Idylliq</h1>
+    <p><strong>Cette propriété fait partie de la Collection Idylliq, la première collection de maisons haut de gamme pensée pour les familles.</strong></p>
+    <p>Toutes les maisons Idylliq :</p>
+    <ul>
+      <li>Sont situées en pleine nature</li>
+      <li>Disposent d'un grand jardin avec meubles de jardin, jeux extérieurs…</li>
+      <li>Possèdent un intérieur cosy et de bon standing, avec cheminée, jeux de société, et parfois babyfoot et piano dans les maisons les mieux équipées</li>
+    </ul>
+    <p>Vous bénéficiez du support de l'équipe Idylliq tout au long de votre séjour, nous vous aidons à organiser activités, livraisons de courses, babysitter, traiteur…</p>
+    <p id="indication">VOUS POUVEZ VOIR UN APERÇU DE NOS MAISONS SUR WWW.IDYLLIQ.FR</p>
+  </div>`;
+}
+
+function generateSearchInput() {
+  return `<div style="display:flex;justify-content:center;">
+    <input type="search" id="search" placeholder="Rechercher dans le livret…" onkeydown="if(event.key==='Enter')searchInPage()">
+    <button id="search-button" onclick="searchInPage()">🔍</button>
+  </div>`;
+}
+
+function searchInPage() {
+  const val = document.getElementById('search').value.trim();
+  if (val) {
+    if (window.find(val)) {
+      document.getElementById('search').focus();
+    } else {
+      alert('Aucun résultat trouvé pour "' + val + '"');
+    }
+  }
 }
 
 async function buildLivret(IdMaison) {
-  const [maisonRecords, livretRecords] = await Promise.all([
-    fetchAll(TABLE_MAISON),
-    fetchAll(TABLE_LIVRET2)
-  ]);
+  const [maisonRecords, livretRecords, equipementRecords, piscineRecords] =
+    await Promise.all([
+      fetchAll(TABLE_MAISON),
+      fetchAll(TABLE_LIVRET),
+      fetchAll(TABLE_EQUIPEMENT),
+      fetchAll(TABLE_PISCINE),
+    ]);
 
-  const maisonItems = maisonRecords.filter(r => r.fields.IdMaison === IdMaison && r.fields.Livret);
-  if (!maisonItems.length) {
+  const maisonRecord = maisonRecords.find(r => r.fields.IdMaison === IdMaison && r.fields.Livret);
+  if (!maisonRecord) {
     document.getElementById('loading').innerText = `Aucune donnée pour ${IdMaison}`;
     return;
   }
 
-  const livretById = {};
-  livretRecords.forEach(r => { livretById[r.id] = r.fields; });
+  const livretIds = maisonRecord.fields['Livret 2'] || [];
+  const livretRecordsForMaison = livretRecords.filter(r => livretIds.includes(r.id));
+
+  const equipementIds = new Set();
+  livretRecordsForMaison.forEach(lr => {
+    (lr.fields.equipement || []).forEach(id => equipementIds.add(id));
+  });
+  const equipements = equipementRecords.filter(r => equipementIds.has(r.id));
+
+  const piscineIds = maisonRecord.fields['Piscine'] || [];
+  const piscines = piscineRecords.filter(r => piscineIds.includes(r.id));
+
+  let nomMaison = IdMaison;
+  try { nomMaison = await fetchNomMaison(IdMaison); } catch(e) { }
 
   const themeMap = {};
-  //const nomMaison = maisonItems[0]?.fields?.NomVillage || IdMaison;
-  const nomMaison = await fetchNomMaison(IdMaison);
-  console.log(nomMaison)
-  console.log(await fetchNomMaison(IdMaison))
-  let coverPhoto  = null;
-  let maisonNumero = '';
-
-  maisonItems.forEach(record => {
-    const f      = record.fields;
-    const themes = f.Theme || ['Général'];
-    const l2ids  = f['Livret 2'] || [];
-    const mainPhoto = f.Photo?.[0]?.url || null;
-    if (!coverPhoto) coverPhoto = mainPhoto;
-
-    if (l2ids.length > 0) {
-      l2ids.forEach(lid => {
-        const lf = livretById[lid];
-        if (!lf) return;
-        let desc = lf.Description || '';
-        let itemPhotos = [];
-
-        desc = desc.replace(/\[?(https?:\/\/[^\]\s<]+)\]?/g, (match, url) => {
-          if (isImageUrl(url)) {
-            itemPhotos.push(url);
-            return '';
-          }
-          return `<a href="${match}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; font-weight: 600;">${match}</a>`;
-        }).trim();
-
-        themes.forEach(theme => {
-          if (!themeMap[theme]) themeMap[theme] = [];
-          themeMap[theme].push({
-            Item: lf.Item || '',
-            Description: desc,
-            _photos: itemPhotos
-          });
-        });
-
-      });
-    } else {
-      const itemsTexte = (f.Texte || '').split(';').filter(Boolean);
-      themes.forEach(theme => {
-        if (!themeMap[theme]) themeMap[theme] = [];
-        itemsTexte.forEach(item => {
-          themeMap[theme].push({ Item: item.trim(), Description: '', _photos: mainPhoto ? [mainPhoto] : [] });
-        });
-      });
-    }
+  equipements.forEach(rec => {
+    const f = rec.fields;
+    const categorie = (f['Catégorie'] || ['Général'])[0];
+    const photos = (f.Photos || []).map(p => p.url).filter(Boolean);
+    let desc = f.descriptionLivret || '';
+    if (!themeMap[categorie]) themeMap[categorie] = [];
+    themeMap[categorie].push({
+      Item: f.NomEquipement || '–',
+      Description: desc,
+      Categorie: categorie,
+      _photos: photos,
+    });
   });
 
-  Object.keys(themeMap).forEach(t => {
-    const seen = new Set();
-    themeMap[t] = themeMap[t].filter(i => { if (seen.has(i.Item)) return false; seen.add(i.Item); return true; });
-  });
+  const themes = Object.keys(themeMap);
+  const hasPiscine = piscines.length > 0;
+  const totalPages = themes.length + (hasPiscine ? 1 : 0);
 
-  const themes     = Object.keys(themeMap);
-  const totalPages = themes.length;
-
-  const cover = renderCover(nomMaison, IdMaison, coverPhoto);
-
-  const pages = themes.map((th, i) => renderThemePage(th, themeMap[th], i + 1, totalPages)).join('\n');
-  const presentation = renderCollection();
-  const end   = `<div class="end-page"><h1>TRÈS BEAU SÉJOUR</h1><p>WWW.IDYLLIQ.FR</p></div>`;
+  const cover = renderCover(nomMaison, IdMaison);
+  let pageNum = 0;
+  const themePages = themes.map(th => renderThemePage(th, themeMap[th], ++pageNum, totalPages)).join('\n');
+  const piscinePage = hasPiscine ? renderPiscinePage(piscines[0], ++pageNum, totalPages) : '';
+  const collection = renderCollection();
+  const endPage = `<div class="end-page"><h1>TRÈS BEAU SÉJOUR</h1><p>WWW.IDYLLIQ.FR</p></div>`;
 
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('livret-container').innerHTML = generateSeachInput() + cover + pages + presentation + end;
+  document.getElementById('livret-container').innerHTML =
+    generateSearchInput() + cover + themePages + piscinePage + collection + endPage;
+    console.log(liste_icon);
 }
 
-
+// Launch
 buildLivret('M64').catch(err => {
   document.getElementById('loading').innerText = 'Erreur : ' + err.message;
   console.error(err);
 });
-
-
-function seachInPage() {
-  const input = document.getElementById("search");
-  const value = input.value;
-
-  if (value) {
-    window.find(value);
-    input.focus()
-  }
-}
 </script>
-
 </body>
 </html>
