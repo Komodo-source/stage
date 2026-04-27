@@ -6,16 +6,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;600;700&family=Open+Sans:ital,wght@0,400;0,600;1,400&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+       :root {
+      --green:       #1F6D67;
+      --green-dark:  #155450;
+      --green-mid:   #2a8a83;
+      --green-light: #e8f4f3;
+      --green-pale:  #f2f8f7;
+      --warm:        #f7f3ee;
+      --warm-mid:    #ede8e0;
+      --warm-dark:   #c8bfb0;
+      --ink:         #2c2824;
+      --ink-mid:     #5a534a;
+      --ink-light:   #9a9088;
+      --white:       #ffffff;
+      --accent:      #d4956a;
+      --accent-pale: #faf0e8;
+    }
     body { background: #f0ede8; font-family: 'Open Sans', sans-serif; }
     #loading { display: flex; align-items: center; justify-content: center; height: 300px; font-family: 'League Spartan', sans-serif; color: #1F6D67; font-size: 1.2rem; }
     #livret-container { max-width: 960px; margin: 0 auto; background: white; }
 
-    /* ── COVER PAGE ── */
     .cover-page {
       font-family: "Roboto", sans-serif;
     }
-   /* ── COVER PAGE ── */
-/* ── COVER PAGE ── */
 .cover-main {
   display: flex;
   flex-wrap: wrap;
@@ -274,15 +287,12 @@
     }
     .bold-title { font-weight: 600; font-family: 'League Spartan', sans-serif; }
 
-    /* card wrapper border */
     .card-box {
-      border: 1px solid #e5e0d8;
       border-radius: 14px;
       padding: 1.5rem;
       background: #fafaf8;
     }
 
-    /* end page */
     .end-page {
       padding: 5rem 4rem;
       text-align: center;
@@ -374,37 +384,191 @@
     }
     #search{
       width: 40%;
-    padding: 0.5rem;
-    border-top-left-radius: 7px;
-    border-bottom-left-radius: 7px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
     border: 2px solid #111;
+    border: 1.5px solid #1F6D67;
     text-align: center;
     position: fixed;
-    top: 3%;
+      outline: none;
+    font-family: 'Open Sans', sans-serif;
+    top: 10%;
     left: 45%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    padding: 0.6rem 1.2rem;
     }
 
     #search-button{
     width: 10%;
     z-index: 1000;
     padding: 0.5rem;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
     border: transparent;
     position: fixed;
-    top: 3%;
+          border: none;
+    top: 10%;
     left: 70%;
     transform: translate(-50%, -50%);
     background-color: #1F6D67;
-    border: 1px solid #1F6D67;
+    border: 2.5px solid #1F6D67;
     }
+      .cover-page {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .cover-hero {
+      position: relative;
+      min-height: 88vh;
+      overflow: hidden;
+    }
+
+    .cover-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      filter: brightness(0.72);
+    }
+
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(21,84,80,0.55) 0%,
+        rgba(21,84,80,0.15) 45%,
+        rgba(0,0,0,0.45) 100%
+      );
+    }
+
+    .cover-brand {
+      position: absolute;
+      top: 2.5rem;
+      left: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .cover-brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .cover-brand-name {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .cover-content {
+      position: absolute;
+      bottom: 3.5rem;
+      left: 3rem;
+      right: 3rem;
+    }
+
+    .cover-label {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .cover-title {
+      font-family: 'Julius Sans One', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .cover-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+    }
+
+    .cover-divider {
+      width: 60px;
+      height: 1.5px;
+      background: var(--accent);
+      margin-bottom: 1.8rem;
+    }
+
+    .cover-chapters {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .cover-chapter {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .cover-chapter-num {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .cover-chapter-name {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .cover-strip {
+      background: var(--green-dark);
+      padding: 1rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cover-strip-text {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .cover-strip-id {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.6);
+    }
+
   </style>
 </head>
 <body>
 
-<div id="loading">Chargement du livret…</div>
+<div id="loading">Chargement de votre livret…</div>
 <div id="livret-container"></div>
 <script>
 const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
@@ -445,6 +609,7 @@ async function fetchAll(table) {
       headers: { Authorization: `Bearer ${TOKEN}` }
     });
     const data = await res.json();
+    console.log(data);
     if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
     records = records.concat(data.records);
     offset  = data.offset || null;
@@ -621,7 +786,6 @@ function renderCollection(){
       }
       img {
         width: 70%;
-        border-radius: 15px;
       }
       .title {
         color: #1f6d67;
@@ -696,41 +860,50 @@ courses, babysitter, traiteur ...</p>
 }
 
 function renderCover(nomMaison, numero, coverPhotoUrl) {
-  console.log(nomMaison)
-  const imgSrc =  '1769094902415x988137661459857400-bubble-1769094882292.jpeg';
+  const imgSrc = '1769094902415x988137661459857400-bubble-1769094882292.jpeg';
   return `
 <div class="cover-page">
-  <div class="cover-main">
-    <div class="cover-left">
-      <h1 id="cover-title">${nomMaison}</h1>
-      <h1 id="cover-numero">${numero || ''}</h1>
-      <h3 id="cover-collection">Collection IDYLLIQ</h3>
+  <div class="cover-hero">
+    <img src="${imgSrc}" alt="${nomMaison}">
+    <div class="cover-overlay"></div>
+    <div class="cover-brand">
+      <div class="cover-brand-dot"></div>
+      <div class="cover-brand-name">Collection Idylliq</div>
     </div>
-    <div class="cover-right">
-      <div class="image-container">
-        <img src="${imgSrc}" alt="${nomMaison}">
-        <div class="text-overlay">
-          <h2>VOTRE HÔTE</h2>
-          <p>MESSAGE DE BIENVENUE</p>
-          <div class="dividor"></div>
-          <h2>LA PROPRIÉTÉ</h2>
-          <p>TOUT SAVOIR SUR LA MAISON ET SON FONCTIONNEMENT</p>
-          <div class="dividor"></div>
-          <h2>LES ENVIRONS</h2>
-          <p>SUGGESTIONS D'ACTIVITÉS AUX ALENTOURS</p>
+    <div class="cover-content">
+      <div class="cover-label">Livret de bienvenue</div>
+      <h1 class="cover-title">${nomMaison}</h1>
+      <div class="cover-subtitle">Votre séjour, à portée de main</div>
+      <div class="cover-divider"></div>
+      <div class="cover-chapters">
+        <div class="cover-chapter">
+          <div class="cover-chapter-num">01</div>
+          <div class="cover-chapter-name">Votre hôte</div>
+        </div>
+        <div class="cover-chapter">
+          <div class="cover-chapter-num">02</div>
+          <div class="cover-chapter-name">La propriété</div>
+        </div>
+        <div class="cover-chapter">
+          <div class="cover-chapter-num">03</div>
+          <div class="cover-chapter-name">Les environs</div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="cover-strip">
+    <div class="cover-strip-text">Réf. maison</div>
+    <div class="cover-strip-id">${numero || ''}</div>
+    <div class="cover-strip-text">Idylliq.fr</div>
   </div>
 </div>`;
 }
 
 
-
 function generateSeachInput(){
   return `
   <div style="display: flex">
-    <input type="search" name="search" id="search" placeholder="Rechercher ici..." onchange="seachInPage()" >
+    <input type="search" name="search" id="search" placeholder="Rechercher dans le livret..." onchange="seachInPage()" >
     <button id="search-button" onclick="seachInPage()">🔍</button>
   </div>
   `;
@@ -837,5 +1010,6 @@ function seachInPage() {
   }
 }
 </script>
+
 </body>
 </html>
