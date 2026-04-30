@@ -283,35 +283,27 @@ async function fetchAll(table) {
   return records;
 }
 
-/* ─── PARSER (CORRIGÉ POUR HTML & IMAGES $0) ─── */
 function is_file_image(str) { return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw)$/i.test(str); }
 function escapeHtml(str) { return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function escapeAttr(str) { return (str || '').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
 
-// On ajoute 'hideInlineImages' pour masquer les images dans les équipements (éviter les doublons)
-// mais les afficher dans le "Point d'attention".
 function parseDescription(text, attachments, hideInlineImages = false) {
   if (!text) return '';
 
-  // Suppression du escapeHtml ici pour permettre l'exécution des vraies balises HTML Airtable (<br>, <b>, etc.)
   let out = text;
 
-  // Transformation des liens URL
   out = out.replace(/\[?(https?:\/\/[^\]\s<"]+)\]?/g, (match, url) => {
-    // Si ce n'est pas caché et que c'est une image airtable
     if (!hideInlineImages && url.includes('airtableusercontent.com') && is_file_image(url)) {
       return `<img src="${url}" class="inline-img" style="width:100%; border-radius:12px; margin:1rem 0; cursor:pointer;" alt="" loading="lazy" onclick="openLightbox('${url.replace(/'/g,"\\'")}', 1, 0)">`;
     }
-    // S'il s'agit déjà d'une balise <a href=> écrite en HTML dans Airtable, on l'ignore
     if (match.includes('href=')) return match;
 
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 
-  // Remplacement des marqueurs Airtable $0, $1 par l'image attachée
   if (attachments && attachments.length > 0) {
     out = out.replace(/\$i?(\d+)/g, (match, idx) => {
-      if (hideInlineImages) return ''; // On masque silencieusement dans les cartes "Équipements"
+      if (hideInlineImages) return '';
 
       const i = parseInt(idx, 10);
       const att = attachments[i];
@@ -322,20 +314,39 @@ function parseDescription(text, attachments, hideInlineImages = false) {
       }
       return `<a href="${att.url}" target="_blank" rel="noopener" class="file-link">📎 Fichier ${i + 1}</a>`;
     });
-  } else {
+  } else if (attachments && attachments.length > 0) {
+    out = out.replace(/\$v?(\d+)/g, (match, idx) => {
+      if (hideInlineImages) return '';
+
+      const i = parseInt(idx, 10);
+      const att = attachments[i];
+      if (!att) return match;
+      console.log(att.url)
+
+      if (is_file_image(att.filename) && att.url.includes("youtube")) {
+        return `<iframe id="ytplayer" type="text/html" width="640" height="360"
+  src="${att.url}"
+  frameborder="0"></iframe>`;
+      }else if(is_file_image(att.filename)){
+        return `<video width="400" controls>
+          <source src="${att.url}" type="video/mp4">
+          <source src="${att.url}" type="video/ogg">
+        </video>`;
+      }
+      return `<a href="${att.url}" target="_blank" rel="noopener" class="file-link">📎 Fichier ${i + 1}</a>`;
+    });
+  }
+  else {
     // Nettoie les $0 s'il n'y a pas d'attachments
     out = out.replace(/\$i?(\d+)/g, '');
   }
 
-  // Formatage par ligne (Key-value, bullets, paragraphes)
   const lines = out.split('\n').map(line => line.trim()).filter(Boolean);
   out = lines.map(line => {
-    // Si la ligne est déjà une balise HTML (image, lien, ou balise bloc native), on la préserve
     if (line.startsWith('<img') && line.endsWith('>')) return line;
     if (line.startsWith('<a class="file-link"') && line.endsWith('</a>')) return line;
     if (line.startsWith('<') && line.endsWith('>')) return line;
 
-    // Vérification Clé/Valeur
     const sep = line.indexOf(' : ') !== -1 ? line.indexOf(' : ') : (line.indexOf(': ') !== -1 ? line.indexOf(': ') : line.indexOf(' :'));
     if (sep !== -1) {
       let left = line.slice(0, sep);
@@ -345,10 +356,8 @@ function parseDescription(text, attachments, hideInlineImages = false) {
       }
     }
 
-    // Vérification puce
-    if (line.startsWith('- ') || line.startsWith('* ')) return `<div class="bullet-line">${line.substring(2)}</div>`;
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('NO. ') || line.startsWith('No. ') || line.startsWith('NO')) return `<div class="bullet-line">${line.substring(2)}</div>`;
 
-    // Paragraphe classique
     return `<p>${line}</p>`;
   }).join('');
 
@@ -584,13 +593,27 @@ function renderPiscinePage(piscineRecord) {
   const f = piscineRecord.fields;
 
   const infos = `
-    <div class="card reveal" style="margin-top:2rem;">
+    <div class="card reveal" style="margin-top:2rem; margin-bottom: 2rem;">
       <div class="card-body">
          <div class="kv-line"><span class="kv-key">Taille</span><span class="kv-val">${f.taille ? f.taille + ' m²' : '–'}</span></div>
          <div class="kv-line"><span class="kv-key">Chauffage</span><span class="kv-val">${(f.Chauffage || []).join(', ') || '–'}</span></div>
          <div class="kv-line"><span class="kv-key">Désinfectant</span><span class="kv-val">${(f.Desinfectant || []).join(', ') || '–'}</span></div>
       </div>
     </div>`;
+
+  // Construction des sections pour l'ouverture, fermeture et entretien de la piscine
+  const instructionSections = [
+    { label: "Instructions d'ouverture", content: f.InstructionOuverture },
+    { label: "Instructions de fermeture", content: f.InstructionFermeture },
+    { label: "Entretien", content: f.InstructionEntretien }
+  ].filter(s => s.content).map(s => `
+    <div class="card reveal">
+      <div class="card-body">
+        <h3 class="card-item-title">${s.label}</h3>
+        <div class="card-desc">${parseDescription(s.content, [], false)}</div>
+      </div>
+    </div>
+  `).join('');
 
   return `
     <section id="section-piscine" class="theme-page reveal">
@@ -600,6 +623,7 @@ function renderPiscinePage(piscineRecord) {
       </div>
       ${renderImageGallery((f.Photo || []).map(p => p.url))}
       ${infos}
+      ${instructionSections}
     </section>`;
 }
 
@@ -635,8 +659,8 @@ function renderCover(nomMaison, numero, coverUrl) {
     </div>`;
 }
 
-/* ─── INIT SYSTEM ─── */
 async function buildLivret(IdMaison) {
+
   const [ maisonRecs, livretRecs, equipRecs, piscineRecs, dispRecs, wfRecs, recoRecs, listRecs ]
     = await Promise.all([
       fetchAll(TABLE_MAISON), fetchAll(TABLE_LIVRET), fetchAll(TABLE_EQUIPEMENT),
@@ -670,8 +694,8 @@ async function buildLivret(IdMaison) {
 
   const html =
     `<div id="search-container">
-      <input type="search" id="search" placeholder="Rechercher...">
-      <button id="search-button" onclick="window.find(document.getElementById('search').value)">🔍</button>
+      <input type="search" id="search" placeholder="Rechercher..." >
+      <button id="search-button" onchange="window.find(document.getElementById('search').value)">🔍</button>
     </div>` +
     renderCover(nomMaison, IdMaison, coverImg) +
     get_global_info_maison(maisonRecord) +
@@ -723,6 +747,7 @@ if (!idMaison) {
   buildLivret(idMaison).catch(err => {
     document.getElementById('loading').innerText = 'Erreur: ' + err.message;
   });
+
 }
 </script>
 </body>
