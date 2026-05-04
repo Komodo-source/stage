@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Livret Idylliq</title>
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://idylliq.fr/favicon.png" type="image/png" />
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
   <style>
-    /* ── BASE & VARIABLES ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --green: #1F6D67; --green-dark: #155450; --green-mid: #2a8a83;
@@ -17,8 +17,7 @@
       --white: #ffffff; --accent: #d4956a; --accent-pale: #fdf5ef;
       --shadow-soft: 0 10px 30px rgba(31,109,103,0.06);
       --shadow-hover: 0 15px 40px rgba(31,109,103,0.12);
-      --radius: 20px;
-      --radius-sm: 12px;
+      --radius: 20px; --radius-sm: 12px;
       --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     body {
@@ -28,7 +27,6 @@
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
     }
-
     #loading {
       display: flex; align-items: center; justify-content: center;
       height: 100vh; font-family: 'League Spartan', sans-serif;
@@ -40,171 +38,189 @@
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* ── COVER PAGE REDESIGN ── */
+    /* ── COVER PAGE ── */
     .cover-page { position: relative; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     .cover-hero { position: absolute; inset: 0; z-index: 1; }
     .cover-hero img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6) saturate(1.1); }
     .cover-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(21,84,80,0.4) 0%, transparent 40%, rgba(21,84,80,0.85) 100%); }
-
     .cover-brand { position: absolute; top: 3rem; left: 3.5rem; z-index: 2; display: flex; align-items: center; gap: 1rem; }
     .cover-brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
     .cover-brand-name { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: var(--white); }
-
     .cover-content { position: absolute; bottom: 8rem; left: 3.5rem; right: 3.5rem; z-index: 2; }
     .cover-label { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
-    .cover-title { font-family: 'Julius Sans One', sans-serif; font-size: clamp(3rem, 8vw, 6rem); color: var(--white); line-height: 1; margin-bottom: 0.5rem; text-transform: uppercase; text-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .cover-title { font-family: 'Julius Sans One', sans-serif; font-size: clamp(2.5rem, 7vw, 5.5rem); color: var(--white); line-height: 1.05; margin-bottom: 0.5rem; text-transform: uppercase; text-shadow: 0 4px 20px rgba(0,0,0,0.2); word-wrap: break-word; hyphens: auto; }
     .cover-subtitle { font-size: clamp(1.2rem, 3vw, 1.6rem); font-style: italic; font-weight: 300; color: rgba(255,255,255,0.9); margin-bottom: 2.5rem; }
-
-    /* Interactive Cover Chapters */
     .cover-chapters { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 2rem; }
     .cover-chapter { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; cursor: pointer; transition: var(--transition); }
     .cover-chapter:hover { transform: translateY(-3px); }
     .cover-chapter-num { font-family: 'League Spartan', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
     .cover-chapter-name { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--white); transition: color 0.3s ease; }
     .cover-chapter:hover .cover-chapter-name { color: var(--accent); }
-
-    /* Polished Bottom Strip */
-    .cover-strip { position: absolute; bottom: 0; width: 100%; z-index: 3; background: rgba(21, 84, 80, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 1.25rem 3.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); }
+    .cover-strip { position: absolute; bottom: 0; width: 100%; z-index: 3; background: rgba(21,84,80,0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 1.25rem 3.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); }
     .cover-strip-text { font-family: 'League Spartan', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
     .cover-strip-id { font-family: 'Julius Sans One', sans-serif; font-size: 1.3rem; color: var(--white); letter-spacing: 2px; }
 
-    /* ── SEARCH PILL ── */
-    #search-container { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; align-items: center; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid rgba(31,109,103,0.1); overflow: hidden; width: 90%; max-width: 400px; transition: var(--transition); }
+    /* ── SEARCH ── */
+    #search-container { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; align-items: center; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.11); border: 1px solid rgba(31,109,103,0.1); overflow: hidden; width: 90%; max-width: 400px; transition: var(--transition); }
     #search-container:focus-within { box-shadow: 0 8px 30px rgba(31,109,103,0.2); transform: translateX(-50%) translateY(-2px); border-color: var(--green-mid); }
     #search { flex: 1; border: none; outline: none; padding: 0.8rem 1.5rem; font-family: 'Open Sans', sans-serif; font-size: 0.95rem; background: transparent; color: var(--ink); }
     #search::placeholder { color: var(--ink-light); }
     #search-button { padding: 0.8rem 1.5rem; background: transparent; border: none; color: var(--green); cursor: pointer; font-size: 1.2rem; transition: var(--transition); }
     #search-button:hover { color: var(--accent); transform: scale(1.1); }
 
-    /* ── SECTION THEMATICS ── */
+    /* ── SECTIONS ── */
     .theme-page { padding: 5rem 4.5rem; border-bottom: 1px solid var(--warm-mid); }
     .theme-header { margin-bottom: 3.5rem; text-align: center; }
     .theme-label { font-family: 'League Spartan', sans-serif; color: var(--accent); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 0.75rem; }
     .theme-title { font-family: 'Julius Sans One', sans-serif; color: var(--green-dark); font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
     .theme-header::after { content: ''; display: block; width: 40px; height: 2px; background: var(--green); margin: 1.5rem auto 0; }
 
-    /* ── EDITORIAL CARDS & TEMPLATES ── */
-    .card { margin-bottom: 3.5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: var(--transition); border: 1px solid rgba(237, 232, 224, 0.5); overflow: hidden; }
+    /* ── CARDS ── */
+    .card { margin-bottom: 3.5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: var(--transition); border: 1px solid rgba(237,232,224,0.5); overflow: hidden; }
     .card-body { padding: 2.5rem; }
     .card-item-title { font-family: 'Julius Sans One', sans-serif; color: var(--green-dark); font-size: 1.6rem; text-transform: uppercase; margin-bottom: 1rem; font-weight: 600; }
 
-    /* Layout: Image + Text (Side by Side) */
+    /* Image+Text side-by-side */
     .tpl-image-text { display: grid; grid-template-columns: 1fr 1.2fr; align-items: stretch; }
-    .tpl-image-text .gallery-wrapper { height: 100%; min-height: 300px; }
-    .tpl-image-text .gallery-wrapper img { height: 100%; width: 100%; object-fit: cover; border-radius: 0; cursor: pointer; transition: transform 0.6s ease; }
-    .tpl-image-text .gallery-wrapper { overflow: hidden; }
+    .tpl-image-text .gallery-wrapper { overflow: hidden; position: relative; min-height: 300px; }
+    .tpl-image-text .gallery-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; transition: transform 0.6s ease; }
     .tpl-image-text .gallery-wrapper:hover img { transform: scale(1.05); }
 
-    /* Image Styling */
-    .img-single img { width: 100%; height: auto; max-height: 400px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.6s ease; border-radius: var(--radius) var(--radius) 0 0; }
-    .img-single { overflow: hidden; position: relative; }
+    /* FIX: image sizing - controlled max-height, no overflow */
+    .img-single { overflow: hidden; position: relative; border-radius: var(--radius) var(--radius) 0 0; }
+    .img-single img { width: 100%; height: 300px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.6s ease; }
     .img-single:hover img { transform: scale(1.05); }
 
-    .img-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.5rem; position: relative; padding: 0 2.5rem; }
-    .img-gallery img { width: 100%; aspect-ratio: 1; border-radius: var(--radius-sm); object-fit: cover; cursor: pointer; transition: var(--transition); border: 2px solid transparent; }
-    .img-gallery img:hover { transform: scale(1.03); border-color: var(--accent); z-index: 2; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    /* FIX: gallery images - fixed aspect ratio, consistent size */
+    .img-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; padding: 1.5rem 2.5rem; }
+    .img-gallery img { width: 100%; height: 90px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); border: 2px solid transparent; display: block; }
+    .img-gallery img:hover { transform: scale(1.03); border-color: var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-    /* ── SEMANTIC POINT ATTENTION ── */
+    /* ── MEDIA INSIDE CARD DESC ── */
+    /* FIX: inline images inside parsed text — constrained width */
+    .card-desc img.inline-img { max-height: 320px; width: 100%; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; display: block; margin: 1rem 0; }
+    .card-desc iframe { width: 100%; aspect-ratio: 16/9; border-radius: var(--radius-sm); border: none; display: block; margin: 1rem 0; }
+    .card-desc video { width: 100%; max-height: 360px; border-radius: var(--radius-sm); display: block; margin: 1rem 0; }
+
+    /* ── ATTENTION BOX ── */
     .attention-box { margin-top: 2.5rem; padding: 2rem; background: var(--accent-pale); border: 1px solid rgba(212,149,106,0.3); border-radius: var(--radius); position: relative; overflow: hidden; display: flex; gap: 1.5rem; align-items: flex-start; }
     .attention-box::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent); }
     .attention-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
-    .attention-content { flex: 1; width: 100%; }
+    .attention-content { flex: 1; min-width: 0; }
     .attention-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
 
-    /* ── TYPOGRAPHY & TEXT PARSING ── */
+    /* ── TYPOGRAPHY ── */
     .card-desc { font-family: 'Open Sans', sans-serif; font-size: 1rem; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
     .card-desc p { margin-bottom: 1rem; }
     .card-desc strong { font-weight: 600; color: var(--ink); }
     .card-desc a { color: var(--green-mid); text-decoration: none; border-bottom: 1px solid transparent; transition: var(--transition); font-weight: 500; }
     .card-desc a:hover { border-bottom-color: var(--green-mid); }
-
     .kv-line { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--warm-mid); }
     .kv-line:last-child { border-bottom: none; }
     .kv-key { font-weight: 600; color: var(--green-dark); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem; }
     .kv-val { color: var(--ink-mid); text-align: right; }
-
     .bullet-line { position: relative; padding-left: 2rem; margin-bottom: 0.75rem; }
     .bullet-line::before { content: ''; position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-
     .category-badge { display: inline-block; background: var(--green-pale); color: var(--green-dark); font-family: 'League Spartan', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 30px; margin-bottom: 1.5rem; border: 1px solid var(--green-light); }
 
-    /* ── GRIDS (PISCINE, CICO, DISPOSITION, RECO) ── */
+    /* ── GRIDS ── */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
-
     .cico-card { border-radius: var(--radius); padding: 2.5rem; background: var(--white); box-shadow: var(--shadow-soft); text-align: center; border: 1px solid var(--warm-mid); transition: var(--transition); }
     .cico-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
     .cico-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 4px; color: var(--accent); margin-bottom: 1rem; }
     .cico-time { font-family: 'Julius Sans One', sans-serif; font-size: 2.5rem; color: var(--green-dark); }
-
     .disposition-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
     .disposition-item { background: var(--white); border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center; border: 1px solid var(--warm-mid); box-shadow: var(--shadow-soft); transition: var(--transition); }
     .disposition-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--green-mid); }
     .disposition-item img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 4px 6px rgba(31,109,103,0.1)); }
     .d-etage { font-family: 'League Spartan', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); margin-bottom: 0.5rem; }
     .d-piece { font-family: 'Julius Sans One', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--green-dark); }
-
     .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
     .reco-card { border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: var(--transition); border: 1px solid var(--warm-mid); display: flex; flex-direction: column; }
     .reco-body { padding: 2rem; flex: 1; display: flex; flex-direction: column; }
     .reco-name { font-family: 'Julius Sans One', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; margin-bottom: 0.5rem; }
     .reco-score { font-family: 'League Spartan', sans-serif; font-size: 0.75rem; color: var(--white); background: var(--accent); padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem; align-self: flex-start; }
     .reco-desc { flex: 1; }
-    .reco-link { margin-top: 1.5rem; display: inline-block; font-family: 'League Spartan', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); text-decoration: none; padding-top: 1rem; border-top: 1px solid var(--warm-mid); width: 100%; text-align: center; transition: var(--transition); padding-bottom: 1rem;}
+    .reco-link { margin-top: 1.5rem; display: inline-block; font-family: 'League Spartan', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); text-decoration: none; padding: 1rem; border-top: 1px solid var(--warm-mid); width: 100%; text-align: center; transition: var(--transition); }
     .reco-link:hover { color: var(--accent); }
 
-    /* ── FOOTER & COLLECTION ── */
+    /* ── WIFI BUTTON ── */
+    #copymdp { padding: 1rem 2rem; border-radius: 30px; transition: var(--transition); cursor: pointer; border: none; font-weight: 600; font-family: 'League Spartan', sans-serif; text-transform: uppercase; letter-spacing: 2px; background-color: var(--green); color: #fff; display: inline-block; margin-top: 1rem; }
+    #copymdp:hover { background-color: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,149,106,0.3); }
+
+    /* ── FOOTER ── */
     .presentation-end { padding: 5rem 4.5rem; background: var(--warm-mid); text-align: center; }
     .presentation-end h1 { font-family: 'Julius Sans One', sans-serif; color: var(--green-dark); font-size: 2.5rem; margin-bottom: 2rem; text-transform: uppercase; }
     .presentation-end p { max-width: 700px; margin: 0 auto 1.5rem; font-size: 1.05rem; }
-    .presentation-end ul { max-width: 600px; margin: 2rem auto; text-align: left; }
     .end-page { padding: 6rem 4rem; text-align: center; background: var(--green-dark); color: white; }
     .end-page h1 { font-family: 'Julius Sans One', sans-serif; font-size: 3rem; margin-bottom: 1rem; color: var(--accent-pale); }
     .end-page p { font-family: 'League Spartan', sans-serif; letter-spacing: 5px; font-size: 1rem; text-transform: uppercase; color: var(--accent); }
 
     /* ── LIGHTBOX ── */
-    .lightbox { display: none; position: fixed; z-index: 2000; inset: 0; background: rgba(21,40,38,0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 2rem; opacity: 0; transition: opacity 0.3s ease; }
-    .lightbox.active { display: flex; opacity: 1; }
+    .lightbox { display: none; position: fixed; z-index: 2000; inset: 0; background: rgba(21,40,38,0.95); backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 2rem; }
+    .lightbox.active { display: flex; }
     .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; }
-    .lightbox-content img { max-width: 100%; max-height: 90vh; border-radius: var(--radius-sm); box-shadow: 0 20px 60px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease; }
-    .lightbox.active .lightbox-content img { transform: scale(1); }
+    .lightbox-content img { max-width: 100%; max-height: 85vh; border-radius: var(--radius-sm); box-shadow: 0 20px 60px rgba(0,0,0,0.5); object-fit: contain; }
     .lightbox-close { position: absolute; top: -40px; right: -40px; color: white; font-size: 2.5rem; cursor: pointer; transition: var(--transition); line-height: 1; }
     .lightbox-close:hover { color: var(--accent); transform: rotate(90deg); }
-
-    /* ── WI-FI BUTTON ── */
-    #copymdp {
-      padding: 1rem 2rem;
-      border-radius: 30px;
-      transition: var(--transition);
-      cursor: pointer;
-      border: none;
-      font-weight: 600;
-      font-family: 'League Spartan', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      background-color: var(--green);
-      color: #fff;
-      display: inline-block;
-      margin-top: 1rem;
-    }
-    #copymdp:hover{
-      background-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(212,149,106,0.3);
-    }
+    .lightbox-counter { text-align: center; color: white; margin-top: 1rem; font-family: 'League Spartan', sans-serif; letter-spacing: 2px; font-size: 0.85rem; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .theme-page, .presentation-end { padding: 3rem 1.5rem; }
-      .cover-content, .cover-brand, .cover-strip { left: 1.5rem; right: 1.5rem; }
-      .cover-title { font-size: 2.5rem; }
-      .cover-strip { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
+      .cover-content, .cover-brand { left: 1.5rem; right: 1.5rem; }
+      .cover-strip { left: 0; right: 0; flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
+      .cover-title { font-size: 2.2rem; }
       .tpl-image-text { grid-template-columns: 1fr; }
-      .tpl-image-text .gallery-wrapper { min-height: 250px; }
+      .tpl-image-text .gallery-wrapper { min-height: 220px; }
       .grid-2 { grid-template-columns: 1fr; }
       .card-body { padding: 1.5rem; }
       .attention-box { flex-direction: column; gap: 1rem; padding: 1.5rem; }
       .lightbox-close { right: 0; top: -50px; }
+      .img-gallery { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+      .img-gallery img { height: 70px; }
     }
+    @media (max-width: 480px) {
+      #search-container { top: 1rem; width: calc(100% - 2rem); }
+      #search { font-size: 0.9rem; padding: 0.7rem 1rem; }
+    }
+
+    /* ── DESCRIPTION LIST & SECTION LABELS ── */
+    .desc-list { list-style: none; padding: 0; margin: 0.5rem 0 1rem 0; }
+    .desc-list li { position: relative; padding: 0.4rem 0 0.4rem 1.75rem; line-height: 1.6; color: var(--ink-mid); font-size: 1rem; font-weight: 300; border-bottom: 1px solid var(--warm-mid); }
+    .desc-list li:last-child { border-bottom: none; }
+    .desc-list li::before { content: ''; position: absolute; left: 0; top: 0.8rem; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 1.5rem 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--warm-mid); }
+    .section-label:first-child { margin-top: 0; }
+
+    /* ── TYPOGRAPHY ── */
+/* Increased font-size slightly and increased line-height for readability */
+.card-desc { font-family: 'Open Sans', sans-serif; font-size: 1.05rem; line-height: 1.85; color: var(--ink-mid); font-weight: 300; }
+
+/* Doubled the space between paragraphs */
+.card-desc p { margin-bottom: 1.5rem; }
+.card-desc strong { font-weight: 600; color: var(--ink); }
+.card-desc a { color: var(--green-mid); text-decoration: none; border-bottom: 1px solid transparent; transition: var(--transition); font-weight: 500; }
+.card-desc a:hover { border-bottom-color: var(--green-mid); }
+
+/* Increased space between key-value pairs */
+.kv-line { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--warm-mid); }
+.kv-line:last-child { border-bottom: none; }
+.kv-key { font-weight: 600; color: var(--green-dark); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem; }
+.kv-val { color: var(--ink-mid); text-align: right; }
+.category-badge { display: inline-block; background: var(--green-pale); color: var(--green-dark); font-family: 'League Spartan', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 30px; margin-bottom: 1.5rem; border: 1px solid var(--green-light); }
+
+/* ── DESCRIPTION LIST & SECTION LABELS ── */
+.desc-list { list-style: none; padding: 0; margin: 0.5rem 0 1.5rem 0; }
+
+/* Increased padding inside list items so text doesn't feel cramped */
+.desc-list li { position: relative; padding: 0.6rem 0 0.6rem 2rem; line-height: 1.7; color: var(--ink-mid); font-size: 1.05rem; font-weight: 300; border-bottom: 1px solid var(--warm-mid); }
+.desc-list li:last-child { border-bottom: none; }
+
+/* Adjusted the bullet point to align perfectly with the new spacing */
+.desc-list li::before { content: ''; position: absolute; left: 0; top: 1.1rem; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2rem 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--warm-mid); }
+.section-label:first-child { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -215,27 +231,15 @@
 <div class="lightbox" id="lightbox">
   <div class="lightbox-content">
     <span class="lightbox-close" onclick="closeLightbox()">✕</span>
-    <img id="lightbox-img" src="" alt="Agrandir">
-    <div class="lightbox-counter" id="lightbox-counter" style="text-align:center; color:white; margin-top:1rem; font-family:'League Spartan', sans-serif; letter-spacing:2px;"></div>
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 </div>
 
 <script>
-// Icon logic
-const icons = [
-  {"name": "ping",      "url": "https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67"},
-  {"name": "piscine",   "url": "https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67"},
-  {"name": "barbecue",  "url": "https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67"},
-  {"name": "jacuzzi",   "url": "https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67"},
-  {"name": "cafe",      "url": "https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67"},
-  {"name": "jeux",      "url": "https://img.icons8.com/?size=100&id=epti7VmcQ7XO&format=png&color=1F6D67"},
-  {"name": "chambre",   "url": "https://img.icons8.com/?size=100&id=8015&format=png&color=D4956A"},
-  {"name": "douche",    "url": "https://img.icons8.com/?size=100&id=9154&format=png&color=D4956A"},
-  {"name": "toilettes", "url": "https://img.icons8.com/?size=100&id=mwyuLvB0I71d&format=png&color=D4956A"},
-  {"name": "piece",     "url": "https://img.icons8.com/?size=100&id=8070&format=png&color=D4956A"},
-  {"name": "salon",     "url": "https://img.icons8.com/?size=100&id=9624&format=png&color=D4956A"},
-];
-
+/* ─────────────────────────────────────────────────────────────
+   CONFIGURATION
+───────────────────────────────────────────────────────────── */
 const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
 const BASE_ID = 'appLWhCKR6pEGE02s';
 const TABLE_MAISON       = 'Maison';
@@ -247,28 +251,39 @@ const TABLE_DISPOSITION  = 'DispositionMaison';
 const TABLE_WORKFLOW     = 'WorkFlowBreezeway';
 const TABLE_RECOMMANDATION = 'Recommandation';
 
-let mdp = '';
-let ssid = '';
+const icons = [
+  {name:"ping",      url:"https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67"},
+  {name:"piscine",   url:"https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67"},
+  {name:"barbecue",  url:"https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67"},
+  {name:"jacuzzi",   url:"https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67"},
+  {name:"cafe",      url:"https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67"},
+  {name:"jeux",      url:"https://img.icons8.com/?size=100&id=epti7VmcQ7XO&format=png&color=1F6D67"},
+  {name:"chambre",   url:"https://img.icons8.com/?size=100&id=8015&format=png&color=D4956A"},
+  {name:"douche",    url:"https://img.icons8.com/?size=100&id=9154&format=png&color=D4956A"},
+  {name:"toilettes", url:"https://img.icons8.com/?size=100&id=mwyuLvB0I71d&format=png&color=D4956A"},
+  {name:"piece",     url:"https://img.icons8.com/?size=100&id=8070&format=png&color=D4956A"},
+  {name:"salon",     url:"https://img.icons8.com/?size=100&id=9624&format=png&color=D4956A"},
+];
 
-/* ─── LIGHTBOX ─── */
+/* ─────────────────────────────────────────────────────────────
+   LIGHTBOX
+───────────────────────────────────────────────────────────── */
 function openLightbox(src, count, index) {
-  const lb      = document.getElementById('lightbox');
-  const img     = document.getElementById('lightbox-img');
-  const counter = document.getElementById('lightbox-counter');
-  img.src = src;
-  counter.textContent = count > 1 ? `${index + 1} / ${count}` : '';
-  lb.classList.add('active');
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-counter').textContent = count > 1 ? `${index + 1} / ${count}` : '';
+  document.getElementById('lightbox').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox() {
-  const lb = document.getElementById('lightbox');
-  lb.classList.remove('active');
-  setTimeout(() => document.body.style.overflow = '', 300);
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
 }
 document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-/* ─── AIRTABLE FETCH ─── */
+/* ─────────────────────────────────────────────────────────────
+   AIRTABLE FETCH
+───────────────────────────────────────────────────────────── */
 async function fetchAll(table) {
   let records = [], offset = null;
   do {
@@ -283,125 +298,272 @@ async function fetchAll(table) {
   return records;
 }
 
-function is_file_image(str) { return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw)$/i.test(str); }
-function escapeHtml(str) { return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function escapeAttr(str) { return (str || '').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+function detectVideoType(url) {
+  if (!url || typeof url !== 'string') return null;
+  const u = url.toLowerCase();
+  if (
+    u.includes('youtube.com/watch') ||
+    u.includes('youtu.be/') ||
+    u.includes('youtube.com/embed/')
+  ) return 'youtube';
+  if (u.includes('vimeo.com')) return 'vimeo';
+  if (/\.(mp4|webm|ogg|mov)([?#]|$)/i.test(url)) return 'native';
+  return 'iframe';
+}
 
-function parseDescription(text, attachments, hideInlineImages = false) {
+function extractYouTubeId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+function detectVideoType(url) {
+  if (!url || typeof url !== 'string') return null;
+  const u = url.toLowerCase();
+
+  // Broadened YouTube detection
+  if (u.match(/(youtube\.com|youtu\.be)/)) return 'youtube';
+  if (u.includes('vimeo.com')) return 'vimeo';
+
+  // FIX: Catch standard extensions AND Airtable's internal video hosting
+  if (/\.(mp4|webm|ogg|mov)([?#]|$)/i.test(url) || url.includes('airtableusercontent.com')) {
+      return 'native';
+  }
+  return 'iframe';
+}
+
+function renderVideo(url) {
+  const type = detectVideoType(url);
+
+  if (type === 'youtube') {
+    const id = extractYouTubeId(url);
+    console.log("escapeAttr(url)", escapeAttr(url))
+    console.log("url", url)
+    if (!id) return `<iframe src="${escapeAttr(url)}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;margin:1.5rem 0;"></iframe>`;
+    return `<iframe src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;margin:1.5rem 0;box-shadow:var(--shadow-soft);"></iframe>`;
+  }
+
+  if (type === 'vimeo') {
+    const id = url.match(/vimeo\.com\/(\d+)/)?.[1];
+    if (!id) return `<iframe src="${escapeAttr(url)}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;margin:1.5rem 0;"></iframe>`;
+    return `<iframe src="https://player.vimeo.com/video/${id}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;margin:1.5rem 0;box-shadow:var(--shadow-soft);"></iframe>`;
+  }
+
+  if (type === 'native') {
+    return `<video controls preload="metadata" style="width:100%;max-height:400px;border-radius:12px;margin:1.5rem 0;box-shadow:var(--shadow-soft);background:#000;">
+              <source src="${escapeAttr(url)}">
+              Votre navigateur ne supporte pas la vidéo.
+            </video>`;
+  }
+
+  return `<iframe src="${escapeAttr(url)}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;margin:1.5rem 0;"></iframe>`;
+}
+function is_file_image(str) { return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw)$/i.test(str || ''); }
+function escapeHtml(str) { return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeAttr(str) { return (str || '').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+
+function replacePlaceholders(text, images, videos) {
+  let out = text || '';
+  // Replace $i0, $i1... with images
+  if (Array.isArray(images)) {
+    images.forEach((url, i) => {
+      const safeUrl = (url || '').replace(/'/g, "\\'");
+      out = out.replace(
+        new RegExp('\\$i' + i + '(?!\\d)', 'g'),
+        `<img src="${url}" class="inline-img" loading="lazy" style="cursor:pointer;" onclick="openLightbox('${safeUrl}', 1, 0)" alt="">`
+      );
+    });
+  }
+  if (Array.isArray(videos)) {
+    videos.forEach((url, i) => {
+      out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
+    });
+  }
+  out = out.replace(/\$[iv]\d+/g, '');
+  return out;
+}
+
+function parseDescription(text, attachments, hideInlineImages) {
   if (!text) return '';
+
+  // Detect if already HTML
+  const isHtml = /<\/?(h[1-6]|p|ul|ol|li|div|table|br)\b/i.test(text);
 
   let out = text;
 
-  out = out.replace(/\[?(https?:\/\/[^\]\s<"]+)\]?/g, (match, url) => {
-    if (!hideInlineImages && url.includes('airtableusercontent.com') && is_file_image(url)) {
-      return `<img src="${url}" class="inline-img" style="width:100%; border-radius:12px; margin:1rem 0; cursor:pointer;" alt="" loading="lazy" onclick="openLightbox('${url.replace(/'/g,"\\'")}', 1, 0)">`;
+  if (attachments && typeof attachments === 'object' && !Array.isArray(attachments)) {
+    if (!hideInlineImages) {
+      out = replacePlaceholders(out, attachments.images || [], attachments.videos || []);
+    } else {
+      out = out.replace(/\$[iv]\d+/g, '');
     }
-    if (match.includes('href=')) return match;
+  } else if (Array.isArray(attachments) && attachments.length > 0) {
+    const images = attachments.filter(a => is_file_image(a.filename || '')).map(a => a.url);
+    const videos = attachments.filter(a => !is_file_image(a.filename || '') && a.url).map(a => a.url);
+    if (!hideInlineImages) {
+      out = replacePlaceholders(out, images, videos);
+    } else {
+      out = out.replace(/\$[iv]\d+/g, '');
+    }
+  } else {
+    // No attachments — strip any remaining placeholders
+    out = out.replace(/\$[iv]\d+/g, '');
+  }
 
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  if (isHtml) {
+    return out;
+  }
+
+  out = out.replace(/((?:<[^>]*>)|(?:https?:\/\/[^\s<"']+))/g, (match) => {
+    if (match.startsWith('<')) return match;
+
+    if (match.includes('airtableusercontent.com') || match.includes('brzw-') || match.includes('breezeway')) {
+      if (is_file_image(match) && !hideInlineImages) {
+        const safeUrl = match.replace(/'/g, "\\'");
+        return `<img src="${match}" class="inline-img" loading="lazy" style="cursor:pointer;" onclick="openLightbox('${safeUrl}', 1, 0)" alt="">`;
+      }
+      return '';
+    }
+    return `<a href="${escapeAttr(match)}" target="_blank" rel="noopener noreferrer">${escapeHtml(match)}</a>`;
   });
 
-  if (attachments && attachments.length > 0) {
-    out = out.replace(/\$i?(\d+)/g, (match, idx) => {
-      if (hideInlineImages) return '';
+  const lines = out.split('\n').map(l => l.trim()).filter(Boolean);
 
-      const i = parseInt(idx, 10);
-      const att = attachments[i];
-      if (!att) return match;
+  const rendered = [];
+  let inList = false;
 
-      if (is_file_image(att.filename)) {
-        return `<img src="${att.url}" style="width:100%; border-radius:12px; margin:1rem 0; cursor:pointer; box-shadow: var(--shadow-soft);" alt="${escapeAttr(att.filename)}" onclick="openLightbox('${att.url.replace(/'/g,"\\'")}', 1, 0)" loading="lazy">`;
-      }
-      return `<a href="${att.url}" target="_blank" rel="noopener" class="file-link">📎 Fichier ${i + 1}</a>`;
-    });
-  } else if (attachments && attachments.length > 0) {
-    out = out.replace(/\$v?(\d+)/g, (match, idx) => {
-      if (hideInlineImages) return '';
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
 
-      const i = parseInt(idx, 10);
-      const att = attachments[i];
-      if (!att) return match;
-      console.log(att.url)
+    if (/^<(img|iframe|video|div|p|h[1-6]|a\s)/.test(line)) {
+      if (inList) { rendered.push('</ul>'); inList = false; }
+      rendered.push(line);
+      continue;
+    }
 
-      if (is_file_image(att.filename) && att.url.includes("youtube")) {
-        return `<iframe id="ytplayer" type="text/html" width="640" height="360"
-  src="${att.url}"
-  frameborder="0"></iframe>`;
-      }else if(is_file_image(att.filename)){
-        return `<video width="400" controls>
-          <source src="${att.url}" type="video/mp4">
-          <source src="${att.url}" type="video/ogg">
-        </video>`;
-      }
-      return `<a href="${att.url}" target="_blank" rel="noopener" class="file-link">📎 Fichier ${i + 1}</a>`;
-    });
-  }
-  else {
-    // Nettoie les $0 s'il n'y a pas d'attachments
-    out = out.replace(/\$i?(\d+)/g, '');
-  }
+    const isSectionHeader = (
+      (/^[A-ZÉÈÀÙÂÊÎÔÛÇ0-9\/\- ]{3,50}:?$/.test(line) && line === line.toUpperCase() && !line.includes('http')) ||
+      (/^[A-ZÉÈÀÙÂÊÎÔÛÇ][\w\s]{2,40}:$/.test(line) && line.length < 50)
+    );
+    if (isSectionHeader && line.length > 2) {
+      if (inList) { rendered.push('</ul>'); inList = false; }
+      const label = line.replace(/:$/, '');
+      rendered.push(`<p class="section-label">${escapeHtml(label)}</p>`);
+      continue;
+    }
 
-  const lines = out.split('\n').map(line => line.trim()).filter(Boolean);
-  out = lines.map(line => {
-    if (line.startsWith('<img') && line.endsWith('>')) return line;
-    if (line.startsWith('<a class="file-link"') && line.endsWith('</a>')) return line;
-    if (line.startsWith('<') && line.endsWith('>')) return line;
+    const bulletMatch = line.match(/^(?:[-•*]\s+|\d+\.\s+|NO\.?\s*\d+\s*[-:]?\s*)/i);
+    if (bulletMatch) {
+      const clean = line.slice(bulletMatch[0].length).trim();
+      if (!inList) { rendered.push('<ul class="desc-list">'); inList = true; }
+      rendered.push(`<li>${clean}</li>`);
+      continue;
+    }
 
-    const sep = line.indexOf(' : ') !== -1 ? line.indexOf(' : ') : (line.indexOf(': ') !== -1 ? line.indexOf(': ') : line.indexOf(' :'));
-    if (sep !== -1) {
-      let left = line.slice(0, sep);
-      let right = line.slice(sep + (line.indexOf(' : ') !== -1 ? 3 : 2));
-      if (left.length < 60 && !left.includes('<img') && !left.includes('<a')) {
-        return `<div class="kv-line"><span class="kv-key">${left}</span><span class="kv-val">${right}</span></div>`;
+    // Close list before non-bullet content
+    if (inList) { rendered.push('</ul>'); inList = false; }
+
+    const colonIdx = line.indexOf(': ');
+    if (colonIdx > 0 && colonIdx < 55 && !line.startsWith('<')) {
+      const left = line.slice(0, colonIdx);
+      const right = line.slice(colonIdx + 2);
+      if (!left.includes('<') && !/https?:\/\//.test(left)) {
+        rendered.push(`<div class="kv-line"><span class="kv-key">${escapeHtml(left)}</span><span class="kv-val">${right}</span></div>`);
+        continue;
       }
     }
 
-    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('NO. ') || line.startsWith('No. ') || line.startsWith('NO')) return `<div class="bullet-line">${line.substring(2)}</div>`;
+    rendered.push(`<p>${line}</p>`);
+  }
 
-    return `<p>${line}</p>`;
-  }).join('');
+  if (inList) rendered.push('</ul>');
+  out = rendered.join('');
 
   return out;
 }
 
-function renderImageGallery(photos, itemName = '') {
-  if (!photos || photos.length === 0) return '';
-  if (photos.length === 1) {
-    return `<div class="img-single"><img src="${photos[0]}" alt="${escapeAttr(itemName)}" loading="lazy" onclick="openLightbox('${photos[0].replace(/'/g,"\\'")}', 1, 0)"></div>`;
+function renderImageGallery(photos, itemName) {
+  if (!photos || !photos.length) return '';
+  const safe = photos.map(p => ({
+    url: typeof p === 'string' ? p : (p.url || ''),
+    thumb: typeof p === 'string' ? p : (p.thumbnails?.full?.url || p.url || '')
+  })).filter(p => p.url);
+
+  if (!safe.length) return '';
+
+  if (safe.length === 1) {
+    const s = safe[0].url.replace(/'/g, "\\'");
+    return `<div class="img-single"><img src="${safe[0].url}" alt="${escapeAttr(itemName || '')}" loading="lazy" onclick="openLightbox('${s}', 1, 0)"></div>`;
   }
   let html = `<div class="img-gallery">`;
-  photos.forEach((photo, i) => {
-    html += `<img src="${photo}" alt="${escapeAttr(itemName)} ${i+1}" loading="lazy" onclick="openLightbox('${photo.replace(/'/g,"\\'")}', ${photos.length}, ${i})">`;
+  safe.forEach((p, i) => {
+    const s = p.url.replace(/'/g, "\\'");
+    html += `<img src="${p.thumb}" alt="${escapeAttr(itemName || '')} ${i+1}" loading="lazy" onclick="openLightbox('${s}', ${safe.length}, ${i})">`;
   });
   html += `</div>`;
   return html;
 }
-
 function getIcon(val) {
-  const map = { 'WC':'toilettes', 'Salle de bain':'douche', 'Chambre':'chambre', 'Salon':'salon', 'Autre':'piece' };
+  const map = {'WC':'toilettes','Salle de bain':'douche','Chambre':'chambre','Salon':'salon','Autre':'piece'};
   const key = map[val] || (val || '').toLowerCase();
-  const found = icons.find(ic => ic.name === key || ic.name === (val || '').toLowerCase());
+  const found = icons.find(ic => ic.name === key);
   return found ? found.url : '';
 }
 
-function copy(v){
+function copy(v) {
   navigator.clipboard.writeText(v)
     .then(() => alert('Mot de passe copié !'))
-    .catch(err => console.error('Erreur lors de la copie: ', err));
+    .catch(() => prompt('Copier le mot de passe :', v));
 }
 
-/* ─── SECTION BUILDERS ─── */
-function get_global_info_maison(maisonRecord) {
-  if (!maisonRecord) return '';
-  const f = maisonRecord.fields;
-  const adresse  = f.Adresse ? `<p style="font-size:1.1rem; color:var(--green-dark); margin-bottom:1.5rem;">📍 ${escapeHtml(f.Adresse)}</p>` : '';
-  const descHtml = f.Description ? `<div class="card-desc">${parseDescription(f.Description, [], false)}</div>` : '';
+function parseWifiCredentials(description) {
+  const lines = (description || '').split('\n').map(l => l.trim()).filter(Boolean);
+  return { ssid: lines[0] || '', mdp: lines[1] || '' };
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COVER
+───────────────────────────────────────────────────────────── */
+function renderCover(nomMaison, numero, coverUrl) {
+  const fallback = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80';
+  return `
+    <div class="cover-page">
+      <div class="cover-hero">
+        <img fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}">
+        <div class="cover-overlay"></div>
+      </div>
+      <div class="cover-brand">
+        <div class="cover-brand-dot"></div>
+        <div class="cover-brand-name">Collection Idylliq</div>
+      </div>
+      <div class="cover-content">
+        <h1 class="cover-title">${escapeHtml(nomMaison)}</h1>
+        <nav class="cover-chapters">
+          <a href="#section-info" class="cover-chapter"><span class="cover-chapter-num">01</span><span class="cover-chapter-name">Maison</span></a>
+          <a href="#section-sejour" class="cover-chapter"><span class="cover-chapter-num">02</span><span class="cover-chapter-name">Séjour</span></a>
+          <a href="#section-equipements-0" class="cover-chapter"><span class="cover-chapter-num">03</span><span class="cover-chapter-name">Équipements</span></a>
+          <a href="#section-reco" class="cover-chapter"><span class="cover-chapter-num">04</span><span class="cover-chapter-name">Adresses</span></a>
+        </nav>
+      </div>
+      <div class="cover-strip">
+        <div class="cover-strip-text">Réf. ${escapeHtml(numero || '')}</div>
+        <div class="cover-strip-id" onclick="window.open('https://idylliq.fr/')" style="cursor:pointer">idylliq.fr</div>
+      </div>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MAISON INFO
+───────────────────────────────────────────────────────────── */
+function get_global_info_maison(rec) {
+  if (!rec) return '';
+  const f = rec.fields;
+  const adresse = f.Adresse ? `<p style="font-size:1.1rem;color:var(--green-dark);margin-bottom:1.5rem;">📍 ${escapeHtml(f.Adresse)}</p>` : '';
+  const descHtml = f.Description ? `<div class="card-desc">${parseDescription(f.Description, null, false)}</div>` : '';
 
   let attentionHtml = '';
-  const pointAttention = f['Point Attention'] || f.PointAttention;
-  if (pointAttention) {
-    // false = on affiche les images attachées dans le Point d'Attention
-    const attText = parseDescription(pointAttention, f.mediaPointAttention || [], false);
+  if (f.PointAttention) {
+    // FIX: pass mediaPointAttention array as attachments
+    const media = f.mediaPointAttention || [];
+    const attText = parseDescription(f.PointAttention, media, false);
     attentionHtml = `
       <aside class="attention-box reveal">
         <div class="attention-icon">💡</div>
@@ -413,14 +575,13 @@ function get_global_info_maison(maisonRecord) {
   }
 
   let departHtml = '';
-  const instructionDepart = f['Instruction Depart'] || f.InstructionDepart;
-  if (instructionDepart) {
+  if (f.InstructionDepart) {
     departHtml = `
       <div class="card reveal" style="margin-top:3rem;">
         <div class="card-body">
           <div class="category-badge">Check-out</div>
           <div class="card-item-title">Instructions de départ</div>
-          <div class="card-desc">${parseDescription(instructionDepart, [], false)}</div>
+          <div class="card-desc">${parseDescription(f.InstructionDepart, null, false)}</div>
         </div>
       </div>`;
   }
@@ -431,31 +592,25 @@ function get_global_info_maison(maisonRecord) {
         <div class="theme-label">Découvrir</div>
         <div class="theme-title">La Maison</div>
       </div>
-      ${adresse}
-      ${descHtml}
-      ${attentionHtml}
-      ${departHtml}
+      ${adresse}${descHtml}${attentionHtml}${departHtml}
     </section>`;
 }
 
-function getCICO(workflowRecords, id_airtable) {
-  const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(id_airtable));
-  if (related.length === 0) return '';
+/* ─────────────────────────────────────────────────────────────
+   CHECK-IN / CHECK-OUT
+───────────────────────────────────────────────────────────── */
+function getCICO(workflowRecords, maisonId) {
+  // FIX: workflowRecords link by Maison array of record IDs
+  const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(maisonId));
+  if (!related.length) return '';
 
-  const items = related.map(r => {
-    const parts   = (r.fields.CICO || '').split(';');
-    const checkin  = (parts[0] || '').trim();
-    const checkout = (parts[1] || '').trim();
-    return `
-      <div class="cico-card">
-        <div class="cico-label">Heure d'arrivée</div>
-        <div class="cico-time">${escapeHtml(checkin)}</div>
-      </div>
-      <div class="cico-card">
-        <div class="cico-label">Heure de départ</div>
-        <div class="cico-time">${escapeHtml(checkout)}</div>
-      </div>`;
-  }).join('');
+  // FIX: find a record with CICO field, not just first
+  const cicoRec = related.find(r => r.fields.CICO);
+  if (!cicoRec) return '';
+
+  const parts    = (cicoRec.fields.CICO || '').split(';');
+  const checkin  = (parts[0] || '').trim().replace(/:\d\d$/, ''); // strip seconds
+  const checkout = (parts[1] || '').trim().replace(/:\d\d$/, '');
 
   return `
     <section id="section-sejour" class="theme-page reveal" style="background:var(--white);">
@@ -463,16 +618,24 @@ function getCICO(workflowRecords, id_airtable) {
         <div class="theme-label">Organisation</div>
         <div class="theme-title">Votre Séjour</div>
       </div>
-      <div class="grid-2">${items}</div>
+      <div class="grid-2">
+        <div class="cico-card">
+          <div class="cico-label">Heure d'arrivée</div>
+          <div class="cico-time">${escapeHtml(checkin)}</div>
+        </div>
+        <div class="cico-card">
+          <div class="cico-label">Heure de départ</div>
+          <div class="cico-time">${escapeHtml(checkout)}</div>
+        </div>
+      </div>
     </section>`;
 }
 
 function renderCard(items) {
   return items.map(item => {
     const hasPhoto = item._photos && item._photos.length > 0;
-
-    // true = on cache les images intégrées pour éviter le doublon avec la photo principale
-    const descText = parseDescription(item.Description, item._attachments, true);
+    // FIX: pass _attachments (Airtable array) properly
+    const descText = parseDescription(item.Description, item._attachments, hasPhoto);
 
     if (!hasPhoto) {
       return `
@@ -487,7 +650,9 @@ function renderCard(items) {
 
     return `
       <article class="card tpl-image-text reveal">
-        <div class="gallery-wrapper"><img src="${item._photos[0]}" onclick="openLightbox('${item._photos[0]}', 1, 0)"></div>
+        <div class="gallery-wrapper">
+          <img src="${escapeAttr(item._photos[0])}" loading="lazy" alt="${escapeAttr(item.Item)}" onclick="openLightbox('${item._photos[0].replace(/'/g,"\\'")}', ${item._photos.length}, 0)">
+        </div>
         <div class="card-body">
           ${item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : ''}
           <h3 class="card-item-title">${escapeHtml(item.Item)}</h3>
@@ -497,52 +662,114 @@ function renderCard(items) {
   }).join('');
 }
 
-function renderThemePage(theme, items, index) {
-  if (escapeHtml(theme).toLowerCase() === "wifi") {
-    ssid = items[0].Description.split("\n")[0] || '';
-    mdp = items[0].Description.split("\n")[1] || '';
+function renderWifiSection(items, index) {
+  const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
+  const safeId = `qr_wifi_${index}`;
 
-    return `
-      <section id="section-equipements-${index}" class="theme-page reveal">
-        <div class="theme-header">
-          <div class="theme-label">Connectivité</div>
-          <div class="theme-title">Réseau Wi-Fi</div>
+  // Schedule QR generation after DOM is ready
+  setTimeout(() => {
+    const el = document.getElementById(safeId);
+    if (el && ssid) {
+      try {
+        new QRCode(el, {
+          text: `WIFI:T:WPA;S:${ssid};P:${mdp};;`,
+          width: 150, height: 150,
+          colorDark: "#155450", colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } catch(e) { console.warn('QRCode error', e); }
+    }
+  }, 200);
+
+  return `
+    <section id="section-equipements-${index}" class="theme-page reveal">
+      <div class="theme-header">
+        <div class="theme-label">Connectivité</div>
+        <div class="theme-title">Réseau Wi-Fi</div>
+      </div>
+      <div class="card reveal" style="max-width:500px;margin:0 auto;text-align:center;">
+        <div class="card-body">
+          <div class="category-badge">Réseau (SSID)</div>
+          <h3 class="card-item-title" style="margin-bottom:0.5rem;">${escapeHtml(ssid)}</h3>
+          <p style="color:var(--ink-mid);font-size:1.1rem;margin-bottom:2rem;">Mot de passe : <strong>${escapeHtml(mdp)}</strong></p>
+          <div id="${safeId}" style="display:flex;justify-content:center;margin-bottom:1.5rem;"></div>
+          <button id="copymdp" onclick="copy('${escapeAttr(mdp)}')">Copier la clé</button>
         </div>
-        <div class="card reveal" style="max-width: 500px; margin: 0 auto; text-align: center;">
-          <div class="card-body">
-            <div class="category-badge">Réseau (SSID)</div>
-            <h3 class="card-item-title" style="margin-bottom: 0.5rem; color: var(--green-dark);">${escapeHtml(ssid)}</h3>
-            <p style="color: var(--ink-mid); font-size: 1.1rem; margin-bottom: 2rem;">Mot de passe : <strong style="color:var(--ink);">${escapeHtml(mdp)}</strong></p>
-            <div id="qr_code" style="display: flex; justify-content: center; margin-bottom: 1.5rem;"></div>
-            <button id="copymdp" onclick="copy('${escapeAttr(mdp)}')">Copier la clé</button>
-          </div>
-        </div>
-      </section>`;
-  } else {
-    return `
-      <section id="section-equipements-${index}" class="theme-page reveal">
-        <div class="theme-header">
-          <div class="theme-label">Équipements</div>
-          <div class="theme-title">${escapeHtml(theme)}</div>
-        </div>
-        ${renderCard(items)}
-      </section>`;
-  }
+      </div>
+    </section>`;
 }
 
-function getDispositionMaison(data, id_airtable) {
-  const related = data.filter(r => (r.fields.Maison || []).includes(id_airtable));
-  if (related.length === 0) return '';
+function renderThemePage(theme, items, index) {
+  if (theme.toLowerCase() === 'wifi') {
+    return renderWifiSection(items, index);
+  }
+  return `
+    <section id="section-equipements-${index}" class="theme-page reveal">
+      <div class="theme-header">
+        <div class="theme-label">Équipements</div>
+        <div class="theme-title">${escapeHtml(theme)}</div>
+      </div>
+      ${renderCard(items)}
+    </section>`;
+}
+
+function renderPiscinePage(rec) {
+  if (!rec) return '';
+  const f = rec.fields;
+  const photos = (f.Photo || []).map(p => ({ url: p.url, thumb: p.thumbnails?.large?.url || p.url }));
+
+  const infos = `
+    <div class="card reveal" style="margin-top:2rem;margin-bottom:2rem;">
+      <div class="card-body">
+        <div class="kv-line"><span class="kv-key">Taille</span><span class="kv-val">${f.taille ? f.taille + ' m²' : '–'}</span></div>
+        <div class="kv-line"><span class="kv-key">Chauffage</span><span class="kv-val">${(f.Chauffage || []).join(', ') || '–'}</span></div>
+        <div class="kv-line"><span class="kv-key">Désinfectant</span><span class="kv-val">${(f.Desinfectant || []).join(', ') || '–'}</span></div>
+        <div class="kv-line"><span class="kv-key">Produit</span><span class="kv-val">${(f.Produit || []).join(', ') || '–'}</span></div>
+      </div>
+    </div>`;
+
+  const sections = [
+    { label: "Instructions d'ouverture", content: f.InstructionOuverture },
+    { label: "Instructions de fermeture", content: f.InstructionFermeture },
+    { label: "Entretien",                 content: f.InstructionEntretien },
+    { label: "video",                 content: f.lienYoutube }
+  ].filter(s => s.content).map(s => `
+    <div class="card reveal">
+      <div class="card-body">
+        <h3 class="card-item-title">${s.label}</h3>
+        <div class="card-desc">${parseDescription(s.content, null, false)}</div>
+      </div>
+    </div>`).join('');
+
+
+  return `
+    <section id="section-piscine" class="theme-page reveal">
+      <div class="theme-header">
+        <div class="theme-label">Détente</div>
+        <div class="theme-title">La Piscine</div>
+      </div>
+      ${renderImageGallery(photos, 'Piscine')}
+      ${infos}${sections}
+
+    </section>`;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DISPOSITION
+───────────────────────────────────────────────────────────── */
+function getDispositionMaison(data, maisonId) {
+  const related = data.filter(r => (r.fields.Maison || []).includes(maisonId));
+  if (!related.length) return '';
 
   const items = related.map(r => {
     const f = r.fields;
-    const iconHtml = getIcon(f.type) ? `<img src="${getIcon(f.type)}" alt="">` : '';
+    const iconUrl = getIcon(f.type);
     return `
       <div class="disposition-item reveal">
-        ${iconHtml}
+        ${iconUrl ? `<img src="${escapeAttr(iconUrl)}" alt="">` : ''}
         ${f.Etage ? `<div class="d-etage">${escapeHtml(f.Etage)}</div>` : ''}
         ${f.Piece ? `<div class="d-piece">${escapeHtml(f.Piece)}</div>` : ''}
-        ${f.Description ? `<div class="card-desc" style="font-size:0.85rem; margin-top:0.5rem;">${escapeHtml(f.Description)}</div>` : ''}
+        ${f.Description ? `<div class="card-desc" style="font-size:0.85rem;margin-top:0.5rem;">${escapeHtml(f.Description)}</div>` : ''}
       </div>`;
   }).join('');
 
@@ -556,22 +783,31 @@ function getDispositionMaison(data, id_airtable) {
     </section>`;
 }
 
-function getRecommandation(data, id_airtable) {
-  const related = data.filter(r => (r.fields.Maison || []).includes(id_airtable));
-  if (related.length === 0) return '';
+/* ─────────────────────────────────────────────────────────────
+   RECOMMANDATIONS
+   FIX: use localisation field (lat;lng) to build maps link
+───────────────────────────────────────────────────────────── */
+function getRecommandation(data, maisonId) {
+  const related = data.filter(r => (r.fields.Maison || []).includes(maisonId));
+  if (!related.length) return '';
 
   const cards = related.map(r => {
     const f = r.fields;
     let mapsLink = '';
-    if (f.localisation) mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${f.localisation.replace(';', ',')}" target="_blank">Y aller</a>`;
-    else if (f.google_place_id) mapsLink = `<a class="reco-link" href="https://maps.google.com/?cid=${f.google_place_id}" target="_blank">Y aller</a>`;
+    if (f.localisation) {
+      const coords = f.localisation.replace(';', ',');
+      mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${encodeURIComponent(coords)}" target="_blank" rel="noopener">Y aller →</a>`;
+    } else if (f.google_place_id) {
+      mapsLink = `<a class="reco-link" href="https://maps.google.com/?cid=${f.google_place_id}" target="_blank" rel="noopener">Y aller →</a>`;
+    }
+    const score = f.Score ? parseFloat(f.Score).toFixed(1) : null;
 
     return `
       <article class="reco-card reveal">
         <div class="reco-body">
           <h3 class="reco-name">${escapeHtml(f.NomRecommandation || '–')}</h3>
-          ${f.Score ? `<div class="reco-score">${f.Score} ★</div>` : ''}
-          ${f.Adress ? `<div class="card-desc" style="font-size:0.85rem; margin-bottom:1rem; opacity:0.8;">📍 ${escapeHtml(f.Adress)}</div>` : ''}
+          ${score ? `<div class="reco-score">${score} ★</div>` : ''}
+          ${f.Adress ? `<div class="card-desc" style="font-size:0.85rem;margin-bottom:1rem;opacity:0.8;">📍 ${escapeHtml(f.Adress)}</div>` : ''}
           <div class="card-desc reco-desc">${escapeHtml(f.Description || '')}</div>
         </div>
         ${mapsLink}
@@ -588,166 +824,129 @@ function getRecommandation(data, id_airtable) {
     </section>`;
 }
 
-function renderPiscinePage(piscineRecord) {
-  if (!piscineRecord) return '';
-  const f = piscineRecord.fields;
-
-  const infos = `
-    <div class="card reveal" style="margin-top:2rem; margin-bottom: 2rem;">
-      <div class="card-body">
-         <div class="kv-line"><span class="kv-key">Taille</span><span class="kv-val">${f.taille ? f.taille + ' m²' : '–'}</span></div>
-         <div class="kv-line"><span class="kv-key">Chauffage</span><span class="kv-val">${(f.Chauffage || []).join(', ') || '–'}</span></div>
-         <div class="kv-line"><span class="kv-key">Désinfectant</span><span class="kv-val">${(f.Desinfectant || []).join(', ') || '–'}</span></div>
-      </div>
-    </div>`;
-
-  // Construction des sections pour l'ouverture, fermeture et entretien de la piscine
-  const instructionSections = [
-    { label: "Instructions d'ouverture", content: f.InstructionOuverture },
-    { label: "Instructions de fermeture", content: f.InstructionFermeture },
-    { label: "Entretien", content: f.InstructionEntretien }
-  ].filter(s => s.content).map(s => `
-    <div class="card reveal">
-      <div class="card-body">
-        <h3 class="card-item-title">${s.label}</h3>
-        <div class="card-desc">${parseDescription(s.content, [], false)}</div>
-      </div>
-    </div>
-  `).join('');
-
-  return `
-    <section id="section-piscine" class="theme-page reveal">
-      <div class="theme-header">
-        <div class="theme-label">Détente</div>
-        <div class="theme-title">La Piscine</div>
-      </div>
-      ${renderImageGallery((f.Photo || []).map(p => p.url))}
-      ${infos}
-      ${instructionSections}
-    </section>`;
-}
-
-function renderCover(nomMaison, numero, coverUrl) {
-  return `
-    <div class="cover-page">
-      <div class="cover-hero">
-        <img src="${coverUrl || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80'}" alt="Cover">
-        <div class="cover-overlay"></div>
-      </div>
-      <div class="cover-brand">
-        <div class="cover-brand-dot"></div>
-        <div class="cover-brand-name">Collection Idylliq</div>
-      </div>
-
-      <div class="cover-content">
-        <div class="cover-label">Livret d'accueil</div>
-        <h1 class="cover-title">${escapeHtml(nomMaison)}</h1>
-        <div class="cover-subtitle">Votre séjour d'exception</div>
-
-        <nav class="cover-chapters">
-          <a href="#section-info" class="cover-chapter"><span class="cover-chapter-num">01</span><span class="cover-chapter-name">Maison</span></a>
-          <a href="#section-sejour" class="cover-chapter"><span class="cover-chapter-num">02</span><span class="cover-chapter-name">Séjour</span></a>
-          <a href="#section-equipements-0" class="cover-chapter"><span class="cover-chapter-num">03</span><span class="cover-chapter-name">Équipements</span></a>
-          <a href="#section-reco" class="cover-chapter"><span class="cover-chapter-num">04</span><span class="cover-chapter-name">Adresses</span></a>
-        </nav>
-      </div>
-
-      <div class="cover-strip">
-        <div class="cover-strip-text">Réf. ${escapeHtml(numero || '')}</div>
-        <div class="cover-strip-id">idylliq.fr</div>
-      </div>
-    </div>`;
-}
-
+/* ─────────────────────────────────────────────────────────────
+   MAIN BUILD
+───────────────────────────────────────────────────────────── */
 async function buildLivret(IdMaison) {
-
-  const [ maisonRecs, livretRecs, equipRecs, piscineRecs, dispRecs, wfRecs, recoRecs, listRecs ]
-    = await Promise.all([
+  const [ maisonRecs, livretRecs, equipRecs, piscineRecs, dispRecs, wfRecs, recoRecs, listRecs ] =
+    await Promise.all([
       fetchAll(TABLE_MAISON), fetchAll(TABLE_LIVRET), fetchAll(TABLE_EQUIPEMENT),
       fetchAll(TABLE_PISCINE), fetchAll(TABLE_DISPOSITION), fetchAll(TABLE_WORKFLOW),
       fetchAll(TABLE_RECOMMANDATION), fetchAll(TABLE_LISTE_MAISON)
     ]);
 
   const maisonRecord = maisonRecs.find(r => r.fields.IdMaison === IdMaison && r.fields.Livret);
-  if (!maisonRecord) return document.getElementById('loading').innerText = `Maison introuvable.`;
+  if (!maisonRecord) {
+    document.getElementById('loading').innerText = `Maison introuvable pour l'identifiant "${IdMaison}".`;
+    return;
+  }
 
   const listData = listRecs.find(r => r.fields.IdMaison === IdMaison);
-  const nomMaison = listData ? listData.fields.NomMaison : IdMaison;
-  const coverImg  = listData?.fields?.ImageMaison?.[0]?.url || '';
+  const nomMaison = listData?.fields?.NomMaison || IdMaison;
+  // FIX: safely get cover image from Airtable attachment array
+  const coverImg = listData?.fields?.ImageMaison?.[0]?.url || '';
 
+  // Build theme map from equipment
   const livretIds = maisonRecord.fields['Livret 2'] || [];
   const equipIds = new Set();
-  livretRecs.filter(r => livretIds.includes(r.id)).forEach(lr => (lr.fields.equipement || []).forEach(id => equipIds.add(id)));
+  livretRecs
+    .filter(r => livretIds.includes(r.id))
+    .forEach(lr => (lr.fields.equipement || []).forEach(id => equipIds.add(id)));
 
   const themeMap = {};
   equipRecs.filter(r => equipIds.has(r.id)).forEach(rec => {
-    const cat = (rec.fields['Catégorie'] || ['Général'])[0];
+    const catArr = rec.fields['Catégorie'];
+    const cat = Array.isArray(catArr) ? catArr[0] : (catArr || 'Général');
     if (!themeMap[cat]) themeMap[cat] = [];
+
+    const allPhotos = (rec.fields.Photos || []);
+    const photoUrls = allPhotos
+      .filter(p => is_file_image(p.filename || ''))
+      .map(p => p.url);
+
+    const videos = [];
+    if (rec.fields.lienYoutube) videos.push(rec.fields.lienYoutube);
+
     themeMap[cat].push({
-      Item: rec.fields.NomEquipement || '–',
-      Description: rec.fields.descriptionLivret || '',
-      Categorie: cat,
-      _photos: (rec.fields.Photos || []).filter(p => is_file_image(p.filename)).map(p => p.url),
-      _attachments: rec.fields.Photos || []
+      Item:         rec.fields.NomEquipement || '–',
+      Description:  rec.fields.descriptionLivret || '',
+      Categorie:    cat,
+      _photos:      photoUrls,
+      _attachments: allPhotos,
+      _videos:      videos
+    });
+  });
+
+  Object.values(themeMap).forEach(items => {
+    items.forEach(item => {
+      if (item._videos.length > 0 && item.Description) {
+        // Append video if not already referenced
+        item.Description = item.Description + '\n' + item._videos.map(v => renderVideo(v)).join('\n');
+      }
     });
   });
 
   const html =
     `<div id="search-container">
-      <input type="search" id="search" placeholder="Rechercher..." >
-      <button id="search-button" onchange="window.find(document.getElementById('search').value)">🔍</button>
-    </div>` +
+       <input type="search" id="search" placeholder="Rechercher..." oninput="doSearch(this.value)">
+       <button id="search-button">🔍</button>
+     </div>` +
     renderCover(nomMaison, IdMaison, coverImg) +
     get_global_info_maison(maisonRecord) +
     getCICO(wfRecs, maisonRecord.id) +
     Object.keys(themeMap).map((th, idx) => renderThemePage(th, themeMap[th], idx)).join('') +
-    (maisonRecord.fields['Piscine'] ? renderPiscinePage(piscineRecs.find(p => maisonRecord.fields['Piscine'].includes(p.id))) : '') +
+    (maisonRecord.fields['Piscine']
+      ? renderPiscinePage(piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id)))
+      : '') +
     getDispositionMaison(dispRecs, maisonRecord.id) +
     getRecommandation(recoRecs, maisonRecord.id) +
     `<section class="presentation-end reveal">
-      <h1>La Collection Idylliq</h1>
-      <p>Cette propriété fait partie de la première collection de maisons haut de gamme pensée pour les familles.</p>
-    </section>
-    <footer class="end-page"><h1>Excellent Séjour</h1><p>idylliq.fr</p></footer>`;
+       <h1>La Collection Idylliq</h1>
+       <p>Cette propriété fait partie de la première collection de maisons haut de gamme pensée pour les familles.</p>
+     </section>
+     <footer class="end-page">
+       <h1>Excellent Séjour</h1>
+       <p onclick="window.open('https://idylliq.fr/')" style="cursor:pointer">idylliq.fr</p>
+     </footer>`;
 
   document.getElementById('loading').style.display = 'none';
   document.getElementById('livret-container').innerHTML = html;
 
-  // Création du QR Code APRES l'injection du HTML dynamique
-  const qrContainer = document.getElementById('qr_code');
-  if (qrContainer && ssid && mdp) {
-    new QRCode(qrContainer, {
-        text: `WIFI:T:WPA;S:${ssid};P:${mdp};;`,
-        width: 150,
-        height: 150,
-        colorDark : "#155450",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-  }
-
-  // Initialize Scroll Animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+/* ─────────────────────────────────────────────────────────────
+   SEARCH
+   FIX: was calling initSearch() which was never defined
+───────────────────────────────────────────────────────────── */
+function doSearch(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    document.querySelectorAll('.card, .reco-card, .disposition-item').forEach(el => el.style.display = '');
+    return;
+  }
+  document.querySelectorAll('.card, .reco-card, .disposition-item').forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BOOT
+───────────────────────────────────────────────────────────── */
 const urlParams = new URLSearchParams(window.location.search);
 const idMaison  = urlParams.get('maison');
 if (!idMaison) {
-  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=X)";
+  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
 } else {
   buildLivret(idMaison).catch(err => {
-    document.getElementById('loading').innerText = 'Erreur: ' + err.message;
+    console.error(err);
+    document.getElementById('loading').innerText = 'Erreur : ' + err.message;
   });
-
 }
 </script>
 </body>
