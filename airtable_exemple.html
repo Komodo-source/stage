@@ -731,8 +731,6 @@ function renderPiscinePage(rec) {
   const sections = [
     { label: "Instructions d'ouverture", content: f.InstructionOuverture },
     { label: "Instructions de fermeture", content: f.InstructionFermeture },
-    { label: "Entretien",                 content: f.InstructionEntretien },
-    { label: "video",                 content: f.lienYoutube }
   ].filter(s => s.content).map(s => `
     <div class="card reveal">
       <div class="card-body">
