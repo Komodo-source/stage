@@ -221,6 +221,30 @@
 .desc-list li::before { content: ''; position: absolute; left: 0; top: 1.1rem; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2rem 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--warm-mid); }
 .section-label:first-child { margin-top: 0; }
+/* Image unique en haut des cartes (S'adapte sans s'étirer) */
+.img-single {
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--warm-pale, #f4f1eb); /* Fond élégant pour habiller les petites images */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.img-single img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: 400px; /* Fixe une limite de hauteur pour l'harmonie */
+  object-fit: contain; /* L'image s'affiche en entier sans rogner ni étirer */
+  display: block;
+  cursor: pointer;
+  transition: transform 0.6s ease;
+}
+.img-single:hover img {
+  transform: scale(1.03);
+}
+
   </style>
 </head>
 <body>
@@ -596,9 +620,6 @@ function get_global_info_maison(rec) {
     </section>`;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   CHECK-IN / CHECK-OUT
-───────────────────────────────────────────────────────────── */
 function getCICO(workflowRecords, maisonId) {
   // FIX: workflowRecords link by Maison array of record IDs
   const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(maisonId));
@@ -666,7 +687,6 @@ function renderWifiSection(items, index) {
   const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
   const safeId = `qr_wifi_${index}`;
 
-  // Schedule QR generation after DOM is ready
   setTimeout(() => {
     const el = document.getElementById(safeId);
     if (el && ssid) {
