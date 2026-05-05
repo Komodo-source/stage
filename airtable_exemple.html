@@ -92,7 +92,7 @@
     .img-single:hover img { transform: scale(1.05); }
 
     /* FIX: gallery images - fixed aspect ratio, consistent size */
-    .img-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; padding: 1.5rem 2.5rem; }
+    .img-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(20rem, 15rem));; gap: 8px; padding: 1.5rem 2.5rem; }
     .img-gallery img { width: 100%; height: 90px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); border: 2px solid transparent; display: block; }
     .img-gallery img:hover { transform: scale(1.03); border-color: var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
@@ -245,6 +245,61 @@
   transform: scale(1.03);
 }
 
+#wide-img{
+  height: 35%;
+}
+
+/* ══ TEMPLATE: STACK (landscape image on top) ══ */
+.tpl-stack .img-banner {
+  width: 100%; height: 260px; object-fit: cover; display: block;
+  cursor: pointer; transition: transform 0.6s ease;
+}
+.tpl-stack:hover .img-banner { transform: scale(1.02); }
+
+/* ══ TEMPLATE: SIDE (portrait image left, text right) ══ */
+.tpl-side {
+  display: grid;
+  grid-template-columns: 260px 1fr; /* fixed image col so text never squishes it */
+  align-items: stretch;
+}
+.tpl-side .side-img-wrap {
+  overflow: hidden;
+  max-height: 340px; /* cap: prevents insane stretch on very tall portraits */
+}
+.tpl-side .side-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  cursor: pointer; transition: transform 0.6s ease;
+}
+.tpl-side:hover .side-img-wrap img { transform: scale(1.04); }
+
+/* ══ TEMPLATE: GALLERY-TOP (thumb strip + text) ══ */
+.tpl-gallery-top .thumb-strip {
+  display: flex; gap: 6px; padding: 1rem 1rem 0;
+  overflow-x: auto; scrollbar-width: thin;
+}
+.tpl-gallery-top .thumb-strip img {
+  height: 120px; border-radius: var(--radius-sm); object-fit: cover;
+  border: 2px solid transparent; cursor: pointer;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.tpl-gallery-top .thumb-strip img:hover {
+  border-color: var(--accent); transform: scale(1.03);
+}
+
+/* Mobile: side → stack */
+@media (max-width: 640px) {
+  .tpl-side { grid-template-columns: 1fr; }
+  .tpl-side .side-img-wrap { max-height: 220px; }
+  .tpl-gallery-top .thumb-strip img { height: 80px; }
+}
+
+img{
+  transition: transform 0.6s ease;
+}
+img:hover{
+  transform: scale(1.05);
+}
+
   </style>
 </head>
 <body>
@@ -261,9 +316,6 @@
 </div>
 
 <script>
-/* ─────────────────────────────────────────────────────────────
-   CONFIGURATION
-───────────────────────────────────────────────────────────── */
 const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
 const BASE_ID = 'appLWhCKR6pEGE02s';
 const TABLE_MAISON       = 'Maison';
@@ -315,6 +367,7 @@ async function fetchAll(table) {
     if (offset) url.searchParams.set('offset', offset);
     const res  = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
     const data = await res.json();
+    console.log(table, data);
     if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
     records = records.concat(data.records);
     offset  = data.offset || null;
@@ -504,24 +557,41 @@ function parseDescription(text, attachments, hideInlineImages) {
   return out;
 }
 
+function checkImageSize(x, y, val){
+  console.log("checkImg", x, y, val)
+  console.log((x > y) ? true : false)
+  return (x >= y) ? true : false;
+}
+
 function renderImageGallery(photos, itemName) {
   if (!photos || !photos.length) return '';
   const safe = photos.map(p => ({
+
     url: typeof p === 'string' ? p : (p.url || ''),
-    thumb: typeof p === 'string' ? p : (p.thumbnails?.full?.url || p.url || '')
+    thumb: typeof p === 'string' ? p : (p.thumbnails?.full?.url || p.url || ''),
+    width: (p.width || ''),
+    height: (p.height || ''),
   })).filter(p => p.url);
 
   if (!safe.length) return '';
 
+
   if (safe.length === 1) {
     const s = safe[0].url.replace(/'/g, "\\'");
+    if(checkImageSize(safe[0].width, safe[0].height, safe[0])){
+      return `<div class="img-single"><img id="wide-image" src="${safe[0].url}" alt="${escapeAttr(itemName || '')}" loading="lazy" onclick="openLightbox('${s}', 1, 0)"></div>`;
+    }
     return `<div class="img-single"><img src="${safe[0].url}" alt="${escapeAttr(itemName || '')}" loading="lazy" onclick="openLightbox('${s}', 1, 0)"></div>`;
   }
   let html = `<div class="img-gallery">`;
   safe.forEach((p, i) => {
     const s = p.url.replace(/'/g, "\\'");
-    html += `<img src="${p.thumb}" alt="${escapeAttr(itemName || '')} ${i+1}" loading="lazy" onclick="openLightbox('${s}', ${safe.length}, ${i})">`;
-  });
+    if(checkImageSize(p.width, p.height, p)){
+      html += `<img id="wide-image" src="${p.thumb}" alt="${escapeAttr(itemName || '')} ${i+1}" loading="lazy" onclick="openLightbox('${s}', ${safe.length}, ${i})">`;
+    }else{
+      html += `<img  src="${p.thumb}" alt="${escapeAttr(itemName || '')} ${i+1}" loading="lazy" onclick="openLightbox('${s}', ${safe.length}, ${i})">`;
+    }
+    });
   html += `</div>`;
   return html;
 }
@@ -543,9 +613,6 @@ function parseWifiCredentials(description) {
   return { ssid: lines[0] || '', mdp: lines[1] || '' };
 }
 
-/* ─────────────────────────────────────────────────────────────
-   COVER
-───────────────────────────────────────────────────────────── */
 function renderCover(nomMaison, numero, coverUrl) {
   const fallback = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80';
   return `
@@ -621,11 +688,9 @@ function get_global_info_maison(rec) {
 }
 
 function getCICO(workflowRecords, maisonId) {
-  // FIX: workflowRecords link by Maison array of record IDs
   const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(maisonId));
   if (!related.length) return '';
 
-  // FIX: find a record with CICO field, not just first
   const cicoRec = related.find(r => r.fields.CICO);
   if (!cicoRec) return '';
 
@@ -651,38 +716,80 @@ function getCICO(workflowRecords, maisonId) {
       </div>
     </section>`;
 }
+function classifyCard(item) {
+  const photoCount = item._photos ? item._photos.length : 0;
+  const desc = item.Description || '';
+
+  if (photoCount === 0) return 'text';
+  if (photoCount >= 2) return 'gallery';
+
+  // Single image: decide stack vs side by aspect ratio
+  const att = item._attachments && item._attachments[0];
+  const isLandscape = att ? (att.width >= att.height) : true;
+  const isShortText = desc.length < 400;
+
+  if (!isLandscape && isShortText) return 'side';
+  return 'stack';
+}
 
 function renderCard(items) {
   return items.map(item => {
-    const hasPhoto = item._photos && item._photos.length > 0;
-    // FIX: pass _attachments (Airtable array) properly
-    const descText = parseDescription(item.Description, item._attachments, hasPhoto);
+    const layout = classifyCard(item);
+    const badge = item.Categorie
+      ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>`
+      : '';
+    const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
-    if (!hasPhoto) {
+    const hideInline = layout === 'stack' || layout === 'side';
+    const descHtml = `<div class="card-desc">${parseDescription(item.Description, item._attachments, hideInline)}</div>`;
+    const body = `<div class="card-body">${badge}${title}${descHtml}</div>`;
+
+    if (layout === 'text') {
+      return `<article class="card reveal">${body}</article>`;
+    }
+
+    if (layout === 'gallery') {
+      const thumbs = item._attachments
+        .filter(a => is_file_image(a.filename || ''))
+        .map((att, i) => {
+          const thumb = att.thumbnails?.large?.url || att.url;
+          const full  = att.url.replace(/'/g, "\\'");
+          const total = item._photos.length;
+          const style = i === 0
+            ? 'flex: 2; min-width: 180px; max-width: 260px;'
+            : 'flex: 1; min-width: 100px; max-width: 160px;';
+          return `<img src="${escapeAttr(thumb)}" alt="${escapeAttr(item.Item)} ${i+1}" loading="lazy" style="${style}" onclick="openLightbox('${full}', ${total}, ${i})">`;
+        })
+        .join('');
+
       return `
-        <article class="card reveal">
-          <div class="card-body">
-            ${item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : ''}
-            <h3 class="card-item-title">${escapeHtml(item.Item)}</h3>
-            <div class="card-desc">${descText}</div>
-          </div>
+        <article class="card tpl-gallery-top reveal">
+          ${body}
         </article>`;
     }
 
+    if (layout === 'stack') {
+      const url   = item._photos[0];
+      const full  = url.replace(/'/g, "\\'");
+      return `
+        <article class="card tpl-stack reveal">
+          <img class="img-banner" src="${escapeAttr(url)}" loading="lazy" alt="${escapeAttr(item.Item)}" onclick="openLightbox('${full}', 1, 0)">
+          ${body}
+        </article>`;
+    }
+
+    const url  = item._photos[0];
+    const full = url.replace(/'/g, "\\'");
     return `
-      <article class="card tpl-image-text reveal">
-        <div class="gallery-wrapper">
-          <img src="${escapeAttr(item._photos[0])}" loading="lazy" alt="${escapeAttr(item.Item)}" onclick="openLightbox('${item._photos[0].replace(/'/g,"\\'")}', ${item._photos.length}, 0)">
+      <article class="card tpl-side reveal">
+        <div class="side-img-wrap">
+          <img src="${escapeAttr(url)}" loading="lazy" alt="${escapeAttr(item.Item)}" onclick="openLightbox('${full}', 1, 0)">
         </div>
-        <div class="card-body">
-          ${item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : ''}
-          <h3 class="card-item-title">${escapeHtml(item.Item)}</h3>
-          <div class="card-desc">${descText}</div>
-        </div>
+        ${body}
       </article>`;
+
   }).join('');
 }
-
 function renderWifiSection(items, index) {
   const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
   const safeId = `qr_wifi_${index}`;
@@ -736,7 +843,7 @@ function renderThemePage(theme, items, index) {
 function renderPiscinePage(rec) {
   if (!rec) return '';
   const f = rec.fields;
-  const photos = (f.Photo || []).map(p => ({ url: p.url, thumb: p.thumbnails?.large?.url || p.url }));
+  const photos = (f.Photo || []).map(p => ({ url: p.url, thumb: p.thumbnails?.large?.url || p.url, width: p.width,height: p.height }));
 
   const infos = `
     <div class="card reveal" style="margin-top:2rem;margin-bottom:2rem;">
@@ -765,6 +872,7 @@ function renderPiscinePage(rec) {
       <div class="theme-header">
         <div class="theme-label">Détente</div>
         <div class="theme-title">La Piscine</div>
+
       </div>
       ${renderImageGallery(photos, 'Piscine')}
       ${infos}${sections}
@@ -842,9 +950,6 @@ function getRecommandation(data, maisonId) {
     </section>`;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   MAIN BUILD
-───────────────────────────────────────────────────────────── */
 async function buildLivret(IdMaison) {
   const [ maisonRecs, livretRecs, equipRecs, piscineRecs, dispRecs, wfRecs, recoRecs, listRecs ] =
     await Promise.all([
@@ -967,5 +1072,6 @@ if (!idMaison) {
   });
 }
 </script>
+
 </body>
 </html>
