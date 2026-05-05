@@ -338,12 +338,10 @@ const icons = [
   {name:"douche",    url:"https://img.icons8.com/?size=100&id=9154&format=png&color=D4956A"},
   {name:"toilettes", url:"https://img.icons8.com/?size=100&id=mwyuLvB0I71d&format=png&color=D4956A"},
   {name:"piece",     url:"https://img.icons8.com/?size=100&id=8070&format=png&color=D4956A"},
-  {name:"salon",     url:"https://img.icons8.com/?size=100&id=9624&format=png&color=D4956A"},
+  {name:"cuisine",    url:"https://img.icons8.com/?size=100&id=1621&format=png&color=D4956A"},
+  {name:"salon",    url:"https://img.icons8.com/?size=100&id=9624&format=png&color=D4956A"},
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   LIGHTBOX
-───────────────────────────────────────────────────────────── */
 function openLightbox(src, count, index) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox-counter').textContent = count > 1 ? `${index + 1} / ${count}` : '';
@@ -357,9 +355,8 @@ function closeLightbox() {
 document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-/* ─────────────────────────────────────────────────────────────
-   AIRTABLE FETCH
-───────────────────────────────────────────────────────────── */
+
+
 async function fetchAll(table) {
   let records = [], offset = null;
   do {
@@ -596,7 +593,7 @@ function renderImageGallery(photos, itemName) {
   return html;
 }
 function getIcon(val) {
-  const map = {'WC':'toilettes','Salle de bain':'douche','Chambre':'chambre','Salon':'salon','Autre':'piece'};
+  const map = {'WC':'toilettes','Salle de bain':'douche','Chambre':'chambre','Salon':'salon','Autre':'piece', "Cuisine":"cuisine"};
   const key = map[val] || (val || '').toLowerCase();
   const found = icons.find(ic => ic.name === key);
   return found ? found.url : '';
@@ -644,6 +641,24 @@ function renderCover(nomMaison, numero, coverUrl) {
 /* ─────────────────────────────────────────────────────────────
    MAISON INFO
 ───────────────────────────────────────────────────────────── */
+
+
+function get_instruction_depart(rec){
+    if (!rec) return '';
+  const f = rec.fields;
+    let departHtml = '';
+  if (f.InstructionDepart) {
+    return `
+      <div class="card reveal" style="margin-top:3rem;">
+        <div class="card-body">
+          <div class="category-badge">Check-out</div>
+          <div class="card-item-title">Instructions de départ</div>
+          <div class="card-desc">${parseDescription(f.InstructionDepart, null, false)}</div>
+        </div>
+      </div>`;
+  }
+
+}
 function get_global_info_maison(rec) {
   if (!rec) return '';
   const f = rec.fields;
@@ -665,17 +680,6 @@ function get_global_info_maison(rec) {
       </aside>`;
   }
 
-  let departHtml = '';
-  if (f.InstructionDepart) {
-    departHtml = `
-      <div class="card reveal" style="margin-top:3rem;">
-        <div class="card-body">
-          <div class="category-badge">Check-out</div>
-          <div class="card-item-title">Instructions de départ</div>
-          <div class="card-desc">${parseDescription(f.InstructionDepart, null, false)}</div>
-        </div>
-      </div>`;
-  }
 
   return `
     <section id="section-info" class="theme-page reveal">
@@ -683,7 +687,7 @@ function get_global_info_maison(rec) {
         <div class="theme-label">Découvrir</div>
         <div class="theme-title">La Maison</div>
       </div>
-      ${adresse}${descHtml}${attentionHtml}${departHtml}
+      ${adresse}${descHtml}${attentionHtml}
     </section>`;
 }
 
@@ -723,7 +727,6 @@ function classifyCard(item) {
   if (photoCount === 0) return 'text';
   if (photoCount >= 2) return 'gallery';
 
-  // Single image: decide stack vs side by aspect ratio
   const att = item._attachments && item._attachments[0];
   const isLandscape = att ? (att.width >= att.height) : true;
   const isShortText = desc.length < 400;
@@ -845,15 +848,6 @@ function renderPiscinePage(rec) {
   const f = rec.fields;
   const photos = (f.Photo || []).map(p => ({ url: p.url, thumb: p.thumbnails?.large?.url || p.url, width: p.width,height: p.height }));
 
-  const infos = `
-    <div class="card reveal" style="margin-top:2rem;margin-bottom:2rem;">
-      <div class="card-body">
-        <div class="kv-line"><span class="kv-key">Taille</span><span class="kv-val">${f.taille ? f.taille + ' m²' : '–'}</span></div>
-        <div class="kv-line"><span class="kv-key">Chauffage</span><span class="kv-val">${(f.Chauffage || []).join(', ') || '–'}</span></div>
-        <div class="kv-line"><span class="kv-key">Désinfectant</span><span class="kv-val">${(f.Desinfectant || []).join(', ') || '–'}</span></div>
-        <div class="kv-line"><span class="kv-key">Produit</span><span class="kv-val">${(f.Produit || []).join(', ') || '–'}</span></div>
-      </div>
-    </div>`;
 
   const sections = [
     { label: "Instructions d'ouverture", content: f.InstructionOuverture },
@@ -875,7 +869,7 @@ function renderPiscinePage(rec) {
 
       </div>
       ${renderImageGallery(photos, 'Piscine')}
-      ${infos}${sections}
+      ${sections}
 
     </section>`;
 }
@@ -1021,8 +1015,9 @@ async function buildLivret(IdMaison) {
     (maisonRecord.fields['Piscine']
       ? renderPiscinePage(piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id)))
       : '') +
-    getDispositionMaison(dispRecs, maisonRecord.id) +
-    getRecommandation(recoRecs, maisonRecord.id) +
+
+    //getDispositionMaison(dispRecs, maisonRecord.id) +
+    getRecommandation(recoRecs, maisonRecord.id) + get_instruction_depart(maisonRecord) +
     `<section class="presentation-end reveal">
        <h1>La Collection Idylliq</h1>
        <p>Cette propriété fait partie de la première collection de maisons haut de gamme pensée pour les familles.</p>
