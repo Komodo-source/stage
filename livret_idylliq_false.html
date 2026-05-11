@@ -592,119 +592,9 @@
     grid-auto-rows: 200px;
   }
 }
-    /* ── NEW FEATURES CSS ── */
-    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; width: 0%; background: var(--accent); z-index: 5000; transition: width 0.1s; }
-
-    body::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); z-index: 9999; mix-blend-mode: multiply; }
-
-    /* Sticky Nav */
-    .sticky-nav { position: fixed; top: 0; left: 0; width: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000; display: flex; justify-content: center; gap: 2rem; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-bottom: 1px solid rgba(0,0,0,0.05); }
-    .sticky-nav.visible { transform: translateY(0); }
-    .sticky-nav a { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-decoration: none; transition: color 0.3s ease; }
-    .sticky-nav a:hover { color: var(--accent); }
-
-    /* Floating Menu */
-    .floating-menu { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem; }
-    .floating-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--white); box-shadow: 0 10px 25px rgba(15, 61, 58, 0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none; border: 1px solid rgba(0,0,0,0.05); font-size: 1.2rem; }
-    .floating-btn:hover { transform: scale(1.1) translateY(-5px); background: var(--green); color: var(--white); }
-    .floating-main { background: var(--accent); color: var(--white); font-size: 1.5rem; z-index: 2; border: none; }
-    .floating-items { display: flex; flex-direction: column; gap: 0.5rem; position: absolute; bottom: 60px; right: 0; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .floating-menu.active .floating-items { opacity: 1; pointer-events: auto; transform: translateY(0); }
-
-    /* Weather Widget */
-    .weather-widget { display: flex; gap: 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-soft); margin-bottom: 2rem; align-items: center; transition: var(--transition); }
-    .weather-widget:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .weather-icon { font-size: 3.5rem; line-height: 1; }
-    .weather-temp { font-family: 'Julius Sans One', sans-serif; font-size: 3rem; color: var(--green-dark); line-height: 1; margin-bottom: 0.5rem; }
-    .weather-desc { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); }
-    .weather-suggestion { flex: 1; border-left: 2px solid var(--accent-soft); padding-left: 1.5rem; }
-    .weather-suggestion p { font-size: 1.1rem; color: var(--ink-mid); font-style: italic; margin: 0; }
-
-    /* Welcome Message */
-    .welcome-section { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 800px; margin: 0 auto 5rem; gap: 1.5rem; }
-    .host-portrait { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft); border: 4px solid var(--white); }
-    .host-signature { height: 60px; opacity: 0.8; margin-top: 1rem; filter: sepia(1) hue-rotate(340deg) saturate(0.5); }
-    .welcome-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green-dark); line-height: 1.4; font-style: italic; }
-
-    /* Interactive Tutorials & Expandable */
-    details.elegant-accordion { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin-bottom: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
-    details.elegant-accordion summary { padding: 1.5rem 2rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green-dark); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-    details.elegant-accordion summary::-webkit-details-marker { display: none; }
-    details.elegant-accordion summary::after { content: '+'; font-size: 1.5rem; color: var(--accent); transition: transform 0.3s ease; font-weight: 400; font-family: 'Outfit', sans-serif; }
-    details.elegant-accordion[open] summary::after { transform: rotate(45deg); }
-    details.elegant-accordion[open] { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-    .accordion-content { padding: 0 2rem 2rem; border-top: 1px solid rgba(0,0,0,0.03); margin-top: 1rem; padding-top: 1.5rem; }
-
-    /* Emergency */
-    .emergency-section { background: #fffafb; border: 1px solid #ffebed; padding: 3rem; border-radius: var(--radius); display: flex; gap: 2.5rem; align-items: flex-start; margin-top: 4rem; box-shadow: 0 15px 45px rgba(211, 47, 47, 0.05); }
-    .emergency-icon { font-size: 3rem; color: #d32f2f; background: #ffebee; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
-    .emergency-content { flex: 1; }
-    .emergency-content h3 { color: #b71c1c; font-family: 'League Spartan', sans-serif; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
-
-    /* Checklist */
-    .checkout-list { list-style: none; padding: 0; margin: 2rem 0; }
-    .checkout-list li { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s ease; border-radius: var(--radius-sm); font-size: 1.1rem; color: var(--ink-mid); background: var(--white); margin-bottom: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-    .checkout-list li:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-    .check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; }
-    .checkout-list li.done .check-circle { background: var(--accent); }
-    .checkout-list li.done .check-circle::after { content: '✓'; color: white; font-size: 0.9rem; font-weight: bold; }
-    .checkout-list li.done span { text-decoration: line-through; opacity: 0.5; }
-
-    /* Playlist */
-    .playlist-section { margin-top: 4rem; }
-    .playlist-card { background: var(--ink); border-radius: var(--radius); padding: 2.5rem; color: var(--white); display: flex; gap: 2rem; align-items: center; margin-bottom: 1.5rem; overflow: hidden; position: relative; box-shadow: var(--shadow-soft); transition: var(--transition); }
-    .playlist-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .playlist-info { flex: 1; z-index: 2; }
-    .playlist-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic; margin-bottom: 0.5rem; }
-    .playlist-vibe { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
-    .playlist-card iframe { border-radius: 12px; z-index: 2; position: relative; width: 300px; height: 80px; }
-
-    /* Copy Button */
-    .copy-btn { margin-left: 10px; cursor: pointer; color: var(--accent); transition: transform 0.3s; font-size: 1.1em; display: inline-flex; align-items: center; justify-content: center; background: rgba(212, 149, 106, 0.1); width: 30px; height: 30px; border-radius: 50%; }
-    .copy-btn:hover { transform: scale(1.1); background: rgba(212, 149, 106, 0.2); }
-
-    /* WhatsApp */
-    .whatsapp-btn { display: inline-flex; align-items: center; gap: 1rem; background: #25D366; color: white; padding: 1rem 2.5rem; border-radius: 30px; font-family: 'League Spartan', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; transition: var(--transition); box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
-    .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4); color: white; }
-
-    /* Filters */
-    .mood-filters { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2.5rem; scrollbar-width: none; }
-    .mood-filters::-webkit-scrollbar { display: none; }
-    .mood-filter { padding: 0.75rem 1.8rem; border-radius: 30px; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; transition: all 0.3s; white-space: nowrap; font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; background: transparent; }
-    .mood-filter.active, .mood-filter:hover { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(212, 149, 106, 0.3); }
-
-    @media (max-width: 768px) {
-      .sticky-nav { display: none; }
-      .weather-widget { flex-direction: column; text-align: center; }
-      .weather-suggestion { border-left: none; border-top: 2px solid var(--accent-soft); padding-left: 0; padding-top: 1.5rem; }
-      .emergency-section { flex-direction: column; padding: 2rem; text-align: center; align-items: center; }
-      .reco-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1.5rem; padding-bottom: 2rem; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-      .reco-card { scroll-snap-align: center; min-width: 85vw; flex-shrink: 0; }
-      .playlist-card { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem; }
-      .playlist-card iframe { width: 100%; }
-      .welcome-section { padding: 0 1rem; }
-    }
   </style>
 </head>
 <body>
-<div id="progress-bar"></div>
-<nav class="sticky-nav" id="sticky-nav">
-  <a href="#section-info">Maison</a>
-  <a href="#section-photos">Photos</a>
-  <a href="#section-sejour">Séjour</a>
-  <a href="#section-icons">Équipements</a>
-  <a href="#section-reco">Adresses</a>
-  <a href="#instruction-depart">Départ</a>
-</nav>
-<div class="floating-menu" id="floating-menu">
-  <div class="floating-items">
-    <a href="#section-info" class="floating-btn" title="Maison">🏠</a>
-    <a href="#section-wifi" class="floating-btn" title="Wi-Fi">📶</a>
-    <a href="#section-reco" class="floating-btn" title="Adresses">🍽</a>
-    <a href="#instruction-depart" class="floating-btn" title="Départ">🚪</a>
-  </div>
-  <button class="floating-btn floating-main" onclick="this.parentElement.classList.toggle('active')">+</button>
-</div>
 
 <div id="loading">Préparation de votre livret...</div>
 <div id="livret-container"></div>
@@ -765,22 +655,8 @@ const ICON_MAP = [
 window.addEventListener('scroll', () => {
   const scrolled = window.pageYOffset;
   const coverImg = document.querySelector('.cover-hero img');
-
-  // Progress Bar
-  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-  const scrolledPct = (winScroll / height) * 100;
-  const progressBar = document.getElementById('progress-bar');
-  if (progressBar) progressBar.style.width = scrolledPct + '%';
-
-  // Sticky Nav
-  const stickyNav = document.getElementById('sticky-nav');
-  if (stickyNav) {
-    if (scrolled > window.innerHeight - 100) {
-      stickyNav.classList.add('visible');
-    } else {
-      stickyNav.classList.remove('visible');
-    }
+  if (coverImg) {
+    coverImg.style.transform = `translateY(${scrolled * 0.4}px) scale(1.05)`;
   }
 });
 
@@ -880,9 +756,7 @@ async function fetchHousePhotos(nomMaison) {
   if (!res.ok) { console.warn('Could not fetch house photos'); return []; }
   return await res.json();
 }
-/* ─────────────────────────────────────────────────────────────
-   HOUSE PHOTOS GALLERY
-───────────────────────────────────────────────────────────── */
+
 function renderHousePhotosSection(photos, nomMaison) {
   if (!photos || !photos.length) return '';
   const rooms = {};
@@ -905,7 +779,6 @@ function renderHousePhotosSection(photos, nomMaison) {
     const imgs = rooms[room];
     const gridImgs = imgs.map((url, j) => {
       const safe = url.replace(/'/g, "\\'");
-      // FIX: Use &quot; instead of " to avoid breaking HTML attribute
       return `<img class="room-grid-img" src="${escapeAttr(url)}" loading="lazy" alt="${escapeHtml(room)} ${j+1}" onclick="openLightbox('${safe}', ${JSON.stringify(imgs).replace(/"/g, '&quot;')}, ${j})">`;
     }).join('');
     return `<div class="room-panel${i === 0 ? ' active' : ''}" id="room-panel-${i}"><div class="room-grid">${gridImgs}</div></div>`;
@@ -922,13 +795,6 @@ function renderHousePhotosSection(photos, nomMaison) {
       ${panels}
     </section>`;
 }
-
-/* ─────────────────────────────────────────────────────────────
-   CARD RENDERER
-───────────────────────────────────────────────────────────── */
-
-
-  // ... (Keep the rest of the switch cases identical)
 
 function switchRoomTab(btn, panelId) {
   btn.closest('.photos-section').querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
@@ -1017,10 +883,8 @@ function renderEquipCard(item, forceTemplate) {
 
   function imgClick(url, idx) {
     const safe = url.replace(/'/g, "\\'");
-    // FIX: Use &quot; instead of "
     return `onclick="openLightbox('${safe}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${idx})"`;
   }
-
 
   console.log(title);
 
@@ -1109,36 +973,36 @@ function groupConsecutiveImages(html) {
   );
 }
 
-  function parseDescriptionWithInline(text, attachments, videos) {
-    if (!text) return '';
-    const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a.filename || '')) : [];
-    const allUrls = photos.map(p => p.url);
-    let out = text;
+function parseDescriptionWithInline(text, attachments, videos) {
+  if (!text) return '';
+  const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a.filename || '')) : [];
+  const allUrls = photos.map(p => p.url);
+  let out = text;
 
-    // 1. Replace $iN beacons by their image at that index
-    photos.forEach((photo, i) => {
-      const url = photo.url || '';
+  // 1. Replace $iN beacons by their image at that index
+  photos.forEach((photo, i) => {
+    const url = photo.url || '';
+    if (!url) return;
+    const cls = getInlineImgClass(photo.width || 0, photo.height || 0);
+    const safeUrl = url.replace(/'/g, "\\'");
+    const imgTag  = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${i})" alt="">`;
+    out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
+  });
+
+  if (Array.isArray(videos)) {
+    videos.forEach((url, i) => {
       if (!url) return;
-      const cls = getInlineImgClass(photo.width || 0, photo.height || 0);
-      const safeUrl = url.replace(/'/g, "\\'");
-      // FIX: Use &quot; inside stringified JSON arrays
-      const imgTag  = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${i})" alt="">`;
-      out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
+      out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
     });
+  }
 
-    if (Array.isArray(videos)) {
-      videos.forEach((url, i) => {
-        if (!url) return;
-        out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
-      });
-    }
+  // Strip leftover unmatched beacons
+  out = out.replace(/\$[iv]\d+/g, '');
 
-    // Strip leftover unmatched beacons
-    out = out.replace(/\$[iv]\d+/g, '');
-
-    const isHtml = /<\/?(h[1-6]|p|ul|ol|li|div|table|br)\b/i.test(out);
+  const isHtml = /<\/?(h[1-6]|p|ul|ol|li|div|table|br)\b/i.test(out);
 
   if (isHtml) {
+    // Linkify outside tags
     out = out.replace(/(<[^>]+>)|((?:https?:\/\/|www\.)[^\s<"'\)\]]+)/g, (m, tag, url) => {
       if (tag) return tag;
       if (url.includes('airtableusercontent.com')) return '';
@@ -1146,6 +1010,7 @@ function groupConsecutiveImages(html) {
       const display = url.length > 55 ? url.slice(0, 52) + '…' : url;
       return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(display)}</a>`;
     });
+    // Convert NO1 / NO.1 / 1. inside <li>…</li> by stripping the prefix (it's already a list)
     out = out.replace(/<li>\s*(?:N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\.\s+|[-•*]\s+)/gi, '<li>');
     return groupConsecutiveImages(out);
   }
@@ -1215,9 +1080,9 @@ function parseDescription(text, attachments, hideInlineImages) {
   );
 }
 
-
-
-
+/* ─────────────────────────────────────────────────────────────
+   ICONS SUMMARY SECTION
+───────────────────────────────────────────────────────────── */
 function renderIconsSection(equipItems) {
   const seen = new Set(), chips = [];
   equipItems.forEach(item => {
@@ -1240,10 +1105,9 @@ function renderIconsSection(equipItems) {
     </section>`;
 }
 
-
-
-
-
+/* ─────────────────────────────────────────────────────────────
+   WIFI / THEME PAGES
+───────────────────────────────────────────────────────────── */
 function renderWifiSection(items, index) {
   const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
   const safeId = `qr_wifi_${index}`;
@@ -1256,7 +1120,7 @@ function renderWifiSection(items, index) {
   }, 200);
   return `
     <section id="section-equipements-${index}" class="theme-page reveal">
-      <div class="theme-header" id="section-wifi">
+      <div class="theme-header">
         <div class="theme-label">Connectivité</div>
         <div class="theme-title">Réseau Wi-Fi</div>
       </div>
@@ -1271,9 +1135,6 @@ function renderWifiSection(items, index) {
       </div>
     </section>`;
 }
-
-
-
 
 function renderThemePage(theme, items, index) {
   if (theme.toLowerCase() === 'wifi') return renderWifiSection(items, index);
@@ -1329,14 +1190,7 @@ function renderCover(nomMaison, numero, coverUrl) {
 function get_global_info_maison(rec) {
   if (!rec) return '';
   const f = rec.fields;
-
-  const weatherHtml = `
-    <div id="weather-widget-container" class="reveal">
-      <!-- Weather will be injected here via JS -->
-    </div>
-  `;
-
-  const adresse  = f.Adresse ? `<p style="font-size:1.15rem;color:var(--green-dark);margin-bottom:2rem; font-weight:500; display:flex; align-items:center; gap:0.5rem;">📍 ${escapeHtml(f.Adresse)} <button class="copy-btn" onclick="copy('${escapeAttr(f.Adresse)}')" title="Copier l'adresse">📋</button></p>` : '';
+  const adresse  = f.Adresse ? `<p style="font-size:1.15rem;color:var(--green-dark);margin-bottom:2rem; font-weight:500;">📍 ${escapeHtml(f.Adresse)}</p>` : '';
   const descHtml = f.Description ? `<div class="card-desc">${parseDescription(f.Description, null, false)}</div>` : '';
   let attentionHtml = '';
   if (f.PointAttention) {
@@ -1362,18 +1216,15 @@ function get_global_info_maison(rec) {
           <span class="rule-text">${escapeHtml(r)}</span>
         </div>`).join('');
       reglesHtml = `
-        <details class="elegant-accordion reveal" style="margin-top: 3rem;">
-          <summary>Règles de la maison</summary>
-          <div class="accordion-content">
-            <div class="rules-grid">${reglesItems}</div>
-          </div>
-        </details>`;
+        <div class="rules-section reveal">
+          <p class="section-label">Règles de la maison</p>
+          <div class="rules-grid">${reglesItems}</div>
+        </div>`;
     }
   }
 
   return `
     <section id="section-info" class="theme-page reveal">
-      ${weatherHtml}
       <div class="theme-header"><div class="theme-label">Découvrir</div><div class="theme-title">La Maison</div></div>
       ${adresse}${descHtml}${reglesHtml}${attentionHtml}
     </section>`;
@@ -1411,11 +1262,12 @@ function getCICO(workflowRecords, maisonId) {
 
 /* Affiche la piscine UNIQUEMENT si du contenu textuel y est présent.
    ET que InstructionOuverture ET InstructionFermeture sont vides. */
-/* Affiche la piscine UNIQUEMENT si du contenu textuel y est présent. */
 function renderPiscinePage(rec) {
   if (!rec) return '';
   const f = rec.fields;
 
+  // IMPORTANT: Keep this as the raw Airtable array of objects!
+  // Do not map to .url here, because parseDescriptionWithInline needs the .filename property.
   const allPhotos = f.Photo || [];
 
   const videos = f.lienYoutube
@@ -1430,6 +1282,8 @@ function renderPiscinePage(rec) {
 
   if (!validSections.length) return '';
 
+  // Dynamically assign media bounds.
+  // If only 1 section exists, it gets ALL the photos. If both exist, split 50/50.
   if (validSections.length === 1) {
     validSections[0].bounds = {
       pStart: 0, pEnd: allPhotos.length,
@@ -1442,9 +1296,8 @@ function renderPiscinePage(rec) {
     validSections[1].bounds = { pStart: halfP, pEnd: allPhotos.length, vStart: halfV, vEnd: videos.length };
   }
 
-  const cardsHtml = validSections.map((section, idx) => {
-    // FIX: Auto-normalize standalone $v and $i (without numbers) to index 0
-    let enrichedText = section.text.replace(/\$v(?!\d)/g, '$v0').replace(/\$i(?!\d)/g, '$i0');
+  const cardsHtml = validSections.map(section => {
+    let enrichedText = section.text;
     const bounds = section.bounds;
 
     // Auto-inject photos for this specific section's boundaries
@@ -1453,9 +1306,8 @@ function renderPiscinePage(rec) {
     for (let i = bounds.pStart; i < bounds.pEnd; i++) {
       if (!usedIndexes.includes(i)) freePhotos.push(i);
     }
-
     if (freePhotos.length) {
-      enrichedText += '\n\n' + freePhotos.map(i => `$i${i}`).join(' ');
+      enrichedText += '\n\n' + freePhotos.map(i => `$i${i}`).join('\n');
     }
 
     // Auto-inject videos for this specific section's boundaries
@@ -1468,16 +1320,13 @@ function renderPiscinePage(rec) {
       enrichedText += '\n\n' + freeVideos.map(i => `$v${i}`).join('\n');
     }
 
+    // Pass the raw allPhotos array so your parser can read the .filename and .url properties
     const descHtml = parseDescriptionWithInline(enrichedText, allPhotos, videos);
 
-    return `
-      <details class="elegant-accordion reveal" ${idx === 0 ? 'open' : ''}>
-        <summary>${escapeHtml(section.label)}</summary>
-        <div class="accordion-content">
-          <div class="card-desc">${descHtml}</div>
-        </div>
-      </details>
-    `;
+    return `<div class="card reveal"><div class="card-body">
+      <h3 class="card-item-title">${escapeHtml(section.label)}</h3>
+      <div class="card-desc">${descHtml}</div>
+    </div></div>`;
   }).join('');
 
   return `
@@ -1486,8 +1335,6 @@ function renderPiscinePage(rec) {
       ${cardsHtml}
     </section>`;
 }
-
-
 
 
 function getRecommandation(data, maisonId) {
@@ -1510,17 +1357,7 @@ function getRecommandation(data, maisonId) {
   }).join('');
   return `
     <section id="section-reco" class="theme-page reveal">
-      <div class="theme-header">
-        <div class="theme-label">Coups de cœur</div>
-        <div class="theme-title">Nos Adresses</div>
-      </div>
-      <div class="mood-filters reveal">
-        <button class="mood-filter active">Tout</button>
-        <button class="mood-filter">Pour les familles</button>
-        <button class="mood-filter">Pour la détente</button>
-        <button class="mood-filter">Amateurs de gastronomie</button>
-        <button class="mood-filter">Échappée romantique</button>
-      </div>
+      <div class="theme-header"><div class="theme-label">Coups de cœur</div><div class="theme-title">Nos Adresses</div></div>
       <div class="reco-grid">${cards}</div>
     </section>`;
 }
@@ -1550,9 +1387,9 @@ function get_instruction_depart(rec) {
       if (inList) { out += '</ul>'; inList = false; }
       out += `<h2 style="font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">${escapeHtml(line)}</h2>`;
     } else if (isListItem) {
-      if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
+      if (!inList) { out += '<ul class="desc-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
       const cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
-      out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(cleanLine)}</span></li>`;
+      out += `<li>${escapeHtml(cleanLine)}</li>`;
     } else {
       if (inList) { out += '</ul>'; inList = false; }
       out += `<p style="margin-bottom: 1rem;">${escapeHtml(line)}</p>`;
@@ -1564,66 +1401,13 @@ function get_instruction_depart(rec) {
     <div class="card-body" id="instruction-depart">
       <div class="category-badge">Check-out</div>
       <h3 class="card-item-title">Instructions de départ</h3>
-      <div class="card-desc">
-        <p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>
-        ${out}
-      </div>
+      <div class="card-desc">${out}</div>
     </div>
   </div>`;
 }
 
 function copy(v) {
-  navigator.clipboard.writeText(v).then(() => alert('Objet copié !')).catch(() => prompt('Copier le mot de passe :', v));
-}
-
-async function fetchWeather(address) {
-  const apiKey = '538bd19bdaba907b8535672e0b3cb600';
-  let query = "Paris,FR";
-  if (address) {
-    const match = address.match(/\d{5}\s+([A-Za-z\s\-]+)/);
-    if (match && match[1]) {
-      query = match[1].trim() + ",FR";
-    } else {
-      query = address.split(',').pop().trim() + ",FR";
-    }
-  }
-
-  try {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(query)}&units=metric&lang=fr&appid=${apiKey}`);
-    if (!res.ok) throw new Error('Weather fetch failed');
-    const data = await res.json();
-
-    // Get icon from OpenWeather or map it
-    const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-    const temp = Math.round(data.main.temp);
-    const desc = data.weather[0].description;
-
-    // Determine suggestion based on weather condition
-    let suggestion = "Une belle journée pour explorer les environs.";
-    const mainCondition = data.weather[0].main.toLowerCase();
-    if (mainCondition.includes('rain')) {
-      suggestion = "Temps pluvieux : profitez d'une soirée cinéma ou du feu de cheminée.";
-    } else if (mainCondition.includes('clear') && temp > 22) {
-      suggestion = "Grand soleil ! C'est le moment idéal pour profiter de la piscine.";
-    } else if (temp < 10) {
-      suggestion = "Il fait frais dehors, une bonne journée pour le jacuzzi ou le sauna.";
-    }
-
-    document.getElementById('weather-widget-container').innerHTML = `
-      <div class="weather-widget">
-        <img src="${iconUrl}" alt="Weather Icon" class="weather-icon" style="width: 80px; height: 80px; object-fit: cover;">
-        <div>
-          <div class="weather-temp">${temp}°C</div>
-          <div class="weather-desc">${desc}</div>
-        </div>
-        <div class="weather-suggestion">
-          <p>${suggestion}</p>
-        </div>
-      </div>
-    `;
-  } catch(e) {
-    console.warn('Could not fetch weather data', e);
-  }
+  navigator.clipboard.writeText(v).then(() => alert('Mot de passe copié !')).catch(() => prompt('Copier le mot de passe :', v));
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -1702,11 +1486,6 @@ async function buildLivret(IdMaison) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('livret-container').innerHTML = html;
 
-  console.log(maisonRecord.fields.Adresse)
-  if (maisonRecord.fields.Adresse) {
-    fetchWeather(maisonRecord.fields.Adresse);
-  }
-
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
@@ -1724,30 +1503,7 @@ const idMaison  = urlParams.get('maison');
 if (!idMaison) {
   document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
 } else {
-  buildLivret(idMaison).then(() => {
-    // Setup mood filters after render
-    const filters = document.querySelectorAll('.mood-filter');
-    const cards = document.querySelectorAll('.reco-card');
-    filters.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filters.forEach(f => f.classList.remove('active'));
-        btn.classList.add('active');
-        const filterText = btn.innerText.toLowerCase();
-
-        cards.forEach(card => {
-          if (filterText === 'tout') {
-            card.style.display = '';
-          } else {
-            // Simple mock filter: if card text contains part of the filter or just random for demo
-            const cardText = card.innerText.toLowerCase();
-            const keyword = filterText.split(' ')[0]; // just take first word as keyword
-            // To make it look dynamic without perfect data:
-            card.style.display = (cardText.includes('famille') || cardText.includes(keyword) || Math.random() > 0.5) ? '' : 'none';
-          }
-        });
-      });
-    });
-  }).catch(err => {
+  buildLivret(idMaison).catch(err => {
     console.error(err);
     document.getElementById('loading').innerText = 'Erreur : ' + err.message;
   });
