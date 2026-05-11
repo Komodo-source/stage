@@ -109,23 +109,23 @@
     .tpl-hero:hover .card-hero-img { transform: scale(1.04); }
     .tpl-hero .img-overlay-wrap { overflow: hidden; position: relative; border-radius: var(--radius) var(--radius) 0 0; }
 
-    /* Template side : Float pour permettre l'enveloppement du texte */
-    .tpl-side-left, .tpl-side-right { display: block; }
-    .tpl-side-left .side-img-wrap.left { float: left; width: 45%; max-width: 450px; margin: 0.5rem 3.5rem 1.5rem -4.5rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; }
-    .tpl-side-right .side-img-wrap.right { float: right; width: 45%; max-width: 450px; margin: 0.5rem -4.5rem 1.5rem 3.5rem; border-radius: var(--radius-sm) 0 0 var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; }
+    /* Template side : Flex pour layout robuste (remplace les floats) */
+    .tpl-side-left .card-body:last-child { display: flex; gap: 3.5rem; align-items: flex-start; padding-left: 0; }
+    .tpl-side-right .card-body:last-child { display: flex; flex-direction: row-reverse; gap: 3.5rem; align-items: flex-start; padding-right: 0; }
+    .tpl-side-left .side-img-wrap.left { flex: 0 0 45%; max-width: 450px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; margin: 0; }
+    .tpl-side-right .side-img-wrap.right { flex: 0 0 45%; max-width: 450px; border-radius: var(--radius-sm) 0 0 var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; margin: 0; }
     .tpl-side-left .side-img-wrap img, .tpl-side-right .side-img-wrap img { width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
     .tpl-side-left:hover .side-img-wrap img, .tpl-side-right:hover .side-img-wrap img { transform: scale(1.05); }
+    .tpl-side-left .card-desc, .tpl-side-right .card-desc { flex: 1; min-width: 0; }
     .card-body::after { content: ""; display: table; clear: both; }
 
-    /* Template portrait : Float permet au texte d'envelopper l'image */
-    .tpl-portrait-left .card-body, .tpl-portrait-right .card-body { display: block; }
-    .tpl-portrait-content-wrap { display: block; }
-    .tpl-portrait-left .portrait-wrap { float: left; margin: 0.5rem 2.5rem 1rem 0; width: 320px; max-height: 400px; overflow: hidden; border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); }
-    .tpl-portrait-right .portrait-wrap { float: right; margin: 0.5rem 0 1rem 2.5rem; width: 320px; max-height: 400px; overflow: hidden; border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); }
-    .portrait-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.8s ease; }
+    /* Template portrait : Flex pour layout robuste */
+    .tpl-portrait-content-wrap { display: flex; gap: 3.5rem; align-items: flex-start; }
+    .tpl-portrait-right .tpl-portrait-content-wrap { flex-direction: row-reverse; }
+    .tpl-portrait-left .portrait-wrap, .tpl-portrait-right .portrait-wrap { flex: 0 0 320px; overflow: hidden; border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin: 0; }
+    .portrait-wrap img { width: 100%; height: auto; max-height: 400px; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.8s ease; }
     .portrait-wrap:hover img { transform: scale(1.05); }
-    .portrait-text { display: block; }
-    .tpl-portrait-content-wrap::after { content: ""; display: table; clear: both; }
+    .portrait-text { flex: 1; min-width: 0; }
 
     .tpl-duo .duo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px 6px 0 6px; }
     .tpl-duo .duo-strip .duo-img-wrap { overflow: hidden; height: 280px; border-radius: var(--radius-sm); }
@@ -333,6 +333,15 @@
     .lightbox-next { right: 30px; }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .tpl-side-left .card-body:last-child, .tpl-side-right .card-body:last-child { flex-direction: column; padding: 4.5rem; gap: 2rem; }
+      .tpl-side-left .side-img-wrap.left, .tpl-side-right .side-img-wrap.right { width: 100%; max-width: 100%; flex: none; border-radius: var(--radius-sm); }
+      .tpl-side-left .side-img-wrap img, .tpl-side-right .side-img-wrap img { max-height: 400px; }
+
+      .tpl-portrait-content-wrap { flex-direction: column !important; gap: 1.5rem; }
+      .tpl-portrait-left .portrait-wrap, .tpl-portrait-right .portrait-wrap { width: 100%; max-width: 100%; flex: none; max-height: 400px; }
+    }
+
     @media (max-width: 900px) {
       .theme-page, .presentation-end, .icons-section { padding: 4rem 3rem; }
       .cover-content, .cover-brand { left: 2.5rem; right: 2.5rem; }
@@ -350,6 +359,7 @@
 
       .grid-2 { grid-template-columns: 1fr; }
       .card-body { padding: 2rem; }
+      .tpl-side-left .card-body:last-child, .tpl-side-right .card-body:last-child { padding: 2rem; }
       .cico-card { padding: 2rem; }
       .attention-box { flex-direction: column; gap: 1rem; padding: 2rem; }
 
@@ -357,11 +367,11 @@
       .lightbox-prev { left: 15px; width: 44px; height: 44px; font-size: 1.5rem; }
       .lightbox-next { right: 15px; width: 44px; height: 44px; font-size: 1.5rem; }
 
-      .tpl-side-left, .tpl-side-right { display: block; }
-      .tpl-side-left .side-img-wrap.left, .tpl-side-right .side-img-wrap.right { float: none; width: 100%; max-width: 100%; max-height: 300px; margin: 0 0 1.5rem 0; border-radius: var(--radius-sm); }
+      .tpl-side-left .side-img-wrap.left, .tpl-side-right .side-img-wrap.right { max-height: 300px; margin: 0 0 1.5rem 0; }
+      .tpl-side-left .side-img-wrap img, .tpl-side-right .side-img-wrap img { max-height: 300px; }
 
-      .tpl-portrait-content-wrap { display: flex; flex-direction: column !important; gap: 1.5rem; }
-      .tpl-portrait-left .portrait-wrap, .tpl-portrait-right .portrait-wrap { float: none; width: 100%; max-height: 300px; margin: 0 0 1.5rem 0; }
+      .tpl-portrait-left .portrait-wrap, .tpl-portrait-right .portrait-wrap { max-height: 300px; margin: 0 0 1.5rem 0; }
+      .portrait-wrap img { max-height: 300px; }
 
       .tpl-duo .duo-strip { grid-template-columns: 1fr; padding: 0; gap: 0; }
       .tpl-duo .duo-strip .duo-img-wrap { height: 200px; border-radius: 0; }
@@ -465,6 +475,125 @@
     /* Make standalone (non-grouped) inline images appear as a clean rounded block */
     .card-desc > p > img:only-child { display: block; margin: 1.5rem auto; }
     .attention-box .card-desc { width: 100%; }
+
+    /* ── MOBILE OVERFLOW FIXES ── */
+
+/* Fix kv-line value overflow */
+.kv-val {
+  max-width: 60%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Fix card-desc content inside flex/grid containers */
+.tpl-side-left .card-desc,
+.tpl-side-right .card-desc,
+.portrait-text {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Fix inline images overflowing their containers */
+.card-desc img {
+  max-width: 100% !important;
+  height: auto;
+}
+
+/* Fix inline-media-stack overflow on small screens */
+@media (max-width: 640px) {
+  .card-desc .inline-media-stack {
+    overflow: hidden;
+  }
+  .card-desc .inline-media-stack > img {
+    min-height: 120px;
+  }
+}
+
+/* Fix card body not clipping on mobile */
+@media (max-width: 768px) {
+  .card {
+    overflow: hidden;
+  }
+
+  /* Fix side templates on tablet/mobile — ensure full-width stacking */
+  .tpl-side-left .card-body:last-child,
+  .tpl-side-right .card-body:last-child {
+    flex-direction: column !important;
+    padding: 2rem !important;
+    gap: 1.5rem;
+  }
+
+  .tpl-side-left .side-img-wrap.left,
+  .tpl-side-right .side-img-wrap.right {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    border-radius: var(--radius-sm);
+    margin: 0;
+  }
+
+  /* Fix portrait templates */
+  .tpl-portrait-left .portrait-wrap,
+  .tpl-portrait-right .portrait-wrap {
+    width: 100%;
+    flex: none;
+  }
+
+  /* Prevent text overflow in attention boxes */
+  .attention-box .card-desc {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Prevent cover strip text overflow */
+  .cover-strip-text {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  /* Fix reco-card grid on mobile */
+  .reco-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Fix kv-line on mobile */
+  .kv-line {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .kv-val {
+    text-align: left;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ensure card bodies don't overflow on very small screens */
+  .card-body {
+    padding: 1.5rem !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Fix trio/quad strips — single column on tiny screens */
+  .tpl-trio .trio-strip {
+    grid-template-columns: 1fr;
+  }
+  .tpl-trio .trio-strip .trio-img-wrap {
+    height: 200px;
+  }
+  .tpl-trio .trio-strip .trio-img-wrap:last-child {
+    display: block;
+  }
+
+  /* Fix inline media — single column */
+  .card-desc .inline-media-stack[data-count="2"] {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 200px;
+  }
+}
   </style>
 </head>
 <body>
@@ -483,9 +612,7 @@
 </div>
 
 <script>
-/* ─────────────────────────────────────────────────────────────
-   CONFIG
-───────────────────────────────────────────────────────────── */
+
 const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
 const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
 const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
@@ -499,9 +626,7 @@ const TABLE_LISTE_MAISON   = 'ListeMaison';
 const TABLE_WORKFLOW       = 'WorkFlowBreezeway';
 const TABLE_RECOMMANDATION = 'Recommandation';
 
-/* ─────────────────────────────────────────────────────────────
-   ICON MAP
-───────────────────────────────────────────────────────────── */
+
 const ICON_MAP = [
   { keys: ['ping-pong','ping pong','table de ping-pong','table de ping pong'], icon: 'https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67', label: 'Ping-pong' },
   { keys: ['babyfoot','baby-foot','baby foot'], icon: 'https://img.icons8.com/?size=100&id=9820&format=png&color=1F6D67', label: 'Babyfoot' },
@@ -1188,11 +1313,49 @@ function getRecommandation(data, maisonId) {
 
 function get_instruction_depart(rec) {
   if (!rec?.fields?.InstructionDepart) return '';
+
+  // 1. Nettoyer l'éventuel HTML (ignorer les balises et garder le texte)
+  let rawText = rec.fields.InstructionDepart;
+  // Remplacer les balises de bloc par des sauts de ligne pour éviter de coller les mots
+  rawText = rawText.replace(/<\/?(div|p|br|h[1-6]|li|ul|ol|table|tr)[^>]*>/gi, '\n');
+  // Supprimer toutes les balises HTML restantes
+  rawText = rawText.replace(/<[^>]+>/g, '');
+
+  // 2. Décoder les entités HTML éventuelles
+  const txt = document.createElement("textarea");
+  txt.innerHTML = rawText;
+  rawText = txt.value;
+
+  // 3. Séparer par lignes et formatter automatiquement
+  const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+  let out = '';
+  let inList = false;
+
+  for (let line of lines) {
+    // Si la ligne est en MAJUSCULES -> on la transforme en <h2>
+    const isHeader = line === line.toUpperCase() && line.length > 2 && /[A-ZÉÈÀÙÂÊÎÔÛÇ]/.test(line);
+    // Si la ligne commence par un tiret -> on la transforme en liste
+    const isListItem = /^(?:[-•*]\s+|\d+\.\s+)/.test(line);
+
+    if (isHeader) {
+      if (inList) { out += '</ul>'; inList = false; }
+      out += `<h2 style="font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">${escapeHtml(line)}</h2>`;
+    } else if (isListItem) {
+      if (!inList) { out += '<ul class="desc-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
+      const cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
+      out += `<li>${escapeHtml(cleanLine)}</li>`;
+    } else {
+      if (inList) { out += '</ul>'; inList = false; }
+      out += `<p style="margin-bottom: 1rem;">${escapeHtml(line)}</p>`;
+    }
+  }
+  if (inList) out += '</ul>';
+
   return `<div class="card reveal" style="margin-top:3rem;">
     <div class="card-body" id="instruction-depart">
       <div class="category-badge">Check-out</div>
       <h3 class="card-item-title">Instructions de départ</h3>
-      <div class="card-desc">${parseDescription(rec.fields.InstructionDepart, null, false)}</div>
+      <div class="card-desc">${out}</div>
     </div>
   </div>`;
 }
