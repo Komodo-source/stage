@@ -80,13 +80,16 @@
     .cover-strip-id { font-family: 'Julius Sans One', sans-serif; font-size: 1.4rem; color: var(--white); letter-spacing: 3px; transition: var(--transition); }
     .cover-strip-id:hover { color: var(--accent); }
 
-    /* ── SEARCH ── */
-    #search-container { position: fixed; top: 2.5rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; align-items: center; background: rgba(255,255,255,0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 50px; box-shadow: 0 15px 45px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.6); overflow: hidden; width: 90%; max-width: 450px; transition: var(--transition); }
-    #search-container:focus-within { box-shadow: 0 20px 60px rgba(15,61,58,0.12); transform: translateX(-50%) translateY(-3px); background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.8); }
-    #search { flex: 1; border: none; outline: none; padding: 1rem 1.8rem; font-family: 'Outfit', sans-serif; font-size: 1.05rem; background: transparent; color: var(--ink); }
-    #search::placeholder { color: var(--ink-light); font-weight: 400; }
-    #search-button { padding: 1rem 1.8rem; background: transparent; border: none; color: var(--green); cursor: pointer; font-size: 1.3rem; transition: var(--transition); }
-    #search-button:hover { color: var(--accent); transform: scale(1.15); }
+    /* ── RECHERCHE FLOTTANTE ── */
+    .search-widget { position: fixed; bottom: 90px; right: 2rem; background: var(--white); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow-hover); width: 320px; max-height: 400px; display: flex; flex-direction: column; gap: 1rem; z-index: 1000; opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95); transition: var(--transition); border: 1px solid rgba(0,0,0,0.05); }
+    .search-widget.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    #search-input { flex: 1; padding: 0.8rem 1.2rem; border: 1px solid var(--warm-mid); border-radius: 30px; outline: none; font-family: 'Outfit', sans-serif; font-size: 1rem; width: 100%; }
+    #search-input::placeholder { color: var(--ink-light); }
+    .search-results { display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; max-height: 250px; }
+    .search-results::-webkit-scrollbar { width: 6px; }
+    .search-results::-webkit-scrollbar-thumb { background: var(--warm-dark); border-radius: 10px; }
+    .search-result-item { padding: 0.8rem 1rem; border-radius: var(--radius-sm); background: var(--warm); cursor: pointer; transition: var(--transition); font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: var(--ink); line-height: 1.3; }
+    .search-result-item:hover { background: var(--green-pale); color: var(--green-dark); }
 
     /* ── SECTION PAGES ── */
     .theme-page { padding: 8rem 5vw; border-bottom: 1px solid rgba(0,0,0,0.03); position: relative; }
@@ -96,7 +99,7 @@
     .theme-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 3.5rem; font-style: italic; font-weight: 400; letter-spacing: -1px; }
     .theme-header::after { content: ''; display: block; width: 60px; height: 1px; background: var(--green-mid); margin: 2rem auto 0; opacity: 0.5; }
 
-    .card { margin-bottom: 5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: var(--transition); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; position: relative; }
+    .card { margin-bottom: 5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; position: relative; }
     .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
     .card-body { padding: 4.5rem; min-width: 0; }
     .card-item-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 2.2rem; margin-bottom: 1.5rem; font-weight: 400; letter-spacing: -0.5px; line-height: 1.2; }
@@ -222,9 +225,9 @@
     .cico-time { font-family: 'Julius Sans One', sans-serif; font-size: 3rem; color: var(--green-dark); }
 
     .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
-    .reco-card { border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: var(--transition); display: flex; flex-direction: column; }
+    .reco-card { border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
     .reco-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .reco-body { padding: 2.5rem; flex: 1; display: flex; flex-direction: column; }
+    .reco-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
     .reco-name { font-family: 'Julius Sans One', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; margin-bottom: 0.75rem; line-height: 1.3; }
     .reco-score { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; color: var(--white); background: var(--accent); padding: 0.3rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1.25rem; align-self: flex-start; letter-spacing: 1px; }
     .reco-desc { flex: 1; }
@@ -234,7 +237,7 @@
     /* ── ICONS SECTION ── */
     .icons-section { padding: 5rem; background: var(--green-light); border-bottom: 1px solid var(--warm-mid); }
     .icons-grid { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 3rem; }
-    .icon-chip { display: flex; flex-direction: column; align-items: center; gap: 1rem; background: var(--white); border-radius: var(--radius); padding: 1.5rem 2rem; min-width: 120px; box-shadow: var(--shadow-soft); transition: var(--transition); }
+    .icon-chip { display: flex; flex-direction: column; align-items: center; gap: 1rem; background: var(--white); border-radius: var(--radius); padding: 1.5rem 2rem; min-width: 120px; box-shadow: var(--shadow-soft); transition: var(--transition); cursor: pointer; }
     .icon-chip:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
     .icon-chip img { width: 42px; height: 42px; object-fit: contain; }
     .icon-chip span { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-align: center; line-height: 1.3; }
@@ -287,7 +290,7 @@
       .cover-brand { top: 2rem; left: 1.5rem; right: 1.5rem; }
       .cover-content { bottom: 8rem; left: 1.5rem; right: 1.5rem; }
       .cover-title { font-size: 3rem; }
-      .cover-chapters { gap: 1.5rem; }
+      .cover-chapters { gap: 1.5rem;         padding-bottom: 6rem;}
       .cover-strip { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
       .grid-2 { grid-template-columns: 1fr; }
       .card-body { padding: 2rem; }
@@ -321,8 +324,7 @@
     }
 
     @media (max-width: 480px) {
-      #search-container { top: 1.5rem; width: calc(100% - 3rem); }
-      #search { font-size: 0.95rem; padding: 0.8rem 1.2rem; }
+      .search-widget { left: 1rem; right: 1rem; width: auto; bottom: 85px; }
       .theme-title { font-size: 2.2rem; }
       .card-item-title { font-size: 1.5rem; }
       .lightbox-prev, .lightbox-next { display: none; }
@@ -405,8 +407,14 @@
 
     .sticky-nav { position: fixed; top: 0; left: 0; width: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000; display: flex; justify-content: center; gap: 2rem; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-bottom: 1px solid rgba(0,0,0,0.05); }
     .sticky-nav.visible { transform: translateY(0); }
-    .sticky-nav a { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-decoration: none; transition: color 0.3s ease; }
+    .sticky-nav a { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-decoration: none; transition: all 0.3s ease; padding-bottom: 4px; border-bottom: 2px solid transparent; }
     .sticky-nav a:hover { color: var(--accent); }
+
+    /* STYLE AJOUTÉ/CORRIGÉ POUR LA NAVIGATION ACTIVE */
+    .nav-link.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
 
     .floating-menu { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem; }
     .floating-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--white); box-shadow: 0 10px 25px rgba(15, 61, 58, 0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none; border: 1px solid rgba(0,0,0,0.05); font-size: 1.2rem; }
@@ -427,7 +435,7 @@
     .host-portrait { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft); border: 4px solid var(--white); }
     .welcome-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green-dark); line-height: 1.4; font-style: italic; }
 
-    details.elegant-accordion { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin-bottom: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
+    details.elegant-accordion { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin-bottom: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.02); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
     details.elegant-accordion summary { padding: 1.5rem 2rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green-dark); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
     details.elegant-accordion summary::-webkit-details-marker { display: none; }
     details.elegant-accordion summary::after { content: '+'; font-size: 1.5rem; color: var(--accent); transition: transform 0.3s ease; font-weight: 400; font-family: 'Outfit', sans-serif; }
@@ -473,31 +481,55 @@
       .weather-suggestion { border-left: none; border-top: 2px solid var(--accent-soft); padding-left: 0; padding-top: 1.5rem; }
       .emergency-section { flex-direction: column; padding: 2rem; text-align: center; align-items: center; }
       .reco-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1.5rem; padding-bottom: 2rem; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-      .reco-card { scroll-snap-align: center; min-width: 85vw; flex-shrink: 0; }
+      .reco-card { scroll-snap-align: center; max-width: 15rem;
+        max-height: 30rem; flex-shrink: 0; }
       .playlist-card { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem; }
       .playlist-card iframe { width: 100%; }
       .welcome-section { padding: 0 1rem; }
+      .card-desc{ font-size: 0.9rem;}
+
+      #info-conciergerie{
+        font-size: 12px;
+      }
+    }
+
+    #info-conciergerie{
+        color: var(--warm);
+        width: 40%;
     }
   </style>
 </head>
 <body>
 <div id="progress-bar"></div>
 <nav class="sticky-nav" id="sticky-nav">
-  <a href="#section-info">Maison</a>
-  <a href="#section-photos">Photos</a>
-  <a href="#section-sejour">Séjour</a>
-  <a href="#section-icons">Équipements</a>
-  <a href="#section-reco">Adresses</a>
-  <a href="#instruction-depart">Départ</a>
+  <a class="nav-link" href="#section-info">arrivée</a>
+  <a class="nav-link" href="#point-attention">Point d'attention</a>
+
+  <a class="nav-link" href="#intérieur">Equipements intérieur</a>
+  <a class="nav-link" href="#extérieur">Equipements extérieurs</a>
+  <a class="nav-link" href="#section-reco">Recommandations</a>
+  <a class="nav-link" href="#instruction-depart">Départ</a>
 </nav>
+
+<!-- MENU FLOTTANT UNIQUE CORRIGÉ -->
 <div class="floating-menu" id="floating-menu">
   <div class="floating-items">
+    <a onclick="toggleSearch()" class="floating-btn" title="Rechercher" style="cursor:pointer; font-size: 1.2rem;">🔍</a>
     <a href="#section-info" class="floating-btn" title="Maison">🏠</a>
     <a href="#section-wifi" class="floating-btn" title="Wi-Fi">📶</a>
     <a href="#section-reco" class="floating-btn" title="Adresses">🍽</a>
     <a href="#instruction-depart" class="floating-btn" title="Départ">🚪</a>
   </div>
   <button class="floating-btn floating-main" onclick="this.parentElement.classList.toggle('active')">+</button>
+</div>
+
+<!-- NOUVEAU WIDGET DE RECHERCHE FLOTTANT -->
+<div class="search-widget" id="search-widget">
+  <div style="display:flex; gap:10px; align-items:center;">
+    <input type="search" id="search-input" placeholder="Rechercher un équipement..." autocomplete="off" oninput="doSearch(this.value)">
+    <button onclick="toggleSearch()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--ink-light); padding:0 0.5rem;">✕</button>
+  </div>
+  <div id="search-results" class="search-results"></div>
 </div>
 
 <div id="loading">Préparation de votre livret...</div>
@@ -523,7 +555,7 @@ const BASE_ID = 'appLWhCKR6pEGE02s';
 const TABLE_MAISON         = 'Maison';
 const TABLE_LIVRET         = 'Livret';
 const TABLE_PISCINE        = 'Piscine';
-const TABLE_EQUIPEMENT     = 'equipement';
+const TABLE_EQUIPEMENT     = 'fonctionnementMaison';
 const TABLE_LISTE_MAISON   = 'ListeMaison';
 const TABLE_WORKFLOW       = 'WorkFlowBreezeway';
 const TABLE_RECOMMANDATION = 'Recommandation';
@@ -536,12 +568,17 @@ const ICON_MAP = [
   { keys: ['trampoline','jeux extérieur','jeux exterieurs','jeux extérieurs'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux' },
   { keys: ['badminton'], icon: 'https://img.icons8.com/?size=100&id=12661&format=png&color=1F6D67', label: 'Badminton' },
   { keys: ['barbecue','bbq'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Barbecue' },
+  { keys: ['brasero'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Brasero' },
+  { keys: ['molkky'], icon: 'https://img.icons8.com/?size=100&id=9789&format=png&color=1F6D67', label: 'Molkky' },
   { keys: ['plancha'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Plancha' },
-  { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=108862&format=png&color=1F6D67', label: 'Friteuse' },
+  { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=8421&format=png&color=1F6D67', label: 'Friteuse' },
   { keys: ['machine à café','café','nespresso','café à grain'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
   { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
   { keys: ['piscine'], icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: 'Piscine' },
-  { keys: ['bain nordique','jacuzzi','spa'], icon: 'https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67', label: 'Bain nordique' },
+  { keys: ['lave', 'machine'], icon: 'https://img.icons8.com/?size=100&id=8472&format=png&color=1F6D67', label: 'Machine à Laver' },
+  { keys: ['hammam', 'sauna'], icon: 'https://img.icons8.com/?size=100&id=37111&format=png&color=1F6D67', label: 'Sauna' },
+  { keys: ['bain nordique'], icon: 'https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67', label: 'Bain Nordique' },
+  { keys: ['jacuzzi', 'spa'], icon: 'https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67', label: 'jacuzzi/spa' },
   { keys: ['cheminée','cheminee','poêle','poele'], icon: 'https://img.icons8.com/?size=100&id=3104&format=png&color=1F6D67', label: 'Cheminée' },
   { keys: ['bibliothèque','biblioth'], icon: 'https://img.icons8.com/?size=100&id=94kYsj9I3t8U&format=png&color=1F6D67', label: 'Bibliothèque' },
   { keys: ['tv','télévision','television','netflix'], icon: 'https://img.icons8.com/?size=100&id=540&format=png&color=1F6D67', label: 'TV' },
@@ -553,6 +590,8 @@ const ICON_MAP = [
   { keys: ['parasol'], icon: 'https://img.icons8.com/?size=100&id=s7nP5hAh4fJM&format=png&color=1F6D67', label: 'Parasol' },
   { keys: ['potager'], icon: 'https://img.icons8.com/?size=100&id=5I9mgW1o2sOm&format=png&color=1F6D67', label: 'Potager' },
   { keys: ['wifi'], icon: 'https://img.icons8.com/?size=100&id=16619&format=png&color=1F6D67', label: 'Wi-Fi' },
+  { keys: ['musculation', 'gym', 'haltères', 'poids'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Musculation' },
+  { keys: ['bateau', 'barque'], icon: 'https://img.icons8.com/?size=100&id=9317&format=png&color=1F6D67', label: 'Barque/Bateau' },
 ];
 
 window.addEventListener('scroll', () => {
@@ -582,6 +621,7 @@ function getEquipmentIconEntry(nomEquipement) {
    LIGHTBOX
 ───────────────────────────────────────────────────────────── */
 let _lbImages = [], _lbIndex = 0;
+let has_piscine = false;
 
 function openLightbox(src, imagesArr, index) {
   _lbImages = Array.isArray(imagesArr) ? imagesArr : [src];
@@ -631,6 +671,54 @@ document.addEventListener('keydown', e => {
 });
 
 /* ─────────────────────────────────────────────────────────────
+   INTERSECTION OBSERVER FIX POUR LA NAVIGATION ACTIVE
+───────────────────────────────────────────────────────────── */
+function initScrollSpy() {
+  const navLinks = document.querySelectorAll(".nav-link");
+  const observerOptions = {
+    root: null,
+    rootMargin: "-20% 0px -70% 0px", // Permet d'activer le lien quand la section atteint le haut de l'écran
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          // On compare l'href avec l'id trouvé
+          if (link.getAttribute("href") === `#${id}`) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  navLinks.forEach(link => {
+    const targetId = link.getAttribute("href").substring(1);
+    let targetSection = document.getElementById(targetId);
+
+    // Fallback pour la casse (ex: Airtable génère "id=Intérieur" mais le lien est href="#intérieur")
+    if (!targetSection) {
+      const allEls = document.querySelectorAll('[id]');
+      for (let el of allEls) {
+        if (el.id.toLowerCase() === targetId.toLowerCase()) {
+          targetSection = el;
+          link.setAttribute("href", `#${el.id}`); // On corrige le lien dynamique pour qu'il marche au clic
+          break;
+        }
+      }
+    }
+
+    if (targetSection) observer.observe(targetSection);
+  });
+}
+
+
+/* ─────────────────────────────────────────────────────────────
    AIRTABLE FETCH
 ───────────────────────────────────────────────────────────── */
 async function fetchAll(table) {
@@ -646,18 +734,6 @@ async function fetchAll(table) {
     offset  = data.offset || null;
   } while (offset);
   return records;
-}
-
-async function fetchHousePhotos(nomMaison) {
-  let url = `${SUPABASE_URL}/rest/v1/house_photos?select=*&nom_maison=eq.${encodeURIComponent(nomMaison)}&order=rank.asc.nullslast`;
-  if (nomMaison === "Domaine d'Auxy") {
-    url = `${SUPABASE_URL}/rest/v1/house_photos?select=*&nom_maison=eq.Le+Domaine+d%27Auxy&order=rank.asc.nullslast`;
-  }
-  const res = await fetch(url, {
-    headers: { 'apikey': IDYLLIQ_API_KEY, 'Authorization': `Bearer ${IDYLLIQ_API_KEY}` }
-  });
-  if (!res.ok) { console.warn('Could not fetch house photos'); return []; }
-  return await res.json();
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -1004,25 +1080,69 @@ function parseDescription(text, attachments, hideInlineImages) {
   );
 }
 
+/* ─────────────────────────────────────────────────────────────
+   FIX: Séparation étanche Intérieur/Extérieur pour Icons
+───────────────────────────────────────────────────────────── */
 function renderIconsSection(equipItems) {
-  const seen = new Set(), chips = [];
+  const seen = new Set();
+  const intChips = [];
+  const extChips = [];
+    if (has_piscine){
+      extChips.push({icon: {icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: "Piscine"}, item: {Item: 'section-piscine'} });
+      has_piscine = false;
+    }
+
   equipItems.forEach(item => {
     const entry = getEquipmentIconEntry(item.Item);
-    if (entry && !seen.has(entry.label)) { seen.add(entry.label); chips.push(entry); }
+
+    if (entry && !seen.has(entry.label)) {
+      seen.add(entry.label);
+      const cat = (item.Categorie || '').toLowerCase().trim();
+
+      if (cat.includes('extérieur') || cat.includes('exterieur')) {
+        extChips.push({ icon: entry, item: item });
+      } else if (cat.includes('intérieur') || cat.includes('interieur')) {
+        intChips.push({ icon: entry, item: item });
+      }
+    }
   });
-  if (!chips.length) return '';
-  const chipsHtml = chips.map(entry => `
-    <div class="icon-chip reveal">
-      <img src="${escapeAttr(entry.icon)}" alt="${escapeAttr(entry.label)}" loading="lazy">
-      <span>${escapeHtml(entry.label)}</span>
-    </div>`).join('');
+  console.log("extChips", extChips);
+
+  if (!intChips.length && !extChips.length) return '';
+
+  let chipsHtml = "";
+
+  if (intChips.length > 0) {
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Intérieur</h2>";
+    chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
+    intChips.forEach(c => {
+      chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
+        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <span>${escapeHtml(c.icon.label)}</span>
+      </div>`;
+    });
+    chipsHtml += `</div>`;
+  }
+
+  if (extChips.length > 0) {
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Extérieur</h2>";
+    chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
+    extChips.forEach(c => {
+      chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
+        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <span>${escapeHtml(c.icon.label)}</span>
+      </div>`;
+    });
+    chipsHtml += `</div>`;
+  }
+
   return `
     <section class="icons-section reveal" id="section-icons">
       <div class="theme-header">
         <div class="theme-label">À votre disposition</div>
         <div class="theme-title">Équipements</div>
       </div>
-      <div class="icons-grid">${chipsHtml}</div>
+      <div class="icons-grid" style="display:flex;flex-direction:column;align-items:center;width:100%;">${chipsHtml}</div>
     </section>`;
 }
 
@@ -1055,17 +1175,30 @@ function renderWifiSection(items, index) {
 }
 
 function renderThemePage(theme, items, index) {
-  if (theme.toLowerCase() === 'wifi') return renderWifiSection(items, index);
-  const cardsHtml = items.map(item => renderEquipCard(item)).join('');
-  return `
-    <section id="section-equipements-${index}" class="theme-page reveal">
-      <div class="theme-header">
-        <div class="theme-label">Équipements</div>
-        <div class="theme-title">${escapeHtml(theme)}</div>
-      </div>
-      ${cardsHtml}
-    </section>`;
-}
+  console.log("theme", theme);
+  console.log("items", items);
+    if (theme.toLowerCase() === 'wifi'){
+      const navi = document.getElementById("sticky-nav");
+      const piscine = document.createElement("a");
+      piscine.className = "nav-link";
+      piscine.href = "#section-wifi";
+      piscine.innerText = "Wifi";
+      navi.insertBefore(piscine, navi.childNodes[4]);
+      return renderWifiSection(items, index);
+    }
+
+    const cardsHtml = items.map(item => renderEquipCard(item)).join('');
+      if(escapeHtml(theme).includes("intérieur") || escapeHtml(theme).includes("extérieur")){
+        return `
+        <section id="${escapeHtml(theme)}" class="theme-page reveal">
+          <div class="theme-header">
+            <div class="theme-label">Équipements</div>
+            <div class="theme-title">${escapeHtml(theme)}</div>
+            </div>
+            ${cardsHtml}
+            </section>`;
+      }
+    }
 
 function parseWifiCredentials(description) {
   const lines = (description || '').split('\n').map(l => l.trim()).filter(Boolean);
@@ -1083,19 +1216,20 @@ function renderCover(nomMaison, numero, coverUrl) {
         <img fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}">
         <div class="cover-overlay"></div>
       </div>
-      <div class="cover-brand"><div class="cover-brand-dot"></div><div class="cover-brand-name">Collection Idylliq</div></div>
       <div class="cover-content reveal visible">
         <h1 class="cover-title">${escapeHtml(nomMaison)}</h1>
         <nav class="cover-chapters">
-          <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">01</span><span class="cover-chapter-name">Maison</span></a>
-          <a href="#section-photos"  class="cover-chapter"><span class="cover-chapter-num">02</span><span class="cover-chapter-name">Photos</span></a>
-          <a href="#section-sejour"  class="cover-chapter"><span class="cover-chapter-num">03</span><span class="cover-chapter-name">Séjour</span></a>
-          <a href="#section-icons"   class="cover-chapter"><span class="cover-chapter-num">04</span><span class="cover-chapter-name">Équipements</span></a>
-          <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">05</span><span class="cover-chapter-name">Adresses</span></a>
-          <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">06</span><span class="cover-chapter-name">Départ</span></a>
+          <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
+          <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
+          <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieur</span></a>
+          <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieur</span></a>
+          <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Recommandations</span></a>
+          <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Départ</span></a>
         </nav>
+
       </div>
       <div class="cover-strip">
+        <p id="info-conciergerie">L'équipe Idylliq est à votre disposition tout au long de votre séjour : +33 7 67 59 16 14 | guests@idylliq.fr</p>
         <div class="cover-strip-text">Réf. ${escapeHtml(numero || '')}</div>
         <div class="cover-strip-id" onclick="window.open('https://idylliq.fr/')" style="cursor:pointer">idylliq.fr</div>
       </div>
@@ -1110,7 +1244,6 @@ function get_global_info_maison(rec) {
   const f = rec.fields;
 
   const weatherHtml = `<div id="weather-widget-container" class="reveal"></div>`;
-  const adresse  = f.Adresse ? `<p style="font-size:1.15rem;color:var(--green-dark);margin-bottom:2rem; font-weight:500; display:flex; align-items:center; gap:0.5rem;">📍 ${escapeHtml(f.Adresse)} <button class="copy-btn" onclick="copy('${escapeAttr(f.Adresse)}')" title="Copier l'adresse">📋</button></p>` : '';
   const descHtml = f.Description ? `<div class="card-desc">${parseDescription(f.Description, null, false)}</div>` : '';
   let attentionHtml = '';
   if (f.PointAttention) {
@@ -1148,7 +1281,7 @@ function get_global_info_maison(rec) {
     <section id="section-info" class="theme-page reveal">
       ${weatherHtml}
       <div class="theme-header"><div class="theme-label">Découvrir</div><div class="theme-title">La Maison</div></div>
-      ${adresse}${descHtml}${reglesHtml}${attentionHtml}
+      ${descHtml}${reglesHtml}${attentionHtml}
     </section>`;
 }
 
@@ -1183,8 +1316,6 @@ function getCICO(workflowRecords, maisonId) {
 
 /* ─────────────────────────────────────────────────────────────
    FIX 4: renderPiscinePage — proper per-section photo/video slicing
-   Each section receives only its own slice of photos/videos, so
-   $i0 always means "first image of THIS section", not the global array.
 ───────────────────────────────────────────────────────────── */
 function renderPiscinePage(rec) {
   if (!rec) return '';
@@ -1218,12 +1349,9 @@ function renderPiscinePage(rec) {
   const cardsHtml = validSections.map((section, idx) => {
     const bounds = section.bounds;
 
-    // Slice to this section's photos and videos only
     const sectionPhotos = allPhotos.slice(bounds.pStart, bounds.pEnd);
     const sectionVideos = videos.slice(bounds.vStart, bounds.vEnd);
 
-    // Re-number any absolute beacon indices in the text to section-relative indices
-    // e.g. if pStart=2, replace $i2 → $i0, $i3 → $i1 (highest first to avoid double-replace)
     let enrichedText = section.text;
     if (bounds.pStart > 0) {
       for (let i = bounds.pEnd - 1; i >= bounds.pStart; i--) {
@@ -1241,25 +1369,23 @@ function renderPiscinePage(rec) {
         );
       }
     }
-    // Normalize bare $i / $v (without a number) to index 0
     enrichedText = enrichedText.replace(/\$i(?!\d)/g, '$i0').replace(/\$v(?!\d)/g, '$v0');
 
-    // Auto-inject any section photos not yet explicitly referenced
     const usedPIdx = [...enrichedText.matchAll(/\$i(\d+)/g)].map(m => +m[1]);
     const freePhotos = sectionPhotos.map((_, i) => i).filter(i => !usedPIdx.includes(i));
     if (freePhotos.length) {
       enrichedText += '\n\n' + freePhotos.map(i => '$i' + i).join(' ');
     }
 
-    // Auto-inject any section videos not yet explicitly referenced
     const usedVIdx = [...enrichedText.matchAll(/\$v(\d+)/g)].map(m => +m[1]);
     const freeVideos = sectionVideos.map((_, i) => i).filter(i => !usedVIdx.includes(i));
     if (freeVideos.length) {
       enrichedText += '\n\n' + freeVideos.map(i => '$v' + i).join('\n');
     }
 
-    // Pass the SLICED arrays — $i0 now maps to sectionPhotos[0], not allPhotos[0]
     const descHtml = parseDescriptionWithInline(enrichedText, sectionPhotos, sectionVideos);
+
+
 
     return `
       <details class="elegant-accordion reveal" ${idx === 0 ? 'open' : ''}>
@@ -1270,6 +1396,14 @@ function renderPiscinePage(rec) {
       </details>
     `;
   }).join('');
+    const navi = document.getElementById("sticky-nav");
+    const piscine = document.createElement("a");
+    piscine.className = "nav-link";
+    piscine.href = "#section-piscine";
+    piscine.innerText = "Piscine";
+    console.log(navi.childNodes);
+    navi.insertBefore(piscine, navi.childNodes[10]);
+    has_piscine = true;
 
   return `
     <section id="section-piscine" class="theme-page reveal">
@@ -1304,10 +1438,9 @@ function getRecommandation(data, maisonId) {
       </div>
       <div class="mood-filters reveal">
         <button class="mood-filter active">Tout</button>
-        <button class="mood-filter">Pour les familles</button>
-        <button class="mood-filter">Pour la détente</button>
-        <button class="mood-filter">Amateurs de gastronomie</button>
-        <button class="mood-filter">Échappée romantique</button>
+        <button class="mood-filter">Commerce</button>
+        <button class="mood-filter">Visite</button>
+        <button class="mood-filter">Restaurant</button>
       </div>
       <div class="reco-grid">${cards}</div>
     </section>`;
@@ -1346,16 +1479,18 @@ function get_instruction_depart(rec) {
   }
   if (inList) out += '</ul>';
 
-  return `<div class="card reveal" style="margin-top:3rem;">
-    <div class="card-body" id="instruction-depart">
-      <div class="category-badge">Check-out</div>
-      <h3 class="card-item-title">Instructions de départ</h3>
-      <div class="card-desc">
-        <p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>
-        ${out}
-      </div>
-    </div>
-  </div>`;
+  return `<section class="theme-page" id="instruction-depart">
+            <div class="card reveal" style="margin-top:0;">
+              <div class="card-body">
+                <div class="category-badge">Check-out</div>
+                <h3 class="card-item-title">Instructions de départ</h3>
+                <div class="card-desc">
+                  <p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>
+                  ${out}
+                </div>
+              </div>
+            </div>
+          </section>`;
 }
 
 function copy(v) {
@@ -1394,9 +1529,6 @@ async function fetchWeather(address) {
   } catch(e) { console.warn('Could not fetch weather data', e); }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   MAIN BUILD
-───────────────────────────────────────────────────────────── */
 async function buildLivret(IdMaison) {
   const [ maisonRecs, livretRecs, equipRecs, piscineRecs, wfRecs, recoRecs, listRecs ] =
     await Promise.all([
@@ -1412,7 +1544,6 @@ async function buildLivret(IdMaison) {
   const nomMaison = listData?.fields?.NomMaison || IdMaison;
   const coverImg  = listData?.fields?.ImageMaison?.[0]?.url || '';
 
-  const housePhotosPromise = fetchHousePhotos(nomMaison);
   const livretIds = maisonRecord.fields['Livret 2'] || [];
   const equipIds  = new Set();
 
@@ -1444,23 +1575,42 @@ async function buildLivret(IdMaison) {
     allEquipItems.push(item);
   });
 
-  const housePhotos = await housePhotosPromise;
+  let piscineSectionHtml = maisonRecord.fields['Piscine'];
 
-  const piscineSectionHtml = maisonRecord.fields['Piscine']
-    ? renderPiscinePage(piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id)))
-    : '';
+  if(maisonRecord.fields['Piscine']){
+    piscineSectionHtml = renderPiscinePage(piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id)));
 
+
+  }
+
+
+  console.log("themeMap", themeMap);
+
+
+  let ordered = Object.keys(themeMap)
+    .sort()
+
+    .reduce((obj, key) => {
+      obj[key] = themeMap[key]; // Rebuild the object with sorted keys
+      return obj;
+    }, {});
+
+    console.log(ordered)
+
+  let un = Object.keys(ordered)
+    .reverse()
+    .reduce((obj, key) => {
+      obj[key] = ordered[key];
+      return obj;
+    }, {});
+
+  console.log("themeMap", un);
   const html =
-    `<div id="search-container">
-       <input type="search" id="search" placeholder="Rechercher..." oninput="doSearch(this.value)">
-       <button id="search-button">🔍</button>
-     </div>` +
     renderCover(nomMaison, IdMaison, coverImg) +
     get_global_info_maison(maisonRecord) +
-    renderHousePhotosSection(housePhotos, nomMaison) +
     getCICO(wfRecs, maisonRecord.id) +
     renderIconsSection(allEquipItems) +
-    Object.keys(themeMap).map((th, idx) => renderThemePage(th, themeMap[th], idx)).join('') +
+    Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx)).join('') +
     piscineSectionHtml +
     getRecommandation(recoRecs, maisonRecord.id) +
     get_instruction_depart(maisonRecord) +
@@ -1476,7 +1626,8 @@ async function buildLivret(IdMaison) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('livret-container').innerHTML = html;
 
-  if (maisonRecord.fields.Adresse) fetchWeather(maisonRecord.fields.Adresse);
+  // Lancement du ScrollSpy après l'intégration du HTML
+  initScrollSpy();
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
@@ -1484,10 +1635,54 @@ async function buildLivret(IdMaison) {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+/* ─────────────────────────────────────────────────────────────
+   NOUVELLE LOGIQUE DE RECHERCHE FLOTTANTE
+───────────────────────────────────────────────────────────── */
+function toggleSearch() {
+  const widget = document.getElementById('search-widget');
+  widget.classList.toggle('active');
+  if (widget.classList.contains('active')) {
+    document.getElementById('search-input').focus();
+    document.getElementById('floating-menu').classList.remove('active'); // Ferme le menu +
+  }
+}
+
 function doSearch(query) {
   const q = query.trim().toLowerCase();
-  if (!q) { document.querySelectorAll('.card, .reco-card').forEach(el => el.style.display = ''); return; }
-  document.querySelectorAll('.card, .reco-card').forEach(el => { el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+  const resultsContainer = document.getElementById('search-results');
+  resultsContainer.innerHTML = '';
+
+  if (!q) return;
+
+  const cards = document.querySelectorAll('.card, .reco-card, .elegant-accordion');
+  let matchCount = 0;
+
+  cards.forEach(card => {
+    if (card.textContent.toLowerCase().includes(q)) {
+      const titleEl = card.querySelector('.card-item-title, .reco-name, summary');
+      const title = titleEl ? titleEl.textContent : 'Section correspondante';
+
+      const div = document.createElement('div');
+      div.className = 'search-result-item';
+      div.textContent = title;
+      div.onclick = () => {
+        // Scroll & feedback visuel
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.style.transition = 'box-shadow 0.4s ease';
+        card.style.boxShadow = '0 0 0 4px var(--accent)';
+        if (card.tagName === 'DETAILS') card.open = true;
+        setTimeout(() => card.style.boxShadow = '', 2500);
+
+        toggleSearch(); // Ferme le widget
+      };
+      resultsContainer.appendChild(div);
+      matchCount++;
+    }
+  });
+
+  if (matchCount === 0) {
+    resultsContainer.innerHTML = '<div style="text-align:center; color:var(--ink-light); padding:1rem;">Aucun résultat</div>';
+  }
 }
 
 const urlParams = new URLSearchParams(window.location.search);

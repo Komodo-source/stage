@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Index des livrets pour les maisons</h1>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+    .separator{
+      width: 100%;
+      height: 1px;
+      background-color: #111;
+      margin-top: 1rem;
+    }
+    *{
+      font-family: "Roboto", sans-serif;
+    }
+
+    button{
+      border: 1px solid #1F6D67;
+    border-radius: 15px;
+    width: 15rem;
+    height: 2rem;
+    margin: 1rem;
+    background-color: transparent;
+    cursor: pointer;
+    transition: 0.7s
+    }
+
+    button:hover{
+      background-color: #1F6D67;
+      color: #fff;
+      transform: translateY(-5px);
+    }
+
+    #main-text{
+      text-align: center;
+      margin-top: 5rem;
+    }
+  </style>
+  <script>
+    const TOKEN   = 'pateBMBdl8UARzfUe.966a1390153383e1bd6dd3a7452dab235d0f04f6fd56cf499201964ce837acce';
+const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
+const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
+
+const BASE_ID = 'appLWhCKR6pEGE02s';
+  async function fetchAll(table) {
+    let records = [], offset = null;
+    do {
+      const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
+      if (offset) url.searchParams.set('offset', offset);
+      const res  = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
+      const data = await res.json();
+      console.log(table, data)
+      if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+      records = records.concat(data.records);
+      offset  = data.offset || null;
+    } while (offset);
+    return records;
+  }
+
+function copy(v) {
+  navigator.clipboard.writeText(v).then(() => alert('Id copié !')).catch(() => prompt('Copier Id :', v));
+}
+
+async function buildLivret() {
+  const [ maisonRecs] =
+    await Promise.all([
+      fetchAll("ListeMaison")
+    ]);
+    let elt = "<div id='houses'>";
+      document.getElementById("main-text").innerText = "";
+      elt+= `<h2>Nombre de Maison dans Airtable: ${maisonRecs.length}</h2>`
+      elt += "<div class='separator'></div>";
+    maisonRecs.forEach(element => {
+
+      console.log(element)
+      elt += "<p>ID: " + element.fields.IdMaison + "</p>";
+      elt += "<p>" + element.fields.NomMaison + "</p>";
+
+      elt += `<button onclick="window.open('https://komodo-source.github.io/stage/livret_idylliq.html?maison=${element.fields.IdMaison}', '_blank')" target="_blank">aller vers le livret</button>`;
+      elt += `<button onclick="copy('${element.fields.IdMaison}')">copier le nom de la maison</button>`;
+      elt += "<div class='separator'></div>";
+    });
+    let main = document.getElementById("main");
+    main.innerHTML = elt;
+}
+
+  buildLivret().catch(err => {
+    console.error(err);
+    document.getElementById('loading').innerText = 'Erreur : ' + err.message;
+  });
+
+
+
+  </script>
+  <div class="main" id="main">
+    <h1 id="main-text">Chargement en cours...</h1>
+  </div>
+
+</body>
+</html>
