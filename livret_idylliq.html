@@ -26,6 +26,11 @@
       --gradient-green: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
       --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    #img_end_presentation{
+          width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    }
 
     body {
       background: var(--warm);
@@ -218,7 +223,7 @@
     .rule-text { font-size: 1.15rem; color: var(--ink); line-height: 1.7; font-weight: 400; }
 
     /* ── GRIDS & RECOS ── */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2rem; }
+    .grid-2 { display: grid; gap: 2.5rem; margin-top: 2rem; }
     .cico-card { border-radius: var(--radius); padding: 3.5rem; background: var(--warm); text-align: center; transition: var(--transition); }
     .cico-card:hover { transform: translateY(-4px); background: var(--white); box-shadow: var(--shadow-hover); }
     .cico-label { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 5px; color: var(--accent); margin-bottom: 1.25rem; }
@@ -511,16 +516,11 @@
   <a class="nav-link" href="#instruction-depart">Départ</a>
 </nav>
 
-<!-- MENU FLOTTANT UNIQUE CORRIGÉ -->
 <div class="floating-menu" id="floating-menu">
   <div class="floating-items">
     <a onclick="toggleSearch()" class="floating-btn" title="Rechercher" style="cursor:pointer; font-size: 1.2rem;">🔍</a>
-    <a href="#section-info" class="floating-btn" title="Maison">🏠</a>
-    <a href="#section-wifi" class="floating-btn" title="Wi-Fi">📶</a>
-    <a href="#section-reco" class="floating-btn" title="Adresses">🍽</a>
-    <a href="#instruction-depart" class="floating-btn" title="Départ">🚪</a>
   </div>
-  <button class="floating-btn floating-main" onclick="this.parentElement.classList.toggle('active')">+</button>
+  <button onclick="toggleSearch()" class="floating-btn" title="Rechercher">🔍</button>
 </div>
 
 <!-- NOUVEAU WIDGET DE RECHERCHE FLOTTANT -->
@@ -941,9 +941,9 @@ function renderEquipCard(item, forceTemplate) {
   }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FIX 3: groupConsecutiveImages — simplified onerror (no broken JS escaping)
-───────────────────────────────────────────────────────────── */
+//cette fonction est ici pour grouper consécutivement les valeurs
+
+
 function groupConsecutiveImages(html) {
   // Add simple onerror to hide broken images — no complex JS inside attribute
   html = html.replace(/<img\b([^>]*)>/g, (m, attrs) => {
@@ -961,6 +961,7 @@ function groupConsecutiveImages(html) {
   );
 }
 
+//rendre les texts url en liens
 function linkifyUrls(text) {
   return text.replace(/((?:https?:\/\/[^\s<"'\)\]]+)|(?:www\.[^\s<"'\)\]]+))/g, (match) => {
     if (match.includes('airtableusercontent.com')) return '';
@@ -1148,6 +1149,7 @@ function renderIconsSection(equipItems) {
 
 function renderWifiSection(items, index) {
   const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
+
   const safeId = `qr_wifi_${index}`;
   setTimeout(() => {
     const el = document.getElementById(safeId);
@@ -1202,7 +1204,7 @@ function renderThemePage(theme, items, index) {
 
 function parseWifiCredentials(description) {
   const lines = (description || '').split('\n').map(l => l.trim()).filter(Boolean);
-  return { ssid: lines[0] || '', mdp: lines[1] || '' };
+  return { ssid: lines[0] || '', mdp: lines[1].replace("Mot de passe :", "") || '' };
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -1290,11 +1292,16 @@ function parseRegles(text) {
   let s = String(text)
     .replace(/\s*(N[O°o]\.?\s*\d+\s*[:.\)\-]?\s*)/g, '\n')
     .replace(/(?:^|\n|\.)\s*(\d+\s*[\.\)]\s+)/g, '\n')
-    .replace(/\s*[•\-\*]\s+/g, '\n');
-  const lines = s.split(/\n+/).map(l => l.trim().replace(/^[:.\-)\s]+/, '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    .replace(/\s*[•\-\*]\s+/g, '\n')
+    // New rule: Splits sentences ending in "." and starting with a Capital letter
+    .replace(/\.\s+([A-ZÉÈÀÙÂÊÎÔÛÇ])/g, '.\n$1');
+
+  const lines = s.split(/\n+/)
+    .map(l => l.trim().replace(/^[:.\-)\s]+/, '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+
   return lines;
 }
-
 function getCICO(workflowRecords, maisonId) {
   const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(maisonId));
   if (!related.length) return '';
@@ -1308,8 +1315,7 @@ function getCICO(workflowRecords, maisonId) {
     <section id="section-sejour" class="theme-page reveal" style="background:var(--white);">
       <div class="theme-header"><div class="theme-label">Organisation</div><div class="theme-title">Votre Séjour</div></div>
       <div class="grid-2">
-        <div class="cico-card"><div class="cico-label">Heure d'arrivée</div><div class="cico-time">${escapeHtml(checkin)}</div></div>
-        <div class="cico-card"><div class="cico-label">Heure de départ</div><div class="cico-time">${escapeHtml(checkout)}</div></div>
+        <div class="cico-card"><div class="cico-label">Heure d'arrivée - Heure de départ</div><div class="cico-time">${escapeHtml(checkin)}</div></div>
       </div>
     </section>`;
 }
@@ -1402,7 +1408,7 @@ function renderPiscinePage(rec) {
     piscine.href = "#section-piscine";
     piscine.innerText = "Piscine";
     console.log(navi.childNodes);
-    navi.insertBefore(piscine, navi.childNodes[10]);
+    navi.insertBefore(piscine, navi.childNodes[8]);
     has_piscine = true;
 
   return `
@@ -1445,7 +1451,6 @@ function getRecommandation(data, maisonId) {
       <div class="reco-grid">${cards}</div>
     </section>`;
 }
-
 function get_instruction_depart(rec) {
   if (!rec?.fields?.InstructionDepart) return '';
 
@@ -1457,21 +1462,48 @@ function get_instruction_depart(rec) {
   txt.innerHTML = rawText;
   rawText = txt.value;
 
+  // --- AUTO-FORMATTING (Formatage intelligent du bloc de texte) ---
+
+  // 1. Détecte les mots en MAJUSCULES suivis d'un tiret (ex: " CHAMBRES - ")
+  // et les isole sur leur propre ligne pour en faire des titres.
+  rawText = rawText.replace(/\s+([A-ZÉÈÀÙÂÊÎÔÛÇ]{4,}(?:\s+[A-ZÉÈÀÙÂÊÎÔÛÇ]+)*)\s+-/g, '\n$1\n- ');
+
+  // 2. Détecte spécifiquement "Fermeture de la maison:" et le transforme en titre
+  rawText = rawText.replace(/\s*(Fermeture de la maison\s*:)\s*/gi, '\nFERMETURE DE LA MAISON\n- ');
+
   const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
   let out = '';
   let inList = false;
 
   for (let line of lines) {
+    // Un titre est une ligne entièrement en majuscule
     const isHeader = line === line.toUpperCase() && line.length > 2 && /[A-ZÉÈÀÙÂÊÎÔÛÇ]/.test(line);
-    const isListItem = /^(?:[-•*]\s+|\d+\.\s+)/.test(line);
 
     if (isHeader) {
       if (inList) { out += '</ul>'; inList = false; }
-      out += `<h2 style="font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">${escapeHtml(line)}</h2>`;
-    } else if (isListItem) {
+      out += `<h2 onclick="this.classList.toggle('done')" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <div class="check-circle"></div>
+                <span>${escapeHtml(line)}</span>
+              </h2>`;
+      // On assume que tout ce qui suit un titre est une liste de tâches
+      inList = true;
+      out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">';
+
+    } else if (inList || /^(?:[-•*]\s+|\d+\.\s+)/.test(line)) {
       if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
-      const cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
-      out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(cleanLine)}</span></li>`;
+
+      // On retire le tiret initial s'il y en a un
+      let cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
+
+      const subItems = cleanLine.split(/\.\s+(?=[A-ZÉÈÀÙÂÊÎÔÛÇ])/);
+
+      for (let i = 0; i < subItems.length; i++) {
+        let text = subItems[i].trim();
+        if (i < subItems.length - 1 && !text.endsWith('.')) text += '.';
+
+        out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(text)}</span></li>`;
+      }
+
     } else {
       if (inList) { out += '</ul>'; inList = false; }
       out += `<p style="margin-bottom: 1rem;">${escapeHtml(line)}</p>`;
@@ -1614,7 +1646,11 @@ async function buildLivret(IdMaison) {
     piscineSectionHtml +
     getRecommandation(recoRecs, maisonRecord.id) +
     get_instruction_depart(maisonRecord) +
-    `<section class="presentation-end reveal">
+    `
+    <section class="presentation-idylliq">
+      <img src="end.png" id="img_end_presentation">
+    </scetion>
+    <section class="presentation-end reveal">
        <h1>La Collection Idylliq</h1>
        <p>Cette propriété fait partie de la première collection de maisons haut de gamme pensée pour les familles.</p>
      </section>

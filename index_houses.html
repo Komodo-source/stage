@@ -7,44 +7,183 @@
 </head>
 <body>
   <h1>Index des livrets pour les maisons</h1>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<link rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+ <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-    .separator{
-      width: 100%;
-      height: 1px;
-      background-color: #111;
-      margin-top: 1rem;
-    }
-    *{
-      font-family: "Roboto", sans-serif;
-    }
+   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    button{
-      border: 1px solid #1F6D67;
-    border-radius: 15px;
-    width: 15rem;
-    height: 2rem;
-    margin: 1rem;
-    background-color: transparent;
-    cursor: pointer;
-    transition: 0.7s
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
 
-    button:hover{
-      background-color: #1F6D67;
-      color: #fff;
-      transform: translateY(-5px);
-    }
+body{
+  background:#f5f7fb;
+  color:#111827;
+  padding:2rem;
+}
 
-    #main-text{
-      text-align: center;
-      margin-top: 5rem;
-    }
+h1{
+  font-size:2.5rem;
+  font-weight:700;
+  margin-bottom:2rem;
+}
+
+#main{
+  display:grid;
+  grid-template-columns: 1fr 500px;
+  gap:2rem;
+  align-items:start;
+}
+
+#houses{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:1.5rem;
+}
+
+.house-card{
+  background:white;
+  border-radius:24px;
+  padding:1.5rem;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.05);
+  transition:0.3s ease;
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+.house-card:hover{
+  transform:translateY(-5px);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.08);
+}
+
+.house-id{
+  font-size:0.9rem;
+  color:#1F6D67;
+  font-weight:600;
+  margin-bottom:0.5rem;
+}
+
+.house-name{
+  font-size:1.4rem;
+  font-weight:700;
+  margin-bottom:1.5rem;
+}
+
+.button-group{
+  display:flex;
+  flex-direction:column;
+  gap:0.75rem;
+}
+
+button{
+  border:none;
+  border-radius:14px;
+  padding:0.9rem;
+  background:#1F6D67;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.25s ease;
+}
+
+button:hover{
+  opacity:0.9;
+  transform:translateY(-2px);
+}
+
+.secondary-btn{
+  background:#eef2f7;
+  color:#111827;
+}
+
+#previsu{
+  position:sticky;
+  top:2rem;
+  background:white;
+  overflow:hidden;
+  height:90vh;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+}
+
+#previsu iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+.empty-preview{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  color:#6b7280;
+  font-size:1rem;
+}
+
+@media(max-width:1100px){
+  #main{
+    grid-template-columns:1fr;
+  }
+
+  #previsu{
+    height:600px;
+  }
+
+}
+#search{
+  width:100%;
+  padding:1rem;
+  border:none;
+  border-radius:18px;
+  margin-bottom:2rem;
+  font-size:1rem;
+  background:white;
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+#previsu {
+  --b: 3px;   /* thickness of the border */
+  --c: #c48b62;   /* color of the border */
+  --w: 20px;  /* width of border */
+
+
+  border: var(--b) solid #0000; /* space for the border */
+  --_g: #0000 90deg,var(--c) 0;
+  --_p: var(--w) var(--w) border-box no-repeat;
+  background:
+    conic-gradient(from 90deg  at top    var(--b) left  var(--b),var(--_g)) 0    0    / var(--_p),
+    conic-gradient(from 180deg at top    var(--b) right var(--b),var(--_g)) 100% 0    / var(--_p),
+    conic-gradient(from 0deg   at bottom var(--b) left  var(--b),var(--_g)) 0    100% / var(--_p),
+    conic-gradient(from -90deg at bottom var(--b) right var(--b),var(--_g)) 100% 100% / var(--_p);
+
+}
+
   </style>
   <script>
     const TOKEN   = 'patYI6cIMmXu0OLsn.d36bdefc63925bf68ade486880a8b0829a0362436b35a8822eed725147f6b373';
 const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
 const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
+let ID_previsu = "";
+
+document.addEventListener("input", e => {
+  if(e.target.id === "search"){
+    const value = e.target.value.toLowerCase();
+
+    document.querySelectorAll(".house-card").forEach(card => {
+      const txt = card.innerText.toLowerCase();
+
+      card.style.display =
+        txt.includes(value)
+          ? "block"
+          : "none";
+    });
+  }
+});
 
 const BASE_ID = 'appLWhCKR6pEGE02s';
   async function fetchAll(table) {
@@ -63,7 +202,16 @@ const BASE_ID = 'appLWhCKR6pEGE02s';
   }
 
 function copy(v) {
-  navigator.clipboard.writeText(v).then(() => alert('Id copié !')).catch(() => prompt('Copier Id :', v));
+  navigator.clipboard.writeText(v).then(() => Toastify({
+  text: "Copié !",
+  duration: 2000
+}).showToast()).catch(() => prompt('Copier Id :', v));
+}
+
+function show_livret(id){
+  ID_previsu = id;
+  let previsu_div = document.getElementById("previsu");
+  previsu_div.innerHTML = `<iframe src="https://komodo-source.github.io/stage/livret_idylliq.html?maison=${id}"></iframe>`
 }
 
 async function buildLivret() {
@@ -73,20 +221,64 @@ async function buildLivret() {
     ]);
     let elt = "<div id='houses'>";
       document.getElementById("main-text").innerText = "";
-      elt+= `<h2>Nombre de Maison dans Airtable: ${maisonRecs.length}</h2>`
+      elt+= `<h2>Nombre de Maison dans Airtable: ${maisonRecs.length}</h2>`;
       elt += "<div class='separator'></div>";
     maisonRecs.forEach(element => {
 
       console.log(element)
-      elt += "<p>ID: " + element.fields.IdMaison + "</p>";
-      elt += "<p>" + element.fields.NomMaison + "</p>";
+      elt += `
+<div class="house-card">
 
-      elt += `<button onclick="window.open('https://komodo-source.github.io/stage/livret_idylliq.html?maison=${element.fields.IdMaison}', '_blank')" target="_blank">aller vers le livret</button>`;
-      elt += `<button onclick="copy('${element.fields.IdMaison}')">copier le nom de la maison</button>`;
+  <div class="house-id">
+    ${element.fields.IdMaison}
+  </div>
+
+  <div class="house-name">
+    ${element.fields.NomMaison}
+  </div>
+
+  <div class="button-group">
+
+    <button onclick="window.open(
+      'https://komodo-source.github.io/stage/livret_idylliq.html?maison=${element.fields.IdMaison}',
+      '_blank'
+    )">
+      Ouvrir le livret
+    </button>
+
+    <button class="secondary-btn"
+      onclick="copy('https://komodo-source.github.io/stage/livret_idylliq.html?maison=${element.fields.IdMaison}')">
+      Copier URL
+    </button>
+
+    <button class="secondary-btn"
+      onclick="copy('${element.fields.IdMaison}')">
+      Copier ID<i data-lucide="copy"></i>
+    </button>
+
+    ${
+      window.screen.width >= 768
+      ? `<button onclick="show_livret('${element.fields.IdMaison}')">
+          Prévisualiser <i data-lucide="eye"></i>
+        </button>`
+      : ''
+    }
+
+  </div>
+
+</div>
+`;
+
       elt += "<div class='separator'></div>";
     });
     let main = document.getElementById("main");
+    lucide.createIcons();
+
     main.innerHTML = elt;
+
+    main.innerHTML += `<div id="previsu">
+      <p style="text-align: center;">Pas de Maison prévisualiser :(</p>
+      </div>`
 }
 
   buildLivret().catch(err => {
@@ -98,6 +290,11 @@ async function buildLivret() {
 
   </script>
   <div class="main" id="main">
+    <input
+        type="text"
+        id="search"
+        placeholder="Rechercher une maison..."
+      >
     <h1 id="main-text">Chargement en cours...</h1>
   </div>
 
