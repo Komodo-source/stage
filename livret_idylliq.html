@@ -13,7 +13,7 @@
     :root {
       --green: #1a5c56; --green-dark: #0f3d3a; --green-mid: #247a73;
       --green-light: #e6f0ef; --green-pale: #f2f8f7;
-      --warm: #fcfaf8; --warm-mid: #efebe4; --warm-dark: #d8cebf;
+      --warm: #fcfaf8; --warm-mid: #efebe4; --warem-dark: #d8cebf;
       --ink: #2a2825; --ink-mid: #5c554e; --ink-light: #9c9187;
       --white: #ffffff; --accent: #c48b62; --accent-soft: #dfb393; --accent-pale: #fcf6f1;
       --shadow-soft: 0 15px 45px -10px rgba(15, 61, 58, 0.08), 0 4px 12px rgba(15, 61, 58, 0.03);
@@ -115,13 +115,14 @@
     .tpl-hero:hover .card-hero-img { transform: scale(1.04); }
     .tpl-hero .img-overlay-wrap { overflow: hidden; position: relative; border-radius: var(--radius) var(--radius) 0 0; }
 
-    .tpl-side-left .card-body:last-child { display: flex; gap: 3.5rem; align-items: flex-start; padding-left: 0; }
-    .tpl-side-right .card-body:last-child { display: flex; flex-direction: row-reverse; gap: 3.5rem; align-items: flex-start; padding-right: 0; }
+    /* FIX 5: side layouts wrap text below image on overflow */
+    .tpl-side-left .card-body:last-child { display: flex; gap: 3.5rem; align-items: flex-start; padding-left: 0; flex-wrap: wrap; }
+    .tpl-side-right .card-body:last-child { display: flex; flex-direction: row-reverse; gap: 3.5rem; align-items: flex-start; padding-right: 0; flex-wrap: wrap; }
     .tpl-side-left .side-img-wrap.left { flex: 0 0 45%; max-width: 450px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; margin: 0; }
     .tpl-side-right .side-img-wrap.right { flex: 0 0 45%; max-width: 450px; border-radius: var(--radius-sm) 0 0 var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; margin: 0; }
     .tpl-side-left .side-img-wrap img, .tpl-side-right .side-img-wrap img { width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
     .tpl-side-left:hover .side-img-wrap img, .tpl-side-right:hover .side-img-wrap img { transform: scale(1.05); }
-    .tpl-side-left .card-desc, .tpl-side-right .card-desc { flex: 1; min-width: 0; }
+    .tpl-side-left .card-desc, .tpl-side-right .card-desc { flex: 1; min-width: 220px; }
     .card-body::after { content: ""; display: table; clear: both; }
 
     .tpl-portrait-content-wrap { display: flex; gap: 3.5rem; align-items: flex-start; }
@@ -159,7 +160,7 @@
     .tpl-banner .banner-wrap:hover img { transform: scale(1.02); }
 
     /* ── TYPOGRAPHY & DESC ── */
-    .card-desc { font-family: 'Outfit', sans-serif; font-size: 1.1rem; line-height: 2; color: var(--ink-mid); font-weight: 300; word-break: break-word; overflow-wrap: anywhere; }
+    .card-desc { font-family: 'Outfit', sans-serif; font-size: 1.2rem; line-height: 2; color: var(--ink-mid); font-weight: 300; word-break: break-word; overflow-wrap: anywhere; }
     .card-desc p { margin-bottom: 1.5rem; }
     .card-desc p:last-child { margin-bottom: 0; }
     .card-desc strong { font-weight: 500; color: var(--ink); }
@@ -182,6 +183,115 @@
 
     .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--green-dark); margin: 3rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
     .section-label:first-child { margin-top: 0; }
+
+    /* ── FIX 2: OWNER MESSAGE (Description) ── */
+    .owner-message-card {
+      position: relative;
+      background: linear-gradient(135deg, var(--green-pale) 0%, var(--accent-pale) 100%);
+      border-radius: var(--radius);
+      padding: 3.5rem 4rem 3.5rem 5rem;
+      margin-bottom: 3rem;
+      border: 1px solid rgba(196, 139, 98, 0.2);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    .owner-message-card::before {
+      content: '\201C';
+      position: absolute;
+      top: -0.5rem;
+      left: 1.5rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 10rem;
+      color: var(--accent);
+      opacity: 0.15;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .owner-message-card::after {
+      content: '';
+      position: absolute;
+      right: -60px;
+      bottom: -60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,139,98,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .owner-message-label {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .owner-message-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(196,139,98,0.4), transparent);
+    }
+    .owner-message-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      line-height: 1.9;
+      color: var(--ink);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .owner-message-text p { margin-bottom: 1.2rem; }
+    .owner-message-text p:last-child { margin-bottom: 0; }
+
+    /* ── FIX 1: ACCES SECTION ── */
+    .acces-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(0,0,0,0.03);
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+    .acces-card-header {
+      background: var(--gradient-green);
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .acces-card-header-icon {
+      font-size: 2rem;
+      background: rgba(255,255,255,0.15);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .acces-card-header-title {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 0.3rem;
+    }
+    .acces-card-header-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--white);
+      font-style: italic;
+    }
+    .acces-card-body {
+      padding: 3rem;
+    }
 
     /* ── HOUSE PHOTOS GALLERY ── */
     .photos-section { border-bottom: 1px solid var(--warm-mid); background: var(--white); }
@@ -229,11 +339,11 @@
     .cico-label { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 5px; color: var(--accent); margin-bottom: 1.25rem; }
     .cico-time { font-family: 'Julius Sans One', sans-serif; font-size: 3rem; color: var(--green-dark); }
 
-    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
+    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
     .reco-card { border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
     .reco-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .reco-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
-    .reco-name { font-family: 'Julius Sans One', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; margin-bottom: 0.75rem; line-height: 1.3; }
+    .reco-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; font-size: 0.9rem;}
+    .reco-name { font-family: 'Julius Sans One', sans-serif; font-size: 1rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; margin-bottom: 0.75rem; line-height: 1.3; }
     .reco-score { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; color: var(--white); background: var(--accent); padding: 0.3rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1.25rem; align-self: flex-start; letter-spacing: 1px; }
     .reco-desc { flex: 1; }
     .reco-link { margin-top: 1.5rem; display: inline-block; font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green); text-decoration: none; padding: 1.25rem; border-top: 1px solid var(--warm-mid); width: 100%; text-align: center; transition: var(--transition); background: var(--warm); }
@@ -295,7 +405,7 @@
       .cover-brand { top: 2rem; left: 1.5rem; right: 1.5rem; }
       .cover-content { bottom: 8rem; left: 1.5rem; right: 1.5rem; }
       .cover-title { font-size: 3rem; }
-      .cover-chapters { gap: 1.5rem;         padding-bottom: 6rem;}
+      .cover-chapters { gap: 1.5rem; padding-bottom: 6rem;}
       .cover-strip { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
       .grid-2 { grid-template-columns: 1fr; }
       .card-body { padding: 2rem; }
@@ -326,6 +436,9 @@
       .photos-hero-title { left: 1.5rem; font-size: 1.6rem; }
       .rules-grid { grid-template-columns: 1fr; }
       .lightbox-nav { width: 44px; height: 44px; font-size: 1.5rem; }
+      .owner-message-card { padding: 2.5rem 2rem 2.5rem 3rem; }
+      .acces-card-header { padding: 1.5rem 2rem; }
+      .acces-card-body { padding: 2rem; }
     }
 
     @media (max-width: 480px) {
@@ -414,12 +527,7 @@
     .sticky-nav.visible { transform: translateY(0); }
     .sticky-nav a { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-decoration: none; transition: all 0.3s ease; padding-bottom: 4px; border-bottom: 2px solid transparent; }
     .sticky-nav a:hover { color: var(--accent); }
-
-    /* STYLE AJOUTÉ/CORRIGÉ POUR LA NAVIGATION ACTIVE */
-    .nav-link.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
+    .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     .floating-menu { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem; }
     .floating-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--white); box-shadow: 0 10px 25px rgba(15, 61, 58, 0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none; border: 1px solid rgba(0,0,0,0.05); font-size: 1.2rem; }
@@ -436,10 +544,6 @@
     .weather-suggestion { flex: 1; border-left: 2px solid var(--accent-soft); padding-left: 1.5rem; }
     .weather-suggestion p { font-size: 1.1rem; color: var(--ink-mid); font-style: italic; margin: 0; }
 
-    .welcome-section { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 800px; margin: 0 auto 5rem; gap: 1.5rem; }
-    .host-portrait { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft); border: 4px solid var(--white); }
-    .welcome-text { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green-dark); line-height: 1.4; font-style: italic; }
-
     details.elegant-accordion { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin-bottom: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.02); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
     details.elegant-accordion summary { padding: 1.5rem 2rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green-dark); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
     details.elegant-accordion summary::-webkit-details-marker { display: none; }
@@ -448,32 +552,15 @@
     details.elegant-accordion[open] { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
     .accordion-content { padding: 0 2rem 2rem; border-top: 1px solid rgba(0,0,0,0.03); margin-top: 1rem; padding-top: 1.5rem; }
 
-    .emergency-section { background: #fffafb; border: 1px solid #ffebed; padding: 3rem; border-radius: var(--radius); display: flex; gap: 2.5rem; align-items: flex-start; margin-top: 4rem; box-shadow: 0 15px 45px rgba(211, 47, 47, 0.05); }
-    .emergency-icon { font-size: 3rem; color: #d32f2f; background: #ffebee; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
-    .emergency-content { flex: 1; }
-    .emergency-content h3 { color: #b71c1c; font-family: 'League Spartan', sans-serif; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
-
     .checkout-list { list-style: none; padding: 0; margin: 2rem 0; }
-    .checkout-list li { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s ease; border-radius: var(--radius-sm); font-size: 1.1rem; color: var(--ink-mid); background: var(--white); margin-bottom: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .checkout-list li { display: flex; align-items: center; gap: 1rem; padding: 0 0 0 1rem; border-bottom: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s ease; border-radius: var(--radius-sm); font-size: 1.1rem; color: var(--ink-mid); background: var(--white); margin-bottom: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
     .checkout-list li:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     .check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; }
     .checkout-list li.done .check-circle { background: var(--accent); }
     .checkout-list li.done .check-circle::after { content: '✓'; color: white; font-size: 0.9rem; font-weight: bold; }
     .checkout-list li.done span { text-decoration: line-through; opacity: 0.5; }
-
-    .playlist-section { margin-top: 4rem; }
-    .playlist-card { background: var(--ink); border-radius: var(--radius); padding: 2.5rem; color: var(--white); display: flex; gap: 2rem; align-items: center; margin-bottom: 1.5rem; overflow: hidden; position: relative; box-shadow: var(--shadow-soft); transition: var(--transition); }
-    .playlist-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .playlist-info { flex: 1; z-index: 2; }
-    .playlist-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic; margin-bottom: 0.5rem; }
-    .playlist-vibe { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
-    .playlist-card iframe { border-radius: 12px; z-index: 2; position: relative; width: 300px; height: 80px; }
-
-    .copy-btn { margin-left: 10px; cursor: pointer; color: var(--accent); transition: transform 0.3s; font-size: 1.1em; display: inline-flex; align-items: center; justify-content: center; background: rgba(212, 149, 106, 0.1); width: 30px; height: 30px; border-radius: 50%; }
-    .copy-btn:hover { transform: scale(1.1); background: rgba(212, 149, 106, 0.2); }
-
-    .whatsapp-btn { display: inline-flex; align-items: center; gap: 1rem; background: #25D366; color: white; padding: 1rem 2.5rem; border-radius: 30px; font-family: 'League Spartan', sans-serif; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; transition: var(--transition); box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
-    .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4); color: white; }
+    /* Link inside checkout items */
+    .checkout-list li a { color: var(--green-mid); font-weight: 500; text-decoration: underline; word-break: break-all; }
 
     .mood-filters { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2.5rem; scrollbar-width: none; }
     .mood-filters::-webkit-scrollbar { display: none; }
@@ -484,24 +571,13 @@
       .sticky-nav { display: none; }
       .weather-widget { flex-direction: column; text-align: center; }
       .weather-suggestion { border-left: none; border-top: 2px solid var(--accent-soft); padding-left: 0; padding-top: 1.5rem; }
-      .emergency-section { flex-direction: column; padding: 2rem; text-align: center; align-items: center; }
       .reco-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1.5rem; padding-bottom: 2rem; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-      .reco-card { scroll-snap-align: center; max-width: 15rem;
-        max-height: 30rem; flex-shrink: 0; }
-      .playlist-card { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem; }
-      .playlist-card iframe { width: 100%; }
-      .welcome-section { padding: 0 1rem; }
-      .card-desc{ font-size: 0.9rem;}
-
-      #info-conciergerie{
-        font-size: 12px;
-      }
+      .reco-card { scroll-snap-align: center; max-width: 15rem; max-height: 30rem; flex-shrink: 0; }
+      .card-desc { font-size: 0.9rem; }
+      #info-conciergerie { font-size: 12px; }
     }
 
-    #info-conciergerie{
-        color: var(--warm);
-        width: 40%;
-    }
+    #info-conciergerie { color: var(--warm); width: 40%; }
   </style>
 </head>
 <body>
@@ -509,7 +585,6 @@
 <nav class="sticky-nav" id="sticky-nav">
   <a class="nav-link" href="#section-info">arrivée</a>
   <a class="nav-link" href="#point-attention">Point d'attention</a>
-
   <a class="nav-link" href="#intérieur">Equipements intérieur</a>
   <a class="nav-link" href="#extérieur">Equipements extérieurs</a>
   <a class="nav-link" href="#section-reco">Recommandations</a>
@@ -523,7 +598,6 @@
   <button onclick="toggleSearch()" class="floating-btn" title="Rechercher">🔍</button>
 </div>
 
-<!-- NOUVEAU WIDGET DE RECHERCHE FLOTTANT -->
 <div class="search-widget" id="search-widget">
   <div style="display:flex; gap:10px; align-items:center;">
     <input type="search" id="search-input" placeholder="Rechercher un équipement..." autocomplete="off" oninput="doSearch(this.value)">
@@ -572,7 +646,7 @@ const ICON_MAP = [
   { keys: ['molkky'], icon: 'https://img.icons8.com/?size=100&id=9789&format=png&color=1F6D67', label: 'Molkky' },
   { keys: ['plancha'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Plancha' },
   { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=8421&format=png&color=1F6D67', label: 'Friteuse' },
-  { keys: ['machine à café','café','nespresso','café à grain'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
+  { keys: ['machine à café','café','nespresso','café à grain', 'Cafetière', 'cafetière'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
   { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
   { keys: ['piscine'], icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: 'Piscine' },
   { keys: ['lave', 'machine'], icon: 'https://img.icons8.com/?size=100&id=8472&format=png&color=1F6D67', label: 'Machine à Laver' },
@@ -582,7 +656,7 @@ const ICON_MAP = [
   { keys: ['cheminée','cheminee','poêle','poele'], icon: 'https://img.icons8.com/?size=100&id=3104&format=png&color=1F6D67', label: 'Cheminée' },
   { keys: ['bibliothèque','biblioth'], icon: 'https://img.icons8.com/?size=100&id=94kYsj9I3t8U&format=png&color=1F6D67', label: 'Bibliothèque' },
   { keys: ['tv','télévision','television','netflix'], icon: 'https://img.icons8.com/?size=100&id=540&format=png&color=1F6D67', label: 'TV' },
-  { keys: ['rétroprojecteur','retroprojecteur','cinéma','cinema'], icon: 'https://img.icons8.com/?size=100&id=8881&format=png&color=1F6D67', label: 'Projecteur' },
+  { keys: ['rétroprojecteur','retroprojecteur','cinéma', 'cinema'], icon: 'https://img.icons8.com/?size=100&id=8881&format=png&color=1F6D67', label: 'Projecteur' },
   { keys: ['piano'], icon: 'https://img.icons8.com/?size=100&id=9398&format=png&color=1F6D67', label: 'Piano' },
   { keys: ['jeux de société','jeux de societe'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux' },
   { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=25661&format=png&color=1F6D67', label: 'Fléchettes' },
@@ -591,7 +665,9 @@ const ICON_MAP = [
   { keys: ['potager'], icon: 'https://img.icons8.com/?size=100&id=5I9mgW1o2sOm&format=png&color=1F6D67', label: 'Potager' },
   { keys: ['wifi'], icon: 'https://img.icons8.com/?size=100&id=16619&format=png&color=1F6D67', label: 'Wi-Fi' },
   { keys: ['musculation', 'gym', 'haltères', 'poids'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Musculation' },
+  { keys: ['sport', 'Sport'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Sport' },
   { keys: ['bateau', 'barque'], icon: 'https://img.icons8.com/?size=100&id=9317&format=png&color=1F6D67', label: 'Barque/Bateau' },
+  { keys: ['Cuisine', 'cuisine'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Cuisine' },
 ];
 
 window.addEventListener('scroll', () => {
@@ -617,9 +693,7 @@ function getEquipmentIconEntry(nomEquipement) {
   return null;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   LIGHTBOX
-───────────────────────────────────────────────────────────── */
+/* ── LIGHTBOX ── */
 let _lbImages = [], _lbIndex = 0;
 let has_piscine = false;
 
@@ -670,57 +744,43 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  lightboxNav(-1);
 });
 
-/* ─────────────────────────────────────────────────────────────
-   INTERSECTION OBSERVER FIX POUR LA NAVIGATION ACTIVE
-───────────────────────────────────────────────────────────── */
+/* ── SCROLL SPY ── */
 function initScrollSpy() {
   const navLinks = document.querySelectorAll(".nav-link");
   const observerOptions = {
     root: null,
-    rootMargin: "-20% 0px -70% 0px", // Permet d'activer le lien quand la section atteint le haut de l'écran
+    rootMargin: "-20% 0px -70% 0px",
     threshold: 0
   };
-
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const id = entry.target.id;
         navLinks.forEach(link => {
-          // On compare l'href avec l'id trouvé
-          if (link.getAttribute("href") === `#${id}`) {
-            link.classList.add("active");
-          } else {
-            link.classList.remove("active");
-          }
+          if (link.getAttribute("href") === `#${id}`) link.classList.add("active");
+          else link.classList.remove("active");
         });
       }
     });
   }, observerOptions);
-
   navLinks.forEach(link => {
     const targetId = link.getAttribute("href").substring(1);
     let targetSection = document.getElementById(targetId);
-
-    // Fallback pour la casse (ex: Airtable génère "id=Intérieur" mais le lien est href="#intérieur")
     if (!targetSection) {
       const allEls = document.querySelectorAll('[id]');
       for (let el of allEls) {
         if (el.id.toLowerCase() === targetId.toLowerCase()) {
           targetSection = el;
-          link.setAttribute("href", `#${el.id}`); // On corrige le lien dynamique pour qu'il marche au clic
+          link.setAttribute("href", `#${el.id}`);
           break;
         }
       }
     }
-
     if (targetSection) observer.observe(targetSection);
   });
 }
 
-
-/* ─────────────────────────────────────────────────────────────
-   AIRTABLE FETCH
-───────────────────────────────────────────────────────────── */
+/* ── AIRTABLE FETCH ── */
 async function fetchAll(table) {
   let records = [], offset = null;
   do {
@@ -736,9 +796,7 @@ async function fetchAll(table) {
   return records;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   HOUSE PHOTOS GALLERY
-───────────────────────────────────────────────────────────── */
+/* ── HOUSE PHOTOS GALLERY ── */
 function renderHousePhotosSection(photos, nomMaison) {
   if (!photos || !photos.length) return '';
   const rooms = {};
@@ -749,14 +807,11 @@ function renderHousePhotosSection(photos, nomMaison) {
     rooms[room].push(p.image_url);
     allImgs.push(p.image_url);
   });
-
   const roomNames = Object.keys(rooms);
   const heroUrl   = allImgs[0];
   const safeHero  = heroUrl.replace(/'/g, "\\'");
-
   const tabs = roomNames.map((room, i) => `
     <button class="room-tab${i === 0 ? ' active' : ''}" onclick="switchRoomTab(this, 'room-panel-${i}')">${escapeHtml(room)} <small style="opacity:.6;">(${rooms[room].length})</small></button>`).join('');
-
   const panels = roomNames.map((room, i) => {
     const imgs = rooms[room];
     const gridImgs = imgs.map((url, j) => {
@@ -765,7 +820,6 @@ function renderHousePhotosSection(photos, nomMaison) {
     }).join('');
     return `<div class="room-panel${i === 0 ? ' active' : ''}" id="room-panel-${i}"><div class="room-grid">${gridImgs}</div></div>`;
   }).join('');
-
   return `
     <section id="section-photos" class="photos-section reveal">
       <div class="photos-hero reveal">
@@ -785,17 +839,12 @@ function switchRoomTab(btn, panelId) {
   document.getElementById(panelId).classList.add('active');
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FIX 1: detectVideoType — check extension first, then domain
-───────────────────────────────────────────────────────────── */
 function detectVideoType(url) {
   if (!url || typeof url !== 'string') return null;
-  // Check by file extension first — works for any CDN/S3 host
   if (/\.(mp4|webm|ogg|mov|m4v|avi)([?#]|$)/i.test(url)) return 'native';
   const u = url.toLowerCase();
   if (u.match(/(youtube\.com|youtu\.be)/)) return 'youtube';
   if (u.includes('vimeo.com')) return 'vimeo';
-  // Airtable attachment CDN (various S3/CDN domains)
   if (u.includes('airtableusercontent.com') || u.includes('dl.airtable.com')) return 'native';
   return 'iframe';
 }
@@ -825,9 +874,6 @@ function is_file_image(str) { return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw|
 function escapeHtml(str) { return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escapeAttr(str) { return (str || '').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
 
-/* ─────────────────────────────────────────────────────────────
-   IMAGE CLASS SELECTION
-───────────────────────────────────────────────────────────── */
 function getInlineImgClass(width, height) {
   if (!width || !height) return 'inline-img-landscape';
   const ratio = width / height;
@@ -837,9 +883,6 @@ function getInlineImgClass(width, height) {
   return 'inline-img-portrait';
 }
 
-/* ─────────────────────────────────────────────────────────────
-   CARD TEMPLATE SELECTOR
-───────────────────────────────────────────────────────────── */
 function pickTemplate(photos) {
   const n = photos.length;
   if (n === 0) return 'text-only';
@@ -858,9 +901,6 @@ function pickTemplate(photos) {
   return 'mosaic';
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FIX 2: renderEquipCard — use slugified raw title for id
-───────────────────────────────────────────────────────────── */
 function slugify(str) {
   return (str || '').toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -941,16 +981,11 @@ function renderEquipCard(item, forceTemplate) {
   }
 }
 
-//cette fonction est ici pour grouper consécutivement les valeurs
-
-
 function groupConsecutiveImages(html) {
-  // Add simple onerror to hide broken images — no complex JS inside attribute
   html = html.replace(/<img\b([^>]*)>/g, (m, attrs) => {
     if (/onerror=/i.test(attrs)) return m;
     return `<img${attrs} onerror="this.style.display='none'">`;
   });
-  // Wrap runs of consecutive <img> tags into adaptive grid containers
   return html.replace(
     /(?:<img\b[^>]*>\s*(?:<br\s*\/?>\s*)*){2,}/g,
     (block) => {
@@ -961,13 +996,11 @@ function groupConsecutiveImages(html) {
   );
 }
 
-//rendre les texts url en liens
 function linkifyUrls(text) {
   return text.replace(/((?:https?:\/\/[^\s<"'\)\]]+)|(?:www\.[^\s<"'\)\]]+))/g, (match) => {
     if (match.includes('airtableusercontent.com')) return '';
     let href = match.startsWith('www.') ? 'https://' + match : match;
-    const display = match.length > 55 ? match.slice(0, 52) + '…' : match;
-    return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(display)}</a>`;
+    return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien maps</a>`;
   });
 }
 
@@ -977,25 +1010,26 @@ function parseDescriptionWithInline(text, attachments, videos) {
   const allUrls = photos.map(p => p.url);
   let out = text;
 
-  // Replace $iN beacons with inline images
-  photos.forEach((photo, i) => {
+  // FIX 3: Replace $iN beacons — iterate forward to avoid index corruption
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i];
     const url = photo.url || '';
-    if (!url) return;
+    if (!url) continue;
     const cls = getInlineImgClass(photo.width || 0, photo.height || 0);
     const safeUrl = url.replace(/'/g, "\\'");
     const imgTag  = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${i})" alt="">`;
     out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
-  });
-
-  // Replace $vN beacons with video embeds
-  if (Array.isArray(videos)) {
-    videos.forEach((url, i) => {
-      if (!url) return;
-      out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
-    });
   }
 
-  // Strip any leftover unmatched beacons
+  if (Array.isArray(videos)) {
+    for (let i = 0; i < videos.length; i++) {
+      const url = videos[i];
+      if (!url) continue;
+      out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
+    }
+  }
+
+  // Strip leftover unmatched beacons
   out = out.replace(/\$[iv]\d+/g, '');
 
   const isHtml = /<\/?(h[1-6]|p|ul|ol|li|div|table|br)\b/i.test(out);
@@ -1005,8 +1039,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
       if (tag) return tag;
       if (url.includes('airtableusercontent.com')) return '';
       const href = url.startsWith('www.') ? 'https://' + url : url;
-      const display = url.length > 55 ? url.slice(0, 52) + '…' : url;
-      return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(display)}</a>`;
+      return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien maps</a>`;
     });
     out = out.replace(/<li>\s*(?:N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\.\s+|[-•*]\s+)/gi, '<li>');
     return groupConsecutiveImages(out);
@@ -1069,11 +1102,9 @@ function parseDescriptionWithInline(text, attachments, videos) {
 
 function parseDescription(text, attachments, hideInlineImages) {
   const atts = hideInlineImages ? [] : (attachments || []);
-
   const vidUrls = atts
     .filter(a => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
     .map(a => a.url);
-
   return parseDescriptionWithInline(
     hideInlineImages ? (text || '').replace(/\$[iv]\d+/g, '') : text,
     atts,
@@ -1081,25 +1112,54 @@ function parseDescription(text, attachments, hideInlineImages) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FIX: Séparation étanche Intérieur/Extérieur pour Icons
-───────────────────────────────────────────────────────────── */
+/* ── FIX 2: Beautiful owner message renderer ── */
+function renderOwnerMessage(text) {
+  if (!text || !text.trim()) return '';
+  // Convert plain text paragraphs
+  const paragraphs = text.trim().split(/\n\n+/).map(p =>
+    `<p>${escapeHtml(p.replace(/\n/g, ' ').trim())}</p>`
+  ).join('');
+  return `
+    <div class="owner-message-card reveal">
+      <div class="owner-message-label">✦ Message des propriétaires</div>
+      <div class="owner-message-text">${paragraphs}</div>
+    </div>`;
+}
+
+/* ── FIX 1: Render InstructionAccesLivret ── */
+function renderAccesSection(text) {
+  if (!text || !text.trim()) return '';
+  const descHtml = parseDescriptionWithInline(text, [], []);
+  return `
+    <div class="acces-card reveal">
+      <div class="acces-card-header">
+        <div class="acces-card-header-icon">🗝️</div>
+        <div>
+          <div class="acces-card-header-title">Comment accéder</div>
+          <div class="acces-card-header-sub">Accès & Arrivée</div>
+        </div>
+      </div>
+      <div class="acces-card-body">
+        <div class="card-desc">${descHtml}</div>
+      </div>
+    </div>`;
+}
+
+/* ── ICONS SECTION ── */
 function renderIconsSection(equipItems) {
   const seen = new Set();
   const intChips = [];
   const extChips = [];
-    if (has_piscine){
-      extChips.push({icon: {icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: "Piscine"}, item: {Item: 'section-piscine'} });
-      has_piscine = false;
-    }
+  if (has_piscine) {
+    extChips.push({icon: {icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: "Piscine"}, item: {Item: 'section-piscine'} });
+    has_piscine = false;
+  }
 
   equipItems.forEach(item => {
     const entry = getEquipmentIconEntry(item.Item);
-
     if (entry && !seen.has(entry.label)) {
       seen.add(entry.label);
       const cat = (item.Categorie || '').toLowerCase().trim();
-
       if (cat.includes('extérieur') || cat.includes('exterieur')) {
         extChips.push({ icon: entry, item: item });
       } else if (cat.includes('intérieur') || cat.includes('interieur')) {
@@ -1107,12 +1167,10 @@ function renderIconsSection(equipItems) {
       }
     }
   });
-  console.log("extChips", extChips);
 
   if (!intChips.length && !extChips.length) return '';
 
   let chipsHtml = "";
-
   if (intChips.length > 0) {
     chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Intérieur</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
@@ -1124,7 +1182,6 @@ function renderIconsSection(equipItems) {
     });
     chipsHtml += `</div>`;
   }
-
   if (extChips.length > 0) {
     chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Extérieur</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
@@ -1149,7 +1206,6 @@ function renderIconsSection(equipItems) {
 
 function renderWifiSection(items, index) {
   const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
-
   const safeId = `qr_wifi_${index}`;
   setTimeout(() => {
     const el = document.getElementById(safeId);
@@ -1177,39 +1233,34 @@ function renderWifiSection(items, index) {
 }
 
 function renderThemePage(theme, items, index) {
-  console.log("theme", theme);
-  console.log("items", items);
-    if (theme.toLowerCase() === 'wifi'){
-      const navi = document.getElementById("sticky-nav");
-      const piscine = document.createElement("a");
-      piscine.className = "nav-link";
-      piscine.href = "#section-wifi";
-      piscine.innerText = "Wifi";
-      navi.insertBefore(piscine, navi.childNodes[4]);
-      return renderWifiSection(items, index);
-    }
-
-    const cardsHtml = items.map(item => renderEquipCard(item)).join('');
-      if(escapeHtml(theme).includes("intérieur") || escapeHtml(theme).includes("extérieur")){
-        return `
-        <section id="${escapeHtml(theme)}" class="theme-page reveal">
-          <div class="theme-header">
-            <div class="theme-label">Équipements</div>
-            <div class="theme-title">${escapeHtml(theme)}</div>
-            </div>
-            ${cardsHtml}
-            </section>`;
-      }
-    }
+  if (theme.toLowerCase() === 'wifi') {
+    const navi = document.getElementById("sticky-nav");
+    const piscine = document.createElement("a");
+    piscine.className = "nav-link";
+    piscine.href = "#section-wifi";
+    piscine.innerText = "Wifi";
+    navi.insertBefore(piscine, navi.childNodes[4]);
+    return renderWifiSection(items, index);
+  }
+  const cardsHtml = items.map(item => renderEquipCard(item)).join('');
+  if (escapeHtml(theme).includes("intérieur") || escapeHtml(theme).includes("extérieur")) {
+    return `
+      <section id="${escapeHtml(theme)}" class="theme-page reveal">
+        <div class="theme-header">
+          <div class="theme-label">Équipements</div>
+          <div class="theme-title">${escapeHtml(theme)}</div>
+        </div>
+        ${cardsHtml}
+      </section>`;
+  }
+}
 
 function parseWifiCredentials(description) {
   const lines = (description || '').split('\n').map(l => l.trim()).filter(Boolean);
-  return { ssid: lines[0] || '', mdp: lines[1].replace("Mot de passe :", "") || '' };
+  return { ssid: lines[0] || '', mdp: (lines[1] || '').replace("Mot de passe :", "") || '' };
 }
 
-/* ─────────────────────────────────────────────────────────────
-   COVER
-───────────────────────────────────────────────────────────── */
+/* ── COVER ── */
 function renderCover(nomMaison, numero, coverUrl) {
   const fallback = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80';
   return `
@@ -1228,7 +1279,6 @@ function renderCover(nomMaison, numero, coverUrl) {
           <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Recommandations</span></a>
           <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Départ</span></a>
         </nav>
-
       </div>
       <div class="cover-strip">
         <p id="info-conciergerie">L'équipe Idylliq est à votre disposition tout au long de votre séjour : +33 7 67 59 16 14 | guests@idylliq.fr</p>
@@ -1238,15 +1288,18 @@ function renderCover(nomMaison, numero, coverUrl) {
     </div>`;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   MAISON INFO
-───────────────────────────────────────────────────────────── */
+/* ── MAISON INFO — FIX 1 & 2: inject acces + owner message ── */
 function get_global_info_maison(rec) {
   if (!rec) return '';
   const f = rec.fields;
 
-  const weatherHtml = `<div id="weather-widget-container" class="reveal"></div>`;
-  const descHtml = f.Description ? `<div class="card-desc">${parseDescription(f.Description, null, false)}</div>` : '';
+  //const weatherHtml = `<div id="weather-widget-container" class="reveal"></div>`;
+
+  const descHtml = f.Description ? renderOwnerMessage(f.Description) : '';
+
+  // FIX 1: InstructionAccesLivret rendered after description
+  const accesHtml = f.InstructionAccesLivret ? renderAccesSection(f.InstructionAccesLivret) : '';
+
   let attentionHtml = '';
   if (f.PointAttention) {
     attentionHtml = `
@@ -1281,9 +1334,11 @@ function get_global_info_maison(rec) {
 
   return `
     <section id="section-info" class="theme-page reveal">
-      ${weatherHtml}
       <div class="theme-header"><div class="theme-label">Découvrir</div><div class="theme-title">La Maison</div></div>
-      ${descHtml}${reglesHtml}${attentionHtml}
+      ${descHtml}
+      ${accesHtml}
+      ${reglesHtml}
+      ${attentionHtml}
     </section>`;
 }
 
@@ -1293,15 +1348,13 @@ function parseRegles(text) {
     .replace(/\s*(N[O°o]\.?\s*\d+\s*[:.\)\-]?\s*)/g, '\n')
     .replace(/(?:^|\n|\.)\s*(\d+\s*[\.\)]\s+)/g, '\n')
     .replace(/\s*[•\-\*]\s+/g, '\n')
-    // New rule: Splits sentences ending in "." and starting with a Capital letter
     .replace(/\.\s+([A-ZÉÈÀÙÂÊÎÔÛÇ])/g, '.\n$1');
-
   const lines = s.split(/\n+/)
     .map(l => l.trim().replace(/^[:.\-)\s]+/, '').replace(/\s+/g, ' ').trim())
     .filter(Boolean);
-
   return lines;
 }
+
 function getCICO(workflowRecords, maisonId) {
   const related = workflowRecords.filter(r => (r.fields.Maison || []).includes(maisonId));
   if (!related.length) return '';
@@ -1310,7 +1363,6 @@ function getCICO(workflowRecords, maisonId) {
   const parts    = (cicoRec.fields.CICO || '').split(';');
   const checkin  = (parts[0] || '').trim().replace(/:\d\d$/, '') || "Non défini";
   const checkout = (parts[1] || '').trim().replace(/:\d\d$/, '') || "Non défini";
-
   return `
     <section id="section-sejour" class="theme-page reveal" style="background:var(--white);">
       <div class="theme-header"><div class="theme-label">Organisation</div><div class="theme-title">Votre Séjour</div></div>
@@ -1320,9 +1372,7 @@ function getCICO(workflowRecords, maisonId) {
     </section>`;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FIX 4: renderPiscinePage — proper per-section photo/video slicing
-───────────────────────────────────────────────────────────── */
+/* ── FIX 3: renderPiscinePage — correct beacon substitution ── */
 function renderPiscinePage(rec) {
   if (!rec) return '';
   const f = rec.fields;
@@ -1355,28 +1405,38 @@ function renderPiscinePage(rec) {
   const cardsHtml = validSections.map((section, idx) => {
     const bounds = section.bounds;
 
+    // Slice photos and videos for this section
     const sectionPhotos = allPhotos.slice(bounds.pStart, bounds.pEnd);
     const sectionVideos = videos.slice(bounds.vStart, bounds.vEnd);
 
+    // Remap beacon indices: $i3 in section[1] with pStart=2 → $i1 in local photos
     let enrichedText = section.text;
+
+    // Remap photo beacons (iterate descending to avoid double-replace)
     if (bounds.pStart > 0) {
       for (let i = bounds.pEnd - 1; i >= bounds.pStart; i--) {
+        const localIdx = i - bounds.pStart;
         enrichedText = enrichedText.replace(
           new RegExp('\\$i' + i + '(?!\\d)', 'g'),
-          '$i' + (i - bounds.pStart)
+          `##IMG${localIdx}##`
         );
       }
+      enrichedText = enrichedText.replace(/##IMG(\d+)##/g, '$i$1');
     }
+
+    // Remap video beacons
     if (bounds.vStart > 0) {
       for (let i = bounds.vEnd - 1; i >= bounds.vStart; i--) {
+        const localIdx = i - bounds.vStart;
         enrichedText = enrichedText.replace(
           new RegExp('\\$v' + i + '(?!\\d)', 'g'),
-          '$v' + (i - bounds.vStart)
+          `##VID${localIdx}##`
         );
       }
+      enrichedText = enrichedText.replace(/##VID(\d+)##/g, '$v$1');
     }
-    enrichedText = enrichedText.replace(/\$i(?!\d)/g, '$i0').replace(/\$v(?!\d)/g, '$v0');
 
+    // Append any photos/videos NOT referenced by beacons
     const usedPIdx = [...enrichedText.matchAll(/\$i(\d+)/g)].map(m => +m[1]);
     const freePhotos = sectionPhotos.map((_, i) => i).filter(i => !usedPIdx.includes(i));
     if (freePhotos.length) {
@@ -1391,8 +1451,6 @@ function renderPiscinePage(rec) {
 
     const descHtml = parseDescriptionWithInline(enrichedText, sectionPhotos, sectionVideos);
 
-
-
     return `
       <details class="elegant-accordion reveal" ${idx === 0 ? 'open' : ''}>
         <summary>${escapeHtml(section.label)}</summary>
@@ -1402,14 +1460,14 @@ function renderPiscinePage(rec) {
       </details>
     `;
   }).join('');
-    const navi = document.getElementById("sticky-nav");
-    const piscine = document.createElement("a");
-    piscine.className = "nav-link";
-    piscine.href = "#section-piscine";
-    piscine.innerText = "Piscine";
-    console.log(navi.childNodes);
-    navi.insertBefore(piscine, navi.childNodes[8]);
-    has_piscine = true;
+
+  const navi = document.getElementById("sticky-nav");
+  const piscineNav = document.createElement("a");
+  piscineNav.className = "nav-link";
+  piscineNav.href = "#section-piscine";
+  piscineNav.innerText = "Piscine";
+  navi.insertBefore(piscineNav, navi.childNodes[8]);
+  has_piscine = true;
 
   return `
     <section id="section-piscine" class="theme-page reveal">
@@ -1436,6 +1494,7 @@ function getRecommandation(data, maisonId) {
       </div>${mapsLink}
     </article>`;
   }).join('');
+
   return `
     <section id="section-reco" class="theme-page reveal">
       <div class="theme-header">
@@ -1451,65 +1510,134 @@ function getRecommandation(data, maisonId) {
       <div class="reco-grid">${cards}</div>
     </section>`;
 }
+
+/* ── FIX 6: Departure instructions — handle flat text format ── */
 function get_instruction_depart(rec) {
   if (!rec?.fields?.InstructionDepart) return '';
 
   let rawText = rec.fields.InstructionDepart;
+
+  // Strip HTML tags gracefully
   rawText = rawText.replace(/<\/?(div|p|br|h[1-6]|li|ul|ol|table|tr)[^>]*>/gi, '\n');
   rawText = rawText.replace(/<[^>]+>/g, '');
 
+  // Decode HTML entities
   const txt = document.createElement("textarea");
   txt.innerHTML = rawText;
   rawText = txt.value;
 
-  // --- AUTO-FORMATTING (Formatage intelligent du bloc de texte) ---
+  // FIX 6: Handle flat text format — split on double spaces or long whitespace clusters
+  // that indicate list boundaries, and split on "  " (multiple spaces) acting as separators
+  // First try to detect if text is one big flat chunk (no newlines, long string)
+  const hasNewlines = rawText.includes('\n');
+  if (!hasNewlines) {
+    // Flat text: try splitting on double-space patterns (common Airtable rich text export artifact)
+    // Also split before phrases that look like instructions ("Enlevez", "Mettez", "Lancez", etc.)
+    rawText = rawText
+      // Split on long space sequences (2+ spaces) → likely list separators
+      .replace(/  +/g, '\n')
+      // Insert line break before imperative verbs at start of what should be a new bullet
+      .replace(/\s+(Enlevez|Mettez|Lancez|Assurez|Jetez|Fermez|Remettez|Replacez|Vérifiez|Nettoyez|Rangez|Videz|Éteignez|Eteignez)\b/g, '\n$1')
+      // Split on "  En partant :" type sub-headers
+      .replace(/\s+(En partant\s*:)\s*/gi, '\nEN PARTANT\n');
+  }
 
-  // 1. Détecte les mots en MAJUSCULES suivis d'un tiret (ex: " CHAMBRES - ")
-  // et les isole sur leur propre ligne pour en faire des titres.
+  // Auto-format: detect ALL-CAPS sections and isolate them as headers
   rawText = rawText.replace(/\s+([A-ZÉÈÀÙÂÊÎÔÛÇ]{4,}(?:\s+[A-ZÉÈÀÙÂÊÎÔÛÇ]+)*)\s+-/g, '\n$1\n- ');
-
-  // 2. Détecte spécifiquement "Fermeture de la maison:" et le transforme en titre
   rawText = rawText.replace(/\s*(Fermeture de la maison\s*:)\s*/gi, '\nFERMETURE DE LA MAISON\n- ');
+
+  // Extract intro/outro text — anything before first instruction and after last instruction
+  // Identify opening/closing paragraph patterns
+  const introRegex = /^(.*?(?:Avant de quitter les lieux.*?:))/si;
+  const outroRegex = /(Nous espérons.*?séjour.*?!)$/si;
+  let introText = '';
+  let outroText = '';
+  const introMatch = rawText.match(introRegex);
+  const outroMatch = rawText.match(outroRegex);
+
+  if (introMatch) {
+    introText = introMatch[1].trim();
+    rawText = rawText.slice(introMatch[1].length);
+  }
+  if (outroMatch) {
+    outroText = outroMatch[1].trim();
+    rawText = rawText.slice(0, rawText.lastIndexOf(outroMatch[1]));
+  }
 
   const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
   let out = '';
   let inList = false;
 
+  // Helper: linkify URLs in text
+  function linkifyLine(str) {
+    return str.replace(/(https?:\/\/[^\s<"')\]]+)/g, (url) => {
+      return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener">📍 Voir sur la carte</a>`;
+    });
+  }
+
   for (let line of lines) {
-    // Un titre est une ligne entièrement en majuscule
-    const isHeader = line === line.toUpperCase() && line.length > 2 && /[A-ZÉÈÀÙÂÊÎÔÛÇ]/.test(line);
+    const isHeader = line === line.toUpperCase() && line.length > 2 && /[A-ZÉÈÀÙÂÊÎÔÛÇ]/.test(line) && !/(https?:\/\/)/.test(line);
 
     if (isHeader) {
       if (inList) { out += '</ul>'; inList = false; }
-      out += `<h2 onclick="this.classList.toggle('done')" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
-                <div class="check-circle"></div>
-                <span>${escapeHtml(line)}</span>
-              </h2>`;
-      // On assume que tout ce qui suit un titre est une liste de tâches
+      out += `<h2 onclick="this.classList.toggle('done')" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--green-dark); padding-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05); margin-top:2rem;">
+              <span>${escapeHtml(line)}</span>
+            </h2>`;
       inList = true;
       out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">';
-
     } else if (inList || /^(?:[-•*]\s+|\d+\.\s+)/.test(line)) {
       if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
 
-      // On retire le tiret initial s'il y en a un
       let cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
 
+      // Split compound sentences separated by ". " + Capital letter
       const subItems = cleanLine.split(/\.\s+(?=[A-ZÉÈÀÙÂÊÎÔÛÇ])/);
 
       for (let i = 0; i < subItems.length; i++) {
         let text = subItems[i].trim();
         if (i < subItems.length - 1 && !text.endsWith('.')) text += '.';
-
-        out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(text)}</span></li>`;
+        // Check for URL in text
+        const hasUrl = /(https?:\/\/[^\s]+)/.test(text);
+        if (hasUrl) {
+          const linkedText = text.replace(/(https?:\/\/[^\s]+)/g, (url) =>
+            `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 Voir sur la carte</a>`
+          );
+          out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${linkedText}</span></li>`;
+        } else {
+          out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(text)}</span></li>`;
+        }
       }
-
     } else {
       if (inList) { out += '</ul>'; inList = false; }
-      out += `<p style="margin-bottom: 1rem;">${escapeHtml(line)}</p>`;
+      // Check if line looks like an instruction (starts with imperative verb)
+      const isInstruction = /^(Enlevez|Mettez|Lancez|Assurez|Jetez|Fermez|Remettez|Replacez|Vérifiez|Nettoyez|Rangez|Videz|Éteignez|Eteignez|Voici)\b/i.test(line);
+      if (isInstruction) {
+        if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
+        const hasUrl = /(https?:\/\/[^\s]+)/.test(line);
+        if (hasUrl) {
+          const linkedText = line.replace(/(https?:\/\/[^\s]+)/g, (url) =>
+            `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 Voir sur la carte</a>`
+          );
+          out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${linkedText}</span></li>`;
+        } else {
+          out += `<li onclick="this.classList.toggle('done')"><div class="check-circle"></div><span>${escapeHtml(line)}</span></li>`;
+        }
+      } else {
+        out += `<p style="margin-bottom: 1rem;">${escapeHtml(line)}</p>`;
+      }
     }
   }
   if (inList) out += '</ul>';
+
+  const introHtml = introText
+    ? `<p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem; font-size:1.05rem; line-height:1.8;">${escapeHtml(introText)}</p>`
+    : `<p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>`;
+
+  const outroHtml = outroText
+    ? `<div style="margin-top:2rem;padding:2rem;background:var(--green-pale);border-radius:var(--radius-sm);border-left:4px solid var(--green-mid);">
+        <p style="font-family:'Playfair Display',serif;font-style:italic;color:var(--green-dark);font-size:1.15rem;line-height:1.8;">${escapeHtml(outroText)}</p>
+       </div>`
+    : '';
 
   return `<section class="theme-page" id="instruction-depart">
             <div class="card reveal" style="margin-top:0;">
@@ -1517,8 +1645,9 @@ function get_instruction_depart(rec) {
                 <div class="category-badge">Check-out</div>
                 <h3 class="card-item-title">Instructions de départ</h3>
                 <div class="card-desc">
-                  <p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>
+                  ${introHtml}
                   ${out}
+                  ${outroHtml}
                 </div>
               </div>
             </div>
@@ -1591,6 +1720,12 @@ async function buildLivret(IdMaison) {
     const allPhotos = (rec.fields.Photos || []);
     const youtubeVids = rec.fields.lienYoutube ? rec.fields.lienYoutube.split(';').map(v => v.trim()).filter(Boolean) : [];
 
+    equipRecs.sort((a, b) => {
+      const orderA = a.fields.OrdreMaison || 0;
+      const orderB = b.fields.OrdreMaison || 0;
+      return orderA - orderB;
+    });
+
     const attachedVids = allPhotos
       .filter(a => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
       .map(a => a.url);
@@ -1607,49 +1742,44 @@ async function buildLivret(IdMaison) {
     allEquipItems.push(item);
   });
 
-  let piscineSectionHtml = maisonRecord.fields['Piscine'];
-
-  if(maisonRecord.fields['Piscine']){
-    piscineSectionHtml = renderPiscinePage(piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id)));
-
-
+  // FIX 4: Guard piscine — only render if record exists, default to empty string
+  let piscineSectionHtml = '';
+  if (maisonRecord.fields['Piscine'] && Array.isArray(maisonRecord.fields['Piscine']) && maisonRecord.fields['Piscine'].length > 0) {
+    const piscineRecord = piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id));
+    if (piscineRecord) {
+      piscineSectionHtml = renderPiscinePage(piscineRecord) || '';
+    }
   }
-
-
-  console.log("themeMap", themeMap);
-
 
   let ordered = Object.keys(themeMap)
     .sort()
-
-    .reduce((obj, key) => {
-      obj[key] = themeMap[key]; // Rebuild the object with sorted keys
-      return obj;
-    }, {});
-
-    console.log(ordered)
+    .reduce((obj, key) => { obj[key] = themeMap[key]; return obj; }, {});
 
   let un = Object.keys(ordered)
     .reverse()
-    .reduce((obj, key) => {
-      obj[key] = ordered[key];
-      return obj;
-    }, {});
+    .reduce((obj, key) => { obj[key] = ordered[key]; return obj; }, {});
 
-  console.log("themeMap", un);
+  const wifiKey = Object.keys(un).find(k => k.toLowerCase() === 'wifi');
+  let wifiSectionHtml = '';
+  if (wifiKey) {
+    wifiSectionHtml = renderThemePage(wifiKey, un[wifiKey], 'wifi-index');
+    delete un[wifiKey];
+  }
+
   const html =
     renderCover(nomMaison, IdMaison, coverImg) +
     get_global_info_maison(maisonRecord) +
     getCICO(wfRecs, maisonRecord.id) +
+    wifiSectionHtml +
     renderIconsSection(allEquipItems) +
-    Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx)).join('') +
+    Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx) || '').join('') +
     piscineSectionHtml +
     getRecommandation(recoRecs, maisonRecord.id) +
     get_instruction_depart(maisonRecord) +
     `
     <section class="presentation-idylliq">
       <img src="end.png" id="img_end_presentation">
-    </scetion>
+    </section>
     <section class="presentation-end reveal">
        <h1>La Collection Idylliq</h1>
        <p>Cette propriété fait partie de la première collection de maisons haut de gamme pensée pour les familles.</p>
@@ -1662,24 +1792,25 @@ async function buildLivret(IdMaison) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('livret-container').innerHTML = html;
 
-  // Lancement du ScrollSpy après l'intégration du HTML
   initScrollSpy();
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Fetch weather after DOM is ready
+  const addr = maisonRecord.fields.Adresse || maisonRecord.fields.adresse || '';
+  if (addr) fetchWeather(addr);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   NOUVELLE LOGIQUE DE RECHERCHE FLOTTANTE
-───────────────────────────────────────────────────────────── */
+/* ── SEARCH ── */
 function toggleSearch() {
   const widget = document.getElementById('search-widget');
   widget.classList.toggle('active');
   if (widget.classList.contains('active')) {
     document.getElementById('search-input').focus();
-    document.getElementById('floating-menu').classList.remove('active'); // Ferme le menu +
+    document.getElementById('floating-menu').classList.remove('active');
   }
 }
 
@@ -1687,35 +1818,28 @@ function doSearch(query) {
   const q = query.trim().toLowerCase();
   const resultsContainer = document.getElementById('search-results');
   resultsContainer.innerHTML = '';
-
   if (!q) return;
-
   const cards = document.querySelectorAll('.card, .reco-card, .elegant-accordion');
   let matchCount = 0;
-
   cards.forEach(card => {
     if (card.textContent.toLowerCase().includes(q)) {
       const titleEl = card.querySelector('.card-item-title, .reco-name, summary');
       const title = titleEl ? titleEl.textContent : 'Section correspondante';
-
       const div = document.createElement('div');
       div.className = 'search-result-item';
       div.textContent = title;
       div.onclick = () => {
-        // Scroll & feedback visuel
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         card.style.transition = 'box-shadow 0.4s ease';
         card.style.boxShadow = '0 0 0 4px var(--accent)';
         if (card.tagName === 'DETAILS') card.open = true;
         setTimeout(() => card.style.boxShadow = '', 2500);
-
-        toggleSearch(); // Ferme le widget
+        toggleSearch();
       };
       resultsContainer.appendChild(div);
       matchCount++;
     }
   });
-
   if (matchCount === 0) {
     resultsContainer.innerHTML = '<div style="text-align:center; color:var(--ink-light); padding:1rem;">Aucun résultat</div>';
   }
