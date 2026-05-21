@@ -1,3 +1,4 @@
+<!--@Author: Pierre Sounouvou -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,9 +7,10 @@
   <title>Livret Idylliq</title>
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="icon" href="https://idylliq.fr/favicon.png" type="image/png" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
   <style>
-    /* ── BASE & VARIABLES ── */
+    /* ── Couleur du site Idylliq ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --green: #1a5c56; --green-dark: #0f3d3a; --green-mid: #247a73;
@@ -33,13 +35,13 @@
     }
 
     body {
-      background: var(--warm);
+      background: var(--warm);  
       font-family: 'Outfit', sans-serif;
       color: var(--ink);
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      line-height: 1.8;
+      line-height: 1.4;
     }
 
     #loading {
@@ -71,7 +73,7 @@
     .cover-brand-name { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; color: var(--white); }
 
     .cover-content { position: absolute; bottom: 9rem; left: 4rem; right: 4rem; z-index: 2; }
-    .cover-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: clamp(3.5rem, 7vw, 7rem); color: var(--white); line-height: 1.1; margin-bottom: 1rem; text-transform: none; text-shadow: 0 15px 40px rgba(0,0,0,0.4); word-wrap: break-word; hyphens: auto; letter-spacing: -1px; }
+    .cover-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: clamp(3.5rem, 7vw, 7rem); color: var(--white); line-height: 0.9; margin-bottom: 1rem; text-transform: none; text-shadow: 0 15px 40px rgba(0,0,0,0.4); word-wrap: break-word; hyphens: auto; letter-spacing: -1px; }
 
     .cover-chapters { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 3rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2.5rem; }
     .cover-chapter { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; cursor: pointer; transition: var(--transition); }
@@ -93,13 +95,13 @@
     .search-results { display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; max-height: 250px; }
     .search-results::-webkit-scrollbar { width: 6px; }
     .search-results::-webkit-scrollbar-thumb { background: var(--warm-dark); border-radius: 10px; }
-    .search-result-item { padding: 0.8rem 1rem; border-radius: var(--radius-sm); background: var(--warm); cursor: pointer; transition: var(--transition); font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: var(--ink); line-height: 1.3; }
+    .search-result-item { padding: 0.8rem 1rem; border-radius: var(--radius-sm); background: var(--warm); cursor: pointer; transition: var(--transition); font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: var(--ink); line-height: 1.0; }
     .search-result-item:hover { background: var(--green-pale); color: var(--green-dark); }
 
     /* ── SECTION PAGES ── */
     .theme-page { padding: 8rem 5vw; border-bottom: 1px solid rgba(0,0,0,0.03); position: relative; }
     .theme-page:nth-of-type(even) { background: linear-gradient(180deg, var(--warm) 0%, #ffffff 100%); }
-    .theme-header { margin-bottom: 5.5rem; text-align: center; }
+    .theme-header {  margin-bottom: 2.5rem;; text-align: center; }
     .theme-label { font-family: 'League Spartan', sans-serif; color: var(--accent); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 10px; margin-bottom: 1.5rem; }
     .theme-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 3.5rem; font-style: italic; font-weight: 400; letter-spacing: -1px; }
     .theme-header::after { content: ''; display: block; width: 60px; height: 1px; background: var(--green-mid); margin: 2rem auto 0; opacity: 0.5; }
@@ -107,7 +109,7 @@
     .card { margin-bottom: 5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; position: relative; }
     .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
     .card-body { padding: 4.5rem; min-width: 0; }
-    .card-item-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 2.2rem; margin-bottom: 1.5rem; font-weight: 400; letter-spacing: -0.5px; line-height: 1.2; }
+    .card-item-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 2.2rem; margin-bottom: 1.5rem; font-weight: 400; letter-spacing: -0.5px; line-height: 1.0; }
 
     .tpl-text-only .card-body { padding: 4.5rem; }
 
@@ -115,7 +117,6 @@
     .tpl-hero:hover .card-hero-img { transform: scale(1.04); }
     .tpl-hero .img-overlay-wrap { overflow: hidden; position: relative; border-radius: var(--radius) var(--radius) 0 0; }
 
-    /* FIX 5: side layouts wrap text below image on overflow */
     .tpl-side-left .card-body:last-child { display: flex; gap: 3.5rem; align-items: flex-start; padding-left: 0; flex-wrap: wrap; }
     .tpl-side-right .card-body:last-child { display: flex; flex-direction: row-reverse; gap: 3.5rem; align-items: flex-start; padding-right: 0; flex-wrap: wrap; }
     .tpl-side-left .side-img-wrap.left { flex: 0 0 45%; max-width: 450px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; overflow: hidden; box-shadow: var(--shadow-soft); position: relative; z-index: 1; margin: 0; }
@@ -160,9 +161,9 @@
     .tpl-banner .banner-wrap:hover img { transform: scale(1.02); }
 
     /* ── TYPOGRAPHY & DESC ── */
-    .card-desc { font-family: 'Outfit', sans-serif; font-size: 1.2rem; line-height: 2; color: var(--ink-mid); font-weight: 300; word-break: break-word; overflow-wrap: anywhere; }
+    .card-desc { font-family: 'Outfit', sans-serif; font-size: 1.2rem; line-height: 1.7; color: var(--ink-mid); font-weight: 300; word-break: break-word; overflow-wrap: anywhere; }
     .card-desc p { margin-bottom: 1.5rem; }
-    .card-desc p:last-child { margin-bottom: 0; }
+    .card-desc p:last-child { margin-bottom: 0; line-height: 1.6;}
     .card-desc strong { font-weight: 500; color: var(--ink); }
     .card-desc a { color: var(--green-mid); text-decoration: none; border-bottom: 1px solid rgba(42, 138, 131, 0.3); transition: var(--transition); font-weight: 500; word-break: break-all; }
     .card-desc a:hover { border-bottom-color: var(--green-mid); color: var(--green-dark); }
@@ -184,7 +185,7 @@
     .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--green-dark); margin: 3rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
     .section-label:first-child { margin-top: 0; }
 
-    /* ── FIX 2: OWNER MESSAGE (Description) ── */
+    /* ── OWNER MESSAGE ── */
     .owner-message-card {
       position: relative;
       background: linear-gradient(135deg, var(--green-pale) 0%, var(--accent-pale) 100%);
@@ -247,7 +248,7 @@
     .owner-message-text p { margin-bottom: 1.2rem; }
     .owner-message-text p:last-child { margin-bottom: 0; }
 
-    /* ── FIX 1: ACCES SECTION ── */
+    /* ── ACCES SECTION ── */
     .acces-card {
       background: var(--white);
       border-radius: var(--radius);
@@ -316,7 +317,7 @@
     .room-grid-img:hover { transform: scale(1.03); box-shadow: var(--shadow-hover); }
 
     /* ── ATTENTION BOX ── */
-    .attention-box { margin-top: 3.5rem; padding: 3rem 3.5rem; background: var(--gradient-warm); border-radius: var(--radius); position: relative; overflow: hidden; display: flex; gap: 2.5rem; align-items: flex-start; box-shadow: 0 15px 45px -10px rgba(212,149,106,0.15); border: 1px solid rgba(212,149,106,0.2); }
+    .attention-box { margin-top: 3.5rem; padding: 3rem 3.5rem; background: var(--gradient-warm); border-radius: var(--radius); position: relative; overflow: hidden; display: flex; gap: 2.5rem; align-items: flex-start; box-shadow: 0 15px 45px -10px rgba(212,149,106,0.15); border: 1px solid rgba(212,149,106,0.2); margin-left: -1rem;margin-right: -1rem;}
     .attention-box::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--gradient-accent); }
     .attention-box::after { content: ''; position: absolute; right: -80px; top: -80px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(212,149,106,0.15), transparent 70%); pointer-events: none; }
     .attention-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; filter: drop-shadow(0 4px 10px rgba(212,149,106,0.35)); }
@@ -339,10 +340,12 @@
     .cico-label { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 5px; color: var(--accent); margin-bottom: 1.25rem; }
     .cico-time { font-family: 'Julius Sans One', sans-serif; font-size: 3rem; color: var(--green-dark); }
 
-    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
-    .reco-card { border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+    /* Recommandation Carousel */
+    .reco-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 2rem; margin-top: 3rem; padding-bottom: 2rem; scrollbar-width: none; }
+    .reco-grid::-webkit-scrollbar { display: none; }
+    .reco-card { flex: 0 0 320px; border-radius: var(--radius); overflow: hidden; background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; scroll-snap-align: center; white-space: normal; }
     .reco-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .reco-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; font-size: 0.9rem;}
+    .reco-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; font-size: 0.9rem;}
     .reco-name { font-family: 'Julius Sans One', sans-serif; font-size: 1rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; margin-bottom: 0.75rem; line-height: 1.3; }
     .reco-score { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; color: var(--white); background: var(--accent); padding: 0.3rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1.25rem; align-self: flex-start; letter-spacing: 1px; }
     .reco-desc { flex: 1; }
@@ -439,6 +442,10 @@
       .owner-message-card { padding: 2.5rem 2rem 2.5rem 3rem; }
       .acces-card-header { padding: 1.5rem 2rem; }
       .acces-card-body { padding: 2rem; }
+      li > span {     font-size: 14px;}
+      .owner-message-text p:last-child{font-size: 16px;}
+      .reco-grid { margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
+      .reco-card { max-width: 85vw; flex: 0 0 auto; }
     }
 
     @media (max-width: 480px) {
@@ -507,7 +514,6 @@
       .tpl-portrait-left .portrait-wrap, .tpl-portrait-right .portrait-wrap { width: 100%; flex: none; }
       .attention-box .card-desc { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
       .cover-strip-text { font-size: 0.7rem; letter-spacing: 2px; }
-      .reco-grid { grid-template-columns: 1fr; }
       .kv-line { flex-wrap: wrap; gap: 0.25rem; }
       .kv-val { text-align: left; max-width: 100%; }
     }
@@ -571,16 +577,16 @@
       .sticky-nav { display: none; }
       .weather-widget { flex-direction: column; text-align: center; }
       .weather-suggestion { border-left: none; border-top: 2px solid var(--accent-soft); padding-left: 0; padding-top: 1.5rem; }
-      .reco-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1.5rem; padding-bottom: 2rem; margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-      .reco-card { scroll-snap-align: center; max-width: 15rem; max-height: 30rem; flex-shrink: 0; }
       .card-desc { font-size: 0.9rem; }
-      #info-conciergerie { font-size: 12px; }
+      #info-conciergerie { font-size: 12px; width: 100%;}
     }
-
-    #info-conciergerie { color: var(--warm); width: 40%; }
+    @media (min-width: 768px) {
+      #info-conciergerie { color: var(--warm);width: 40%}
+    }
+    #info-conciergerie { color: var(--warm);}
   </style>
 </head>
-<body>
+<body id="main-part-download">
 <div id="progress-bar"></div>
 <nav class="sticky-nav" id="sticky-nav">
   <a class="nav-link" href="#section-info">arrivée</a>
@@ -634,6 +640,7 @@ const TABLE_LISTE_MAISON   = 'ListeMaison';
 const TABLE_WORKFLOW       = 'WorkFlowBreezeway';
 const TABLE_RECOMMANDATION = 'Recommandation';
 
+
 const ICON_MAP = [
   { keys: ['ping-pong','ping pong','table de ping-pong','table de ping pong'], icon: 'https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67', label: 'Ping-pong' },
   { keys: ['babyfoot','baby-foot','baby foot'], icon: 'https://img.icons8.com/?size=100&id=9820&format=png&color=1F6D67', label: 'Babyfoot' },
@@ -668,6 +675,11 @@ const ICON_MAP = [
   { keys: ['sport', 'Sport'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Sport' },
   { keys: ['bateau', 'barque'], icon: 'https://img.icons8.com/?size=100&id=9317&format=png&color=1F6D67', label: 'Barque/Bateau' },
   { keys: ['Cuisine', 'cuisine'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Cuisine' },
+  { keys: ['poêle', 'Poêle'], icon: 'https://img.icons8.com/?size=100&id=mIXbPNP3d6S0&format=png&color=1F6D67', label: 'Poêle' },
+  { keys: ['bébé', 'bebe'], icon: 'https://img.icons8.com/?size=100&id=2090&format=png&color=1F6D67', label: 'Équipements bébé' },
+  { keys: ['enceinte', 'audio'], icon: 'https://img.icons8.com/?size=100&id=undefined&format=png&color=1F6D67', label: 'Enceinte/Audio' },
+  { keys: ['térasse', 'véranda'], icon: 'https://img.icons8.com/?size=100&id=SlzL4GyBltua&format=png&color=1F6D67', label: 'Térasse/Véranda' },
+  { keys: ['ventilateur', 'véranda'], icon: 'https://img.icons8.com/?size=100&id=551&format=png&color=1F6D67', label: 'Ventilateur' },
 ];
 
 window.addEventListener('scroll', () => {
@@ -693,7 +705,6 @@ function getEquipmentIconEntry(nomEquipement) {
   return null;
 }
 
-/* ── LIGHTBOX ── */
 let _lbImages = [], _lbIndex = 0;
 let has_piscine = false;
 
@@ -744,7 +755,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  lightboxNav(-1);
 });
 
-/* ── SCROLL SPY ── */
+/* ── scroll ── */
 function initScrollSpy() {
   const navLinks = document.querySelectorAll(".nav-link");
   const observerOptions = {
@@ -796,7 +807,7 @@ async function fetchAll(table) {
   return records;
 }
 
-/* ── HOUSE PHOTOS GALLERY ── */
+/* ── Enlever, devait représenter les photos de la maison ── */
 function renderHousePhotosSection(photos, nomMaison) {
   if (!photos || !photos.length) return '';
   const rooms = {};
@@ -816,14 +827,14 @@ function renderHousePhotosSection(photos, nomMaison) {
     const imgs = rooms[room];
     const gridImgs = imgs.map((url, j) => {
       const safe = url.replace(/'/g, "\\'");
-      return `<img class="room-grid-img" src="${escapeAttr(url)}" loading="lazy" alt="${escapeHtml(room)} ${j+1}" onclick="openLightbox('${safe}', ${JSON.stringify(imgs).replace(/"/g, '&quot;')}, ${j})">`;
+      return `<img class="room-grid-img" src="${escapeAttr(url)}" loading="lazy" alt="${escapeHtml(room)} ${j+1}" onclick="openLightbox('${safe}', ${JSON.stringify(imgs).replace(/"/g, '"')}, ${j})">`;
     }).join('');
     return `<div class="room-panel${i === 0 ? ' active' : ''}" id="room-panel-${i}"><div class="room-grid">${gridImgs}</div></div>`;
   }).join('');
   return `
     <section id="section-photos" class="photos-section reveal">
       <div class="photos-hero reveal">
-        <img src="${escapeAttr(heroUrl)}" loading="lazy" alt="${escapeHtml(nomMaison)}" onclick="openLightbox('${safeHero}', ${JSON.stringify(allImgs).replace(/"/g, '&quot;')}, 0)">
+        <img src="${escapeAttr(heroUrl)}" loading="lazy" alt="${escapeHtml(nomMaison)}" onclick="openLightbox('${safeHero}', ${JSON.stringify(allImgs).replace(/"/g, '"')}, 0)">
         <div class="photos-hero-overlay"></div>
         <div class="photos-hero-title">${escapeHtml(nomMaison)}</div>
       </div>
@@ -870,9 +881,15 @@ function renderVideo(url) {
   return `<iframe src="${escapeAttr(url)}" frameborder="0" allowfullscreen></iframe>`;
 }
 
-function is_file_image(str) { return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw|avif)$/i.test(str || ''); }
-function escapeHtml(str) { return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escapeAttr(str) { return (str || '').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+function is_file_image(a) {
+  if (!a) return false;
+  if (typeof a === 'string') return true; // If it's a plain string URL, accept it
+  if (a.type && a.type.startsWith('image/')) return true;
+  return /\.(jpg|jpeg|png|gif|webp|svg|tiff|psd|raw|avif)([?#]|$)/i.test(a.filename || a.url || '');
+}
+
+function escapeHtml(str) { return (str || '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>'); }
+function escapeAttr(str) { return (str || '').replace(/'/g,'\'').replace(/"/g,'"'); }
 
 function getInlineImgClass(width, height) {
   if (!width || !height) return 'inline-img-landscape';
@@ -908,9 +925,11 @@ function slugify(str) {
     .replace(/^-+|-+$/g, '');
 }
 
+
+// essaye de s'adapter aux différents nombre d'image en fonction du texte il génère de templates et les renvoies
 function renderEquipCard(item, forceTemplate) {
   const photos  = Array.isArray(item._attachments)
-    ? item._attachments.filter(a => is_file_image(a.filename || ''))
+    ? item._attachments.filter(a => is_file_image(a))
     : [];
   const allUrls = photos.map(p => p.url);
 
@@ -918,9 +937,12 @@ function renderEquipCard(item, forceTemplate) {
   const cardId   = slugify(item.Item);
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
   const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
-  const desc  = `<div class="card-desc">${parseDescriptionWithInline(item.Description, item._attachments, item._videos)}</div>`;
+  console.log("parseDesc_test", item._attachments);
 
-  function imgClick(url, idx) {
+  const cleanDesc = (item.Description || '').replace(/\$[iv]\d+/g, '');
+  const desc  = `<div class="card-desc">${parseDescriptionWithInline(cleanDesc, [], [])}</div>`;
+
+function imgClick(url, idx) {
     const safe = url.replace(/'/g, "\\'");
     return `onclick="openLightbox('${safe}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${idx})"`;
   }
@@ -997,27 +1019,117 @@ function groupConsecutiveImages(html) {
 }
 
 function linkifyUrls(text) {
-  return text.replace(/((?:https?:\/\/[^\s<"'\)\]]+)|(?:www\.[^\s<"'\)\]]+))/g, (match) => {
-    if (match.includes('airtableusercontent.com')) return '';
-    let href = match.startsWith('www.') ? 'https://' + match : match;
+  if (!text) return '';
+  return text.replace(/(<[^>]+>)|((?:https?:\/\/|www\.)[^\s<"'\)\]]+)/g, (match, tag, url) => {
+    if (tag) return tag;
+    if (!url) return match;
+    if (url.includes('airtableusercontent.com')) return '';
+    const href = url.startsWith('www.') ? 'https://' + url : url;
     return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien maps</a>`;
   });
 }
 
 function parseDescriptionWithInline(text, attachments, videos) {
   if (!text) return '';
-  const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a.filename || '')) : [];
+
+  const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a)) : [];
+  const allUrls = photos.map(p => typeof p === 'string' ? p : p.url);
+
+  let out = linkifyUrls(text);
+
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i];
+    const url = typeof photo === 'string' ? photo : (photo.url || '');
+    if (!url) continue;
+
+    const width = photo.width || 0;
+    const height = photo.height || 0;
+    const cls = getInlineImgClass(width, height);
+    const safeUrl = url.replace(/'/g, "\\'");
+
+    const imgTag = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${i})" alt="">`;
+    out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
+  }
+
+  if (Array.isArray(videos)) {
+    for (let i = 0; i < videos.length; i++) {
+      const url = videos[i];
+      if (!url) continue;
+      out = out.replace(new RegExp('\\$v' + i + '(?!\\d)', 'g'), renderVideo(url));
+    }
+  }
+
+  out = out.replace(/\$[iv]\d+/g, '');
+
+  // Handle existing HTML vs Plain Text processing
+  const isHtml = /<\/?(h[1-6]|p|ul|ol|li|div|table|br)\b/i.test(out);
+
+  if (isHtml) {
+    out = out.replace(/<li>\s*(?:N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\.\s+|[-•*]\s+)/gi, '<li>');
+    return groupConsecutiveImages(out);
+  }
+
+  const lines = out.split('\n').map(l => l.trim()).filter(Boolean);
+  const rendered = [];
+  let inList = false;
+  const closeList = () => { if (inList) { rendered.push('</ul>'); inList = false; } };
+
+  for (const line of lines) {
+    if (/^(?:<img\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
+      closeList();
+      rendered.push(line);
+      continue;
+    }
+
+    const isSectionHeader = (
+      (/^[A-ZÉÈÀÙÂÊÎÔÛÇ0-9\/\- ]{3,50}:?$/.test(line) && line === line.toUpperCase() && !line.includes('http')) ||
+      (/^[A-ZÉÈÀÙÂÊÎÔÛÇ][\w\s]{2,40}:$/.test(line) && line.length < 50)
+    );
+    if (isSectionHeader && line.length > 2) {
+      closeList();
+      rendered.push(`<p class="section-label">${escapeHtml(line.replace(/:$/, ''))}</p>`);
+      continue;
+    }
+
+    const bulletMatch = line.match(/^(?:[-•*]\s+|N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\s*[.)]\s+)/i);
+    if (bulletMatch) {
+      const clean = line.slice(bulletMatch[0].length).trim();
+      if (!inList) { rendered.push('<ul class="desc-list">'); inList = true; }
+      rendered.push(`<li>${clean}</li>`);
+      continue;
+    }
+
+    closeList();
+
+    const colonIdx = line.indexOf(': ');
+    if (colonIdx > 0 && colonIdx < 55 && !line.startsWith('<')) {
+      const left = line.slice(0, colonIdx), right = line.slice(colonIdx + 2);
+      if (!left.includes('<') && !/https?:\/\//.test(left)) {
+        rendered.push(`<div class="kv-line"><span class="kv-key">${escapeHtml(left)}</span><span class="kv-val">${right}</span></div>`);
+        continue;
+      }
+    }
+
+    rendered.push(`<p>${line}</p>`);
+  }
+  closeList();
+  return groupConsecutiveImages(rendered.join(''));
+}
+
+function parseDescriptionWithInline(text, attachments, videos) {
+  if (!text) return '';
+  const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a)) : [];
   const allUrls = photos.map(p => p.url);
   let out = text;
 
-  // FIX 3: Replace $iN beacons — iterate forward to avoid index corruption
+  // remplacer $iN balise
   for (let i = 0; i < photos.length; i++) {
     const photo = photos[i];
     const url = photo.url || '';
     if (!url) continue;
     const cls = getInlineImgClass(photo.width || 0, photo.height || 0);
     const safeUrl = url.replace(/'/g, "\\'");
-    const imgTag  = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '&quot;')}, ${i})" alt="">`;
+    const imgTag  = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '"')}, ${i})" alt="">`;
     out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
   }
 
@@ -1112,10 +1224,8 @@ function parseDescription(text, attachments, hideInlineImages) {
   );
 }
 
-/* ── FIX 2: Beautiful owner message renderer ── */
 function renderOwnerMessage(text) {
   if (!text || !text.trim()) return '';
-  // Convert plain text paragraphs
   const paragraphs = text.trim().split(/\n\n+/).map(p =>
     `<p>${escapeHtml(p.replace(/\n/g, ' ').trim())}</p>`
   ).join('');
@@ -1126,10 +1236,57 @@ function renderOwnerMessage(text) {
     </div>`;
 }
 
-/* ── FIX 1: Render InstructionAccesLivret ── */
-function renderAccesSection(text) {
-  if (!text || !text.trim()) return '';
-  const descHtml = parseDescriptionWithInline(text, [], []);
+function renderAccesSection(text, media) {
+  if ((!text || !text.trim()) && (!Array.isArray(media) || media.length === 0)) return '';
+  console.log("media", media)
+  const allMedia = media || [];
+
+  // Créer des tableaux locaux pour les photos et les vidéos, ainsi qu'une correspondance entre l'index global et l'index local.
+  // Dans le texte, $iN fait référence à la position N dans le tableau brut mediaAccess (qui peut
+  // contenir à la fois des images et des vidéos) ; il faut donc effectuer une remappage avant de passer à
+  // parseDescriptionWithInline, qui s'attend à ce que $iN corresponde à la N-ième image et $vN à la N-ième vidéo.
+
+  const photos = [];
+  const videoUrls = [];
+  const globalToPhoto = {};
+  const globalToVideo = {};
+  allMedia.forEach((item, gi) => {
+    if (is_file_image(item)) {
+      globalToPhoto[gi] = photos.length;
+      photos.push(item);
+    } else if ((item.type && item.type.startsWith('video/')) || /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(item.filename || '')) {
+      globalToVideo[gi] = videoUrls.length;
+      videoUrls.push(item.url);
+    }
+  });
+  console.log("videoUrls", videoUrls);
+  console.log("photos", photos);
+
+  let enrichedText = (text || '').trim();
+
+  enrichedText = enrichedText.replace(/\$i(\d+)/g, (m, n) => {
+    const gi = +n;
+    if (globalToPhoto[gi] !== undefined) return '$i' + globalToPhoto[gi];
+    if (globalToVideo[gi] !== undefined) return '$v' + globalToVideo[gi];
+    return '';
+  });
+
+  const usedPIdxs = new Set([...enrichedText.matchAll(/\$i(\d+)/g)].map(m => +m[1]));
+  const freePIdxs = photos.map((_, i) => i).filter(i => !usedPIdxs.has(i));
+  console.log(freePIdxs)
+  if (freePIdxs.length) {
+    enrichedText += (enrichedText ? '\n\n' : '') + freePIdxs.map(i => '$i' + i).join(' ');
+  }
+  console.log("enrichedText", enrichedText)
+
+  const usedVIdxs = new Set([...enrichedText.matchAll(/\$v(\d+)/g)].map(m => +m[1]));
+  const freeVIdxs = videoUrls.map((_, i) => i).filter(i => !usedVIdxs.has(i));
+  if (freeVIdxs.length) {
+    enrichedText += (enrichedText ? '\n\n' : '') + freeVIdxs.map(i => '$v' + i).join('\n');
+  }
+  console.log("parse photos", photos)
+  const descHtml = parseDescriptionWithInline(enrichedText, photos, videoUrls);
+
   return `
     <div class="acces-card reveal">
       <div class="acces-card-header">
@@ -1288,17 +1445,14 @@ function renderCover(nomMaison, numero, coverUrl) {
     </div>`;
 }
 
-/* ── MAISON INFO — FIX 1 & 2: inject acces + owner message ── */
 function get_global_info_maison(rec) {
   if (!rec) return '';
   const f = rec.fields;
 
-  //const weatherHtml = `<div id="weather-widget-container" class="reveal"></div>`;
-
   const descHtml = f.Description ? renderOwnerMessage(f.Description) : '';
-
-  // FIX 1: InstructionAccesLivret rendered after description
-  const accesHtml = f.InstructionAccesLivret ? renderAccesSection(f.InstructionAccesLivret) : '';
+  const accesHtml = (f.InstructionAccesLivret || (f.mediaAcces && f.mediaAcces.length > 0))
+    ? renderAccesSection(f.InstructionAccesLivret, f.mediaAcces)
+    : '';
 
   let attentionHtml = '';
   if (f.PointAttention) {
@@ -1372,93 +1526,83 @@ function getCICO(workflowRecords, maisonId) {
     </section>`;
 }
 
-/* ── FIX 3: renderPiscinePage — correct beacon substitution ── */
 function renderPiscinePage(rec) {
   if (!rec) return '';
   const f = rec.fields;
 
-  const allPhotos = f.Photo || [];
+  const allPhotos = (f.Photo || []).filter(a => is_file_image(a));
   const youtubeVids = f.lienYoutube ? f.lienYoutube.split(';').map(v => v.trim()).filter(Boolean) : [];
-
-  const attachedVids = allPhotos
+  const attachedVids = (f.Photo || [])
     .filter(a => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
     .map(a => a.url);
-
   const videos = [...youtubeVids, ...attachedVids];
 
-  const validSections = [
-    { label: "Instructions d'ouverture", text: f.InstructionOuverture },
-    { label: "Instructions de fermeture", text: f.InstructionFermeture }
+  const rawSections = [
+    { label: "Instructions d'ouverture", text: f.InstructionOuverture, extraMedia: [] },
+    { label: "Instructions de fermeture", text: f.InstructionFermeture, extraMedia: [] },
+    ...(f.InstructionAcces ? [{ label: "Accès piscine", text: f.InstructionAcces, extraMedia: (f.mediaAcces || []).filter(a => is_file_image(a)) }] : [])
   ].filter(s => s.text && s.text.trim());
 
-  if (!validSections.length) return '';
+  if (!rawSections.length) return '';
 
-  if (validSections.length === 1) {
-    validSections[0].bounds = { pStart: 0, pEnd: allPhotos.length, vStart: 0, vEnd: videos.length };
-  } else {
-    const halfP = Math.ceil(allPhotos.length / 2);
-    const halfV = Math.ceil(videos.length / 2);
-    validSections[0].bounds = { pStart: 0, pEnd: halfP, vStart: 0, vEnd: halfV };
-    validSections[1].bounds = { pStart: halfP, pEnd: allPhotos.length, vStart: halfV, vEnd: videos.length };
-  }
+  const sectionData = rawSections.map(s => {
+    const pRefs = new Set([...(s.text || '').matchAll(/\$i(\d+)/g)].map(m => +m[1]));
+    const vRefs = new Set([...(s.text || '').matchAll(/\$v(\d+)/g)].map(m => +m[1]));
+    return { ...s, pRefs, vRefs };
+  });
 
-  const cardsHtml = validSections.map((section, idx) => {
-    const bounds = section.bounds;
+  const allReferencedPIdxs = new Set(sectionData.flatMap(s => [...s.pRefs]));
+  const unrefPIdxs = allPhotos.map((_, i) => i).filter(i => !allReferencedPIdxs.has(i));
+  unrefPIdxs.forEach(i => sectionData[sectionData.length - 1].pRefs.add(i));
 
-    // Slice photos and videos for this section
-    const sectionPhotos = allPhotos.slice(bounds.pStart, bounds.pEnd);
-    const sectionVideos = videos.slice(bounds.vStart, bounds.vEnd);
+  const allReferencedVIdxs = new Set(sectionData.flatMap(s => [...s.vRefs]));
+  const unrefVIdxs = videos.map((_, i) => i).filter(i => !allReferencedVIdxs.has(i));
+  unrefVIdxs.forEach(i => sectionData[sectionData.length - 1].vRefs.add(i));
 
-    // Remap beacon indices: $i3 in section[1] with pStart=2 → $i1 in local photos
-    let enrichedText = section.text;
+  const cardsHtml = sectionData.map(section => {
+    const globalPIdxs = [...section.pRefs].sort((a, b) => a - b);
+    const mainPhotos = globalPIdxs.map(i => allPhotos[i]).filter(Boolean);
+    const sectionPhotos = [...mainPhotos, ...section.extraMedia];
 
-    // Remap photo beacons (iterate descending to avoid double-replace)
-    if (bounds.pStart > 0) {
-      for (let i = bounds.pEnd - 1; i >= bounds.pStart; i--) {
-        const localIdx = i - bounds.pStart;
-        enrichedText = enrichedText.replace(
-          new RegExp('\\$i' + i + '(?!\\d)', 'g'),
-          `##IMG${localIdx}##`
-        );
-      }
-      enrichedText = enrichedText.replace(/##IMG(\d+)##/g, '$i$1');
+    const globalToLocal = {};
+    globalPIdxs.forEach((gi, li) => { globalToLocal[gi] = li; });
+
+    let enrichedText = section.text.replace(/\$i(\d+)/g, (m, n) => {
+      const li = globalToLocal[+n];
+      return li !== undefined ? '$i' + li : '';
+    });
+
+    const usedLocalPIdxs = new Set([...enrichedText.matchAll(/\$i(\d+)/g)].map(m => +m[1]));
+    const freePIdxs = sectionPhotos.map((_, i) => i).filter(i => !usedLocalPIdxs.has(i));
+    if (freePIdxs.length) {
+      enrichedText += '\n\n' + freePIdxs.map(i => '$i' + i).join(' ');
     }
 
-    // Remap video beacons
-    if (bounds.vStart > 0) {
-      for (let i = bounds.vEnd - 1; i >= bounds.vStart; i--) {
-        const localIdx = i - bounds.vStart;
-        enrichedText = enrichedText.replace(
-          new RegExp('\\$v' + i + '(?!\\d)', 'g'),
-          `##VID${localIdx}##`
-        );
-      }
-      enrichedText = enrichedText.replace(/##VID(\d+)##/g, '$v$1');
+    const globalVIdxs = [...section.vRefs].sort((a, b) => a - b);
+    const sectionVideos = globalVIdxs.map(i => videos[i]).filter(Boolean);
+    const globalVToLocal = {};
+    globalVIdxs.forEach((gi, li) => { globalVToLocal[gi] = li; });
+
+    enrichedText = enrichedText.replace(/\$v(\d+)/g, (m, n) => {
+      const li = globalVToLocal[+n];
+      return li !== undefined ? '$v' + li : '';
+    });
+
+    const usedLocalVIdxs = new Set([...enrichedText.matchAll(/\$v(\d+)/g)].map(m => +m[1]));
+    const freeVIdxs = sectionVideos.map((_, i) => i).filter(i => !usedLocalVIdxs.has(i));
+    if (freeVIdxs.length) {
+      enrichedText += '\n\n' + freeVIdxs.map(i => '$v' + i).join('\n');
     }
 
-    // Append any photos/videos NOT referenced by beacons
-    const usedPIdx = [...enrichedText.matchAll(/\$i(\d+)/g)].map(m => +m[1]);
-    const freePhotos = sectionPhotos.map((_, i) => i).filter(i => !usedPIdx.includes(i));
-    if (freePhotos.length) {
-      enrichedText += '\n\n' + freePhotos.map(i => '$i' + i).join(' ');
-    }
+    const item = {
+      Item: section.label,
+      Description: enrichedText,
+      Categorie: 'Piscine',
+      _attachments: sectionPhotos,
+      _videos: sectionVideos
+    };
 
-    const usedVIdx = [...enrichedText.matchAll(/\$v(\d+)/g)].map(m => +m[1]);
-    const freeVideos = sectionVideos.map((_, i) => i).filter(i => !usedVIdx.includes(i));
-    if (freeVideos.length) {
-      enrichedText += '\n\n' + freeVideos.map(i => '$v' + i).join('\n');
-    }
-
-    const descHtml = parseDescriptionWithInline(enrichedText, sectionPhotos, sectionVideos);
-
-    return `
-      <details class="elegant-accordion reveal" ${idx === 0 ? 'open' : ''}>
-        <summary>${escapeHtml(section.label)}</summary>
-        <div class="accordion-content">
-          <div class="card-desc">${descHtml}</div>
-        </div>
-      </details>
-    `;
+    return renderEquipCard(item);
   }).join('');
 
   const navi = document.getElementById("sticky-nav");
@@ -1511,43 +1655,29 @@ function getRecommandation(data, maisonId) {
     </section>`;
 }
 
-/* ── FIX 6: Departure instructions — handle flat text format ── */
 function get_instruction_depart(rec) {
   if (!rec?.fields?.InstructionDepart) return '';
 
   let rawText = rec.fields.InstructionDepart;
 
-  // Strip HTML tags gracefully
   rawText = rawText.replace(/<\/?(div|p|br|h[1-6]|li|ul|ol|table|tr)[^>]*>/gi, '\n');
   rawText = rawText.replace(/<[^>]+>/g, '');
 
-  // Decode HTML entities
   const txt = document.createElement("textarea");
   txt.innerHTML = rawText;
   rawText = txt.value;
 
-  // FIX 6: Handle flat text format — split on double spaces or long whitespace clusters
-  // that indicate list boundaries, and split on "  " (multiple spaces) acting as separators
-  // First try to detect if text is one big flat chunk (no newlines, long string)
   const hasNewlines = rawText.includes('\n');
   if (!hasNewlines) {
-    // Flat text: try splitting on double-space patterns (common Airtable rich text export artifact)
-    // Also split before phrases that look like instructions ("Enlevez", "Mettez", "Lancez", etc.)
     rawText = rawText
-      // Split on long space sequences (2+ spaces) → likely list separators
       .replace(/  +/g, '\n')
-      // Insert line break before imperative verbs at start of what should be a new bullet
       .replace(/\s+(Enlevez|Mettez|Lancez|Assurez|Jetez|Fermez|Remettez|Replacez|Vérifiez|Nettoyez|Rangez|Videz|Éteignez|Eteignez)\b/g, '\n$1')
-      // Split on "  En partant :" type sub-headers
       .replace(/\s+(En partant\s*:)\s*/gi, '\nEN PARTANT\n');
   }
 
-  // Auto-format: detect ALL-CAPS sections and isolate them as headers
   rawText = rawText.replace(/\s+([A-ZÉÈÀÙÂÊÎÔÛÇ]{4,}(?:\s+[A-ZÉÈÀÙÂÊÎÔÛÇ]+)*)\s+-/g, '\n$1\n- ');
   rawText = rawText.replace(/\s*(Fermeture de la maison\s*:)\s*/gi, '\nFERMETURE DE LA MAISON\n- ');
 
-  // Extract intro/outro text — anything before first instruction and after last instruction
-  // Identify opening/closing paragraph patterns
   const introRegex = /^(.*?(?:Avant de quitter les lieux.*?:))/si;
   const outroRegex = /(Nous espérons.*?séjour.*?!)$/si;
   let introText = '';
@@ -1568,7 +1698,6 @@ function get_instruction_depart(rec) {
   let out = '';
   let inList = false;
 
-  // Helper: linkify URLs in text
   function linkifyLine(str) {
     return str.replace(/(https?:\/\/[^\s<"')\]]+)/g, (url) => {
       return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener">📍 Voir sur la carte</a>`;
@@ -1589,14 +1718,11 @@ function get_instruction_depart(rec) {
       if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
 
       let cleanLine = line.replace(/^(?:[-•*]\s+|\d+\.\s+)/, '');
-
-      // Split compound sentences separated by ". " + Capital letter
       const subItems = cleanLine.split(/\.\s+(?=[A-ZÉÈÀÙÂÊÎÔÛÇ])/);
 
       for (let i = 0; i < subItems.length; i++) {
         let text = subItems[i].trim();
         if (i < subItems.length - 1 && !text.endsWith('.')) text += '.';
-        // Check for URL in text
         const hasUrl = /(https?:\/\/[^\s]+)/.test(text);
         if (hasUrl) {
           const linkedText = text.replace(/(https?:\/\/[^\s]+)/g, (url) =>
@@ -1609,7 +1735,6 @@ function get_instruction_depart(rec) {
       }
     } else {
       if (inList) { out += '</ul>'; inList = false; }
-      // Check if line looks like an instruction (starts with imperative verb)
       const isInstruction = /^(Enlevez|Mettez|Lancez|Assurez|Jetez|Fermez|Remettez|Replacez|Vérifiez|Nettoyez|Rangez|Videz|Éteignez|Eteignez|Voici)\b/i.test(line);
       if (isInstruction) {
         if (!inList) { out += '<ul class="checkout-list" style="margin-top:0.5rem; margin-bottom:1.5rem;">'; inList = true; }
@@ -1713,18 +1838,21 @@ async function buildLivret(IdMaison) {
   const themeMap = {};
   const allEquipItems = [];
 
-  equipRecs.filter(r => equipIds.has(r.id)).forEach(rec => {
+  const validEquipRecs = equipRecs.filter(r => equipIds.has(r.id));
+
+  // Tri global pour s'assurer que OrdreMaison est bien pris en compte
+  validEquipRecs.sort((a, b) => {
+    const orderA = parseFloat(a.fields.OrdreMaison) || 0;
+    const orderB = parseFloat(b.fields.OrdreMaison) || 0;
+    return orderA - orderB;
+  });
+
+  validEquipRecs.forEach(rec => {
     const catArr = rec.fields['Catégorie'];
     const cat    = Array.isArray(catArr) ? catArr[0] : (catArr || 'Général');
     if (!themeMap[cat]) themeMap[cat] = [];
     const allPhotos = (rec.fields.Photos || []);
     const youtubeVids = rec.fields.lienYoutube ? rec.fields.lienYoutube.split(';').map(v => v.trim()).filter(Boolean) : [];
-
-    equipRecs.sort((a, b) => {
-      const orderA = a.fields.OrdreMaison || 0;
-      const orderB = b.fields.OrdreMaison || 0;
-      return orderA - orderB;
-    });
 
     const attachedVids = allPhotos
       .filter(a => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
@@ -1742,7 +1870,6 @@ async function buildLivret(IdMaison) {
     allEquipItems.push(item);
   });
 
-  // FIX 4: Guard piscine — only render if record exists, default to empty string
   let piscineSectionHtml = '';
   if (maisonRecord.fields['Piscine'] && Array.isArray(maisonRecord.fields['Piscine']) && maisonRecord.fields['Piscine'].length > 0) {
     const piscineRecord = piscineRecs.find(p => (maisonRecord.fields['Piscine'] || []).includes(p.id));
@@ -1799,12 +1926,16 @@ async function buildLivret(IdMaison) {
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Fetch weather after DOM is ready
   const addr = maisonRecord.fields.Adresse || maisonRecord.fields.adresse || '';
   if (addr) fetchWeather(addr);
 }
 
+function download(){
+  const element = document.getElementById('main-part-download');
+  html2pdf().from(element).save('livret-idylliq.pdf');
+}
 /* ── SEARCH ── */
+
 function toggleSearch() {
   const widget = document.getElementById('search-widget');
   widget.classList.toggle('active');
