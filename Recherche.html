@@ -304,6 +304,141 @@
         margin-bottom: 0;
       }
 
+      .field-header {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-bottom: 0.15rem;
+      }
+      .field-header .field-label { margin-bottom: 0; }
+
+      /* ── EDIT BUTTON ── */
+      .edit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 0;
+        opacity: 0;
+        transition: opacity 0.15s, background 0.15s, color 0.15s;
+        flex-shrink: 0;
+      }
+      .field-block:hover .edit-btn,
+      .cell-nom:hover .edit-btn { opacity: 1; }
+      .edit-btn:hover { background: var(--primary-light); color: var(--primary); }
+
+      /* ── EDIT MODAL ── */
+      #edit-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      #edit-modal.open { display: flex; }
+
+      #edit-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 560px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      }
+
+      #edit-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      #edit-field-name {
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      #edit-meta {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-family: monospace;
+        margin-top: 0.2rem;
+      }
+
+      #edit-textarea {
+        width: 100%;
+        min-height: 140px;
+        padding: 0.75rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        resize: vertical;
+        outline: none;
+        color: var(--text);
+        line-height: 1.5;
+        transition: border-color 0.2s;
+      }
+      #edit-textarea:focus { border-color: var(--primary); }
+
+      #edit-actions {
+        display: flex;
+        gap: 0.65rem;
+        justify-content: flex-end;
+        margin-top: 1rem;
+      }
+
+      #edit-cancel-btn {
+        padding: 0.6rem 1.2rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: white;
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      #edit-cancel-btn:hover { border-color: var(--muted); color: var(--text); }
+
+      #edit-save-btn {
+        padding: 0.6rem 1.4rem;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      #edit-save-btn:hover { opacity: 0.85; }
+      #edit-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      #edit-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.1rem 0.3rem;
+        border-radius: 6px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      #edit-close-btn:hover { color: var(--text); }
+
       /* Thumbnails */
       .thumbs {
         display: flex;
@@ -412,24 +547,32 @@
           width: 100%;
         }
       }
+      .create{
+        padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+      }
+
+      .creation{
+        margin-bottom: 2rem;
+      }
     </style>
   </head>
   <body>
-    <!-- HEADER -->
     <header class="header">
       <div class="header-logo">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-        >
+
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
-        Maisons
+        Idylliq
       </div>
       <div class="controls">
         <div class="search-wrap">
@@ -460,6 +603,16 @@
 
     <!-- MAIN -->
     <div class="main">
+      <div class="creation">
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form'">Créer une maison</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form'">Créer une maison dans la liste</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagdD9YKBkyFDtYBo/form'">Créer un livret</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagB4Dr4RpW2PHKrP/form'">Créer un fonctionnement/Equipement</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagP0QXE7kBoXwnqd/form'">Créer un propriétaire</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form'">Créer une Disposition de Maison</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form'">Créer une Condition de Location</button>
+        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form'">Créer une Piscine</button>
+      </div>
       <div id="cat-filter" class="cat-filter"></div>
 
       <div class="meta-bar">
@@ -496,6 +649,24 @@
     <div id="lightbox">
       <button id="lightbox-close">✕</button>
       <img id="lightbox-img" src="" alt="" />
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal">
+      <div id="edit-card">
+        <div id="edit-card-header">
+          <div>
+            <div id="edit-field-name"></div>
+            <div id="edit-meta"></div>
+          </div>
+          <button id="edit-close-btn">✕</button>
+        </div>
+        <textarea id="edit-textarea" spellcheck="false"></textarea>
+        <div id="edit-actions">
+          <button id="edit-cancel-btn">Annuler</button>
+          <button id="edit-save-btn">Sauvegarder</button>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -621,6 +792,8 @@
               const desc = rec.fields.descriptionLivret || '';
               rows.push({
                 type: 'equip',
+                recId: rec.id,
+                recTable: TABLE_EQUIPEMENT,
                 maison: nomMaison,
                 maisonId: IdMaison,
                 categorie: Array.isArray(rec.fields['Catégorie'])
@@ -668,6 +841,8 @@
 
               rows.push({
                 type: 'piscine',
+                recId: prec.id,
+                recTable: TABLE_PISCINE,
                 maison: nomMaison,
                 maisonId: IdMaison,
                 categorie: 'Piscine',
@@ -735,11 +910,13 @@
             if (!val) return;
             rows.push({
               type: 'maison',
+              recId: maisonRecord.id,
+              recTable: TABLE_MAISON,
               maison: nomMaison,
               maisonId: IdMaison,
               categorie: cat,
               nom: field,
-              nomField: null, 
+              nomField: null,
               descParts: [{ field, value: val }],
               photosField,
               description: val,
@@ -772,17 +949,20 @@
                   ? 'tag-maison'
                   : '';
 
+            const pencil = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+            const editBtn = (field) =>
+              `<button class="edit-btn" data-table="${esc(row.recTable)}" data-recid="${esc(row.recId)}" data-field="${esc(field)}" title="Modifier ${esc(field)}">${pencil}</button>`;
+
             // Titre cell
-            const nomHtml =
-              (row.nomField
-                ? `<span class="field-label">${esc(row.nomField)}</span>`
-                : '') + esc(row.nom);
+            const nomHtml = row.nomField
+              ? `<span class="field-header"><span class="field-label">${esc(row.nomField)}</span>${editBtn(row.nomField)}</span><span class="field-value">${esc(row.nom)}</span>`
+              : esc(row.nom);
 
             // Contenu cell — one field-block per part
             const descHtml = (row.descParts || [])
               .map((p) =>
                 p.value
-                  ? `<div class="field-block"><span class="field-label">${esc(p.field)}</span>${esc(p.value).replace(/\n/g, '<br>')}</div>`
+                  ? `<div class="field-block"><span class="field-header"><span class="field-label">${esc(p.field)}</span>${editBtn(p.field)}</span><span class="field-value">${esc(p.value).replace(/\n/g, '<br>')}</span></div>`
                   : '',
               )
               .join('');
@@ -871,8 +1051,99 @@
         });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape')
+        if (e.key === 'Escape') {
           document.getElementById('lightbox').classList.remove('open');
+          closeEditModal();
+        }
+      });
+
+      /* ── update record ── */
+
+      async function updateRecord(table, recId, fieldName, newValue) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`;
+        const res = await fetch(url, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fields: { [fieldName]: newValue } }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
+
+      /* ── edit modal ── */
+
+      let editCtx = null;
+
+      function openEditModal(table, recId, field, valueEl) {
+        const rawValue = valueEl ? valueEl.innerText : '';
+        editCtx = { table, recId, field, valueEl };
+        document.getElementById('edit-field-name').textContent = field;
+        document.getElementById('edit-meta').textContent = `${table}  ·  ${recId}`;
+        document.getElementById('edit-textarea').value = rawValue;
+        document.getElementById('edit-save-btn').disabled = false;
+        document.getElementById('edit-save-btn').textContent = 'Sauvegarder';
+        document.getElementById('edit-modal').classList.add('open');
+        setTimeout(() => document.getElementById('edit-textarea').focus(), 50);
+      }
+
+      function closeEditModal() {
+        document.getElementById('edit-modal').classList.remove('open');
+        editCtx = null;
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.edit-btn');
+        if (!btn) return;
+        e.stopPropagation();
+        const { table, recid, field } = btn.dataset;
+        const container = btn.closest('.field-block, .cell-nom');
+        const valueEl = container?.querySelector('.field-value') ?? null;
+        openEditModal(table, recid, field, valueEl);
+      });
+
+      document.getElementById('edit-close-btn').addEventListener('click', closeEditModal);
+      document.getElementById('edit-cancel-btn').addEventListener('click', closeEditModal);
+      document.getElementById('edit-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeEditModal();
+      });
+
+      document.getElementById('edit-save-btn').addEventListener('click', async () => {
+        if (!editCtx) return;
+        const newVal = document.getElementById('edit-textarea').value;
+        const saveBtn = document.getElementById('edit-save-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Sauvegarde…';
+
+        try {
+          await updateRecord(editCtx.table, editCtx.recId, editCtx.field, newVal);
+
+          // Update DOM value span
+          if (editCtx.valueEl) {
+            editCtx.valueEl.innerHTML = esc(newVal).replace(/\n/g, '<br>');
+          }
+
+          // Sync allRows so search stays accurate
+          allRows.forEach((row) => {
+            if (row.recId !== editCtx.recId || row.recTable !== editCtx.table) return;
+            if (row.nomField === editCtx.field) row.nom = newVal;
+            const part = row.descParts?.find((p) => p.field === editCtx.field);
+            if (part) {
+              part.value = newVal;
+              row.description = row.descParts.map((p) => p.value).join(' ');
+            }
+          });
+
+          Toastify({ text: 'Enregistré !', duration: 2500, style: { background: '#1F6D67' } }).showToast();
+          closeEditModal();
+        } catch (err) {
+          Toastify({ text: `Erreur : ${err.message}`, duration: 4000, style: { background: '#dc2626' } }).showToast();
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Sauvegarder';
+        }
       });
 
       /* ── init ── */
