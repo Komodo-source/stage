@@ -1,3 +1,8 @@
+<!--
+@author: Pierre
+@github: https://github.com/Komodo-source
+-->
+
 <!doctype html>
 <html lang="fr">
   <head>
@@ -325,7 +330,6 @@
         cursor: pointer;
         border-radius: 4px;
         padding: 0;
-        opacity: 0;
         transition: opacity 0.15s, background 0.15s, color 0.15s;
         flex-shrink: 0;
       }
@@ -333,7 +337,7 @@
       .cell-nom:hover .edit-btn { opacity: 1; }
       .edit-btn:hover { background: var(--primary-light); color: var(--primary); }
 
-      /* ── EDIT MODAL ── */
+      
       #edit-modal {
         display: none;
         position: fixed;
@@ -604,16 +608,20 @@
     <!-- MAIN -->
     <div class="main">
       <div class="creation">
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form'">Créer une maison</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form'">Créer une maison dans la liste</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagdD9YKBkyFDtYBo/form'">Créer un livret</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagB4Dr4RpW2PHKrP/form'">Créer un fonctionnement/Equipement</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagP0QXE7kBoXwnqd/form'">Créer un propriétaire</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form'">Créer une Disposition de Maison</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form'">Créer une Condition de Location</button>
-        <button class="create" onclick="window.location.href= 'https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form'">Créer une Piscine</button>
+        <h2>Formulaire de création</h2>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form'">Créer une maison</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form'">Créer une maison dans la liste</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagdD9YKBkyFDtYBo/form'">Créer un livret</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagB4Dr4RpW2PHKrP/form'">Créer un fonctionnement/Equipement</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagP0QXE7kBoXwnqd/form'">Créer un propriétaire</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form'">Créer une Disposition de Maison</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form'">Créer une Condition de Location</button>
+        <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form'">Créer une Piscine</button>
       </div>
-      <div id="cat-filter" class="cat-filter"></div>
+      <div id="cat-filter" class="cat-filter">
+        <h2>Tags</h2>
+
+      </div>
 
       <div class="meta-bar">
         <div id="results-count"></div>
