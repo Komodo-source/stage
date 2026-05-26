@@ -35,7 +35,7 @@
     }
 
     body {
-      background: var(--warm);  
+      background: var(--warm);
       font-family: 'Outfit', sans-serif;
       color: var(--ink);
       scroll-behavior: smooth;
@@ -941,6 +941,7 @@ function renderEquipCard(item, forceTemplate) {
 
   const cleanDesc = (item.Description || '').replace(/\$[iv]\d+/g, '');
   const desc  = `<div class="card-desc">${parseDescriptionWithInline(cleanDesc, [], [])}</div>`;
+  if (!desc){return "";}
 
 function imgClick(url, idx) {
     const safe = url.replace(/'/g, "\\'");
@@ -1025,7 +1026,7 @@ function linkifyUrls(text) {
     if (!url) return match;
     if (url.includes('airtableusercontent.com')) return '';
     const href = url.startsWith('www.') ? 'https://' + url : url;
-    return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien maps</a>`;
+    return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien</a>`;
   });
 }
 
@@ -1151,7 +1152,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
       if (tag) return tag;
       if (url.includes('airtableusercontent.com')) return '';
       const href = url.startsWith('www.') ? 'https://' + url : url;
-      return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien maps</a>`;
+      return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien</a>`;
     });
     out = out.replace(/<li>\s*(?:N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\.\s+|[-•*]\s+)/gi, '<li>');
     return groupConsecutiveImages(out);
@@ -1399,7 +1400,16 @@ function renderThemePage(theme, items, index) {
     navi.insertBefore(piscine, navi.childNodes[4]);
     return renderWifiSection(items, index);
   }
-  const cardsHtml = items.map(item => renderEquipCard(item)).join('');
+
+  const cardsHtml = items.map(item => {
+    if (item.Description) {
+      return renderEquipCard(item);
+    }
+    return '';
+  }).join('');
+
+  console.log("cardsHtml", cardsHtml)
+  if(!cardsHtml){return "";}
   if (escapeHtml(theme).includes("intérieur") || escapeHtml(theme).includes("extérieur")) {
     return `
       <section id="${escapeHtml(theme)}" class="theme-page reveal">

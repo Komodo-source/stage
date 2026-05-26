@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #1f6d67;
+      --darker: #13433f;
+      --primary-light: #e6f2f1;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    h1 {
+      margin: 5rem 0 2rem 0;
+    }
+    button {
+      width: 15rem;
+      height: 2.2rem;
+      border-radius: 7px;
+      background-color: var(--primary);
+      color: #fff;
+      border: transparent;
+      margin: 0 1rem ;
+      transition: 0.7s;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    button:hover{
+      transform: translateY(5px);
+      background-color: var(--darker);
+    }
+    body {
+      text-align: center;
+    }
+    .buttons{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+
+    }
+  </style>
+  <body>
+    <h1>Interface administrateur <a style="color: var(--primary);">Idylliq</a></h1>
+    <div class="buttons">
+      <button
+        onclick="
+          window.location.href =
+            'https://komodo-source.github.io/stage/index_houses.html'
+        "
+      >
+        Index des maisons
+      </button>
+      <button
+        onclick="
+          window.location.href =
+            'https://komodo-source.github.io/stage/Recherche.html'
+        "
+      >
+        Recherches Global
+      </button>
+      <button
+        onclick="
+          window.location.href =
+            'https://airtable.com/appLWhCKR6pEGE02s/pagu6TVMLNL7DwZQW'
+        "
+      >
+        Interfaces par table
+      </button>
+      <button
+        onclick="
+          window.location.href =
+            'https://komodo-source.github.io/stage/livret_idylliq.html'
+        "
+      >
+        Livret
+      </button>
+    </div>
+  </body>
+</html>
