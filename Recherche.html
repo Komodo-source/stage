@@ -337,7 +337,7 @@
       .cell-nom:hover .edit-btn { opacity: 1; }
       .edit-btn:hover { background: var(--primary-light); color: var(--primary); }
 
-      
+
       #edit-modal {
         display: none;
         position: fixed;
@@ -567,12 +567,85 @@
       .creation{
         margin-bottom: 2rem;
       }
+
+      /* ── TABS ── */
+      #tabs-bar {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border);
+      }
+
+      .tab-btn {
+        padding: 0.45rem 0.9rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px 10px 0 0;
+        background: white;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+        border-bottom: none;
+        position: relative;
+        top: 2px;
+      }
+      .tab-btn:hover {
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+      .tab-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        font-weight: 600;
+      }
+
+      .tab-count {
+        display: inline-block;
+        background: rgba(0,0,0,0.08);
+        color: inherit;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.1rem 0.45rem;
+        border-radius: 10px;
+        margin-left: 0.35rem;
+        min-width: 1.4rem;
+        text-align: center;
+      }
+      .tab-btn.active .tab-count {
+        background: rgba(255,255,255,0.25);
+      }
+
+      mark {
+        background: #fef08a;
+        color: inherit;
+        padding: 0.05em 0.15em;
+        border-radius: 3px;
+      }
+
+      .cell-id {
+        font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        font-size: 0.75rem;
+        color: var(--primary);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .cell-id:hover {
+        text-decoration: underline;
+      }
+
+      /* Hide sections based on tab */
+      body.show-table .only-tout { display: none !important; }
     </style>
   </head>
   <body>
     <header class="header">
       <div class="header-logo">
-
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
@@ -607,7 +680,21 @@
 
     <!-- MAIN -->
     <div class="main">
-      <div class="creation">
+      <!-- TAB BAR -->
+      <div id="tabs-bar">
+        <button class="tab-btn active" data-tab="all">📋 Tout<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="Maison">🏠 Maison<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="Livret">📖 Livret<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="fonctionnementMaison">⚙️ Équipement<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="Piscine">🏊 Piscine<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="DispositionMaison">🛏️ Disposition<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="WorkFlowBreezeway">🔄 WorkFlow<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="ConditionLocation">📝 Condition Loc.<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="Proprietaire">👤 Propriétaire<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="Recommandation">⭐ Recommandation<span class="tab-count">0</span></button>
+      </div>
+
+      <div class="only-tout creation">
         <h2>Formulaire de création</h2>
         <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form'">Créer une maison</button>
         <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form'">Créer une maison dans la liste</button>
@@ -618,9 +705,8 @@
         <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form'">Créer une Condition de Location</button>
         <button class="create" target="_blank" onclick="window.location.href='https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form'">Créer une Piscine</button>
       </div>
-      <div id="cat-filter" class="cat-filter">
+      <div id="cat-filter" class="cat-filter only-tout">
         <h2>Tags</h2>
-
       </div>
 
       <div class="meta-bar">
@@ -630,7 +716,7 @@
       <div class="table-wrap">
         <div class="table-scroll">
           <table>
-            <thead>
+            <thead id="thead">
               <tr>
                 <th>Maison</th>
                 <th>Catégorie</th>
@@ -681,8 +767,6 @@
     <script>
       const TOKEN =
         'patYI6cIMmXu0OLsn.d36bdefc63925bf68ade486880a8b0829a0362436b35a8822eed725147f6b373';
-      const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
-      const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
       const BASE_ID = 'appLWhCKR6pEGE02s';
 
       const TABLE_MAISON = 'Maison';
@@ -690,26 +774,29 @@
       const TABLE_PISCINE = 'Piscine';
       const TABLE_EQUIPEMENT = 'fonctionnementMaison';
       const TABLE_LISTE_MAISON = 'ListeMaison';
+      const TABLE_DISPOSITION = 'DispositionMaison';
       const TABLE_WORKFLOW = 'WorkFlowBreezeway';
+      const TABLE_CONDITION = 'ConditionLocation';
+      const TABLE_PROPRIETAIRE = 'Proprietaire';
       const TABLE_RECOMMANDATION = 'Recommandation';
 
-      console.log("Si tu vois ca c'est que tu est un petit malin");
-      console.log("Par contre y a rien d'intéressant ici");
+      /* ── global state ── */
+      const db = {};          // raw records per table: { Maison: [...], Livret: [...], ... }
+      let allRows = [];       // Tout tab unified rows
+      let selectedCat = '';
+      let currentTab = 'all'; // 'all' or a table name
+      let currentQuery = '';
+      const houseNameToId = {}; // maison name → IdMaison (for per-table filtering)
 
+      /* ── utilities ── */
       async function fetchAll(table) {
-        let records = [],
-          offset = null;
+        let records = [], offset = null;
         do {
-          const url = new URL(
-            `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`,
-          );
+          const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
           if (offset) url.searchParams.set('offset', offset);
-          const res = await fetch(url, {
-            headers: { Authorization: `Bearer ${TOKEN}` },
-          });
+          const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
           const data = await res.json();
-          if (!res.ok)
-            throw new Error(data.error?.message || JSON.stringify(data));
+          if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
           records = records.concat(data.records);
           offset = data.offset || null;
         } while (offset);
@@ -717,54 +804,46 @@
       }
 
       function copy(v) {
-        const msgs = [
-          'Copié !',
-          "C'est dans la poche",
-          'Super copy',
-          'copiage ultime',
-          'copiiiié',
-          'Je copie ça pour toi',
-          "zipp et c'est copié",
-        ];
-        navigator.clipboard
-          .writeText(v)
-          .then(() =>
-            Toastify({
-              text: msgs[Math.floor(Math.random() * msgs.length)],
-              duration: 2000,
-            }).showToast(),
-          )
+        const msgs = ['Copié !', "C'est dans la poche", 'Super copy', 'copiage ultime', 'copiiiié', 'Je copie ça pour toi', "zipp et c'est copié"];
+        navigator.clipboard.writeText(v)
+          .then(() => Toastify({ text: msgs[Math.floor(Math.random() * msgs.length)], duration: 2000 }).showToast())
           .catch(() => prompt('Copier Id :', v));
       }
 
       function esc(s) {
-        return String(s ?? '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
+        return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
-
-      /* ── data ── */
-
-      let allRows = [];
-      let selectedCat = '';
 
       function extractImages(photos) {
-        return (photos || []).filter(
-          (a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
-        );
+        return (photos || []).filter((a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''));
       }
 
-      async function buildData() {
-        const [maisonRecs, livretRecs, equipRecs, piscineRecs, listRecs] =
-          await Promise.all([
-            fetchAll(TABLE_MAISON),
-            fetchAll(TABLE_LIVRET),
-            fetchAll(TABLE_EQUIPEMENT),
-            fetchAll(TABLE_PISCINE),
-            fetchAll(TABLE_LISTE_MAISON),
-          ]);
+      function highlightText(text, query) {
+        const escaped = esc(text);
+        if (!query || query.length < 2) return escaped;
+        const escapedQ = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return escaped.replace(new RegExp(`(${escapedQ})`, 'gi'), '<mark>$1</mark>');
+      }
+
+      function flattenValue(val) {
+        if (val == null || val === '') return '';
+        if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') return String(val);
+        if (Array.isArray(val)) {
+          if (val.length === 0) return '';
+          if (typeof val[0] === 'string') return val.join(', ');
+          if (val[0] && typeof val[0] === 'object' && val[0].url) return ''; // attachments handled separately
+          return val.map(v => (v && typeof v === 'object' ? (v.name || v.id || '') : String(v))).filter(Boolean).join(', ');
+        }
+        return '';
+      }
+
+      /* ── build Tout data from db ── */
+      function buildData() {
+        const maisonRecs = db[TABLE_MAISON] || [];
+        const livretRecs = db[TABLE_LIVRET] || [];
+        const equipRecs = db[TABLE_EQUIPEMENT] || [];
+        const piscineRecs = db[TABLE_PISCINE] || [];
+        const listRecs = db[TABLE_LISTE_MAISON] || [];
 
         const rows = [];
         const houses = new Set();
@@ -772,163 +851,70 @@
         listRecs.forEach((listItem) => {
           const IdMaison = listItem.fields.IdMaison;
           const nomMaison = listItem.fields.NomMaison || IdMaison;
-
-          const maisonRecord = maisonRecs.find(
-            (r) => r.fields.IdMaison === IdMaison && r.fields.Livret,
-          );
+          const maisonRecord = maisonRecs.find((r) => r.fields.IdMaison === IdMaison && r.fields.Livret);
           if (!maisonRecord) return;
-
           houses.add(nomMaison);
 
-          /* ── équipements ── */
+          // équipements
           const livretIds = maisonRecord.fields['Livret 2'] || [];
           const equipIds = new Set();
-          livretRecs
-            .filter((r) => livretIds.includes(r.id))
-            .forEach((lr) =>
-              (lr.fields.equipement || []).forEach((id) => equipIds.add(id)),
-            );
-
-          equipRecs
-            .filter((r) => equipIds.has(r.id))
-            .sort(
-              (a, b) =>
-                (parseFloat(a.fields.OrdreMaison) || 0) -
-                (parseFloat(b.fields.OrdreMaison) || 0),
-            )
+          livretRecs.filter((r) => livretIds.includes(r.id)).forEach((lr) => (lr.fields.equipement || []).forEach((id) => equipIds.add(id)));
+          equipRecs.filter((r) => equipIds.has(r.id))
+            .sort((a, b) => (parseFloat(a.fields.OrdreMaison) || 0) - (parseFloat(b.fields.OrdreMaison) || 0))
             .forEach((rec) => {
               const desc = rec.fields.descriptionLivret || '';
               rows.push({
-                type: 'equip',
-                recId: rec.id,
-                recTable: TABLE_EQUIPEMENT,
-                maison: nomMaison,
-                maisonId: IdMaison,
-                categorie: Array.isArray(rec.fields['Catégorie'])
-                  ? rec.fields['Catégorie'][0]
-                  : rec.fields['Catégorie'] || '',
-                nom: rec.fields.NomEquipement || '–',
-                nomField: 'NomEquipement',
+                type: 'equip', recId: rec.id, recTable: TABLE_EQUIPEMENT,
+                maison: nomMaison, maisonId: IdMaison,
+                categorie: Array.isArray(rec.fields['Catégorie']) ? rec.fields['Catégorie'][0] : rec.fields['Catégorie'] || '',
+                nom: rec.fields.NomEquipement || '–', nomField: 'NomEquipement',
                 descParts: [{ field: 'descriptionLivret', value: desc }],
-                photosField: 'Photos',
-                description: desc,
-                images: extractImages(rec.fields.Photos),
+                photosField: 'Photos', description: desc, images: extractImages(rec.fields.Photos),
               });
             });
 
-          /* ── piscine ── */
+          // piscine
           const piscineIds = maisonRecord.fields['Piscine'] || [];
-          piscineRecs
-            .filter((p) => piscineIds.includes(p.id))
-            .forEach((prec) => {
-              const f = prec.fields;
-              const nom = f.Name || f.NomPiscine || f.Nom || 'Piscine';
-
-              const descParts = [
-                f.DateOuverturePiscine && {
-                  field: 'DateOuverturePiscine',
-                  value: f.DateOuverturePiscine,
-                },
-                f.DateOuverturePiscineMeteo && {
-                  field: 'DateOuverturePiscineMeteo',
-                  value: f.DateOuverturePiscineMeteo,
-                },
-                f.Chauffage && {
-                  field: 'Chauffage',
-                  value: [].concat(f.Chauffage).join(', '),
-                },
-                f.InstructionOuverture && {
-                  field: 'InstructionOuverture',
-                  value: f.InstructionOuverture,
-                },
-                f.InstructionEntretien && {
-                  field: 'InstructionEntretien',
-                  value: f.InstructionEntretien,
-                },
-              ].filter(Boolean);
-
-              rows.push({
-                type: 'piscine',
-                recId: prec.id,
-                recTable: TABLE_PISCINE,
-                maison: nomMaison,
-                maisonId: IdMaison,
-                categorie: 'Piscine',
-                nom,
-                nomField: 'Name',
-                descParts,
-                photosField: 'Photo',
-                description: descParts.map((p) => p.value).join(' '),
-                images: extractImages(f.Photo),
-              });
+          piscineRecs.filter((p) => piscineIds.includes(p.id)).forEach((prec) => {
+            const f = prec.fields;
+            const nom = f.Name || f.NomPiscine || f.Nom || 'Piscine';
+            const descParts = [
+              f.DateOuverturePiscine && { field: 'DateOuverturePiscine', value: f.DateOuverturePiscine },
+              f.DateOuverturePiscineMeteo && { field: 'DateOuverturePiscineMeteo', value: f.DateOuverturePiscineMeteo },
+              f.Chauffage && { field: 'Chauffage', value: [].concat(f.Chauffage).join(', ') },
+              f.InstructionOuverture && { field: 'InstructionOuverture', value: f.InstructionOuverture },
+              f.InstructionEntretien && { field: 'InstructionEntretien', value: f.InstructionEntretien },
+            ].filter(Boolean);
+            rows.push({
+              type: 'piscine', recId: prec.id, recTable: TABLE_PISCINE,
+              maison: nomMaison, maisonId: IdMaison, categorie: 'Piscine',
+              nom, nomField: 'Name', descParts, photosField: 'Photo',
+              description: descParts.map((p) => p.value).join(' '), images: extractImages(f.Photo),
             });
+          });
 
+          // maison text rows
           const mf = maisonRecord.fields;
-          const maisonTextRows = [
+          [
             { cat: 'Infos', field: 'Adresse', photosField: null, media: null },
-            {
-              cat: 'Infos',
-              field: 'Description',
-              photosField: null,
-              media: null,
-            },
-            {
-              cat: 'Accès',
-              field: 'InstructionAccesLivret',
-              photosField: 'mediaAcces',
-              media: mf.mediaAcces,
-            },
-            {
-              cat: 'Accès',
-              field: 'InstructionAccesInterne',
-              photosField: 'mediaAcces',
-              media: mf.mediaAcces,
-            },
+            { cat: 'Infos', field: 'Description', photosField: null, media: null },
+            { cat: 'Accès', field: 'InstructionAccesLivret', photosField: 'mediaAcces', media: mf.mediaAcces },
+            { cat: 'Accès', field: 'InstructionAccesInterne', photosField: 'mediaAcces', media: mf.mediaAcces },
             { cat: 'Accès', field: 'BoiteCle', photosField: null, media: null },
             { cat: 'Accès', field: 'Portail', photosField: null, media: null },
-            {
-              cat: 'Accès',
-              field: 'JeuxDeCle',
-              photosField: null,
-              media: null,
-            },
-            {
-              cat: 'Accès',
-              field: 'AlarmeInterne',
-              photosField: null,
-              media: null,
-            },
-            {
-              cat: 'Départ',
-              field: 'InstructionDepart',
-              photosField: null,
-              media: null,
-            },
+            { cat: 'Accès', field: 'JeuxDeCle', photosField: null, media: null },
+            { cat: 'Accès', field: 'AlarmeInterne', photosField: null, media: null },
+            { cat: 'Départ', field: 'InstructionDepart', photosField: null, media: null },
             { cat: 'Règles', field: 'regle', photosField: null, media: null },
-            {
-              cat: 'Attention',
-              field: 'PointAttention',
-              photosField: 'mediaPointAttention',
-              media: mf.mediaPointAttention,
-            },
-          ];
-
-          maisonTextRows.forEach(({ cat, field, photosField, media }) => {
+            { cat: 'Attention', field: 'PointAttention', photosField: 'mediaPointAttention', media: mf.mediaPointAttention },
+          ].forEach(({ cat, field, photosField, media }) => {
             const val = mf[field];
             if (!val) return;
             rows.push({
-              type: 'maison',
-              recId: maisonRecord.id,
-              recTable: TABLE_MAISON,
-              maison: nomMaison,
-              maisonId: IdMaison,
-              categorie: cat,
-              nom: field,
-              nomField: null,
-              descParts: [{ field, value: val }],
-              photosField,
-              description: val,
-              images: extractImages(media),
+              type: 'maison', recId: maisonRecord.id, recTable: TABLE_MAISON,
+              maison: nomMaison, maisonId: IdMaison, categorie: cat,
+              nom: field, nomField: null, descParts: [{ field, value: val }],
+              photosField, description: val, images: extractImages(media),
             });
           });
         });
@@ -936,128 +922,198 @@
         return { rows, houses: [...houses].sort() };
       }
 
-      /* ── render ── */
-
-      function renderRows(rows) {
+      /* ── Tout tab rendering (5 columns) ── */
+      function renderToutRows(rows) {
         const tbody = document.getElementById('tbody');
         const count = document.getElementById('results-count');
         count.textContent = `${rows.length} résultat${rows.length !== 1 ? 's' : ''}`;
 
         if (rows.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5"><div class="state-box">Aucun résultat.</div></td></tr>`;
+          tbody.innerHTML = '<tr><td colspan="5"><div class="state-box">Aucun résultat.</div></td></tr>';
           return;
         }
 
-        tbody.innerHTML = rows
-          .map((row) => {
-            const tagClass =
-              row.type === 'piscine'
-                ? 'tag-piscine'
-                : row.type === 'maison'
-                  ? 'tag-maison'
-                  : '';
+        tbody.innerHTML = rows.map((row) => {
+          const tagClass = row.type === 'piscine' ? 'tag-piscine' : row.type === 'maison' ? 'tag-maison' : '';
+          const pencil = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+          const editBtn = (field) => `<button class="edit-btn" data-table="${esc(row.recTable)}" data-recid="${esc(row.recId)}" data-field="${esc(field)}" title="Modifier ${esc(field)}">${pencil}</button>`;
 
-            const pencil = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-            const editBtn = (field) =>
-              `<button class="edit-btn" data-table="${esc(row.recTable)}" data-recid="${esc(row.recId)}" data-field="${esc(field)}" title="Modifier ${esc(field)}">${pencil}</button>`;
+          const nomHtml = row.nomField
+            ? `<span class="field-header"><span class="field-label">${highlightText(row.nomField, currentQuery)}</span>${editBtn(row.nomField)}</span><span class="field-value">${highlightText(row.nom, currentQuery)}</span>`
+            : highlightText(row.nom, currentQuery);
 
-            // Titre cell
-            const nomHtml = row.nomField
-              ? `<span class="field-header"><span class="field-label">${esc(row.nomField)}</span>${editBtn(row.nomField)}</span><span class="field-value">${esc(row.nom)}</span>`
-              : esc(row.nom);
+          const descHtml = (row.descParts || []).map((p) =>
+            p.value ? `<div class="field-block"><span class="field-header"><span class="field-label">${highlightText(p.field, currentQuery)}</span>${editBtn(p.field)}</span><span class="field-value">${highlightText(p.value, currentQuery).replace(/\n/g, '<br>')}</span></div>` : ''
+          ).join('');
 
-            // Contenu cell — one field-block per part
-            const descHtml = (row.descParts || [])
-              .map((p) =>
-                p.value
-                  ? `<div class="field-block"><span class="field-header"><span class="field-label">${esc(p.field)}</span>${editBtn(p.field)}</span><span class="field-value">${esc(p.value).replace(/\n/g, '<br>')}</span></div>`
-                  : '',
-              )
-              .join('');
+          const photosLabelHtml = row.photosField && row.images.length
+            ? `<span class="field-label" style="text-align:center">${esc(row.photosField)}</span>` : '';
+          const thumbsHtml = row.images.length
+            ? `<div class="thumbs">${row.images.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('')}</div>`
+            : '<span style="color:var(--border)">—</span>';
 
-            // Photos cell
-            const photosLabelHtml =
-              row.photosField && row.images.length
-                ? `<span class="field-label" style="text-align:center">${esc(row.photosField)}</span>`
-                : '';
-            const thumbsHtml = row.images.length
-              ? `<div class="thumbs">${row.images
-                  .map(
-                    (img) =>
-                      `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`,
-                  )
-                  .join('')}</div>`
-              : '<span style="color:var(--border)">—</span>';
-
-            return `
-      <tr>
-        <td class="cell-maison">
-          <span class="badge" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">
-            ${esc(row.maison)}
-          </span>
-          <span class="id-label" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">${esc(row.maisonId)}</span>
-        </td>
-        <td class="cell-cat">
-          ${row.categorie ? `<span class="tag ${tagClass}">${esc(row.categorie)}</span>` : ''}
-        </td>
+          return `<tr>
+        <td class="cell-maison"><span class="badge" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">${highlightText(row.maison, currentQuery)}</span><span class="id-label" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">${esc(row.maisonId)}</span></td>
+        <td class="cell-cat">${row.categorie ? `<span class="tag ${tagClass}">${highlightText(row.categorie, currentQuery)}</span>` : ''}</td>
         <td class="cell-nom">${nomHtml}</td>
         <td class="cell-desc">${descHtml || '—'}</td>
         <td class="cell-photos">${photosLabelHtml}${thumbsHtml}</td>
       </tr>`;
-          })
-          .join('');
+        }).join('');
       }
 
-      /* ── filter ── */
-
-      function applyFilter() {
-        const q = document.getElementById('search').value.toLowerCase().trim();
-        const house = document.getElementById('house-filter').value;
-
-        const filtered = allRows.filter((row) => {
-          if (house && row.maison !== house) return false;
-          if (selectedCat && row.categorie !== selectedCat) return false;
-          if (!q) return true;
-          return [
-            row.maison,
-            row.maisonId,
-            row.categorie,
-            row.nom,
-            row.description,
-          ]
-            .join(' ')
-            .toLowerCase()
-            .includes(q);
+      /* ── Per-table rendering (dynamic columns) ── */
+      function buildTableHeader(tableName) {
+        const records = db[tableName] || [];
+        const fieldKeys = new Set();
+        records.forEach((r) => {
+          Object.keys(r.fields).forEach((k) => {
+            if (!k.startsWith('_') || k === '_recId') fieldKeys.add(k);
+          });
         });
-
-        renderRows(filtered);
+        const keys = ['_recId', ...Array.from(fieldKeys).filter((k) => k !== '_recId').sort()];
+        return keys;
       }
 
+      function renderAttachments(attachments, query) {
+        if (!attachments || !attachments.length) return '<span style="color:var(--border)">—</span>';
+        const imgs = extractImages(attachments);
+        if (!imgs.length) return '<span style="color:var(--border)">—</span>';
+        return `<div class="thumbs">${imgs.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('')}</div>`;
+      }
+
+      function renderTableData(tableName, query) {
+        const records = db[tableName] || [];
+        const tbody = document.getElementById('tbody');
+        const count = document.getElementById('results-count');
+        const thead = document.getElementById('thead');
+
+        // filter by house
+        const houseVal = document.getElementById('house-filter').value;
+        let filtered = records;
+        if (houseVal) {
+          const maisonId = houseNameToId[houseVal] || houseVal;
+          filtered = records.filter((r) => {
+            const f = r.fields;
+            const vals = [f.IdMaison, f.idMaison, f.maison, f.Maison, f.NomMaison, f['Maison (lien)']];
+            return vals.some((v) => {
+              if (!v) return false;
+              if (Array.isArray(v)) return v.some((id) => String(id) === maisonId);
+              return String(v) === maisonId || String(v) === houseVal;
+            });
+          });
+        }
+
+        // search filter
+        if (query && query.length >= 2) {
+          const q = query.toLowerCase();
+          filtered = filtered.filter((r) => {
+            const allText = [r.id, ...Object.values(r.fields).map(flattenValue)].join(' ').toLowerCase();
+            return allText.includes(q);
+          });
+        }
+
+        count.textContent = `${filtered.length} résultat${filtered.length !== 1 ? 's' : ''}`;
+
+        // build header
+        const headers = buildTableHeader(tableName);
+        thead.innerHTML = `<tr>${headers.map((h) => `<th>${h === '_recId' ? '🆔 ID' : esc(h)}</th>`).join('')}</tr>`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="${headers.length}"><div class="state-box">Aucun résultat.</div></td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((rec) => {
+          const cells = headers.map((key) => {
+            if (key === '_recId') {
+              return `<td class="cell-id" onclick="copy('${esc(rec.id)}')" title="Cliquer pour copier">${highlightText(rec.id, query)}</td>`;
+            }
+            const val = rec.fields[key];
+            if (Array.isArray(val) && val.length > 0 && val[0] && typeof val[0] === 'object' && val[0].url) {
+              return `<td class="cell-photos">${renderAttachments(val, query)}</td>`;
+            }
+            return `<td>${highlightText(flattenValue(val), query).replace(/\n/g, '<br>')}</td>`;
+          });
+          return `<tr>${cells.join('')}</tr>`;
+        }).join('');
+      }
+
+      /* ── filter & render dispatcher ── */
+      function applyFilter() {
+        currentQuery = document.getElementById('search').value.toLowerCase().trim();
+
+        if (currentTab === 'all') {
+          // Restore Tout header
+          document.getElementById('thead').innerHTML = '<tr><th>Maison</th><th>Catégorie</th><th>Titre</th><th>Contenu</th><th class="col-photos">Photos</th></tr>';
+
+          const house = document.getElementById('house-filter').value;
+          const filtered = allRows.filter((row) => {
+            if (house && row.maison !== house) return false;
+            if (selectedCat && row.categorie !== selectedCat) return false;
+            if (!currentQuery) return true;
+            return [row.maison, row.maisonId, row.categorie, row.nom, row.description].join(' ').toLowerCase().includes(currentQuery);
+          });
+          renderToutRows(filtered);
+        } else {
+          renderTableData(currentTab, currentQuery);
+        }
+      }
+
+      /* ── tab switching ── */
+      function switchTab(tabName) {
+        currentTab = tabName;
+        selectedCat = '';
+
+        // Update tab UI
+        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === tabName));
+
+        // Toggle Tout-only sections
+        if (tabName === 'all') {
+          document.body.classList.remove('show-table');
+          // Reset category chips
+          document.querySelectorAll('.cat-chip').forEach((c) => c.classList.toggle('active', c.textContent === 'Tout'));
+        } else {
+          document.body.classList.add('show-table');
+        }
+
+        applyFilter();
+      }
+
+      function updateTabCounts() {
+        const counts = { all: allRows.length };
+        Object.keys(db).forEach((t) => { counts[t] = (db[t] || []).length; });
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+          const t = btn.dataset.tab;
+          const span = btn.querySelector('.tab-count');
+          if (span) span.textContent = counts[t] || 0;
+        });
+      }
+
+      /* ── event listeners ── */
       document.getElementById('search').addEventListener('input', applyFilter);
-      document
-        .getElementById('house-filter')
-        .addEventListener('change', applyFilter);
+      document.getElementById('house-filter').addEventListener('change', applyFilter);
+
+      // Tab clicks
+      document.getElementById('tabs-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        switchTab(btn.dataset.tab);
+      });
 
       /* ── lightbox ── */
-
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('thumb')) {
           document.getElementById('lightbox-img').src = e.target.dataset.full;
           document.getElementById('lightbox').classList.add('open');
         }
       });
-
       document.getElementById('lightbox').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget)
-          document.getElementById('lightbox').classList.remove('open');
+        if (e.target === e.currentTarget) document.getElementById('lightbox').classList.remove('open');
       });
-
-      document
-        .getElementById('lightbox-close')
-        .addEventListener('click', () => {
-          document.getElementById('lightbox').classList.remove('open');
-        });
-
+      document.getElementById('lightbox-close').addEventListener('click', () => {
+        document.getElementById('lightbox').classList.remove('open');
+      });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           document.getElementById('lightbox').classList.remove('open');
@@ -1066,15 +1122,11 @@
       });
 
       /* ── update record ── */
-
       async function updateRecord(table, recId, fieldName, newValue) {
         const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`;
         const res = await fetch(url, {
           method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ fields: { [fieldName]: newValue } }),
         });
         const data = await res.json();
@@ -1083,7 +1135,6 @@
       }
 
       /* ── edit modal ── */
-
       let editCtx = null;
 
       function openEditModal(table, recId, field, valueEl) {
@@ -1125,26 +1176,16 @@
         const saveBtn = document.getElementById('edit-save-btn');
         saveBtn.disabled = true;
         saveBtn.textContent = 'Sauvegarde…';
-
         try {
           await updateRecord(editCtx.table, editCtx.recId, editCtx.field, newVal);
-
-          // Update DOM value span
-          if (editCtx.valueEl) {
-            editCtx.valueEl.innerHTML = esc(newVal).replace(/\n/g, '<br>');
-          }
-
-          // Sync allRows so search stays accurate
+          if (editCtx.valueEl) editCtx.valueEl.innerHTML = esc(newVal).replace(/\n/g, '<br>');
+          // Sync allRows
           allRows.forEach((row) => {
             if (row.recId !== editCtx.recId || row.recTable !== editCtx.table) return;
             if (row.nomField === editCtx.field) row.nom = newVal;
             const part = row.descParts?.find((p) => p.field === editCtx.field);
-            if (part) {
-              part.value = newVal;
-              row.description = row.descParts.map((p) => p.value).join(' ');
-            }
+            if (part) { part.value = newVal; row.description = row.descParts.map((p) => p.value).join(' '); }
           });
-
           Toastify({ text: 'Enregistré !', duration: 2500, style: { background: '#1F6D67' } }).showToast();
           closeEditModal();
         } catch (err) {
@@ -1155,11 +1196,41 @@
       });
 
       /* ── init ── */
+      (async function init() {
+        try {
+          // Fetch all 10 tables in parallel
+          const [
+            maisonRecs, livretRecs, equipRecs, piscineRecs, listRecs,
+            dispositionRecs, workflowRecs, conditionRecs, proprioRecs, recommandRecs,
+          ] = await Promise.all([
+            fetchAll(TABLE_MAISON),
+            fetchAll(TABLE_LIVRET),
+            fetchAll(TABLE_EQUIPEMENT),
+            fetchAll(TABLE_PISCINE),
+            fetchAll(TABLE_LISTE_MAISON),
+            fetchAll(TABLE_DISPOSITION),
+            fetchAll(TABLE_WORKFLOW),
+            fetchAll(TABLE_CONDITION),
+            fetchAll(TABLE_PROPRIETAIRE),
+            fetchAll(TABLE_RECOMMANDATION),
+          ]);
 
-      buildData()
-        .then(({ rows, houses }) => {
+          db[TABLE_MAISON] = maisonRecs;
+          db[TABLE_LIVRET] = livretRecs;
+          db[TABLE_EQUIPEMENT] = equipRecs;
+          db[TABLE_PISCINE] = piscineRecs;
+          db[TABLE_LISTE_MAISON] = listRecs;
+          db[TABLE_DISPOSITION] = dispositionRecs;
+          db[TABLE_WORKFLOW] = workflowRecs;
+          db[TABLE_CONDITION] = conditionRecs;
+          db[TABLE_PROPRIETAIRE] = proprioRecs;
+          db[TABLE_RECOMMANDATION] = recommandRecs;
+
+          // Build Tout data
+          const { rows, houses } = buildData();
           allRows = rows;
 
+          // Populate house filter
           const sel = document.getElementById('house-filter');
           houses.forEach((h) => {
             const opt = document.createElement('option');
@@ -1168,19 +1239,15 @@
             sel.appendChild(opt);
           });
 
-          /* ── category chips ── */
-          const cats = [
-            ...new Set(rows.map((r) => r.categorie).filter(Boolean)),
-          ].sort();
+          // Category chips
+          const cats = [...new Set(rows.map((r) => r.categorie).filter(Boolean))].sort();
           const catDiv = document.getElementById('cat-filter');
           ['Tout', ...cats].forEach((cat) => {
             const btn = document.createElement('button');
             btn.className = 'cat-chip' + (cat === 'Tout' ? ' active' : '');
             btn.textContent = cat;
             btn.addEventListener('click', () => {
-              document
-                .querySelectorAll('.cat-chip')
-                .forEach((c) => c.classList.remove('active'));
+              document.querySelectorAll('.cat-chip').forEach((c) => c.classList.remove('active'));
               btn.classList.add('active');
               selectedCat = cat === 'Tout' ? '' : cat;
               applyFilter();
@@ -1188,13 +1255,16 @@
             catDiv.appendChild(btn);
           });
 
-          renderRows(rows);
-        })
-        .catch((err) => {
+          // Update tab counts
+          updateTabCounts();
+
+          // Render initial Tout view
+          renderToutRows(rows);
+        } catch (err) {
           console.error(err);
-          document.getElementById('tbody').innerHTML =
-            `<tr><td colspan="5"><div class="state-box">Erreur : ${esc(err.message)}</div></td></tr>`;
-        });
+          document.getElementById('tbody').innerHTML = `<tr><td colspan="5"><div class="state-box">Erreur : ${esc(err.message)}</div></td></tr>`;
+        }
+      })();
     </script>
   </body>
 </html>
