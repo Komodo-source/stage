@@ -83,6 +83,16 @@
         pointer-events: none;
       }
 
+      #search-houses{
+        padding: 0.7rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: var(--bg);
+        transition: border-color 0.2s;
+        color: var(--text);
+      }
+
       #search {
         width: 100%;
         padding: 0.65rem 1rem 0.65rem 2.4rem;
@@ -122,7 +132,6 @@
         border-color: var(--primary);
       }
 
-      /* ── MAIN ── */
       .main {
         padding: 1.25rem 2rem 3rem;
       }
@@ -164,7 +173,6 @@
         color: var(--primary);
         font-size: 0.73rem;
         font-weight: 700;
-        text-transform: uppercase;
         letter-spacing: 0.06em;
         padding: 0.8rem 1rem;
         text-align: left;
@@ -638,12 +646,833 @@
         text-decoration: underline;
       }
 
+      /* ── TABLE CELL WRAP ── */
+      .table-cell-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+      .table-cell-wrap .field-header {
+        flex-shrink: 0;
+        opacity: 0.4;
+        transition: opacity 0.15s;
+      }
+      .table-cell-wrap:hover .field-header {
+        opacity: 1;
+      }
+      .table-cell-wrap .cell-val {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .linked-rec {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        color: var(--primary);
+        font-family: monospace;
+        font-size: 0.8rem;
+        text-decoration: none;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        background: var(--primary-light);
+        transition: background 0.15s, color 0.15s;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .linked-rec:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* ── CREATE BUTTON ── */
+      .create-btn {
+        display: none;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+        white-space: nowrap;
+      }
+      .create-btn:hover { opacity: 0.85; }
+      body.show-table .create-btn { display: inline-flex; }
+
+      .page-size-select {
+        padding: 0.3rem 0.5rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.78rem;
+        background: white;
+        color: var(--text);
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      /* ── PAGINATION CONTROLS ── */
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-left: auto;
+      }
+      .pagination-controls .page-btn {
+        padding: 0.35rem 0.7rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        background: white;
+        color: var(--text);
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.15s;
+        line-height: 1;
+        user-select: none;
+      }
+      .pagination-controls .page-btn:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .pagination-controls .page-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .pagination-controls .page-info {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 500;
+        min-width: 7rem;
+        text-align: center;
+      }
+
+      /* ── CREATE MODAL ── */
+      #create-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      #create-modal.open { display: flex; }
+
+      #create-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 620px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      }
+
+      #create-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      #create-table-name {
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .create-field-group {
+        margin-bottom: 0.8rem;
+      }
+      .create-field-group label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 0.25rem;
+        font-family: monospace;
+      }
+      .create-field-group input,
+      .create-field-group textarea {
+        width: 100%;
+        padding: 0.55rem 0.7rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+        color: var(--text);
+        resize: vertical;
+        transition: border-color 0.2s;
+      }
+      .create-field-group input:focus,
+      .create-field-group textarea:focus { border-color: var(--primary); }
+
+      #create-actions {
+        display: flex;
+        gap: 0.65rem;
+        justify-content: flex-end;
+        margin-top: 1.2rem;
+      }
+
+      #create-cancel-btn {
+        padding: 0.6rem 1.2rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: white;
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      #create-cancel-btn:hover { border-color: var(--muted); color: var(--text); }
+
+      #create-save-btn {
+        padding: 0.6rem 1.4rem;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      #create-save-btn:hover { opacity: 0.85; }
+      #create-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      #create-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.1rem 0.3rem;
+        border-radius: 6px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      #create-close-btn:hover { color: var(--text); }
+
+      /* ── PHOTO EDITOR MODAL ── */
+      #photo-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      #photo-modal.open { display: flex; }
+
+      #photo-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 700px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      }
+
+      #photo-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+      }
+
+      #photo-field-name {
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      #photo-meta {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-family: monospace;
+        margin-top: 0.2rem;
+      }
+
+      #photo-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.1rem 0.3rem;
+        border-radius: 6px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      #photo-close-btn:hover { color: var(--text); }
+
+      .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+        margin: 1rem 0;
+      }
+
+      .photo-grid-item {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid var(--border);
+        aspect-ratio: 1;
+        background: #f9f9f9;
+        transition: border-color 0.15s;
+      }
+      .photo-grid-item:hover {
+        border-color: var(--primary);
+      }
+
+      .photo-grid-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .photo-delete-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: rgba(220, 38, 38, 0.9);
+        color: white;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: opacity 0.15s, transform 0.15s;
+        line-height: 1;
+      }
+      .photo-grid-item:hover .photo-delete-btn {
+        opacity: 1;
+      }
+      .photo-delete-btn:hover {
+        transform: scale(1.15);
+        background: rgba(220, 38, 38, 1);
+      }
+
+      .photo-add-section {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        transition: border-color 0.2s;
+      }
+      .photo-add-section:hover {
+        border-color: var(--primary);
+      }
+
+      .photo-add-section h4 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 0.6rem;
+      }
+
+      .photo-url-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.6rem;
+      }
+      .photo-url-row input {
+        flex: 1;
+        padding: 0.5rem 0.7rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        outline: none;
+        color: var(--text);
+        transition: border-color 0.2s;
+      }
+      .photo-url-row input:focus {
+        border-color: var(--primary);
+      }
+
+      .photo-add-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        background: var(--primary);
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.15s;
+      }
+      .photo-add-btn:hover { opacity: 0.85; }
+      .photo-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .photo-file-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        background: white;
+        color: var(--text);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .photo-file-label:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .photo-file-label input[type="file"] {
+        display: none;
+      }
+
+      .photo-pending-preview {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+      .photo-pending-item {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid var(--primary);
+      }
+      .photo-pending-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .photo-pending-item .remove-pending {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        width: 18px;
+        height: 18px;
+        border: none;
+        background: #dc2626;
+        color: white;
+        border-radius: 50%;
+        font-size: 0.6rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+      }
+
+      .photo-actions {
+        display: flex;
+        gap: 0.65rem;
+        justify-content: flex-end;
+        margin-top: 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .photo-cancel-btn {
+        padding: 0.6rem 1.2rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: white;
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      .photo-cancel-btn:hover { border-color: var(--muted); color: var(--text); }
+
+      #photo-save-btn {
+        padding: 0.6rem 1.4rem;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      #photo-save-btn:hover { opacity: 0.85; }
+      #photo-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .photo-empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .photo-empty-state svg {
+        display: block;
+        margin: 0 auto 0.5rem;
+        opacity: 0.3;
+      }
+
+      .photo-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+        margin-top: 0.3rem;
+      }
+      .photo-edit-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      /* ── DATA VIEWER MODAL ── */
+      #data-viewer-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      #data-viewer-modal.open { display: flex; }
+
+      #data-viewer-card {
+        background: white;
+        border-radius: 16px;
+        padding: 0;
+        width: 100%;
+        max-width: 700px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        overflow: hidden;
+      }
+
+      #data-viewer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      #data-viewer-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      #data-viewer-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.1rem 0.3rem;
+        border-radius: 6px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      #data-viewer-close-btn:hover { color: var(--text); }
+
+      #data-viewer-search-wrap {
+        position: relative;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      #data-viewer-search-wrap svg {
+        position: absolute;
+        left: 2.15rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+      }
+
+      #data-viewer-search {
+        width: 100%;
+        padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        background: var(--bg);
+        outline: none;
+        transition: border-color 0.2s;
+        color: var(--text);
+      }
+      #data-viewer-search:focus {
+        border-color: var(--primary);
+      }
+      #data-viewer-search::placeholder {
+        color: var(--muted);
+      }
+
+      #data-viewer-body {
+        padding: 0.75rem 1.5rem 1.5rem;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      #data-viewer-count {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .dv-field-group {
+        margin-bottom: 0.6rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: 10px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        transition: border-color 0.15s;
+      }
+      .dv-field-group:hover {
+        border-color: var(--primary);
+      }
+      .dv-field-key {
+        font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--primary);
+        opacity: 0.7;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.2rem;
+        text-transform: uppercase;
+        word-break: break-all;
+      }
+
+      .dv-field-value {
+        font-size: 0.85rem;
+        color: var(--text);
+        line-height: 1.5;
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
+
+      .dv-field-value.empty {
+        color: var(--border);
+        font-style: italic;
+      }
+
+      .dv-field-group mark {
+        background: #fef08a;
+        color: inherit;
+        padding: 0.05em 0.15em;
+        border-radius: 3px;
+      }
+
+      .dv-empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .dv-table-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      .dv-field-value.array-val {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+      .dv-field-value.array-val .array-item {
+        background: #f3f4f6;
+        padding: 0.15rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #374151;
+      }
+
+      /* ── ALL-TABLES FIELD PREVIEW ── */
+      .field-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .field-preview .preview-item {
+        font-size: 0.8rem;
+        color: var(--text);
+        line-height: 1.4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 2.8em;
+      }
+      .field-preview .preview-key {
+        font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--primary);
+        opacity: 0.6;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-right: 0.25rem;
+      }
+      .field-preview .preview-more {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 500;
+        font-style: italic;
+      }
+
+      .cell-actions {
+        text-align: center;
+        white-space: nowrap;
+      }
+      .cell-actions .view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.35rem 0.75rem;
+        border: 1.5px solid var(--primary);
+        border-radius: 8px;
+        background: white;
+        color: var(--primary);
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+      .cell-actions .view-btn:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* ── MAISON BANNER IN DATA VIEWER ── */
+      #dv-maison-banner {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 0.85rem;
+        margin-bottom: 0.75rem;
+        border-radius: 10px;
+        background: var(--primary-light);
+        border: 1px solid #c8dedd;
+        font-size: 0.85rem;
+        color: var(--primary);
+        font-weight: 600;
+      }
+      #dv-maison-banner.show {
+        display: flex;
+      }
+      #dv-maison-banner .maison-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: white;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 20px;
+        border: 1px solid var(--primary);
+        white-space: nowrap;
+      }
+
+      .cell-table-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: #f3f4f6;
+        color: #374151;
+        font-weight: 600;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      /* Upload progress */
+      .upload-progress {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #f0fdf4;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #166534;
+      }
+      .upload-progress.active { display: flex; }
+
+      .upload-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #86efac;
+        border-top-color: #16a34a;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        flex-shrink: 0;
+      }
+
       /* Hide sections based on tab */
       body.show-table .only-tout { display: none !important; }
     </style>
   </head>
   <body>
     <header class="header">
+    <button  onclick="window.history.go(-1); return false;" style="width: 5rem;
+    height: 2.5rem;
+    margin: 1rem 0 0 1rem;
+    border: var(--card) solid 1px;
+    cursor: pointer;
+    border-radius: 7px;"><=</button>
       <div class="header-logo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -668,12 +1497,20 @@
           <input
             type="text"
             id="search"
-            placeholder="Rechercher dans tout…"
+            placeholder="Rechercher dans cette section"
             autocomplete="off"
           />
         </div>
+          <input
+            type="text"
+            id="search-houses"
+            placeholder="Rechercher dans les maisons"
+            autocomplete="off"
+            oninput="filter_houses()"
+          />
         <select id="house-filter">
-          <option value="">Toutes les maisons</option>
+
+          <option value="" id="houses-options">Toutes les maisons</option>
         </select>
       </div>
     </header>
@@ -692,6 +1529,7 @@
         <button class="tab-btn" data-tab="ConditionLocation"> Condition Loc.<span class="tab-count">0</span></button>
         <button class="tab-btn" data-tab="Proprietaire"> Propriétaire<span class="tab-count">0</span></button>
         <button class="tab-btn" data-tab="Recommandation"> Recommandation<span class="tab-count">0</span></button>
+        <button class="tab-btn" data-tab="alltables"> Toutes les données<span class="tab-count">0</span></button>
       </div>
 
       <div id="cat-filter" class="cat-filter only-tout">
@@ -700,6 +1538,15 @@
 
       <div class="meta-bar">
         <div id="results-count"></div>
+        <div class="pagination-controls" id="pagination-controls">
+          <button class="page-btn" id="page-prev" disabled>‹</button>
+          <span class="page-info" id="page-info"></span>
+          <button class="page-btn" id="page-next" disabled>›</button>
+        </div>
+        <button class="create-btn" id="create-btn" title="Créer un nouvel enregistrement">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Créer
+        </button>
       </div>
 
       <div class="table-wrap">
@@ -752,6 +1599,106 @@
       </div>
     </div>
 
+    <!-- CREATE MODAL -->
+    <div id="create-modal">
+      <div id="create-card">
+        <div id="create-card-header">
+          <div>
+            <div id="create-table-name"></div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;margin-top:0.2rem;">Nouvel enregistrement</div>
+          </div>
+          <button id="create-close-btn">✕</button>
+        </div>
+        <div id="create-form-fields">
+          <!-- dynamic fields rendered here -->
+        </div>
+        <div id="create-actions">
+          <button id="create-cancel-btn">Annuler</button>
+          <button id="create-save-btn">Créer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA VIEWER MODAL -->
+    <div id="data-viewer-modal">
+      <div id="data-viewer-card">
+        <div id="data-viewer-header">
+          <div style="display:flex;align-items:center;gap:0.6rem">
+            <span id="data-viewer-title">Données</span>
+            <span class="dv-table-badge" id="data-viewer-table-badge"></span>
+          </div>
+          <button id="data-viewer-close-btn">✕</button>
+        </div>
+        <div id="data-viewer-search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input type="text" id="data-viewer-search" placeholder="Rechercher dans les champs…" autocomplete="off" />
+        </div>
+        <div id="data-viewer-body">
+          <div id="dv-maison-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Maison associée : <span class="maison-badge" id="dv-maison-name"></span>
+          </div>
+          <div id="data-viewer-count"></div>
+          <div id="data-viewer-fields"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO EDITOR MODAL -->
+    <div id="photo-modal">
+      <div id="photo-card">
+        <div id="photo-card-header">
+          <div>
+            <div id="photo-field-name"></div>
+            <div id="photo-meta"></div>
+          </div>
+          <button id="photo-close-btn">✕</button>
+        </div>
+
+        <!-- Existing photos grid -->
+        <div id="photo-grid-container">
+          <div class="photo-empty-state" id="photo-empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Aucune photo pour ce champ
+          </div>
+          <div class="photo-grid" id="photo-grid"></div>
+        </div>
+
+        <!-- Add photos section -->
+        <div class="photo-add-section">
+          <h4>Ajouter des photos</h4>
+
+          <!-- By URL -->
+          <div class="photo-url-row">
+            <input type="text" id="photo-url-input" placeholder="Coller une URL d'image…" />
+            <button class="photo-add-btn" id="photo-add-url-btn">Ajouter</button>
+          </div>
+
+          <!-- By file upload -->
+          <div>
+            <label class="photo-file-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Choisir des fichiers
+              <input type="file" id="photo-file-input" accept="image/*" multiple />
+            </label>
+            <div class="upload-progress" id="upload-progress">
+              <div class="upload-spinner"></div>
+              <span id="upload-status">Téléchargement…</span>
+            </div>
+            <div class="photo-pending-preview" id="photo-pending-preview"></div>
+          </div>
+        </div>
+
+        <div class="photo-actions">
+          <button class="photo-cancel-btn" id="photo-cancel-btn">Annuler</button>
+          <button id="photo-save-btn" disabled>Sauvegarder les photos</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
       const TOKEN =
@@ -775,7 +1722,23 @@
       let selectedCat = '';
       let currentTab = 'all'; // 'all' or a table name
       let currentQuery = '';
+      let all_houses = [];
+      let tablePage = 1;
+      let allTablesPage = 1;
+      const PAGE_SIZE = 50;
+      let currentFilteredCount = 0;
       const houseNameToId = {}; // maison name → IdMaison (for per-table filtering)
+      const idToHouseName = {}; // IdMaison → maison name (reverse lookup)
+      const recIdToHouseName = {}; // Airtable recId → maison name (for linked record lookup)
+      const recordIdToTable = {}; // recId → tableName (for cross-table navigation)
+
+      /* ── photo editor state ── */
+      let photoCtx = null; // { table, recId, field }
+      let photoExisting = []; // current attachments from Airtable [{ id, url, filename }]
+      let photoOriginalCount = 0; // snapshot of original photo count
+      let photoNewUrls = []; // pending new URLs to add [{ url, filename }]
+      let photoPendingFiles = []; // pending file uploads [{ file, dataUrl, filename }]
+      const IMGBB_API_KEY = ''; // Optional: set your imgbb API key for file uploads
 
       /* ── utilities ── */
       async function fetchAll(table) {
@@ -792,11 +1755,11 @@
         return records;
       }
 
-      function copy(v) {
-        const msgs = ['Copié !', "C'est dans la poche", 'Super copy', 'copiage ultime', 'copiiiié', 'Je copie ça pour toi', "zipp et c'est copié"];
+      function copy(v, msg) {
+        const msgs = msg ? [msg] : ['Copié !', "C'est dans la poche", 'Super copy', 'copiage ultime', 'copiiiié', 'Je copie ça pour toi', "zipp et c'est copié"];
         navigator.clipboard.writeText(v)
           .then(() => Toastify({ text: msgs[Math.floor(Math.random() * msgs.length)], duration: 2000 }).showToast())
-          .catch(() => prompt('Copier Id :', v));
+          .catch(() => prompt('Copier :', v));
       }
 
       function esc(s) {
@@ -826,7 +1789,78 @@
         return '';
       }
 
-      /* ── build Tout data from db ── */
+      function detectMaison(fields, tableName) {
+        // Try to find house info from a record's fields
+        const maisonFields = ['IdMaison', 'idMaison', 'Maison', 'NomMaison', 'maison', 'Maison (lien)'];
+
+        // Special case: ListeMaison itself has the name directly
+        if (tableName === TABLE_LISTE_MAISON) {
+          const name = fields.NomMaison || fields.Name || '';
+          const id = fields.IdMaison || '';
+          if (name) return { maisonName: name, maisonId: id };
+        }
+
+        for (const field of maisonFields) {
+          const val = fields[field];
+          if (val == null) continue;
+
+          // Direct string value
+          if (typeof val === 'string') {
+            const str = val.trim();
+            if (idToHouseName[str]) {
+              return { maisonName: idToHouseName[str], maisonId: str };
+            }
+            if (houseNameToId[str]) {
+              return { maisonName: str, maisonId: houseNameToId[str] };
+            }
+            if (recIdToHouseName[str]) {
+              return { maisonName: recIdToHouseName[str], maisonId: str };
+            }
+          }
+
+          // Array of linked records (common in Airtable)
+          if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object' && val[0].id) {
+            for (const item of val) {
+              const itemId = item.id || '';
+              const itemName = item.name || '';
+              if (recIdToHouseName[itemId]) {
+                return { maisonName: recIdToHouseName[itemId], maisonId: itemId };
+              }
+              if (itemName && houseNameToId[itemName]) {
+                return { maisonName: itemName, maisonId: houseNameToId[itemName] };
+              }
+            }
+          }
+        }
+
+        return null;
+      }
+
+      function build_all_tables() {
+        const allRows = [];
+        const allTableNames = [
+          TABLE_MAISON, TABLE_LIVRET, TABLE_EQUIPEMENT, TABLE_PISCINE,
+          TABLE_LISTE_MAISON, TABLE_DISPOSITION, TABLE_WORKFLOW,
+          TABLE_CONDITION, TABLE_PROPRIETAIRE, TABLE_RECOMMANDATION
+        ];
+
+        allTableNames.forEach((tableName) => {
+          const records = db[tableName] || [];
+          records.forEach((rec) => {
+            const maison = detectMaison(rec.fields, tableName);
+            allRows.push({
+              id: rec.id,
+              table: tableName,
+              fields: rec.fields,
+              maisonName: maison ? maison.maisonName : '',
+              maisonId: maison ? maison.maisonId : ''
+            });
+          });
+        });
+
+        return allRows;
+      }
+
       function buildData() {
         const maisonRecs = db[TABLE_MAISON] || [];
         const livretRecs = db[TABLE_LIVRET] || [];
@@ -911,11 +1945,14 @@
         return { rows, houses: [...houses].sort() };
       }
 
-      /* ── Tout tab rendering (5 columns) ── */
       function renderToutRows(rows) {
         const tbody = document.getElementById('tbody');
         const count = document.getElementById('results-count');
         count.textContent = `${rows.length} résultat${rows.length !== 1 ? 's' : ''}`;
+        document.getElementById('page-info').textContent = '';
+
+        document.getElementById('page-prev').style.display = 'none';
+        document.getElementById('page-next').style.display = 'none';
 
         if (rows.length === 0) {
           tbody.innerHTML = '<tr><td colspan="5"><div class="state-box">Aucun résultat.</div></td></tr>';
@@ -935,18 +1972,24 @@
             p.value ? `<div class="field-block"><span class="field-header"><span class="field-label">${highlightText(p.field, currentQuery)}</span>${editBtn(p.field)}</span><span class="field-value">${highlightText(p.value, currentQuery).replace(/\n/g, '<br>')}</span></div>` : ''
           ).join('');
 
-          const photosLabelHtml = row.photosField && row.images.length
+          const photosLabelHtml = row.photosField
             ? `<span class="field-label" style="text-align:center">${esc(row.photosField)}</span>` : '';
           const thumbsHtml = row.images.length
             ? `<div class="thumbs">${row.images.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('')}</div>`
-            : '<span style="color:var(--border)">—</span>';
+            : '<span style="color:var(--border);font-size:0.8rem">—</span>';
+          const photoEditHtml = row.photosField
+            ? `<br><button class="photo-edit-btn" data-table="${esc(row.recTable)}" data-recid="${esc(row.recId)}" data-field="${esc(row.photosField)}">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                ${row.images.length ? 'Éditer' : 'Ajouter'}
+              </button>`
+            : '';
 
           return `<tr>
         <td class="cell-maison"><span class="badge" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">${highlightText(row.maison, currentQuery)}</span><span class="id-label" onclick="copy('${esc(row.maisonId)}')" title="Cliquer pour copier l'id">${esc(row.maisonId)}</span></td>
         <td class="cell-cat">${row.categorie ? `<span class="tag ${tagClass}">${highlightText(row.categorie, currentQuery)}</span>` : ''}</td>
         <td class="cell-nom">${nomHtml}</td>
         <td class="cell-desc">${descHtml || '—'}</td>
-        <td class="cell-photos">${photosLabelHtml}${thumbsHtml}</td>
+        <td class="cell-photos">${photosLabelHtml}${thumbsHtml}${photoEditHtml}</td>
       </tr>`;
         }).join('');
       }
@@ -964,34 +2007,247 @@
         return keys;
       }
 
-      function renderAttachments(attachments, query) {
-        if (!attachments || !attachments.length) return '<span style="color:var(--border)">—</span>';
+      function renderAttachments(attachments, query, tableName, recId, fieldName) {
+        if (!attachments || !attachments.length) {
+          return `<div style="text-align:center">
+            <span style="color:var(--border);font-size:0.8rem">—</span>
+            <br><button class="photo-edit-btn" data-table="${esc(tableName)}" data-recid="${esc(recId)}" data-field="${esc(fieldName || '')}">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Ajouter
+            </button>
+          </div>`;
+        }
         const imgs = extractImages(attachments);
-        if (!imgs.length) return '<span style="color:var(--border)">—</span>';
-        return `<div class="thumbs">${imgs.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('')}</div>`;
+        if (!imgs.length) {
+          return `<div style="text-align:center">
+            <span style="color:var(--border);font-size:0.8rem">—</span>
+            <br><button class="photo-edit-btn" data-table="${esc(tableName)}" data-recid="${esc(recId)}" data-field="${esc(fieldName || '')}">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Ajouter
+            </button>
+          </div>`;
+        }
+        const thumbs = imgs.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('');
+        return `
+          <div class="thumbs">${thumbs}</div>
+          <button class="photo-edit-btn" data-table="${esc(tableName)}" data-recid="${esc(recId)}" data-field="${esc(fieldName || '')}">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Éditer
+          </button>`;
+      }
+
+      function renderLinkedRecord(val) {
+        // Check if value is a record ID we can navigate to
+        const id = String(val).trim();
+        if (recordIdToTable[id]) {
+          const targetTable = recordIdToTable[id];
+          return `<a href="#" class="linked-rec" data-table="${esc(targetTable)}" data-recid="${esc(id)}" onclick="navigateToRecord('${esc(targetTable)}','${esc(id)}');return false">🔗 ${esc(id)}</a>`;
+        }
+        return esc(id);
+      }
+
+      function flattenWithLinks(val, query) {
+        if (val == null || val === '') return '';
+        if (typeof val === 'string') {
+          // Check if it looks like a record ID
+          if (/^rec[A-Za-z0-9]+$/.test(val.trim())) {
+            return renderLinkedRecord(val);
+          }
+          return highlightText(val, query).replace(/\n/g, '<br>');
+        }
+        if (typeof val === 'number' || typeof val === 'boolean') return esc(String(val));
+        if (Array.isArray(val)) {
+          if (val.length === 0) return '';
+          // Array of linked record objects: [{id: "recXXX", name: "..."}, ...]
+          if (typeof val[0] === 'object' && val[0] !== null && val[0].id) {
+            if (val[0].url) return ''; // attachments
+            return val.map((v) => {
+              const id = v.id || '';
+              const name = v.name || v.id || '';
+              if (id && recordIdToTable[id]) {
+                return `<a href="#" class="linked-rec" data-table="${esc(recordIdToTable[id])}" data-recid="${esc(id)}" onclick="navigateToRecord('${esc(recordIdToTable[id])}','${esc(id)}');return false">🔗 ${esc(name)}</a>`;
+              }
+              return esc(name);
+            }).join(', ');
+          }
+          // Array of plain strings
+          if (typeof val[0] === 'string') {
+            return val.map((v) => {
+              if (/^rec[A-Za-z0-9]+$/.test(String(v).trim())) {
+                return renderLinkedRecord(v);
+              }
+              return highlightText(v, query);
+            }).join(', ');
+          }
+          // Generic fallback
+          return val.map(v => (v && typeof v === 'object' ? (v.name || v.id || '') : String(v))).filter(Boolean).join(', ');
+        }
+        return '';
+      }
+
+      /* ── DATA VIEWER MODAL ── */
+      let dataViewerFields = {};
+      let dataViewerTable = '';
+      let dataViewerRecId = '';
+
+      function openDataViewer(tableName, recId) {
+        dataViewerTable = tableName;
+        dataViewerRecId = recId;
+
+        // Find the record from db
+        const records = db[tableName] || [];
+        const rec = records.find((r) => r.id === recId);
+        if (!rec) {
+          Toastify({ text: 'Enregistrement non trouvé', duration: 3000, style: { background: '#dc2626' } }).showToast();
+          return;
+        }
+
+        dataViewerFields = rec.fields || {};
+
+        document.getElementById('data-viewer-title').textContent = `📋 ${tableName}`;
+        document.getElementById('data-viewer-table-badge').textContent = recId;
+        document.getElementById('data-viewer-search').value = '';
+
+        // Show maison info
+        const maison = detectMaison(rec.fields, tableName);
+        const maisonBanner = document.getElementById('dv-maison-banner');
+        const maisonNameEl = document.getElementById('dv-maison-name');
+        if (maison) {
+          maisonNameEl.textContent = maison.maisonName;
+          maisonBanner.classList.add('show');
+        } else {
+          maisonBanner.classList.remove('show');
+        }
+
+        renderDataViewerFields('');
+        document.getElementById('data-viewer-modal').classList.add('open');
+        setTimeout(() => document.getElementById('data-viewer-search').focus(), 100);
+      }
+
+      function closeDataViewer() {
+        document.getElementById('data-viewer-modal').classList.remove('open');
+        dataViewerFields = {};
+        dataViewerTable = '';
+        dataViewerRecId = '';
+      }
+
+      function renderDataViewerFields(query) {
+        const container = document.getElementById('data-viewer-fields');
+        const countEl = document.getElementById('data-viewer-count');
+
+        const entries = Object.entries(dataViewerFields);
+        const q = query.toLowerCase().trim();
+
+        let filtered = entries;
+        if (q.length >= 1) {
+          filtered = entries.filter(([key, val]) => {
+            const str = `${key} ${flattenValue(val)}`.toLowerCase();
+            return str.includes(q);
+          });
+        }
+
+        countEl.textContent = `${filtered.length} champ${filtered.length !== 1 ? 's' : ''}${q ? ` (filtré${filtered.length !== 1 ? 's' : ''} sur ${entries.length})` : ''}`;
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="dv-empty-state">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3;margin-bottom:0.5rem">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <div>Aucun champ trouvé pour « ${esc(q)} »</div>
+          </div>`;
+          return;
+        }
+
+        container.innerHTML = filtered.map(([key, val]) => {
+          const highlightedKey = q ? highlightText(key, q) : esc(key);
+          const displayVal = formatDataViewerValue(val, q);
+          const isEmpty = val == null || val === '' || (Array.isArray(val) && val.length === 0);
+          return `<div class="dv-field-group">
+            <div class="dv-field-key">${highlightedKey}</div>
+            <div class="dv-field-value${isEmpty ? ' empty' : ''}">${displayVal || '—'}</div>
+          </div>`;
+        }).join('');
+      }
+
+      function formatDataViewerValue(val, query) {
+        if (val == null || val === '') return '';
+        if (typeof val === 'string') return highlightText(val, query).replace(/\n/g, '<br>');
+        if (typeof val === 'number' || typeof val === 'boolean') return esc(String(val));
+        if (Array.isArray(val)) {
+          if (val.length === 0) return '';
+          // Attachment array (has url)
+          if (typeof val[0] === 'object' && val[0] !== null && val[0].url) {
+            const imgs = extractImages(val);
+            if (imgs.length === 0) return '<span class="empty">Fichiers média</span>';
+            return `<div class="thumbs" style="justify-content:flex-start">${imgs.map((img) => `<img class="thumb" style="width:48px;height:48px" src="${esc(img.url)}" alt="${esc(img.filename || '')}">`).join('')}</div>`;
+          }
+          // Linked records
+          if (typeof val[0] === 'object' && val[0] !== null && val[0].id) {
+            return `<span class="array-val">${val.map((v) => {
+              const name = v.name || v.id || '';
+              const id = v.id || '';
+              if (id && recordIdToTable[id]) {
+                return `<a href="#" class="linked-rec" onclick="navigateToRecord('${esc(recordIdToTable[id])}','${esc(id)}');closeDataViewer();return false">🔗 ${esc(name)}</a>`;
+              }
+              return `<span class="array-item">${esc(name)}</span>`;
+            }).join('')}</span>`;
+          }
+          // Simple array
+          return `<span class="array-val">${val.map((v) => `<span class="array-item">${highlightText(String(v), query)}</span>`).join('')}</span>`;
+        }
+        if (typeof val === 'object') {
+          try { return `<pre style="font-size:0.8rem;margin:0;background:#f3f4f6;padding:0.5rem;border-radius:6px;overflow-x:auto">${esc(JSON.stringify(val, null, 2))}</pre>`; }
+          catch { return esc(String(val)); }
+        }
+        return esc(String(val));
+      }
+
+      // Data viewer search listener
+      document.getElementById('data-viewer-search').addEventListener('input', (e) => {
+        renderDataViewerFields(e.target.value);
+      });
+
+      // Data viewer close events
+      document.getElementById('data-viewer-close-btn').addEventListener('click', closeDataViewer);
+      document.getElementById('data-viewer-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeDataViewer();
+      });
+
+      function navigateToRecord(tableName, recId) {
+        // Switch to the target table tab
+        currentTab = tableName;
+        selectedCat = '';
+        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === tableName));
+        if (tableName === 'all') {
+          document.body.classList.remove('show-table');
+        } else {
+          document.body.classList.add('show-table');
+        }
+        // Set search and filter
+        document.getElementById('search').value = recId;
+        currentQuery = recId;
+        applyFilter();
       }
 
       function renderTableData(tableName, query) {
         const records = db[tableName] || [];
         const tbody = document.getElementById('tbody');
         const count = document.getElementById('results-count');
-        const thead = document.getElementById('thead');
-
-        // filter by house
-        const houseVal = document.getElementById('house-filter').value;
-        let filtered = records;
-        if (houseVal) {
-          const maisonId = houseNameToId[houseVal] || houseVal;
-          filtered = records.filter((r) => {
-            const f = r.fields;
-            const vals = [f.IdMaison, f.idMaison, f.maison, f.Maison, f.NomMaison, f['Maison (lien)']];
-            return vals.some((v) => {
-              if (!v) return false;
-              if (Array.isArray(v)) return v.some((id) => String(id) === maisonId);
-              return String(v) === maisonId || String(v) === houseVal;
-            });
+        const thead = document.getElementById('thead');      // filter by house
+      const houseVal = document.getElementById('house-filter').value;
+      let filtered = records;
+      if (houseVal) {
+        const maisonId = houseNameToId[houseVal] || houseVal;
+        filtered = records.filter((r) => {
+          const f = r.fields;
+          const vals = [f.IdMaison, f.idMaison, f.maison, f.Maison, f.NomMaison, f['Maison (lien)']];
+          return vals.some((v) => {
+            if (!v) return false;
+            if (Array.isArray(v)) return v.some((id) => String(id) === maisonId);
+            return String(v) === maisonId || String(v) === houseVal;
           });
-        }
+        });
+      }
 
         // search filter
         if (query && query.length >= 2) {
@@ -1002,40 +2258,193 @@
           });
         }
 
-        count.textContent = `${filtered.length} résultat${filtered.length !== 1 ? 's' : ''}`;
+        // Pagination
+        const page = tablePage;
+        const totalFiltered = filtered.length;
+        const pageSize = PAGE_SIZE;
+        const start = (page - 1) * pageSize;
+        const paged = filtered.slice(start, start + pageSize);
+
+        count.textContent = `${totalFiltered} résultat${totalFiltered !== 1 ? 's' : ''}`;
+        currentFilteredCount = totalFiltered;
+        renderPagination(totalFiltered, page, pageSize);
 
         // build header
         const headers = buildTableHeader(tableName);
+        const pencil = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
         thead.innerHTML = `<tr>${headers.map((h) => `<th>${h === '_recId' ? '🆔 ID' : esc(h)}</th>`).join('')}</tr>`;
 
-        if (filtered.length === 0) {
+        if (paged.length === 0) {
           tbody.innerHTML = `<tr><td colspan="${headers.length}"><div class="state-box">Aucun résultat.</div></td></tr>`;
           return;
         }
 
-        tbody.innerHTML = filtered.map((rec) => {
+        tbody.innerHTML = paged.map((rec) => {
           const cells = headers.map((key) => {
             if (key === '_recId') {
               return `<td class="cell-id" onclick="copy('${esc(rec.id)}')" title="Cliquer pour copier">${highlightText(rec.id, query)}</td>`;
             }
             const val = rec.fields[key];
             if (Array.isArray(val) && val.length > 0 && val[0] && typeof val[0] === 'object' && val[0].url) {
-              return `<td class="cell-photos">${renderAttachments(val, query)}</td>`;
+              return `<td class="cell-photos">${renderAttachments(val, query, tableName, rec.id, key)}</td>`;
             }
-            return `<td>${highlightText(flattenValue(val), query).replace(/\n/g, '<br>')}</td>`;
+            const withLinks = flattenWithLinks(val, query);
+            const editBtn = `<button class="edit-btn" data-table="${esc(tableName)}" data-recid="${esc(rec.id)}" data-field="${esc(key)}" title="Modifier ${esc(key)}">${pencil}</button>`;
+            return `<td><div class="table-cell-wrap"><span class="field-header">${editBtn}</span><span class="cell-val">${withLinks || '—'}</span></div></td>`;
           });
           return `<tr>${cells.join('')}</tr>`;
         }).join('');
       }
 
-      /* ── filter & render dispatcher ── */
+      /* ── All-Tables tab rendering ── */
+      function renderPagination(total, page, pageSize) {
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        const info = document.getElementById('page-info');
+        const prev = document.getElementById('page-prev');
+        const next = document.getElementById('page-next');
+
+        if (total <= pageSize) {
+          info.textContent = '';
+          prev.style.display = 'none';
+          next.style.display = 'none';
+          return;
+        }
+
+        prev.style.display = '';
+        next.style.display = '';
+        const start = (page - 1) * pageSize + 1;
+        const end = Math.min(page * pageSize, total);
+        info.textContent = `${start}–${end} / ${total}`;
+        prev.disabled = page <= 1;
+        next.disabled = page >= totalPages;
+      }
+
+      function getFieldPreview(fields, query, maxFields) {
+        maxFields = maxFields || 4;
+        const entries = Object.entries(fields || {});
+        const q = query ? query.toLowerCase() : '';
+        // Skip internal fields and attachment fields
+        const skipFields = ['IdMaison', 'idMaison', 'Maison', 'NomMaison', 'maison', 'Maison (lien)'];
+        const relevant = entries.filter(([k, v]) => {
+          if (skipFields.includes(k)) return false;
+          if (k.startsWith('_')) return false;
+          const flat = flattenValue(v);
+          if (!flat) return false;
+          if (Array.isArray(v) && v.length > 0 && typeof v[0] === 'object' && v[0].url) return false; // skip attachments
+          return true;
+        });
+
+        let items = relevant.slice(0, maxFields);
+        const totalShown = items.length;
+        const totalFields = relevant.length;
+
+        let html = items.map(([key, val]) => {
+          const flat = flattenValue(val).substring(0, 120);
+          const hKey = q ? highlightText(key, q) : esc(key);
+          const hVal = q ? highlightText(flat, q) : esc(flat);
+          return `<div class="preview-item"><span class="preview-key">${hKey}:</span> ${hVal}</div>`;
+        }).join('');
+
+
+        return html || '<span style="color:var(--border);font-size:0.8rem">—</span>';
+      }
+
+      function renderAllTables(query) {
+        const allRows = window._allTablesData || [];
+        const tbody = document.getElementById('tbody');
+        const count = document.getElementById('results-count');
+        const thead = document.getElementById('thead');
+
+        thead.innerHTML = `<tr><th>Table</th><th>Maison</th><th>Aperçu des champs</th><th>Actions</th></tr>`;
+
+        // House filter
+        let filtered = allRows;
+        const houseVal = document.getElementById('house-filter').value;
+        if (houseVal) {
+          const maisonId = houseNameToId[houseVal] || houseVal;
+          filtered = allRows.filter((row) => {
+            return row.maisonName === houseVal || row.maisonId === maisonId;
+          });
+        }
+
+        if (query && query.length >= 2) {
+          const q = query.toLowerCase();
+          filtered = filtered.filter((row) => {
+            const allText = Object.values(row.fields || {}).map(flattenValue).join(' ').toLowerCase();
+            return allText.includes(q) || (row.table || '').toLowerCase().includes(q) ||
+                   (row.maisonName || '').toLowerCase().includes(q);
+          });
+        }
+
+
+        const page = allTablesPage;
+        const totalFiltered = filtered.length;
+        const pageSize = PAGE_SIZE;
+        const start = (page - 1) * pageSize;
+        const paged = filtered.slice(start, start + pageSize);
+
+        let livret_info = {};
+        let association_maison = {};
+
+        filtered.forEach((element) => {
+
+            if (element.table === "Maison") {
+            association_maison[element.id] = element.maisonName;
+          }
+          if (element.table === "Livret") {
+            livret_info[element.id] = element.fields;
+          }
+          if (element.table === "fonctionnementMaison") {
+            let nom_maison;
+            Object.values(livret_info).forEach((elt2) => {
+              if (elt2.equipement && elt2.equipement.includes(element.id)) {
+                nom_maison = association_maison[elt2.Maison];
+              }
+            });
+            element.maisonName = nom_maison;
+          }
+        });
+        console.log("livret_info", livret_info);
+        console.log("association_maison", association_maison);
+
+        count.textContent = `${totalFiltered} résultat${totalFiltered !== 1 ? 's' : ''}`;
+        currentFilteredCount = totalFiltered;
+        renderPagination(totalFiltered, page, pageSize);
+
+        if (paged.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4"><div class="state-box">Aucun résultat.</div></td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = paged.map((element) => {
+          console.log("element", element);
+
+
+          const maisonHtml = element.maisonName
+            ? `<span class="badge" onclick="copy('${esc(element.maisonId)}')" title="Cliquer pour copier l'id">${highlightText(element.maisonName, query)}</span><span class="id-label" onclick="copy('${esc(element.maisonId)}')" style="margin-top:0.15rem;font-size:0.65rem">${esc(element.maisonId)}</span>`
+            : '<span style="color:var(--border);font-size:0.8rem">—</span>';
+
+          const previewHtml = getFieldPreview(element.fields, query, 4);
+
+          return `<tr>
+            <td><span class="cell-table-badge">${esc(element.table)}</span></td>
+            <td class="cell-maison">${maisonHtml}</td>
+            <td class="cell-desc"><div class="field-preview">${previewHtml}</div></td>
+            <td class="cell-actions">
+              <button class="view-btn" onclick="openDataViewer('${esc(element.table)}', '${esc(element.id)}')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Voir
+              </button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+
       function applyFilter() {
         currentQuery = document.getElementById('search').value.toLowerCase().trim();
 
         if (currentTab === 'all') {
-          // Restore Tout header
           document.getElementById('thead').innerHTML = '<tr><th>Maison</th><th>Catégorie</th><th>Titre</th><th>Contenu</th><th class="col-photos">Photos</th></tr>';
-
           const house = document.getElementById('house-filter').value;
           const filtered = allRows.filter((row) => {
             if (house && row.maison !== house) return false;
@@ -1044,6 +2453,8 @@
             return [row.maison, row.maisonId, row.categorie, row.nom, row.description].join(' ').toLowerCase().includes(currentQuery);
           });
           renderToutRows(filtered);
+        } else if (currentTab === 'alltables') {
+          renderAllTables(currentQuery);
         } else {
           renderTableData(currentTab, currentQuery);
         }
@@ -1053,6 +2464,9 @@
       function switchTab(tabName) {
         currentTab = tabName;
         selectedCat = '';
+        // Reset pages on tab switch
+        tablePage = 1;
+        allTablesPage = 1;
 
         // Update tab UI
         document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === tabName));
@@ -1070,7 +2484,8 @@
       }
 
       function updateTabCounts() {
-        const counts = { all: allRows.length };
+        const allTablesData = window._allTablesData || [];
+        const counts = { all: allRows.length, alltables: allTablesData.length };
         Object.keys(db).forEach((t) => { counts[t] = (db[t] || []).length; });
         document.querySelectorAll('.tab-btn').forEach((btn) => {
           const t = btn.dataset.tab;
@@ -1080,8 +2495,36 @@
       }
 
       /* ── event listeners ── */
-      document.getElementById('search').addEventListener('input', applyFilter);
-      document.getElementById('house-filter').addEventListener('change', applyFilter);
+      function goToPage(direction) {
+        if (currentTab === 'alltables') {
+          const totalPages = Math.max(1, Math.ceil(currentFilteredCount / PAGE_SIZE));
+          const newPage = allTablesPage + direction;
+          if (newPage < 1 || newPage > totalPages) return;
+          allTablesPage = newPage;
+        } else if (currentTab !== 'all') {
+          const totalPages = Math.max(1, Math.ceil(currentFilteredCount / PAGE_SIZE));
+          const newPage = tablePage + direction;
+          if (newPage < 1 || newPage > totalPages) return;
+          tablePage = newPage;
+        } else {
+          return;
+        }
+        applyFilter();
+      }
+
+      document.getElementById('search').addEventListener('input', () => {
+        tablePage = 1;
+        allTablesPage = 1;
+        applyFilter();
+      });
+      document.getElementById('house-filter').addEventListener('change', () => {
+        tablePage = 1;
+        allTablesPage = 1;
+        applyFilter();
+      });
+
+      document.getElementById('page-prev').addEventListener('click', () => goToPage(-1));
+      document.getElementById('page-next').addEventListener('click', () => goToPage(1));
 
       // Tab clicks
       document.getElementById('tabs-bar').addEventListener('click', (e) => {
@@ -1107,6 +2550,9 @@
         if (e.key === 'Escape') {
           document.getElementById('lightbox').classList.remove('open');
           closeEditModal();
+          closeCreateModal();
+          closePhotoEditor();
+          closeDataViewer();
         }
       });
 
@@ -1123,8 +2569,37 @@
         return data;
       }
 
-      /* ── edit modal ── */
       let editCtx = null;
+
+      function filter_houses() {
+        const sel = document.getElementById('house-filter');
+        const searched_value = document.getElementById("search-houses").value;
+
+        while (sel.options.length > 1) {
+          sel.remove(sel.options.length - 1);
+        }
+
+        if (!searched_value) {
+          // Restore all houses when search is cleared
+          all_houses.forEach((h) => {
+            const opt = document.createElement('option');
+            opt.value = h;
+            opt.textContent = h;
+            sel.appendChild(opt);
+          });
+          return;
+        }
+
+        const q = searched_value.toLowerCase();
+        all_houses.forEach((h) => {
+          if (h.toLowerCase().includes(q)) {
+            const opt = document.createElement('option');
+            opt.value = h;
+            opt.textContent = h;
+            sel.appendChild(opt);
+          }
+        });
+      }
 
       function openEditModal(table, recId, field, valueEl) {
         const rawValue = valueEl ? valueEl.innerText : '';
@@ -1175,6 +2650,9 @@
             const part = row.descParts?.find((p) => p.field === editCtx.field);
             if (part) { part.value = newVal; row.description = row.descParts.map((p) => p.value).join(' '); }
           });
+          // Rebuild all-tables data
+          window._allTablesData = build_all_tables();
+          updateTabCounts();
           Toastify({ text: 'Enregistré !', duration: 2500, style: { background: '#1F6D67' } }).showToast();
           closeEditModal();
         } catch (err) {
@@ -1184,10 +2662,378 @@
         }
       });
 
+      /* ── CREATE RECORD ── */
+      let createCtx = null; // { table }
+
+      async function createRecord(table, fields) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fields }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
+
+      function openCreateModal(tableName) {
+        createCtx = { table: tableName };
+        document.getElementById('create-table-name').textContent = tableName;
+
+        const records = db[tableName] || [];
+        const fieldKeys = new Set();
+        records.forEach((r) => {
+          Object.keys(r.fields).forEach((k) => {
+            if (!k.startsWith('_')) fieldKeys.add(k);
+          });
+        });
+        const sortedKeys = Array.from(fieldKeys).sort();
+
+        const container = document.getElementById('create-form-fields');
+        container.innerHTML = sortedKeys.map((key) => {
+          return `<div class="create-field-group">
+            <label for="cf-${esc(key)}">${esc(key)}</label>
+            <textarea id="cf-${esc(key)}" rows="2" placeholder="${esc(key)}"></textarea>
+          </div>`;
+        }).join('');
+
+        document.getElementById('create-save-btn').disabled = false;
+        document.getElementById('create-save-btn').textContent = 'Créer';
+        document.getElementById('create-modal').classList.add('open');
+      }
+
+      function closeCreateModal() {
+        document.getElementById('create-modal').classList.remove('open');
+        createCtx = null;
+      }
+
+      document.getElementById('create-btn').addEventListener('click', () => {
+        if (currentTab && currentTab !== 'all' && currentTab !== 'alltables') {
+          openCreateModal(currentTab);
+        }
+      });
+
+      document.getElementById('create-close-btn').addEventListener('click', closeCreateModal);
+      document.getElementById('create-cancel-btn').addEventListener('click', closeCreateModal);
+      document.getElementById('create-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeCreateModal();
+      });
+
+      /* ── PHOTO EDITOR EVENTS ── */
+      // Listen for photo-edit-btn clicks (delegated)
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.photo-edit-btn');
+        if (!btn) return;
+        e.stopPropagation();
+        openPhotoEditor(btn.dataset.table, btn.dataset.recid, btn.dataset.field);
+      });
+
+      document.getElementById('photo-close-btn').addEventListener('click', closePhotoEditor);
+      document.getElementById('photo-cancel-btn').addEventListener('click', closePhotoEditor);
+      document.getElementById('photo-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closePhotoEditor();
+      });
+
+      document.getElementById('photo-add-url-btn').addEventListener('click', () => {
+        const input = document.getElementById('photo-url-input');
+        addPhotoUrl(input.value);
+        input.focus();
+      });
+
+      document.getElementById('photo-url-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const input = e.target;
+          addPhotoUrl(input.value);
+          input.focus();
+        }
+      });
+
+      document.getElementById('photo-file-input').addEventListener('change', (e) => {
+        uploadFiles(e.target.files);
+        e.target.value = ''; // Allow re-selecting same files
+      });
+
+      document.getElementById('photo-save-btn').addEventListener('click', savePhotoChanges);
+
+      document.getElementById('create-save-btn').addEventListener('click', async () => {
+        if (!createCtx) return;
+        const saveBtn = document.getElementById('create-save-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Création…';
+
+        // Collect all field values
+        const container = document.getElementById('create-form-fields');
+        const inputs = container.querySelectorAll('textarea');
+        const fields = {};
+        inputs.forEach((input) => {
+          const val = input.value.trim();
+          if (val) {
+            const fieldName = input.id.replace(/^cf-/, '');
+            fields[fieldName] = val;
+          }
+        });
+
+        try {
+          const result = await createRecord(createCtx.table, fields);
+          // Add to local db
+          if (!db[createCtx.table]) db[createCtx.table] = [];
+          db[createCtx.table].push(result);
+          recordIdToTable[result.id] = createCtx.table;
+          // Rebuild Tout data if needed
+          if (createCtx.table === TABLE_MAISON || createCtx.table === TABLE_LIVRET ||
+              createCtx.table === TABLE_EQUIPEMENT || createCtx.table === TABLE_PISCINE ||
+              createCtx.table === TABLE_LISTE_MAISON) {
+            const { rows, houses } = buildData();
+            allRows = rows;
+          }
+          // Rebuild all-tables data & refresh
+          window._allTablesData = build_all_tables();
+          updateTabCounts();
+          applyFilter();
+          Toastify({ text: 'Créé avec succès !', duration: 2500, style: { background: '#1F6D67' } }).showToast();
+          closeCreateModal();
+        } catch (err) {
+          Toastify({ text: `Erreur : ${err.message}`, duration: 4000, style: { background: '#dc2626' } }).showToast();
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Créer';
+        }
+      });
+
+
+
+
+      /* ── PHOTO EDITOR ── */
+      function resetPhotoEditorState() {
+        photoExisting = [];
+        photoNewUrls = [];
+        photoPendingFiles = [];
+        document.getElementById('photo-url-input').value = '';
+        document.getElementById('photo-file-input').value = '';
+        document.getElementById('photo-pending-preview').innerHTML = '';
+        document.getElementById('upload-progress').classList.remove('active');
+      }
+
+      function openPhotoEditor(table, recId, field) {
+        if (!field) {
+          Toastify({ text: 'Champ photo non identifié pour ce champ', duration: 3000, style: { background: '#dc2626' } }).showToast();
+          return;
+        }
+        photoCtx = { table, recId, field };
+        resetPhotoEditorState();
+
+        // Find current attachments
+        const records = db[table] || [];
+        const rec = records.find((r) => r.id === recId);
+        const attachments = rec?.fields?.[field] || [];
+        photoExisting = (attachments || [])
+          .filter((a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
+          .map((a) => ({ id: a.id, url: a.url, filename: a.filename || 'photo' }));
+        photoOriginalCount = photoExisting.length;
+
+        document.getElementById('photo-field-name').textContent = field;
+        document.getElementById('photo-meta').textContent = `${table}  ·  ${recId}`;
+
+        renderPhotoGrid();
+        updatePhotoSaveButton();
+        document.getElementById('photo-modal').classList.add('open');
+      }
+
+      function closePhotoEditor() {
+        document.getElementById('photo-modal').classList.remove('open');
+        photoCtx = null;
+        resetPhotoEditorState();
+      }
+
+      function renderPhotoGrid() {
+        const grid = document.getElementById('photo-grid');
+        const empty = document.getElementById('photo-empty-state');
+        const hasExisting = photoExisting.length > 0;
+
+        grid.innerHTML = photoExisting.map((p) => `
+          <div class="photo-grid-item">
+            <img src="${esc(p.url)}" alt="${esc(p.filename)}" />
+            <button class="photo-delete-btn" data-photo-id="${esc(p.id)}" title="Supprimer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        `).join('');
+
+        empty.style.display = hasExisting ? 'none' : 'block';
+        grid.style.display = hasExisting ? 'grid' : 'none';
+
+        // Wire delete buttons
+        grid.querySelectorAll('.photo-delete-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.photoId;
+            photoExisting = photoExisting.filter((p) => p.id !== id);
+            renderPhotoGrid();
+            updatePhotoSaveButton();
+          });
+        });
+      }
+
+      function updatePhotoSaveButton() {
+        const btn = document.getElementById('photo-save-btn');
+        const hasChanges = photoPendingFiles.length > 0 || photoNewUrls.length > 0 ||
+          photoExisting.length !== photoOriginalCount;
+        btn.disabled = !hasChanges;
+      }
+
+      function addPhotoUrl(url) {
+        if (!url || !url.trim()) return false;
+        const trimmed = url.trim();
+        // Extract filename from URL
+        const filename = trimmed.split('/').pop().split('?')[0] || 'photo.jpg';
+        photoNewUrls.push({ url: trimmed, filename });
+        document.getElementById('photo-url-input').value = '';
+        updatePhotoSaveButton();
+        Toastify({ text: 'Photo ajoutée !', duration: 2000, style: { background: '#1F6D67' } }).showToast();
+        return true;
+      }
+
+      function uploadFiles(files) {
+        if (!files || files.length === 0) return;
+
+        const progress = document.getElementById('upload-progress');
+        const status = document.getElementById('upload-status');
+        progress.classList.add('active');
+
+        Array.from(files).forEach((file) => {
+          if (!file.type.startsWith('image/')) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const dataUrl = e.target.result;
+            const filename = file.name;
+            photoPendingFiles.push({ file, dataUrl, filename });
+            renderPendingPreviews();
+            updatePhotoSaveButton();
+            progress.classList.remove('active');
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function renderPendingPreviews() {
+        const container = document.getElementById('photo-pending-preview');
+        container.innerHTML = photoPendingFiles.map((p, i) => `
+          <div class="photo-pending-item">
+            <img src="${esc(p.dataUrl)}" alt="${esc(p.filename)}" />
+            <button class="remove-pending" data-index="${i}">✕</button>
+          </div>
+        `).join('');
+
+        container.querySelectorAll('.remove-pending').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.index);
+            photoPendingFiles.splice(idx, 1);
+            renderPendingPreviews();
+            updatePhotoSaveButton();
+          });
+        });
+      }
+
+      async function uploadPendingFileToHosting(file, filename) {
+        // Try to upload via imgbb API if a key is configured
+        if (IMGBB_API_KEY) {
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+              method: 'POST',
+              body: formData,
+            });
+            const data = await res.json();
+            if (data.success) {
+              return { url: data.data.url, filename };
+            }
+          } catch (e) {
+            // Fall through to alternative
+          }
+        }
+
+        // Fallback: return null (user will need to paste URL manually)
+        return null;
+      }
+
+      async function savePhotoChanges() {
+        if (!photoCtx) return;
+        const saveBtn = document.getElementById('photo-save-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Sauvegarde…';
+
+        const status = document.getElementById('upload-status');
+        const progress = document.getElementById('upload-progress');
+
+        try {
+          // Upload pending files first
+          const uploadedUrls = [];
+          for (const p of photoPendingFiles) {
+            status.textContent = `Upload de ${p.filename}…`;
+            progress.classList.add('active');
+            const uploaded = await uploadPendingFileToHosting(p.file, p.filename);
+            progress.classList.remove('active');
+            if (uploaded) {
+              uploadedUrls.push(uploaded);
+            } else {
+              // Ask user to paste URL
+              const url = prompt(`Impossible d'uploader ${p.filename}. Collez l'URL de l'image (ou annulez pour ignorer) :`);
+              if (url && url.trim()) {
+                uploadedUrls.push({ url: url.trim(), filename: p.filename });
+              }
+            }
+          }
+
+          // Build final attachments array
+          const finalAttachments = [
+            ...photoExisting.map((p) => ({ id: p.id })),
+            ...photoNewUrls.map((p) => ({ url: p.url, filename: p.filename })),
+            ...uploadedUrls.map((p) => ({ url: p.url, filename: p.filename })),
+          ];
+
+          // Save to Airtable
+          const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(photoCtx.table)}/${photoCtx.recId}`;
+          const res = await fetch(url, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fields: { [photoCtx.field]: finalAttachments } }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+
+          // Update local db
+          const records = db[photoCtx.table];
+          const rec = records?.find((r) => r.id === photoCtx.recId);
+          if (rec) {
+            rec.fields[photoCtx.field] = data.fields[photoCtx.field];
+          }
+
+          // Rebuild Tout data if needed
+          if (photoCtx.table === TABLE_MAISON || photoCtx.table === TABLE_LIVRET ||
+              photoCtx.table === TABLE_EQUIPEMENT || photoCtx.table === TABLE_PISCINE ||
+              photoCtx.table === TABLE_LISTE_MAISON) {
+            const rebuilt = buildData();
+            allRows = rebuilt.rows;
+          }
+
+          // Refresh view
+          applyFilter();
+
+          saveBtn.textContent = 'Sauvegarder les photos';
+          Toastify({ text: 'Photos enregistrées !', duration: 2500, style: { background: '#1F6D67' } }).showToast();
+          closePhotoEditor();
+        } catch (err) {
+          Toastify({ text: `Erreur : ${err.message}`, duration: 4000, style: { background: '#dc2626' } }).showToast();
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Sauvegarder les photos';
+        }
+      }
+
       /* ── init ── */
       (async function init() {
         try {
-          // Fetch all 10 tables in parallel
           const [
             maisonRecs, livretRecs, equipRecs, piscineRecs, listRecs,
             dispositionRecs, workflowRecs, conditionRecs, proprioRecs, recommandRecs,
@@ -1215,8 +3061,31 @@
           db[TABLE_PROPRIETAIRE] = proprioRecs;
           db[TABLE_RECOMMANDATION] = recommandRecs;
 
+          // Populate houseNameToId from ListeMaison (must be before build_all_tables)
+          listRecs.forEach((r) => {
+            const name = r.fields.NomMaison || r.fields.Name || '';
+            const id = r.fields.IdMaison || '';
+            if (name && id) {
+              houseNameToId[name] = id;
+              idToHouseName[id] = name;
+              recIdToHouseName[r.id] = name;
+            }
+          });
+
+          // Store all-tables data
+          window._allTablesData = build_all_tables();
+
+          // Build reverse index: recId → tableName
+          const allTables = [TABLE_MAISON, TABLE_LIVRET, TABLE_EQUIPEMENT, TABLE_PISCINE,
+            TABLE_LISTE_MAISON, TABLE_DISPOSITION, TABLE_WORKFLOW, TABLE_CONDITION,
+            TABLE_PROPRIETAIRE, TABLE_RECOMMANDATION];
+          allTables.forEach((t) => {
+            (db[t] || []).forEach((rec) => { recordIdToTable[rec.id] = t; });
+          });
+
           // Build Tout data
           const { rows, houses } = buildData();
+          all_houses = houses;
           allRows = rows;
 
           // Populate house filter
