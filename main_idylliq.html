@@ -6,7 +6,7 @@
     <title>Document</title>
   </head>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('httpM55s://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     :root {
       --primary: #1f6d67;
@@ -52,13 +52,19 @@
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-
+    }
+    .Instruction{
+          border: 1px solid var(--border);
+    padding: 1rem;
+    margin: 5rem 5rem 0 5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
   </style>
   <body>
+
     <h1>Interface <a style="color: var(--primary);">Idylliq</a></h1>
     <div class="buttons">
-      <button
+      <button id="creer"
         onclick="
           window.location.href =
             'https://komodo-source.github.io/stage/instruction_creation.html'
@@ -66,7 +72,7 @@
       >
         Créer une maison
       </button>
-      <button
+      <button id="recherche"
         onclick="
           window.location.href =
             'https://komodo-source.github.io/stage/Recherche.html'
@@ -74,7 +80,7 @@
       >
         Recherche/Modification
       </button>
-      <button
+      <button id="visu"
         onclick="
           window.location.href =
             'https://airtable.com/appLWhCKR6pEGE02s/pagu6TVMLNL7DwZQW'
@@ -82,7 +88,7 @@
       >
         Visualisation par table
       </button>
-      <button
+      <button id="index"
         onclick="
           window.location.href =
             'https://komodo-source.github.io/stage/index_houses.html'
@@ -92,5 +98,24 @@
       </button>
 
     </div>
+
+
+
+    <div class="Instruction">
+      <p id="valeur-tabs"></p>
+    </div>
+        <script>
+      const desc = {
+        "creer": "Liste complète des instructions afin de créer une nouvelle maison dans Airtable, avec liens des formulaires",
+        "recherche": "Permet de rechercher et de modifier dans la base de données entière d'Airtable",
+        "visu": "Permet de visualiser les valeurs par table",
+        "index": "Lien des livrets"
+      }
+
+    document.getElementById("creer").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["creer"]});
+    document.getElementById("recherche").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["recherche"]});
+    document.getElementById("visu").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["visu"]});
+    document.getElementById("index").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["index"]});
+    </script>
   </body>
 </html>
