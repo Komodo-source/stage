@@ -35175,7 +35175,15 @@
           return;
         }
 
-        dataViewerFields = rec.fields || {};
+        // Collect every field key seen across all records of this table so that
+        // empty fields (omitted by Airtable) still appear in the viewer.
+        const allKnownKeys = new Set();
+        records.forEach(r => Object.keys(r.fields || {}).forEach(k => allKnownKeys.add(k)));
+        const mergedFields = {};
+        allKnownKeys.forEach(k => {
+          mergedFields[k] = (rec.fields || {})[k] !== undefined ? (rec.fields || {})[k] : null;
+        });
+        dataViewerFields = mergedFields;
 
         document.getElementById('data-viewer-title').textContent =
           `📋 ${tableName}`;
@@ -35824,7 +35832,9 @@
           openPhotoEditor(table, recId, field);
           return;
         }
-        const rawValue = valueEl ? valueEl.innerText : '';
+        // Use the actual stored value (not DOM text, which shows "—" for empties)
+        const storedVal = fieldVal != null && !Array.isArray(fieldVal) ? String(fieldVal) : '';
+        const rawValue = storedVal || (valueEl ? (valueEl.innerText === '—' ? '' : valueEl.innerText) : '');
         editCtx = { table, recId, field, valueEl };
         document.getElementById('edit-field-name').textContent = field;
         document.getElementById('edit-meta').textContent =

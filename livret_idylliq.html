@@ -1226,8 +1226,9 @@ function renderWifiSection(items, index) {
       </div>
       <div class="card reveal" style="max-width:550px;margin:0 auto;text-align:center;">
         <div class="card-body">
-          <div class="category-badge">Réseau (SSID)</div>
-          <h3 class="card-item-title" style="margin-bottom:0.75rem;">${escapeHtml(ssid)}</h3>
+          <div class="category-badge">Wi-Fi · Réseau</div>
+          <h3 class="card-item-title" style="margin-bottom:0.35rem;">Réseau Wi-Fi</h3>
+          <p style="color:var(--ink-mid);font-size:0.9rem;letter-spacing:1px;margin-bottom:1.5rem;">${escapeHtml(ssid)}</p>
           <p style="color:var(--ink-mid);font-size:1.15rem;margin-bottom:2.5rem;">Mot de passe : <strong>${escapeHtml(mdp)}</strong></p>
           <div id="${safeId}" style="display:flex;justify-content:center;margin-bottom:2rem;"></div>
           <button id="copymdp" onclick="copy('${escapeAttr(mdp)}')">Copier la clé</button>
@@ -1339,6 +1340,17 @@ function get_global_info_maison(rec) {
       ${accesHtml}
       ${reglesHtml}
     </section>`;
+}
+
+function dedupParas(text) {
+  if (!text) return text;
+  const seen = new Set();
+  return text.split(/\n{2,}/).filter(p => {
+    const norm = p.replace(/\s+/g, ' ').trim();
+    if (!norm || seen.has(norm)) return false;
+    seen.add(norm);
+    return true;
+  }).join('\n\n');
 }
 
 function parseRegles(text) {
@@ -1466,7 +1478,10 @@ function renderPiscinePage(rec) {
 }
 
 function getRecommandation(data, maisonId) {
-  const related = data.filter(r => ((r.fields.Link_maison || r.fields.Maison) || []).includes(maisonId));
+  const related = data.filter(r => {
+    const link = r.fields.Link_maison ?? r.fields.Link_Maison ?? r.fields.Maison ?? r.fields.maison ?? r.fields.Maisons ?? r.fields.Link_Maisons ?? [];
+    return (Array.isArray(link) ? link : [link]).some(v => v === maisonId || (v && v.id === maisonId));
+  });
   if (!related.length) return '';
   const cards = related.map(r => {
     const f = r.fields;
@@ -1687,6 +1702,9 @@ async function buildLivret(IdMaison) {
   const allEquipItems = [];
   let pointsAttentionHtml = '';
   let combinedDepartText = '';
+  let departItemsHtml = '';
+  const seenAttention = new Set();
+  const seenDepart = new Set();
 
   const validEquipRecs = livretRecs.filter(r =>
     equipIds.has(r.id) ||
@@ -1725,18 +1743,33 @@ async function buildLivret(IdMaison) {
 
     // Extraction Point d'attention depuis la table Livret (fonctionnementMaison)
     if (f.Livret_PointAttention) {
-      const equipName = f.NomEquipement || 'Équipement';
-      pointsAttentionHtml += `<div style="margin-bottom: 1.5rem;">
-        <strong style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
-        <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(f.Livret_PointAttention, [], false)}</div>
-      </div>`;
+      const attText = dedupParas(f.Livret_PointAttention.trim());
+      const attNorm = attText.replace(/\s+/g, ' ');
+      if (!seenAttention.has(attNorm)) {
+        seenAttention.add(attNorm);
+        const equipName = f.NomEquipement || 'Équipement';
+        pointsAttentionHtml += `<div style="margin-bottom: 1.5rem;">
+          <strong style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
+          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(attText, [], false)}</div>
+        </div>`;
+      }
     }
 
     // Extraction Instruction Départ depuis la table Livret (fonctionnementMaison)
     if (f.Livret_InstructionDepart) {
-      const equipNameHeader = f.NomEquipement ? f.NomEquipement.toUpperCase() : 'ÉQUIPEMENT';
-      // L'ajout du nom en majuscule crée proprement une nouvelle section check-out pour cet équipement
-      combinedDepartText += `\n${equipNameHeader}\n${f.Livret_InstructionDepart}\n`;
+      const deptText = dedupParas(f.Livret_InstructionDepart.trim());
+      const deptNorm = deptText.replace(/\s+/g, ' ');
+      if (!seenDepart.has(deptNorm)) {
+        seenDepart.add(deptNorm);
+        const equipName = f.NomEquipement || 'Équipement';
+        departItemsHtml += `<div style="margin-bottom: 1.5rem;">
+          <strong style="color:var(--green-dark); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
+          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(deptText, [], false)}</div>
+        </div>`;
+        // Keep combinedDepartText for the checkout-list renderer as fallback
+        const header = equipName.toUpperCase();
+        combinedDepartText += `\n${header}\n${deptText}\n`;
+      }
     }
   });
 
@@ -1752,6 +1785,24 @@ async function buildLivret(IdMaison) {
             ${pointsAttentionHtml}
           </div>
         </aside>
+      </section>`;
+  }
+
+  // Construction du bloc final Instruction Départ (identique au pattern Point d'attention)
+  let finalDepartHtml = '';
+  if (departItemsHtml) {
+    finalDepartHtml = `
+      <section class="theme-page" id="instruction-depart">
+        <div class="card reveal" style="margin-top:0;">
+          <div class="card-body">
+            <div class="category-badge">Check-out</div>
+            <h3 class="card-item-title">Instructions de départ</h3>
+            <div class="card-desc">
+              <p style="font-style:italic;color:var(--ink-mid);margin-bottom:2rem;">Effectuez les actions ci-dessous avant de quitter la propriété.</p>
+              ${departItemsHtml}
+            </div>
+          </div>
+        </div>
       </section>`;
   }
 
@@ -1791,7 +1842,7 @@ async function buildLivret(IdMaison) {
     Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx) || '').join('') +
     piscineSectionHtml +
     getRecommandation(recoRecs, maisonRecord.id) +
-    get_instruction_depart(combinedDepartText) +
+    (finalDepartHtml || get_instruction_depart(combinedDepartText)) +
     `
     <section class="presentation-idylliq">
       <img src="end.png" id="img_end_presentation">
@@ -1835,14 +1886,15 @@ function toggleSearch() {
 }
 
 function doSearch(query) {
-  const q = query.trim().toLowerCase();
+  const normalize = s => s.toLowerCase().replace(/-/g, '');
+  const q = normalize(query.trim());
   const resultsContainer = document.getElementById('search-results');
   resultsContainer.innerHTML = '';
   if (!q) return;
   const cards = document.querySelectorAll('.card, .reco-card, .elegant-accordion');
   let matchCount = 0;
   cards.forEach(card => {
-    if (card.textContent.toLowerCase().includes(q)) {
+    if (normalize(card.textContent).includes(q)) {
       const titleEl = card.querySelector('.card-item-title, .reco-name, summary');
       const title = titleEl ? titleEl.textContent : 'Section correspondante';
       const div = document.createElement('div');
