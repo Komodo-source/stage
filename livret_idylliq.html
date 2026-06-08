@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -376,8 +376,7 @@
     .lightbox { display: none; position: fixed; z-index: 2000; inset: 0; background: rgba(15, 61, 58, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); justify-content: center; align-items: center; padding: 0; }
     .lightbox.active { display: flex; animation: fadeIn 0.25s ease; }
     .lightbox-content { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .lightbox-content img { max-width: 100vw; max-height: 100vh; border-radius: 0; box-shadow: none; object-fit: contain; transition: transform 0.3s ease; cursor: zoom-in; }
-    .lightbox-content img.zoomed { transform: scale(1.8); cursor: zoom-out; }
+    .lightbox-content img { max-width: 100vw; max-height: 100vh; border-radius: 0; box-shadow: none; object-fit: contain; transform-origin: center center; will-change: transform; cursor: zoom-in; user-select: none; -webkit-user-drag: none; }
     .lightbox-close { position: fixed; top: 25px; right: 30px; color: white; font-size: 2rem; cursor: pointer; transition: var(--transition); line-height: 1; opacity: 0.8; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3); z-index: 2010; }
     .lightbox-close:hover { opacity: 1; transform: rotate(90deg) scale(1.1); background: rgba(255,255,255,0.3); }
     .lightbox-counter { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.9); font-family: 'League Spartan', sans-serif; letter-spacing: 3px; font-size: 1rem; z-index: 2010; }
@@ -645,7 +644,7 @@ const ICON_MAP = [
   { keys: ['billard'], icon: 'https://img.icons8.com/?size=100&id=40278&format=png&color=1F6D67', label: 'Billard' },
   { keys: ['tennis'], icon: 'https://img.icons8.com/?size=100&id=66955&format=png&color=1F6D67', label: 'Tennis' },
   { keys: ['trampoline','jeux extérieur','jeux exterieurs','jeux extérieurs'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux' },
-  { keys: ['badminton'], icon: 'https://img.icons8.com/?size=100&id=12661&format=png&color=1F6D67', label: 'Badminton' },
+  { keys: ['badminton'], icon: 'https://img.icons8.com/?size=100&id=24308&format=png&color=1F6D67', label: 'Badminton' },
   { keys: ['barbecue','bbq'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Barbecue' },
   { keys: ['brasero'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Brasero' },
   { keys: ['molkky'], icon: 'https://img.icons8.com/?size=100&id=9789&format=png&color=1F6D67', label: 'Molkky' },
@@ -664,7 +663,7 @@ const ICON_MAP = [
   { keys: ['rétroprojecteur','retroprojecteur','cinéma', 'cinema'], icon: 'https://img.icons8.com/?size=100&id=8881&format=png&color=1F6D67', label: 'Projecteur' },
   { keys: ['piano'], icon: 'https://img.icons8.com/?size=100&id=9398&format=png&color=1F6D67', label: 'Piano' },
   { keys: ['jeux de société','jeux de societe'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux' },
-  { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=25661&format=png&color=1F6D67', label: 'Fléchettes' },
+  { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=tHzZ9ys48oBP&format=png&color=1F6D67', label: 'Fléchettes' },
   { keys: ['mobilier extérieur','salon de jardin','terrasse','table extérieure'], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse' },
   { keys: ['parasol'], icon: 'https://img.icons8.com/?size=100&id=s7nP5hAh4fJM&format=png&color=1F6D67', label: 'Parasol' },
   { keys: ['potager'], icon: 'https://img.icons8.com/?size=100&id=5I9mgW1o2sOm&format=png&color=1F6D67', label: 'Potager' },
@@ -707,52 +706,132 @@ function getEquipmentIconEntry(nomEquipement) {
 let _lbImages = [], _lbIndex = 0;
 let has_piscine = false;
 
+/* ── Lightbox zoom / pan state ── */
+let _lbScale = 1, _lbPanX = 0, _lbPanY = 0;
+let _lbDrag = null, _lbPinchDist = null;
+
+function _lbImg() { return document.getElementById('lightbox-img'); }
+
+function _applyLbTransform(animate) {
+  const img = _lbImg();
+  img.style.transition = animate ? 'transform 0.25s ease' : 'none';
+  img.style.transform = `scale(${_lbScale}) translate(${_lbPanX}px, ${_lbPanY}px)`;
+  img.style.cursor = _lbScale > 1 ? 'grab' : 'zoom-in';
+}
+
+function _resetLbZoom(animate) {
+  _lbScale = 1; _lbPanX = 0; _lbPanY = 0;
+  _applyLbTransform(animate);
+}
+
 function openLightbox(src, imagesArr, index) {
   _lbImages = Array.isArray(imagesArr) ? imagesArr : [src];
   _lbIndex  = typeof index === 'number' ? index : 0;
+  _resetLbZoom(false);
   _renderLightbox();
-  const img = document.getElementById('lightbox-img');
-  img.classList.remove('zoomed');
   document.getElementById('lightbox').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 function _renderLightbox() {
-  const img = document.getElementById('lightbox-img');
-  img.classList.remove('zoomed');
+  const img = _lbImg();
+  _resetLbZoom(false);
   img.src = _lbImages[_lbIndex];
   const c = document.getElementById('lightbox-counter');
   if (c) c.textContent = _lbImages.length > 1 ? `${_lbIndex + 1} / ${_lbImages.length}` : '';
 }
 function lightboxNav(dir) {
+  if (_lbScale > 1) return; // don't navigate while zoomed
   _lbIndex = (_lbIndex + dir + _lbImages.length) % _lbImages.length;
   _renderLightbox();
 }
 function toggleZoom(img) {
-  img.classList.toggle('zoomed');
-  if (img.classList.contains('zoomed')) {
-    const lb = document.getElementById('lightbox');
-    if (lb.requestFullscreen) lb.requestFullscreen();
-    else if (lb.webkitRequestFullscreen) lb.webkitRequestFullscreen();
-  } else {
-    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
-    else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
-  }
+  _lbScale = _lbScale > 1 ? 1 : 2.5;
+  _lbPanX = 0; _lbPanY = 0;
+  _applyLbTransform(true);
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
   document.body.style.overflow = '';
-  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
-  else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+  _resetLbZoom(false);
 }
-document.getElementById('lightbox').addEventListener('click', e => {
-  if (e.target.id === 'lightbox') closeLightbox();
-});
+
+/* ── Lightbox events ── */
+const _lb = document.getElementById('lightbox');
+
+// Close on backdrop click
+_lb.addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
+
+// Keyboard
 document.addEventListener('keydown', e => {
-  if (!document.getElementById('lightbox').classList.contains('active')) return;
+  if (!_lb.classList.contains('active')) return;
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowRight') lightboxNav(1);
   if (e.key === 'ArrowLeft')  lightboxNav(-1);
+  if (e.key === '0') _resetLbZoom(true);
 });
+
+// Mouse wheel zoom
+_lb.addEventListener('wheel', e => {
+  if (!_lb.classList.contains('active')) return;
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.15 : 0.87;
+  _lbScale = Math.max(1, Math.min(6, _lbScale * factor));
+  if (_lbScale === 1) { _lbPanX = 0; _lbPanY = 0; }
+  _applyLbTransform(false);
+}, { passive: false });
+
+// Mouse drag to pan
+_lbImg().addEventListener('mousedown', e => {
+  if (_lbScale <= 1) return;
+  e.preventDefault();
+  _lbDrag = { startX: e.clientX, startY: e.clientY, panX: _lbPanX, panY: _lbPanY };
+  _lbImg().style.cursor = 'grabbing';
+});
+document.addEventListener('mousemove', e => {
+  if (!_lbDrag) return;
+  _lbPanX = _lbDrag.panX + (e.clientX - _lbDrag.startX) / _lbScale;
+  _lbPanY = _lbDrag.panY + (e.clientY - _lbDrag.startY) / _lbScale;
+  _applyLbTransform(false);
+});
+document.addEventListener('mouseup', () => {
+  if (!_lbDrag) return;
+  _lbDrag = null;
+  _applyLbTransform(false);
+});
+
+// Touch pinch-to-zoom + drag
+_lbImg().addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    _lbPinchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1 && _lbScale > 1) {
+    _lbDrag = { startX: e.touches[0].clientX, startY: e.touches[0].clientY, panX: _lbPanX, panY: _lbPanY };
+  }
+}, { passive: false });
+
+_lbImg().addEventListener('touchmove', e => {
+  if (e.touches.length === 2 && _lbPinchDist !== null) {
+    e.preventDefault();
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    _lbScale = Math.max(1, Math.min(6, _lbScale * (dist / _lbPinchDist)));
+    _lbPinchDist = dist;
+    if (_lbScale === 1) { _lbPanX = 0; _lbPanY = 0; }
+    _applyLbTransform(false);
+  } else if (e.touches.length === 1 && _lbDrag) {
+    e.preventDefault();
+    _lbPanX = _lbDrag.panX + (e.touches[0].clientX - _lbDrag.startX) / _lbScale;
+    _lbPanY = _lbDrag.panY + (e.touches[0].clientY - _lbDrag.startY) / _lbScale;
+    _applyLbTransform(false);
+  }
+}, { passive: false });
+
+_lbImg().addEventListener('touchend', () => { _lbPinchDist = null; _lbDrag = null; });
 
 /* ── scroll ── */
 function initScrollSpy() {
@@ -791,14 +870,15 @@ function initScrollSpy() {
 }
 
 /* ── AIRTABLE FETCH ── */
-async function fetchAll(table) {
+async function fetchFiltered(table, formula, fields) {
   let records = [], offset = null;
   do {
     const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
     if (offset) url.searchParams.set('offset', offset);
+    if (formula) url.searchParams.set('filterByFormula', formula);
+    if (fields?.length) fields.forEach(f => url.searchParams.append('fields[]', f));
     const res  = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
     const data = await res.json();
-    console.log(table, data);
     if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
     records = records.concat(data.records);
     offset  = data.offset || null;
@@ -893,8 +973,14 @@ function renderEquipCard(item, forceTemplate) {
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
   const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
-  const cleanDesc = (item.Description || '').replace(/\$[iv]\d+/g, '');
-  const desc  = `<div class="card-desc">${parseDescriptionWithInline(cleanDesc, [], [])}</div>`;
+  const videos = Array.isArray(item._videos) ? item._videos : [];
+  let descText = (item.Description || '').replace(/\$i\d+/g, '');
+  if (videos.length > 0) {
+    const usedVIdxs = new Set([...descText.matchAll(/\$v(\d+)/g)].map(m => +m[1]));
+    const freeVIdxs = videos.map((_, i) => i).filter(i => !usedVIdxs.has(i));
+    if (freeVIdxs.length) descText += '\n\n' + freeVIdxs.map(i => '$v' + i).join('\n');
+  }
+  const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, [], videos)}</div>`;
   if (!desc){return "";}
 
 function imgClick(url, idx) {
@@ -1681,22 +1767,53 @@ async function fetchWeather(address) {
 }
 
 async function buildLivret(IdMaison) {
-  const [ maisonRecs, livretRecs, piscineRecs, wfRecs, recoRecs, listRecs ] =
-    await Promise.all([
-      fetchAll(TABLE_MAISON), fetchAll(TABLE_LIVRET),
-      fetchAll(TABLE_PISCINE), fetchAll(TABLE_WORKFLOW),
-      fetchAll(TABLE_RECOMMANDATION), fetchAll(TABLE_LISTE_MAISON)
-    ]);
+  // Phase 1 — fetch only the one maison + its list data, filtered server-side.
+  // fields[] lists contain ONLY names confirmed in the Airtable schema (unknown fallback
+  // names cause a 422). ListeMaison field names are unknown so no formula/fields filter.
+  const [maisonRecs, listRecs] = await Promise.all([
+    fetchFiltered(TABLE_MAISON,
+      `{ID_Maison}="${IdMaison}"`,
+      ['ID_Maison','Livret_live',
+       'Link_FonctionnementMaison','Link_livret','Link_Piscine',
+       'Livret_NomMaison','Livret_Mot_propriétaire',
+       'Livret_InstructionAccess','InstructionAccess_media',
+       'Livret_regle','FS_Adresse']),
+    fetchFiltered(TABLE_LISTE_MAISON, null, null)
+  ]);
 
   const maisonRecord = maisonRecs.find(r => (r.fields.ID_Maison || r.fields.IdMaison) === IdMaison && (r.fields.Livret_live || r.fields.Livret));
   if (!maisonRecord) { document.getElementById('loading').innerText = `Maison introuvable pour "${IdMaison}".`; return; }
 
-  const listData  = listRecs.find(r => (r.fields.ID_Maison || r.fields.IdMaison) === IdMaison);
+  const listData = listRecs.find(r => (r.fields.ID_Maison || r.fields.IdMaison) === IdMaison);
+
+  // Phase 2 — fetch dependent tables filtered by maisonRecord.id
+  const mId = maisonRecord.id;
+  const _equipIds = new Set(maisonRecord.fields['Link_FonctionnementMaison'] || maisonRecord.fields['Link_livret'] || []);
+  const piscineLinkIds = Array.isArray(maisonRecord.fields['Link_Piscine'])
+    ? maisonRecord.fields['Link_Piscine']
+    : [];
+
+  const livretFormula = _equipIds.size
+    ? `OR(FIND("${mId}",ARRAYJOIN({Link_Maison},",")),${[..._equipIds].map(id => `RECORD_ID()="${id}"`).join(',')})`
+    : `FIND("${mId}",ARRAYJOIN({Link_Maison},","))`;
+
+  const [livretRecs, piscineRecs, wfRecs, recoRecs] = await Promise.all([
+    fetchFiltered(TABLE_LIVRET, livretFormula,
+      ['Link_Maison','Catégorie','NomEquipement',
+       'Livret_description','Photos','lienYoutube',
+       'Livret_PointAttention','Livret_InstructionDepart',
+       'Livret_ordre']),
+    piscineLinkIds.length
+      ? fetchFiltered(TABLE_PISCINE,
+          `OR(${piscineLinkIds.map(id => `RECORD_ID()="${id}"`).join(',')})`,
+          null)
+      : Promise.resolve([]),
+    fetchFiltered(TABLE_WORKFLOW, null, null),
+    fetchFiltered(TABLE_RECOMMANDATION, null, null)
+  ]);
 
 
   const coverImg  = listData?.fields?.Livret_Maison_cover_pic?.[0]?.url || listData?.fields?.ImageMaison?.[0]?.url || '';
-
-  const equipIds = new Set(maisonRecord.fields['Link_FonctionnementMaison'] || maisonRecord.fields['Link_livret'] || maisonRecord.fields['Livret 2'] || []);
 
   const themeMap = {};
   const allEquipItems = [];
@@ -1707,7 +1824,7 @@ async function buildLivret(IdMaison) {
   const seenDepart = new Set();
 
   const validEquipRecs = livretRecs.filter(r =>
-    equipIds.has(r.id) ||
+    _equipIds.has(r.id) ||
     (r.fields.Link_Maison || []).includes(maisonRecord.id)
   );
 
@@ -1720,8 +1837,7 @@ async function buildLivret(IdMaison) {
   validEquipRecs.forEach(rec => {
     const f = rec.fields;
     const catArr = f['Catégorie'];
-    const cat    = Array.isArray(catArr) ? catArr[0] : (catArr || 'Général');
-    if (!themeMap[cat]) themeMap[cat] = [];
+    const cats   = Array.isArray(catArr) ? catArr : [catArr || 'Général'];
     const allPhotos = (f.Photos || []);
     const youtubeVids = (f.LienYoutube || f.lienYoutube)
       ? (f.LienYoutube || f.lienYoutube).split(';').map(v => v.trim()).filter(Boolean) : [];
@@ -1734,11 +1850,14 @@ async function buildLivret(IdMaison) {
     const item = {
       Item: f.NomEquipement || '–',
       Description: f.Livret_description || f.descriptionLivret || '',
-      Categorie: cat,
+      Categorie: cats[0],
       _attachments: allPhotos,
       _videos: videos
     };
-    themeMap[cat].push(item);
+    cats.forEach(cat => {
+      if (!themeMap[cat]) themeMap[cat] = [];
+      themeMap[cat].push(item);
+    });
     allEquipItems.push(item);
 
     // Extraction Point d'attention depuis la table Livret (fonctionnementMaison)
@@ -1748,9 +1867,10 @@ async function buildLivret(IdMaison) {
       if (!seenAttention.has(attNorm)) {
         seenAttention.add(attNorm);
         const equipName = f.NomEquipement || 'Équipement';
+        const attPhotos = allPhotos.filter(a => is_file_image(a));
         pointsAttentionHtml += `<div style="margin-bottom: 1.5rem;">
           <strong style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
-          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(attText, [], false)}</div>
+          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(attText, attPhotos, false)}</div>
         </div>`;
       }
     }
@@ -1788,27 +1908,10 @@ async function buildLivret(IdMaison) {
       </section>`;
   }
 
-  // Construction du bloc final Instruction Départ (identique au pattern Point d'attention)
-  let finalDepartHtml = '';
-  if (departItemsHtml) {
-    finalDepartHtml = `
-      <section class="theme-page" id="instruction-depart">
-        <div class="card reveal" style="margin-top:0;">
-          <div class="card-body">
-            <div class="category-badge">Check-out</div>
-            <h3 class="card-item-title">Instructions de départ</h3>
-            <div class="card-desc">
-              <p style="font-style:italic;color:var(--ink-mid);margin-bottom:2rem;">Effectuez les actions ci-dessous avant de quitter la propriété.</p>
-              ${departItemsHtml}
-            </div>
-          </div>
-        </div>
-      </section>`;
-  }
+  // finalDepartHtml is now always rendered via get_instruction_depart (checklist format)
 
   let piscineSectionHtml = '';
-  const piscineLinkIds = maisonRecord.fields['Link_Piscine'] || maisonRecord.fields['Piscine'];
-  if (piscineLinkIds && Array.isArray(piscineLinkIds) && piscineLinkIds.length > 0) {
+  if (piscineLinkIds.length > 0) {
     const piscineRecord = piscineRecs.find(p => piscineLinkIds.includes(p.id));
     if (piscineRecord) {
       piscineSectionHtml = renderPiscinePage(piscineRecord) || '';
@@ -1829,7 +1932,6 @@ async function buildLivret(IdMaison) {
     wifiSectionHtml = renderThemePage(wifiKey, un[wifiKey], 'wifi-index');
     delete un[wifiKey];
   }
-  console.log("maisonRecord", maisonRecord);
   const nomMaison = maisonRecord.fields.Livret_NomMaison || IdMaison;
 
   const html =
@@ -1842,7 +1944,7 @@ async function buildLivret(IdMaison) {
     Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx) || '').join('') +
     piscineSectionHtml +
     getRecommandation(recoRecs, maisonRecord.id) +
-    (finalDepartHtml || get_instruction_depart(combinedDepartText)) +
+    get_instruction_depart(combinedDepartText) +
     `
     <section class="presentation-idylliq">
       <img src="end.png" id="img_end_presentation">
