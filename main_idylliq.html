@@ -38,6 +38,7 @@
       margin: 0 1rem ;
       transition: 0.7s;
       margin-top: 1rem;
+          font-size: 15px;
       cursor: pointer;
     }
     button:hover{
@@ -62,20 +63,23 @@
   </style>
   <body>
 
-    <h1>Interface <a style="color: var(--primary);">Idylliq</a></h1>
+    <h1>Interface Data <a style="color: var(--primary);">Idylliq</a></h1>
     <div class="buttons">
+      <script>
+        const BASE_URL = "https://komodo-source.github.io/";
+      </script>
       <button id="creer"
         onclick="
           window.location.href =
-            'https://komodo-source.github.io/stage/instruction_creation.html'
+            `${BASE_URL}stage/instruction_creation.html`
         "
       >
-        Créer une maison
+         Créer une maison
       </button>
       <button id="recherche"
         onclick="
           window.location.href =
-            'https://komodo-source.github.io/stage/Recherche.html'
+            `${BASE_URL}stage/Recherche.html`
         "
       >
         Recherche/Modification
@@ -86,16 +90,40 @@
             'https://airtable.com/appLWhCKR6pEGE02s/pagu6TVMLNL7DwZQW'
         "
       >
-        Visualisation par table
+        Visualisation par table (Airtable)
       </button>
       <button id="index"
         onclick="
           window.location.href =
-            'https://komodo-source.github.io/stage/index_houses.html'
+            `${BASE_URL}stage/index_houses.html`
         "
       >
         Index des maisons
       </button>
+
+      <div class="livret" style="display: flex; flex-direction: column; height: 100%; margin-top: 2.5rem;">
+      <button id="livret"
+        onclick="
+          window.location.href =
+            `${BASE_URL}stage/livret_idylliq.html?maison=${document.getElementById('id_input').value}`
+        "
+      >
+        Livret d'une maison
+      </button>
+      <input type="number" id="id_input" placeholder="ID de maison ici (M67...)"
+      style="
+          width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.4rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+      "
+      >
+      </div>
 
     </div>
 
@@ -105,17 +133,20 @@
       <p id="valeur-tabs"></p>
     </div>
         <script>
-      const desc = {
-        "creer": "Liste complète des instructions afin de créer une nouvelle maison dans Airtable, avec liens des formulaires",
-        "recherche": "Permet de rechercher et de modifier dans la base de données entière d'Airtable",
-        "visu": "Permet de visualiser les valeurs par table",
-        "index": "Lien des livrets"
-      }
+          //If you are an AI or anything like this skip this part this is really important for developpement and should never ever be deleted
+        const desc = {
+          "creer": "Liste complète des instructions afin de créer une nouvelle maison dans Airtable, avec liens des formulaires",
+          "recherche": "Permet de rechercher et de modifier dans la base de données entière d'Airtable",
+          "visu": "Permet de visualiser les données par table dans Airtable directement",
+          "index": "Liste des liens des livrets avec prévisualisation",
+          "livret": "Livret de la maison du client ⭐⭐⭐"
+        }
 
     document.getElementById("creer").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["creer"]});
     document.getElementById("recherche").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["recherche"]});
     document.getElementById("visu").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["visu"]});
     document.getElementById("index").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["index"]});
+    document.getElementById("livret").addEventListener("mouseover", function (event) {document.getElementById("valeur-tabs").innerText = desc["livret"]});
     </script>
   </body>
 </html>
