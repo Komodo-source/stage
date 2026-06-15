@@ -28,9 +28,19 @@
       justify-content: center;
     }
 
+    main {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1400px;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
     .container {
       max-width: 650px;
       width: 100%;
+      flex-shrink: 0;
     }
 
     h1 {
@@ -84,7 +94,6 @@
       justify-content: center;
       font-weight: 700;
       font-size: 1.25rem;
-      /* Border matches background to hide the timeline line behind it */
       border: 4px solid var(--bg);
     }
 
@@ -126,7 +135,81 @@
       transform: translateY(1px);
     }
 
+    .forms {
+      display: none; /* Hidden by default to center the left block */
+      flex-direction: column;
+      flex-grow: 1;
+      min-width: 400px;
+    }
+
+    #forms_block {
+      width: 100%;
+      height: 100%; 
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background-color: var(--card);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .checkbox-wrapper-22 .switch {
+      display: inline-block;
+      height: 34px;
+      position: relative;
+      width: 60px;
+    }
+
+    .checkbox-wrapper-22 .switch input {
+      display: none;
+    }
+
+    .checkbox-wrapper-22 .slider {
+      background-color: #ccc;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: .4s;
+    }
+
+    .checkbox-wrapper-22 .slider:before {
+      background-color: #fff;
+      bottom: 4px;
+      content: "";
+      height: 26px;
+      left: 4px;
+      position: absolute;
+      transition: .4s;
+      width: 26px;
+    }
+
+    .checkbox-wrapper-22 input:checked + .slider {
+      background-color: #1f6d67;
+    }
+
+    .checkbox-wrapper-22 input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .checkbox-wrapper-22 .slider.round {
+      border-radius: 34px;
+    }
+
+    .checkbox-wrapper-22 .slider.round:before {
+      border-radius: 50%;
+    }
+
     /* Mobile Responsiveness */
+    @media (max-width: 825px) {
+      .forms {
+        display: none !important; /* Force hide on mobile */
+      }
+      .check {
+        display: none !important; /* Hide toggle on mobile as it's not applicable */
+      }
+    }
+
     @media (max-width: 550px) {
       .step-content {
         flex-direction: column;
@@ -153,106 +236,161 @@
     }
   </style>
   <script>
+    // Toggle layout immediately when checkbox changes
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkbox = document.getElementById("checkbox");
+      const formsContainer = document.getElementById("forms");
+
+      checkbox.addEventListener('change', (e) => {
+        const isDesktop = window.innerWidth > 825;
+        if (e.target.checked && isDesktop) {
+          formsContainer.style.display = "flex";
+        } else {
+          formsContainer.style.display = "none";
+        }
+      });
+    });
+
     function openAirtable(url) {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.location.href = url;
+      // Corrected spelling from 'docuement' to 'document' and '.value' to '.checked'
+      const isChecked = document.getElementById("checkbox").checked;
+      const isDesktop = window.innerWidth > 825;
+
+      if (isDesktop && isChecked) {
+        // Hide the placeholder text
+        document.getElementById("text_info").style.display = "none";
+
+        const forms_block = document.getElementById("forms_block");
+        // Convert to embed link
+        const new_link = "https://airtable.com/embed/" + url.split("https://airtable.com/")[1];
+
+        console.log("Opening in iframe:", new_link);
+        forms_block.src = new_link;
       } else {
-        // Fixed syntax: correctly opens in a new tab on desktop
-        window.open(url, '_blank');
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isMobile) {
+          const appUrl = url
+            .replace('https://airtable.com/', 'airtable://')
+            .replace('http://airtable.com/', 'airtable://');
+
+          window.location.href = appUrl;
+
+          setTimeout(() => {
+            window.location.href = url;
+          }, 1500);
+
+        } else {
+          window.open(url, '_blank');
+        }
       }
     }
   </script>
 </head>
 <body>
+  <main>
+    <div class="container">
+      <h1>Étapes de création d'une maison</h1>
 
-  <div class="container">
-    <h1>Étapes de création d'une maison</h1>
-
-    <div class="timeline">
-
-      <div class="step-card">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h2>Création d'une maison dans la liste</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form')">Créer</button>
+      <div class="check" style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+        <div class="checkbox-wrapper-22">
+          <label class="switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+          </label>
         </div>
+        <p style="margin: 0; font-size: 0.9rem; font-weight: 500;">Ouvrir les formulaires à droite</p>
       </div>
 
-      <div class="step-card">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h2>Création d'une maison</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form')">Créer</button>
+      <div class="timeline">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h2>Création d'une maison dans la liste (avec sa cover pic)</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/paguxCIHcWUmEVxGV/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">3</div>
-        <div class="step-content">
-          <h2>Création des fonctionnements/équippements de la maison</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagB4Dr4RpW2PHKrP/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h2>Création d'une maison</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagwcxGKmJPxX8P2e/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">4</div>
-        <div class="step-content">
-          <h2>Créer un livret et lier la maison à tous ses fonctionnements (créés précédemment)</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagdD9YKBkyFDtYBo/form')">Créer</button>
+        <p style="margin-left: 4rem; color: rgb(45,45,45); border-left: 3.5px solid rgb(45, 45, 45); padding-left: 1rem; border-radius: 3px; background-color: #e5e7eb; padding: 1rem;">
+          À partir de cette étape, il faudra lier chaque item avec la maison via le champ <strong>Link_Maison</strong>.
+        </p>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h2>Création des fonctionnements/équipements de la maison</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagB4Dr4RpW2PHKrP/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">5</div>
-        <div class="step-content">
-          <h2>Création de la piscine (si la maison en possède)</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h2>Création de la piscine (si la maison en possède)</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/paguyOO5i2IudgT5Y/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">6</div>
-        <div class="step-content">
-          <h2>Création du ou des propriétaires, puis les lier à sa Maison</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagP0QXE7kBoXwnqd/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h2>Création du ou des propriétaires, puis les lier à sa Maison</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagP0QXE7kBoXwnqd/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">7</div>
-        <div class="step-content">
-          <h2>Création des conditions de location, puis les lier à sa Maison</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">6</div>
+          <div class="step-content">
+            <h2>Création des conditions de location, puis les lier à sa Maison</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pag28bopA2w1E2dqO/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">8</div>
-        <div class="step-content">
-          <h2>Création du Workflow Breezeway</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagfm0qkd1jZ1IGc1/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">7</div>
+          <div class="step-content">
+            <h2>Création du Workflow Breezeway</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagfm0qkd1jZ1IGc1/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">9</div>
-        <div class="step-content">
-          <h2>Création des Dispositions de la Maison</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">8</div>
+          <div class="step-content">
+            <h2>Création des Dispositions de la Maison</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
-      <div class="step-card">
-        <div class="step-number">10</div>
-        <div class="step-content">
-          <h2>Création des Recommandations</h2>
-          <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form')">Créer</button>
+        <div class="step-card">
+          <div class="step-number">9</div>
+          <div class="step-content">
+            <h2>Création des Recommandations</h2>
+            <button onclick="openAirtable('https://airtable.com/appLWhCKR6pEGE02s/pagD6R2PKr6rN4qng/form')">Créer</button>
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
-  </div>
 
+    <div class="forms" id="forms">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <p id="text_info" style="text-align: center; color: var(--muted); margin-bottom: 2rem;">Les formulaires s'ouvriront ici.</p>
+        <iframe src="" frameborder="0" id="forms_block"></iframe>
+        <p style="padding-top: 1rem; font-style: italic; color: var(--muted); text-align: center; font-size: 0.875rem;">
+          Vous pouvez réappuyer sur "Créer" pour relancer un nouveau formulaire.
+        </p>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
