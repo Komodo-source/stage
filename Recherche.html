@@ -2114,7 +2114,7 @@ document.addEventListener('keydown', (event) => {
       let photoOriginalCount = 0; // snapshot of original photo count
       let photoNewUrls = []; // pending new URLs to add [{ url, filename }]
       let photoPendingFiles = []; // pending file uploads [{ file, dataUrl, filename }]
-      const IMGBB_API_KEY = ''; // Optional: set your imgbb API key for file uploads
+      const IMGBB_API_KEY = '86f3fe2416fbfe28a82463a04a041f33';
 
       /* ── utilities ── */
       function debounce(fn, delay) {
@@ -2170,7 +2170,7 @@ document.addEventListener('keydown', (event) => {
 
 
 
-      
+
       async function fetchSchemas() {
         try {
           const res = await fetch(

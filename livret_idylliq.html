@@ -582,6 +582,7 @@
       #info-conciergerie { color: var(--warm);width: 40%}
     }
     #info-conciergerie { color: var(--warm);}
+
   </style>
 </head>
 <body id="main-part-download">
@@ -617,7 +618,7 @@
   <div class="lightbox-content">
     <span class="lightbox-close" onclick="closeLightbox()">✕</span>
     <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
-    <img id="lightbox-img" src="" alt="" onclick="toggleZoom(this)">
+    <img onclick="toggleZoom(this)" id="lightbox-img" src="" alt="" onclick="toggleZoom(this)">
     <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
     <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
@@ -964,25 +965,45 @@ function slugify(str) {
 }
 
 // essaye de s'adapter aux différents nombre d'image en fonction du texte il génère de templates et les renvoies
+// essaye de s'adapter aux différents nombre d'image en fonction du texte il génère de templates et les renvoies
 function renderEquipCard(item, forceTemplate) {
   const photos  = Array.isArray(item._attachments)
     ? item._attachments.filter(a => is_file_image(a))
     : [];
   const allUrls = photos.map(p => p.url);
 
-  const template = forceTemplate || pickTemplate(photos);
+  let descText = (item.Description || '');
+
+  // --- NOUVELLE LOGIQUE ---
+  // On vérifie si la description contient explicitement des balises $i0, $i1, etc.
+  const hasExplicitBeacons = /\$i\d+/.test(descText);
+
+  if (hasExplicitBeacons) {
+    // S'il y a des balises, on ajoute les images restantes (non appelées) à la fin du texte pour ne rien perdre
+    const usedIIdxs = new Set([...descText.matchAll(/\$i(\d+)/g)].map(m => +m[1]));
+    const freeIIdxs = photos.map((_, i) => i).filter(i => !usedIIdxs.has(i));
+    if (freeIIdxs.length) {
+      descText += '\n\n' + freeIIdxs.map(i => '$i' + i).join(' ');
+    }
+  }
+
+  // Si l'utilisateur a positionné une balise, on ignore le placement auto de pickTemplate et on force en 'text-only'
+  const template = forceTemplate || (hasExplicitBeacons ? 'text-only' : pickTemplate(photos));
+  // -------------------------
+
   const cardId   = slugify(item.Item);
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
   const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
-  let descText = (item.Description || '').replace(/\$i\d+/g, '');
   if (videos.length > 0) {
     const usedVIdxs = new Set([...descText.matchAll(/\$v(\d+)/g)].map(m => +m[1]));
     const freeVIdxs = videos.map((_, i) => i).filter(i => !usedVIdxs.has(i));
     if (freeVIdxs.length) descText += '\n\n' + freeVIdxs.map(i => '$v' + i).join('\n');
   }
-  const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, [], videos)}</div>`;
+
+  // CORRECTION ICI : On passe "photos" à la place de "[]"
+  const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, photos, videos)}</div>`;
   if (!desc){return "";}
 
 function imgClick(url, idx) {
@@ -996,41 +1017,41 @@ function imgClick(url, idx) {
 
     case 'hero': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-hero reveal"><div class="card-body">${badge}${title}</div><div class="img-overlay-wrap"><img class="card-hero-img" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="card-body">${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-hero reveal"><div class="card-body">${badge}${title}</div><div class="img-overlay-wrap"><img onclick="toggleZoom(this)" class="card-hero-img" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'side-left': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-side-left reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap left"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-side-left reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap left"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
     }
 
     case 'side-right': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-side-right reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap right"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-side-right reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap right"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
     }
 
     case 'portrait-left': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-portrait-left reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
+      return `<article id="${cardId}" class="card tpl-portrait-left reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
     }
 
     case 'portrait-right': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-portrait-right reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
+      return `<article id="${cardId}" class="card tpl-portrait-right reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
     }
 
     case 'duo': {
-      const strip = photos.slice(0, 2).map((p, i) => `<div class="duo-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 2).map((p, i) => `<div class="duo-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-duo reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="duo-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'trio': {
-      const strip = photos.slice(0, 3).map((p, i) => `<div class="trio-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 3).map((p, i) => `<div class="trio-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-trio reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="trio-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'quad': {
-      const strip = photos.slice(0, 4).map((p, i) => `<div class="quad-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 4).map((p, i) => `<div class="quad-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-quad reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="quad-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
@@ -1038,7 +1059,7 @@ function imgClick(url, idx) {
       const [p0, p1, p2] = photos;
       const extra = photos.length > 3 ? photos.length - 3 : 0;
       const moreLabel = extra ? `<div style="position:absolute;inset:0;background:rgba(21,84,80,0.65);display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-size:1.8rem;font-weight:700;color:#fff;cursor:zoom-in;" ${imgClick(p0.url, 0)}>+${extra}</div>` : '';
-      return `<article id="${cardId}" class="card tpl-mosaic reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="mosaic-grid"><div class="mosaic-main"><img src="${escapeAttr(p0.url)}" loading="lazy" alt="" ${imgClick(p0.url, 0)}></div><div class="mosaic-side"><div class="mosaic-side-top"><img src="${escapeAttr(p1?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p1?.url || p0.url, 1)}></div><div class="mosaic-side-bot"><img src="${escapeAttr(p2?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p2?.url || p0.url, 2)}>${moreLabel}</div></div></div><div class="card-body">${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-mosaic reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="mosaic-grid"><div class="mosaic-main"><img onclick="toggleZoom(this)" src="${escapeAttr(p0.url)}" loading="lazy" alt="" ${imgClick(p0.url, 0)}></div><div class="mosaic-side"><div class="mosaic-side-top"><img onclick="toggleZoom(this)" src="${escapeAttr(p1?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p1?.url || p0.url, 1)}></div><div class="mosaic-side-bot"><img onclick="toggleZoom(this)" src="${escapeAttr(p2?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p2?.url || p0.url, 2)}>${moreLabel}</div></div></div><div class="card-body">${desc}</div></article>`;
     }
 
     default:
@@ -1046,15 +1067,16 @@ function imgClick(url, idx) {
   }
 }
 
+
 function groupConsecutiveImages(html) {
-  html = html.replace(/<img\b([^>]*)>/g, (m, attrs) => {
+  html = html.replace(/<img onclick="toggleZoom(this)"\b([^>]*)>/g, (m, attrs) => {
     if (/onerror=/i.test(attrs)) return m;
-    return `<img${attrs} onerror="this.style.display='none'">`;
+    return `<img onclick="toggleZoom(this)"${attrs} onerror="this.style.display='none'">`;
   });
   return html.replace(
-    /(?:<img\b[^>]*>\s*(?:<br\s*\/?>\s*)*){2,}/g,
+    /(?:<img onclick="toggleZoom(this)"\b[^>]*>\s*(?:<br\s*\/?>\s*)*){2,}/g,
     (block) => {
-      const imgs = block.match(/<img\b[^>]*>/g) || [];
+      const imgs = block.match(/<img onclick="toggleZoom(this)"\b[^>]*>/g) || [];
       const count = Math.min(imgs.length, 6);
       return `<div class="inline-media-stack" data-count="${count}">${imgs.join('')}</div>`;
     }
@@ -1090,7 +1112,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
     const cls = getInlineImgClass(width, height);
     const safeUrl = url.replace(/'/g, "\\'");
 
-    const imgTag = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '"')}, ${i})" alt="">`;
+    const imgTag = `<img onclick="toggleZoom(this)" src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '"')}, ${i})" alt="">`;
     out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
   }
 
@@ -1117,7 +1139,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
   const closeList = () => { if (inList) { rendered.push('</ul>'); inList = false; } };
 
   for (const line of lines) {
-    if (/^(?:<img\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
+    if (/^(?:<img onclick="toggleZoom(this)"\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
       closeList();
       rendered.push(line);
       continue;
@@ -1274,7 +1296,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
     intChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
-        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <img onclick="toggleZoom(this)" src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
     });
@@ -1285,7 +1307,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
     extChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
-        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <img onclick="toggleZoom(this)" src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
     });
@@ -1368,12 +1390,12 @@ function parseWifiCredentials(description) {
 }
 
 /* ── COVER ── */
-function renderCover(nomMaison, numero, coverUrl) {
+function renderCover(nomMaison, numero, coverUrl, has_piscine) {
   const fallback = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80';
   return `
     <div class="cover-page">
       <div class="cover-hero">
-        <img fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}">
+        <img onclick="toggleZoom(this)" fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}">
         <div class="cover-overlay"></div>
       </div>
       <div class="cover-content reveal visible">
@@ -1383,6 +1405,7 @@ function renderCover(nomMaison, numero, coverUrl) {
           <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
           <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieur</span></a>
           <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieur</span></a>
+          ${has_piscine ? `<a href="#section-piscine"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Piscine</span></a>` : ''}
           <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Recommandations</span></a>
           <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Départ</span></a>
         </nav>
@@ -1766,7 +1789,7 @@ async function fetchWeather(address) {
     else if (temp < 10) suggestion = "Il fait frais dehors, une bonne journée pour le jacuzzi ou le sauna.";
     document.getElementById('weather-widget-container').innerHTML = `
       <div class="weather-widget">
-        <img src="${iconUrl}" alt="Weather Icon" class="weather-icon" style="width: 80px; height: 80px; object-fit: cover;">
+        <img onclick="toggleZoom(this)" src="${iconUrl}" alt="Weather Icon" class="weather-icon" style="width: 80px; height: 80px; object-fit: cover;">
         <div>
           <div class="weather-temp">${temp}°C</div>
           <div class="weather-desc">${desc}</div>
@@ -1970,7 +1993,7 @@ async function buildLivret(IdMaison) {
   const nomMaison = maisonRecord.fields.Livret_NomMaison || IdMaison;
 
   const html =
-    renderCover(nomMaison, IdMaison, coverImg) +
+    renderCover(nomMaison, IdMaison, coverImg, has_piscine) +
     get_global_info_maison(maisonRecord) +
     finalAttentionHtml +
     getCICO(wfRecs, maisonRecord.id) +
@@ -1982,7 +2005,7 @@ async function buildLivret(IdMaison) {
     get_instruction_depart(combinedDepartText) +
     `
     <section class="presentation-idylliq">
-      <img src="end.png" id="img_end_presentation">
+      <img onclick="toggleZoom(this)" src="end.png" id="img_end_presentation">
     </section>
     <section class="presentation-end reveal">
        <h1>La Collection Idylliq</h1>
