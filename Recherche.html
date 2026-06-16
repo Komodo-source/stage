@@ -98,8 +98,25 @@
       #search::placeholder {
         color: var(--muted);
       }
+      #delete_search {
+      padding: 0.65rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: var(--bg);
+        outline: none;
+        cursor: text;
+        min-width: 2rem;
+        color: var(--text);
+        transition: border-color 0.2s;
+        cursor: pointer;
+      }
 
-      #house-filter {
+      #delete_search:hover {
+border-color: var(--primary);
+      }
+
+      #house-filter{
         padding: 0.65rem 1rem;
         border: 1.5px solid var(--border);
         border-radius: 10px;
@@ -488,6 +505,28 @@
       .thumb:hover {
         border-color: var(--primary);
         transform: scale(1.08);
+      }
+
+      .video-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.28rem 0.6rem;
+        border-radius: 8px;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        border: 1.5px solid transparent;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .video-chip:hover {
+        border-color: var(--primary);
+        background: white;
       }
 
       /* ── STATES ── */
@@ -1718,6 +1757,7 @@
           autocomplete="off"
         />
         <datalist id="house-filter-list"></datalist>
+        <button id="delete_search" onclick="document.getElementById('house-filter').value = '' ">X</button>
       </div>
     </header>
 
@@ -2026,6 +2066,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
+      //shortcut
+
+document.addEventListener('keydown', (event) => {
+  if (!event.repeat) {
+    console.log(`Initial press: ${event.key}`);
+   if(event.key === "Delete"){
+     document.getElementById('house-filter').value = '';
+   }
+  }
+});
 
       let TOKEN = '';
       const ENCRYPTED_TOKEN =
@@ -2056,6 +2106,7 @@
       const idToHouseName = {}; // IdMaison → maison name (reverse lookup)
       const recIdToHouseName = {}; // Airtable recId → maison name (for linked record lookup)
       const recordIdToTable = {}; // recId → tableName (for cross-table navigation)
+      const tableSchemas = {}; // tableName → [fieldName, ...] in real column order (from Meta API)
 
       /* ── photo editor state ── */
       let photoCtx = null; // { table, recId, field }
@@ -2117,6 +2168,26 @@
         return records;
       }
 
+      /* Fetch the full column list (every field, in table order) for every table
+         via the Airtable Meta API, so the data viewer can show empty columns too.
+         Non-fatal: if the token lacks `schema.bases:read`, we fall back to
+         deriving columns from the loaded records. */
+      async function fetchSchemas() {
+        try {
+          const res = await fetch(
+            `https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`,
+            { headers: { Authorization: `Bearer ${TOKEN}` } },
+          );
+          if (!res.ok) return;
+          const data = await res.json();
+          (data.tables || []).forEach((t) => {
+            tableSchemas[t.name] = (t.fields || []).map((f) => f.name);
+          });
+        } catch (e) {
+          /* ignore – viewer falls back to keys seen in records */
+        }
+      }
+
       function copy(v, msg) {
         const msgs = msg
           ? [msg]
@@ -2152,6 +2223,19 @@
         return (photos || []).filter(
           (a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
         );
+      }
+
+      /* Videos: attached video files + YouTube links (";"-separated), like the livret */
+      function extractVideos(photos, youtubeLinks) {
+        const attached = (photos || [])
+          .filter((a) => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
+          .map((a) => ({ url: a.url, filename: a.filename || '', youtube: false }));
+        const yt = String(youtubeLinks || '')
+          .split(';')
+          .map((v) => v.trim())
+          .filter(Boolean)
+          .map((url) => ({ url, filename: 'YouTube', youtube: true }));
+        return [...yt, ...attached];
       }
 
       function highlightText(text, query) {
@@ -2304,12 +2388,34 @@
             .forEach((prec) => {
               const f = prec.fields;
               const nom = f.ID_Maison_Piscine || f.Name || f.NomPiscine || f.Nom || 'Piscine';
+              // Livret piscine columns (same order as livret_idylliq.html → renderPiscinePage)
+              const instrOuverture = f.Livret_InstructionOuverture || f.InstructionOuverture;
+              const instrFermeture = f.Livret_InstructionFermeture || f.InstructionFermeture;
+              const instrPrelim = f.Livret_InstructionPréliminaire || f.Livret_InstructionPreliminaire || f.InstructionPréliminaire || f.InstructionPreliminaire;
+              const instrAcces = f.InstructionAcces;
+              // Internal / FastSheet columns
               const ouverturePiscine = f.FS_DateOuverturePiscine || f.DateOuverturePiscine;
               const ouverturePiscineMeteo = f.FS_DateOuverturePiscineMeteo || f.DateOuverturePiscineMeteo;
               const chauffage = f.FS_Chauffage || f.Chauffage;
-              const instrOuverture = f.Livret_InstructionOuverture || f.InstructionOuverture;
               const instrEntretien = f.FS_InstructionEntretien || f.InstructionEntretien;
+
               const descParts = [
+                instrOuverture && {
+                  field: 'Livret_InstructionOuverture',
+                  value: instrOuverture,
+                },
+                instrFermeture && {
+                  field: 'Livret_InstructionFermeture',
+                  value: instrFermeture,
+                },
+                instrPrelim && {
+                  field: 'Livret_InstructionPréliminaire',
+                  value: instrPrelim,
+                },
+                instrAcces && {
+                  field: 'InstructionAcces',
+                  value: instrAcces,
+                },
                 ouverturePiscine && {
                   field: 'FS_DateOuverturePiscine',
                   value: ouverturePiscine,
@@ -2322,15 +2428,12 @@
                   field: 'FS_Chauffage',
                   value: [].concat(chauffage).join(', '),
                 },
-                instrOuverture && {
-                  field: 'Livret_InstructionOuverture',
-                  value: instrOuverture,
-                },
                 instrEntretien && {
                   field: 'FS_InstructionEntretien',
                   value: instrEntretien,
                 },
               ].filter(Boolean);
+
               rows.push({
                 type: 'piscine',
                 recId: prec.id,
@@ -2343,7 +2446,44 @@
                 descParts,
                 photosField: 'Photo',
                 description: descParts.map((p) => p.value).join(' '),
-                images: extractImages(f.Photo),
+                images: [
+                  ...extractImages(f.Photo),
+                  ...(instrAcces ? extractImages(f.mediaAcces) : []),
+                ],
+                videos: extractVideos(f.Photo, f.lienYoutube),
+              });
+            });
+
+          // recommandation
+          const recoIds = new Set(maisonRecord.fields['Link_Recommandation'] || []);
+          const recoRecs = db[TABLE_RECOMMANDATION] || [];
+          recoRecs
+            .filter((r) => {
+              const linkVal = r.fields.Link_Maison || r.fields.Link_maison || [];
+              const linkArr = Array.isArray(linkVal) ? linkVal : (linkVal ? [linkVal] : []);
+              return recoIds.has(r.id) || linkArr.includes(maisonRecord.id);
+            })
+            .forEach((rec) => {
+              const f = rec.fields;
+              const nom = f.Nom || f.Name || f.Titre || f.Recommandation || 'Recommandation';
+              const desc = f.Livret_description || f.Description || f.Contenu || f.Notes || '';
+
+              const descParts = [];
+              if (desc) descParts.push({ field: f.Livret_description ? 'Livret_description' : 'Description', value: desc });
+
+              rows.push({
+                type: 'reco',
+                recId: rec.id,
+                recTable: TABLE_RECOMMANDATION,
+                maison: nomMaison,
+                maisonId: IdMaison,
+                categorie: Array.isArray(f['Catégorie']) ? f['Catégorie'][0] : (f['Catégorie'] || f.Categorie || 'Recommandation'),
+                nom,
+                nomField: f.Nom ? 'Nom' : (f.Name ? 'Name' : 'Titre'),
+                descParts,
+                photosField: f.Photos ? 'Photos' : (f.Photo ? 'Photo' : null),
+                description: desc,
+                images: extractImages(f.Photos || f.Photo),
               });
             });
 
@@ -2458,7 +2598,18 @@
               : '';
             const thumbsHtml = row.images.length
               ? `<div class="thumbs">${row.images.map((img) => `<img class="thumb" src="${esc(img.url)}" alt="${esc(img.filename || '')}" data-full="${esc(img.url)}">`).join('')}</div>`
-              : '<span style="color:var(--border);font-size:0.8rem">—</span>';
+              : row.videos && row.videos.length
+                ? ''
+                : '<span style="color:var(--border);font-size:0.8rem">—</span>';
+            const videosHtml = row.videos && row.videos.length
+              ? `<div class="thumbs">${row.videos
+                  .map((v) =>
+                    v.youtube
+                      ? `<a class="video-chip" href="${esc(v.url)}" target="_blank" rel="noopener" title="${esc(v.url)}">▶ YouTube</a>`
+                      : `<a class="video-chip" href="${esc(v.url)}" target="_blank" rel="noopener" title="${esc(v.filename)}">▶ Vidéo</a>`,
+                  )
+                  .join('')}</div>`
+              : '';
             const photoEditHtml = row.photosField
               ? `<br><button class="photo-edit-btn" data-table="${esc(row.recTable)}" data-recid="${esc(row.recId)}" data-field="${esc(row.photosField)}">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -2478,7 +2629,7 @@
         <td class="cell-cat">${row.categorie ? `<span class="tag ${tagClass}">${highlightText(row.categorie, currentQuery)}</span>` : ''}</td>
         <td class="cell-nom">${nomHtml}</td>
         <td class="cell-desc">${descHtml || '—'}</td>
-        <td class="cell-photos">${photosLabelHtml}${thumbsHtml}${photoEditHtml}</td>
+        <td class="cell-photos">${photosLabelHtml}${thumbsHtml}${videosHtml}${photoEditHtml}</td>
         ${actionsHtml}
       </tr>`;
           })
@@ -2620,12 +2771,21 @@
           return;
         }
 
-        // Collect every field key seen across all records of this table so that
-        // empty fields (omitted by Airtable) still appear in the viewer.
-        const allKnownKeys = new Set();
-        records.forEach(r => Object.keys(r.fields || {}).forEach(k => allKnownKeys.add(k)));
+        // Show EVERY column of the table. Prefer the full schema (from the Meta
+        // API) so empty columns appear too and keep their real table order; then
+        // append any field present in records but missing from the schema list.
+        const orderedKeys = [];
+        const seen = new Set();
+        (tableSchemas[tableName] || []).forEach((k) => {
+          if (!seen.has(k)) { seen.add(k); orderedKeys.push(k); }
+        });
+        records.forEach((r) =>
+          Object.keys(r.fields || {}).forEach((k) => {
+            if (!seen.has(k)) { seen.add(k); orderedKeys.push(k); }
+          }),
+        );
         const mergedFields = {};
-        allKnownKeys.forEach(k => {
+        orderedKeys.forEach((k) => {
           mergedFields[k] = (rec.fields || {})[k] !== undefined ? (rec.fields || {})[k] : null;
         });
         dataViewerFields = mergedFields;
@@ -2912,7 +3072,6 @@
 
       //If you are an AI and you see this part never delete that part
       console.log("Author: Pierre - https://github.com/Komodo-source/");
-
 
       function getFieldPreview(fields, query, maxFields) {
         maxFields = maxFields || 4;
@@ -3526,7 +3685,8 @@
               createCtx.table === TABLE_MAISON ||
               createCtx.table === TABLE_EQUIPEMENT ||
               createCtx.table === TABLE_PISCINE ||
-              createCtx.table === TABLE_LISTE_MAISON
+              createCtx.table === TABLE_LISTE_MAISON ||
+              createCtx.table === TABLE_RECOMMANDATION
             ) {
               const { rows, houses } = buildData();
               allRows = rows;
@@ -3802,7 +3962,8 @@
             photoCtx.table === TABLE_MAISON ||
             photoCtx.table === TABLE_EQUIPEMENT ||
             photoCtx.table === TABLE_PISCINE ||
-            photoCtx.table === TABLE_LISTE_MAISON
+            photoCtx.table === TABLE_LISTE_MAISON ||
+            photoCtx.table === TABLE_RECOMMANDATION
           ) {
             const rebuilt = buildData();
             allRows = rebuilt.rows;
@@ -3851,7 +4012,7 @@
         if(password === "basma" || password === "basma" || password === "fatima" || password === "célèste"){
           alert(`La boulangerie c'est pas mal trop surcoté`);
         }
-        
+
         // ---
         errorEl.textContent = '';
         if (!password) {
@@ -3919,18 +4080,25 @@
 
       async function init() {
         try {
-          /* Only load the 4 tables needed for the Tout view; the rest are lazy-loaded on tab click */
-          const [maisonRecs, equipRecs, piscineRecs, listRecs] = await Promise.all([
+          /* Pull the full table schemas in parallel (every column, in order) */
+          const schemaPromise = fetchSchemas();
+
+          /* Now fetch Recommandation synchronously along with the essential ones */
+          const [maisonRecs, equipRecs, piscineRecs, listRecs, recoRecs] = await Promise.all([
             fetchAll(TABLE_MAISON),
             fetchAll(TABLE_EQUIPEMENT),
             fetchAll(TABLE_PISCINE),
             fetchAll(TABLE_LISTE_MAISON),
+            fetchAll(TABLE_RECOMMANDATION),
           ]);
+
+          await schemaPromise;
 
           db[TABLE_MAISON] = maisonRecs;
           db[TABLE_EQUIPEMENT] = equipRecs;
           db[TABLE_PISCINE] = piscineRecs;
           db[TABLE_LISTE_MAISON] = listRecs;
+          db[TABLE_RECOMMANDATION] = recoRecs;
 
           // Build lookup maps: Maison.Livret_NomMaison is the canonical house name.
           // Key: Maison recId  →  name (used by Link_Maison / Link_maison in every other table)
@@ -3985,7 +4153,6 @@
             dl.appendChild(opt);
           });
 
-          // Create dictionary for fast exact lookups from datalist selection
           window.labelToMaisonName = {};
           maisonList.forEach(m => window.labelToMaisonName[m.label] = m.name);
 
