@@ -2168,10 +2168,9 @@ document.addEventListener('keydown', (event) => {
         return records;
       }
 
-      /* Fetch the full column list (every field, in table order) for every table
-         via the Airtable Meta API, so the data viewer can show empty columns too.
-         Non-fatal: if the token lacks `schema.bases:read`, we fall back to
-         deriving columns from the loaded records. */
+
+
+      
       async function fetchSchemas() {
         try {
           const res = await fetch(

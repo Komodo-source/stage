@@ -74,7 +74,7 @@
     .cover-content { position: absolute; bottom: 9rem; left: 4rem; right: 4rem; z-index: 2; }
     .cover-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: clamp(3.5rem, 7vw, 7rem); color: var(--white); line-height: 0.9; margin-bottom: 1rem; text-transform: none; text-shadow: 0 15px 40px rgba(0,0,0,0.4); word-wrap: break-word; hyphens: auto; letter-spacing: -1px; }
 
-    .cover-chapters { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 3rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2.5rem; }
+    .cover-chapters { display: flex; gap: 1rem; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2.5rem; }
     .cover-chapter { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; cursor: pointer; transition: var(--transition); }
     .cover-chapter:hover { transform: translateY(-4px); }
     .cover-chapter-num { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
@@ -405,7 +405,7 @@
       .theme-page, .presentation-end, .icons-section { padding: 3rem 1.5rem; }
       .cover-brand { top: 2rem; left: 1.5rem; right: 1.5rem; }
       .cover-content { bottom: 8rem; left: 1.5rem; right: 1.5rem; }
-      .cover-title { font-size: 3rem; }
+      .cover-title { font-size: 1rem; }
       .cover-chapters { gap: 1.5rem; padding-bottom: 6rem;}
       .cover-strip { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
       .grid-2 { grid-template-columns: 1fr; }
@@ -604,7 +604,7 @@
 
 <div class="search-widget" id="search-widget">
   <div style="display:flex; gap:10px; align-items:center;">
-    <input type="search" id="search-input" placeholder="Rechercher un équipement..." autocomplete="off" oninput="doSearch(this.value)">
+    <input type="search" id="search-input" placeholder="Rechercher dans tout le livret..." autocomplete="off" oninput="doSearch(this.value)">
     <button onclick="toggleSearch()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--ink-light); padding:0 0.5rem;">✕</button>
   </div>
   <div id="search-results" class="search-results"></div>
@@ -742,7 +742,7 @@ function _renderLightbox() {
   if (c) c.textContent = _lbImages.length > 1 ? `${_lbIndex + 1} / ${_lbImages.length}` : '';
 }
 function lightboxNav(dir) {
-  if (_lbScale > 1) return; // don't navigate while zoomed
+  if (_lbScale > 1) return;
   _lbIndex = (_lbIndex + dir + _lbImages.length) % _lbImages.length;
   _renderLightbox();
 }
@@ -1172,9 +1172,15 @@ function parseDescription(text, attachments, hideInlineImages) {
 
 function renderOwnerMessage(text) {
   if (!text || !text.trim()) return '';
-  const paragraphs = text.trim().split(/\n\n+/).map(p =>
-    `<p>${escapeHtml(p.replace(/\n/g, ' ').trim())}</p>`
-  ).join('');
+  // Force a line break right after the opening greeting "Chers invités"
+  // (handles an optional trailing comma / ! / . and collapses any following whitespace).
+  let normalized = text.replace(/^(\s*Chers invités\s*[,!.]?)\s*/i, '$1\n');
+  // Respect newlines: blank lines split paragraphs, single newlines become <br>.
+  const paragraphs = normalized
+    .trim()
+    .split(/\n{2,}/)
+    .map(p => `<p>${escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>`)
+    .join('');
   return `
     <div class="owner-message-card reveal">
       <div class="owner-message-label">✦ Message des propriétaires</div>
@@ -1375,8 +1381,8 @@ function renderCover(nomMaison, numero, coverUrl) {
         <nav class="cover-chapters">
           <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
           <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
-          <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieur</span></a>
           <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieur</span></a>
+          <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieur</span></a>
           <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Recommandations</span></a>
           <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Départ</span></a>
         </nav>
@@ -1581,6 +1587,7 @@ function getRecommandation(data, maisonId) {
     const scoreVal = f.Livret_Reco_MaisonScore || f.Score;
     const score = scoreVal ? parseFloat(scoreVal).toFixed(1) : null;
     const adress = f.Livret_Reco_Adress || f.Adress;
+    if (adress) { mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${encodeURIComponent(adress)}" target="_blank" rel="noopener">Y aller →</a>`; }
     const description = f.Livret_Reco_Description || f.Description;
     const nom = f.Livret_Reco_Nom || f.NomRecommandation;
     return `<article class="reco-card reveal">
@@ -1823,6 +1830,9 @@ async function buildLivret(IdMaison) {
   let pointsAttentionHtml = '';
   let combinedDepartText = '';
   let departItemsHtml = '';
+  // Collected with their Livret_ordre so they can be sorted just like fonctionnement.
+  const attentionItems = []; // { order, html }
+  const departItems = [];    // { order, name, text, html }
   const seenAttention = new Set();
   const seenDepart = new Set();
 
@@ -1878,10 +1888,13 @@ async function buildLivret(IdMaison) {
         if (freeVIdxs.length) {
           enrichedAttText += '\n\n' + freeVIdxs.map(i => '$v' + i).join('\n');
         }
-        pointsAttentionHtml += `<div style="margin-bottom: 1.5rem;">
-          <strong style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
+        attentionItems.push({
+          order: parseFloat(f.Livret_ordre ?? f.OrdreMaison) || 0,
+          html: `<div class="search-item attention-item" style="margin-bottom: 1.5rem;">
+          <strong class="search-item-title" style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
           <div class="card-desc" style="margin-top: 0.5rem;">${parseDescriptionWithInline(enrichedAttText, attPhotos, videos)}</div>
-        </div>`;
+        </div>`
+        });
       }
     }
 
@@ -1892,16 +1905,28 @@ async function buildLivret(IdMaison) {
       if (!seenDepart.has(deptNorm)) {
         seenDepart.add(deptNorm);
         const equipName = f.NomEquipement || 'Équipement';
-        departItemsHtml += `<div style="margin-bottom: 1.5rem;">
+        departItems.push({
+          order: parseFloat(f.Livret_ordre ?? f.OrdreMaison) || 0,
+          name: equipName,
+          text: deptText,
+          html: `<div style="margin-bottom: 1.5rem;">
           <strong style="color:var(--green-dark); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">${escapeHtml(equipName)}</strong>
           <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(deptText, [], false)}</div>
-        </div>`;
-        // Keep combinedDepartText for the checkout-list renderer as fallback
-        const header = equipName.toUpperCase();
-        combinedDepartText += `\n${header}\n${deptText}\n`;
+        </div>`
+        });
       }
     }
   });
+
+  // Apply Livret_ordre to points d'attention and instructions de départ,
+  // just like fonctionnement (equipment) cards.
+  attentionItems.sort((a, b) => a.order - b.order);
+  departItems.sort((a, b) => a.order - b.order);
+  pointsAttentionHtml = attentionItems.map(i => i.html).join('');
+  departItemsHtml = departItems.map(i => i.html).join('');
+  combinedDepartText = departItems
+    .map(i => `\n${i.name.toUpperCase()}\n${i.text}\n`)
+    .join('');
 
   // Construction du bloc final Point d'attention (uniquement s'il y a des données)
   let finalAttentionHtml = '';
@@ -2003,28 +2028,64 @@ function doSearch(query) {
   const resultsContainer = document.getElementById('search-results');
   resultsContainer.innerHTML = '';
   if (!q) return;
-  const cards = document.querySelectorAll('.card, .reco-card, .elegant-accordion');
-  let matchCount = 0;
-  cards.forEach(card => {
-    if (normalize(card.textContent).includes(q)) {
-      const titleEl = card.querySelector('.card-item-title, .reco-name, summary');
-      const title = titleEl ? titleEl.textContent : 'Section correspondante';
-      const div = document.createElement('div');
-      div.className = 'search-result-item';
-      div.textContent = title;
-      div.onclick = () => {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        card.style.transition = 'box-shadow 0.4s ease';
-        card.style.boxShadow = '0 0 0 4px var(--accent)';
-        if (card.tagName === 'DETAILS') card.open = true;
-        setTimeout(() => card.style.boxShadow = '', 2500);
-        toggleSearch();
-      };
-      resultsContainer.appendChild(div);
-      matchCount++;
-    }
+
+  const root = document.getElementById('livret-container') || document.body;
+
+  // Granular, meaningful blocks across the whole livret.
+  const blockSelector =
+    '.card, .reco-card, .elegant-accordion, .owner-message-card, .attention-box, .cico-card';
+  const candidates = Array.from(root.querySelectorAll(blockSelector));
+
+  // Item-level units inside sections that bundle many entries, so each
+  // point d'attention / instruction de départ can be matched on its own.
+  candidates.push(
+    ...root.querySelectorAll(
+      '.attention-item, #instruction-depart .checkout-list li, #instruction-depart h2'
+    )
+  );
+
+  // Sections that contain no block, so headers, the cover and the closing
+  // pages remain searchable — i.e. search everywhere.
+  root.querySelectorAll('section').forEach(sec => {
+    if (!sec.querySelector(blockSelector)) candidates.push(sec);
   });
-  if (matchCount === 0) {
+
+  // Keep only matches, then drop any element that is an ancestor of another
+  // match (prefer the most specific item over its container).
+  const matched = candidates.filter(el => normalize(el.textContent).includes(q));
+  let results = matched.filter(
+    el => !matched.some(other => other !== el && el.contains(other))
+  );
+  results.sort((a, b) =>
+    a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+  );
+
+  const titleSelector =
+    '.card-item-title, .reco-name, summary, .owner-message-label, .attention-label, .cico-label, .search-item-title, .theme-title, h1, h2, h3';
+
+  results.forEach(el => {
+    const titleEl = el.querySelector(titleSelector);
+    let title = (titleEl ? titleEl.textContent : el.textContent || '').trim();
+    if (!title) title = el.id || 'Section correspondante';
+    if (title.length > 60) title = title.slice(0, 57) + '…';
+
+    const div = document.createElement('div');
+    div.className = 'search-result-item';
+    div.textContent = title;
+    div.onclick = () => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.style.transition = 'box-shadow 0.4s ease';
+      el.style.boxShadow = '0 0 0 4px var(--accent)';
+      if (el.tagName === 'DETAILS') el.open = true;
+      const parentDetails = el.closest('details');
+      if (parentDetails) parentDetails.open = true;
+      setTimeout(() => (el.style.boxShadow = ''), 2500);
+      toggleSearch();
+    };
+    resultsContainer.appendChild(div);
+  });
+
+  if (results.length === 0) {
     resultsContainer.innerHTML = '<div style="text-align:center; color:var(--ink-light); padding:1rem;">Aucun résultat</div>';
   }
 }
