@@ -384,6 +384,88 @@ border-color: var(--primary);
         z-index: 86;
       }
 
+      /* ── LIVRET PREVIEW (split view) ── */
+      #livret-preview-pane {
+        display: none;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        max-width: 760px;
+        height: 90vh;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      }
+      #livret-preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+      #livret-preview-close {
+        background: none;
+        border: none;
+        font-size: 1.05rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.1rem 0.35rem;
+        border-radius: 6px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+      #livret-preview-close:hover {
+        color: var(--text);
+      }
+      #livret-preview-frame-wrap {
+        flex: 1;
+        min-height: 0;
+        background: #fcfaf8;
+      }
+      #livret-preview-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
+
+      /* When the preview is open, lay the editor card and the livret side by side */
+      #edit-modal.preview-open {
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1.25rem;
+      }
+      #edit-modal.preview-open #edit-card {
+        flex: 0 0 auto;
+        max-width: 460px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      #edit-modal.preview-open #livret-preview-pane {
+        display: flex;
+      }
+
+      @media (max-width: 880px) {
+        #edit-modal.preview-open {
+          flex-direction: column;
+          align-items: stretch;
+          overflow-y: auto;
+        }
+        #edit-modal.preview-open #edit-card {
+          max-width: 100%;
+        }
+        #livret-preview-pane {
+          height: 70vh;
+          max-width: 100%;
+        }
+      }
+
       #edit-card-header {
         display: flex;
         align-items: flex-start;
@@ -480,6 +562,7 @@ border-color: var(--primary);
       }
       #edit-preview-btn{
         background-color: #0370e2;
+        color: #fff;
       }
 
       #edit-save-btn {
@@ -1934,9 +2017,18 @@ border-color: var(--primary);
           <textarea id="edit-textarea" spellcheck="false"></textarea>
         </div>
         <div id="edit-actions">
-          <button id="edit-preview-btn">Livret Preview</button>
           <button id="edit-cancel-btn">Annuler</button>
+          <button id="edit-preview-btn">Livret Preview</button>
           <button id="edit-save-btn">Sauvegarder</button>
+        </div>
+      </div>
+      <div id="livret-preview-pane">
+        <div id="livret-preview-head">
+          <span>Aperçu du livret — mise à jour en direct</span>
+          <button id="livret-preview-close" title="Fermer l'aperçu">✕</button>
+        </div>
+        <div id="livret-preview-frame-wrap">
+          <iframe id="livret-preview-frame" title="Aperçu livret"></iframe>
         </div>
       </div>
     </div>
@@ -2183,6 +2275,29 @@ document.addEventListener('keydown', (event) => {
         return function (...args) {
           clearTimeout(timer);
           timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+      }
+
+      // Like debounce but fires periodically *while* the user keeps typing
+      // (leading + trailing), instead of only after they pause.
+      function throttle(fn, interval) {
+        let last = 0,
+          timer = null;
+        return function (...args) {
+          const now = Date.now();
+          const remaining = interval - (now - last);
+          if (remaining <= 0) {
+            clearTimeout(timer);
+            timer = null;
+            last = now;
+            fn.apply(this, args);
+          } else if (!timer) {
+            timer = setTimeout(() => {
+              last = Date.now();
+              timer = null;
+              fn.apply(this, args);
+            }, remaining);
+          }
         };
       }
 
@@ -3477,6 +3592,15 @@ document.addEventListener('keydown', (event) => {
         const rawValue = storedVal || (valueEl ? (valueEl.innerText === '—' ? '' : valueEl.innerText) : '');
         editCtx = { table, recId, field, valueEl };
         document.getElementById('edit-field-name').textContent = field;
+        if(field.includes("Link") || field.includes("link")){
+          alert("Les link représentent les liens entre les tables, Soyez extrêmement prudent avant de les modifier")
+        }
+        if(field.includes("Catégorie")){
+          alert("Si c'est une catégorie le choix est entre: fonctionnement, wifi, extérieur, intérieur");
+        }
+        if(field.includes("Livret_Reco_Categorie")){
+          alert("Si c'est une catégorie de reco le choix est entre: Restaurant, Commerce, Visite, Autre");
+        }
         document.getElementById('edit-meta').textContent =
           `${table}  ·  ${recId}`;
         document.getElementById('edit-textarea').value = rawValue;
@@ -3488,6 +3612,7 @@ document.addEventListener('keydown', (event) => {
       }
 
       function closeEditModal() {
+        closeLivretPreview();
         document.getElementById('edit-modal').classList.remove('open');
         editCtx = null;
       }
@@ -3693,6 +3818,139 @@ document.addEventListener('keydown', (event) => {
             saveBtn.textContent = 'Sauvegarder';
           }
         });
+
+      /* ── LIVRET LIVE PREVIEW ──────────────────────────────────────────────
+         Loads livret_idylliq.html in an iframe and feeds it the data already
+         in `db` (no new API call). The livret rebuilds itself live whenever the
+         edited field changes. */
+      let previewActive = false;
+      let previewReady = false;
+      let previewIdMaison = '';
+
+      // Normalize an ID_Maison value to a plain string like "M6" / "M67".
+      // (Airtable lookup/rollup fields often return it wrapped in an array.)
+      function normIdMaison(v) {
+        if (Array.isArray(v)) v = v[0];
+        return v == null ? '' : String(v).trim();
+      }
+
+      // Resolve the ID_Maison (e.g. "M6", "M67") that the record being edited
+      // belongs to — this is exactly what the livret expects as ?maison=.
+      // NOTE: houseNameToId maps name → Airtable recId (rec…), NOT the M-id, so
+      // the real ID_Maison must always be read from the Maison record itself.
+      function resolveIdMaison(table, recId) {
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        if (!rec) return '';
+        const f = rec.fields || {};
+
+        // 1) Direct ID_Maison on this record (Maison/ListeMaison rows, or an
+        //    ID_Maison lookup field present on a linked table).
+        const direct = normIdMaison(f.ID_Maison || f.IdMaison);
+        if (direct) return direct;
+
+        // 2) Otherwise find the Maison record this row links to, and read its
+        //    ID_Maison (the canonical "M…" value).
+        let maisonRecId = '';
+        if (table === TABLE_MAISON) {
+          maisonRecId = rec.id;
+        } else {
+          const link = f.Link_Maison || f.Link_maison;
+          maisonRecId = Array.isArray(link) ? link[0] : link;
+          if (!maisonRecId) {
+            const det = detectMaison(f, table); // det.maisonId is a recId
+            if (det) maisonRecId = det.maisonId;
+          }
+        }
+        if (maisonRecId) {
+          const m = (db[TABLE_MAISON] || []).find((r) => r.id === maisonRecId);
+          if (m) return normIdMaison(m.fields.ID_Maison || m.fields.IdMaison);
+        }
+        return '';
+      }
+
+      function sendPreviewInit() {
+        const frame = document.getElementById('livret-preview-frame');
+        if (!editCtx || !frame.contentWindow) return;
+        previewIdMaison = resolveIdMaison(editCtx.table, editCtx.recId);
+        if (!previewIdMaison) {
+          Toastify({
+            text: "Aucune maison liée à cet enregistrement pour l'aperçu.",
+            duration: 3500,
+            style: { background: '#dc2626' },
+          }).showToast();
+          return;
+        }
+        frame.contentWindow.postMessage(
+          { type: 'INIT_DB', db, idMaison: previewIdMaison },
+          '*',
+        );
+        // Immediately reflect whatever is currently typed (possibly unsaved),
+        // so the first render already shows the live text.
+        sendPreviewUpdate();
+      }
+
+      function sendPreviewUpdate() {
+        const frame = document.getElementById('livret-preview-frame');
+        if (!previewActive || !previewReady || !editCtx || !frame.contentWindow)
+          return;
+        frame.contentWindow.postMessage(
+          {
+            type: 'UPDATE_FIELD',
+            table: editCtx.table,
+            recId: editCtx.recId,
+            field: editCtx.field,
+            value: document.getElementById('edit-textarea').value,
+            idMaison: previewIdMaison,
+          },
+          '*',
+        );
+      }
+
+      function openLivretPreview() {
+        if (previewActive) return;
+        previewActive = true;
+        previewReady = false;
+        document.getElementById('edit-modal').classList.add('preview-open');
+        document.getElementById('edit-preview-btn').textContent =
+          "Fermer l'aperçu";
+        // (Re)load the iframe; it posts PREVIEW_READY once its script is up.
+        document.getElementById('livret-preview-frame').src =
+          'livret_idylliq.html?preview=1';
+      }
+
+      function closeLivretPreview() {
+        if (!previewActive) return;
+        previewActive = false;
+        previewReady = false;
+        document.getElementById('edit-modal').classList.remove('preview-open');
+        document.getElementById('edit-preview-btn').textContent =
+          'Livret Preview';
+        document.getElementById('livret-preview-frame').src = 'about:blank';
+      }
+
+      // The iframe tells us when it is ready to receive the data snapshot.
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'PREVIEW_READY') {
+          previewReady = true;
+          sendPreviewInit();
+        }
+      });
+
+      document
+        .getElementById('edit-preview-btn')
+        .addEventListener('click', () => {
+          if (previewActive) closeLivretPreview();
+          else openLivretPreview();
+        });
+      document
+        .getElementById('livret-preview-close')
+        .addEventListener('click', closeLivretPreview);
+
+      // Live-update the livret continuously *while* the user types (throttle
+      // fires periodically during writing, not only after a pause).
+      document
+        .getElementById('edit-textarea')
+        .addEventListener('input', throttle(sendPreviewUpdate, 180));
 
       /* ── CREATE RECORD ── */
       let createCtx = null; // { table }

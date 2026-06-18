@@ -59,6 +59,9 @@
     /* ── ANIMATIONS ── */
     .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* Preview mode rebuilds the livret on every keystroke — kill the scroll
+       reveal animation so it doesn't flicker/"refresh" on each update. */
+    body.no-reveal .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 
     /* ── COVER PAGE ── */
     .cover-page { position: relative; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -877,6 +880,14 @@ function initScrollSpy() {
 
 /* ── AIRTABLE FETCH ── */
 async function fetchFiltered(table, formula, fields) {
+  // ── Preview mode: serve records injected by the parent (Recherche.html)
+  // instead of hitting the network. All client-side filtering downstream in
+  // buildLivret() (maison match, Link_Maison, RECORD_ID()) still applies, so
+  // returning the full table here is correct.
+  if (window.__INJECTED_DB__) {
+    const recs = window.__INJECTED_DB__[table] || [];
+    return recs.map(r => ({ id: r.id, fields: r.fields }));
+  }
   let records = [], offset = null;
   do {
     const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
@@ -1779,6 +1790,9 @@ function copy(v) {
 }
 
 async function fetchWeather(address) {
+  // Skip external weather calls while live-previewing (buildLivret re-runs on
+  // every keystroke); avoids spamming the API.
+  if (window.__PREVIEW_MODE__) return;
   const apiKey = '538bd19bdaba907b8535672e0b3cb600';
   let query = "Paris,FR";
   if (address) {
@@ -2132,24 +2146,95 @@ function doSearch(query) {
 
 const urlParams = new URLSearchParams(window.location.search);
 const idMaison  = urlParams.get('maison');
-if (!idMaison) {
-  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
-} else {
-  buildLivret(idMaison).then(() => {
-    const filters = document.querySelectorAll('.mood-filter');
-    const cards = document.querySelectorAll('.reco-card');
-    filters.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filters.forEach(f => f.classList.remove('active'));
-        btn.classList.add('active');
-        const want = (btn.dataset.filter || '').toLowerCase();
-        cards.forEach(card => {
-          const cat = (card.dataset.category || '').toLowerCase();
-          card.style.display = (!want || cat === want) ? '' : 'none';
-        });
+const PREVIEW_MODE = urlParams.get('preview') === '1';
+window.__PREVIEW_MODE__ = PREVIEW_MODE;
+if (PREVIEW_MODE) document.body.classList.add('no-reveal');
+
+// ── Live preview bridge (driven by Recherche.html) ─────────────────────────
+// In preview mode the livret is built from records the parent window injects
+// via postMessage, and rebuilt live whenever an edited field changes — no
+// network fetch is ever made.
+function _initRecoFilters() {
+  const filters = document.querySelectorAll('.mood-filter');
+  const cards = document.querySelectorAll('.reco-card');
+  filters.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filters.forEach(f => f.classList.remove('active'));
+      btn.classList.add('active');
+      const want = (btn.dataset.filter || '').toLowerCase();
+      cards.forEach(card => {
+        const cat = (card.dataset.category || '').toLowerCase();
+        card.style.display = (!want || cat === want) ? '' : 'none';
       });
     });
-  }).catch(err => {
+  });
+}
+
+if (PREVIEW_MODE) {
+  let previewId = null;
+  let rebuildTimer = null;
+
+  let builtOnce = false;
+  let releaseTimer = null;
+  const rebuildPreview = () => {
+    if (!previewId) return;
+    clearTimeout(rebuildTimer);
+    rebuildTimer = setTimeout(() => {
+      // No loading overlay on rebuilds: buildLivret swaps the container content
+      // in place, so live updates stay flicker-free. (The default #loading text
+      // covers only the very first build, until content exists.)
+      const container = document.getElementById('livret-container');
+      const scroller = document.scrollingElement || document.documentElement;
+      const prevScroll = builtOnce ? scroller.scrollTop : 0;
+      // Freeze the page height before swapping the DOM. Otherwise the new
+      // images render at 0px for a frame, the document collapses, the scroll
+      // gets clamped, then it grows back — making the preview jump up & down on
+      // every keystroke. The floor is released once images have settled.
+    //  if (builtOnce && container) {
+    //    container.style.minHeight = container.scrollHeight + 'px';
+     // }
+      buildLivret(previewId)
+        .then(() => {
+          _initRecoFilters();
+          builtOnce = true;
+          // Restore synchronously (before paint) and again next frame.
+          scroller.scrollTop = prevScroll;
+          requestAnimationFrame(() => { scroller.scrollTop = prevScroll; });
+          clearTimeout(releaseTimer);
+          releaseTimer = setTimeout(() => {
+            if (container) container.style.minHeight = '';
+          }, 500);
+        })
+        .catch(err => {
+          const l = document.getElementById('loading');
+          if (l) { l.style.display = 'flex'; l.innerText = 'Erreur : ' + err.message; }
+        });
+    }, 30);
+  };
+
+  window.addEventListener('message', (e) => {
+    const msg = e.data || {};
+    if (msg.type === 'INIT_DB') {
+      window.__INJECTED_DB__ = msg.db || {};
+      previewId = msg.idMaison || null;
+      rebuildPreview();
+    } else if (msg.type === 'UPDATE_FIELD') {
+      const tbl = window.__INJECTED_DB__ && window.__INJECTED_DB__[msg.table];
+      if (tbl) {
+        const rec = tbl.find(r => r.id === msg.recId);
+        if (rec) rec.fields[msg.field] = msg.value;
+      }
+      if (msg.idMaison) previewId = msg.idMaison;
+      rebuildPreview();
+    }
+  });
+
+  // Tell the parent we are ready to receive data.
+  try { window.parent.postMessage({ type: 'PREVIEW_READY' }, '*'); } catch (e) {}
+} else if (!idMaison) {
+  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
+} else {
+  buildLivret(idMaison).then(_initRecoFilters).catch(err => {
     console.error(err);
     document.getElementById('loading').innerText = 'Erreur : ' + err.message;
   });
