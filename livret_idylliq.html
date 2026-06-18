@@ -583,6 +583,9 @@
     }
     #info-conciergerie { color: var(--warm);}
 
+    /* Gallery images are not zoomable */
+    #livret-container img { cursor: default !important; }
+
   </style>
 </head>
 <body id="main-part-download">
@@ -1165,14 +1168,14 @@ function parseDescriptionWithInline(text, attachments, videos) {
 
     closeList();
 
-    const colonIdx = line.indexOf(': ');
+    /*const colonIdx = line.indexOf(': ');
     if (colonIdx > 0 && colonIdx < 55 && !line.startsWith('<')) {
       const left = line.slice(0, colonIdx), right = line.slice(colonIdx + 2);
       if (!left.includes('<') && !/https?:\/\//.test(left)) {
         rendered.push(`<div class="kv-line"><span class="kv-key">${escapeHtml(left)}</span><span class="kv-val">${right}</span></div>`);
         continue;
       }
-    }
+    }*/
 
     rendered.push(`<p>${line}</p>`);
   }
@@ -1601,6 +1604,7 @@ function getRecommandation(data, maisonId) {
     return (Array.isArray(link) ? link : [link]).some(v => v === maisonId || (v && v.id === maisonId));
   });
   if (!related.length) return '';
+  const categories = new Map(); // key: lowercased value → display label
   const cards = related.map(r => {
     const f = r.fields;
     let mapsLink = '';
@@ -1613,9 +1617,13 @@ function getRecommandation(data, maisonId) {
     if (adress) { mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${encodeURIComponent(adress)}" target="_blank" rel="noopener">Y aller →</a>`; }
     const description = f.Livret_Reco_Description || f.Description;
     const nom = f.Livret_Reco_Nom || f.NomRecommandation;
-    return `<article class="reco-card reveal">
+    const catRaw = (f.Livret_Reco_Categorie || f.Categorie || '').toString().trim();
+    const catKey = catRaw.toLowerCase();
+    if (catKey) categories.set(catKey, catRaw);
+    return `<article class="reco-card reveal" data-category="${escapeAttr(catKey)}">
       <div class="reco-body">
         <h3 class="reco-name">${escapeHtml(nom || '–')}</h3>
+        ${catRaw ? `<div class="reco-score" style="background:var(--green-mid);">${escapeHtml(catRaw)}</div>` : ''}
         ${score ? `<div class="reco-score">${score} ★</div>` : ''}
         ${adress ? `<div class="card-desc" style="font-size:.85rem;margin-bottom:1rem;opacity:.8;">📍 ${escapeHtml(adress)}</div>` : ''}
         <div class="card-desc reco-desc">${escapeHtml(description || '')}</div>
@@ -1623,18 +1631,21 @@ function getRecommandation(data, maisonId) {
     </article>`;
   }).join('');
 
+  // Only show filter tabs when at least one recommendation has a category
+  const filtersHtml = categories.size
+    ? `<div class="mood-filters reveal">
+        <button class="mood-filter active" data-filter="">Tout</button>
+        ${[...categories.values()].map(label => `<button class="mood-filter" data-filter="${escapeAttr(label.toLowerCase())}">${escapeHtml(label)}</button>`).join('')}
+      </div>`
+    : '';
+
   return `
     <section id="section-reco" class="theme-page reveal">
       <div class="theme-header">
         <div class="theme-label">Coups de cœur</div>
         <div class="theme-title">Nos Adresses</div>
       </div>
-      <div class="mood-filters reveal">
-        <button class="mood-filter active">Tout</button>
-        <button class="mood-filter">Commerce</button>
-        <button class="mood-filter">Visite</button>
-        <button class="mood-filter">Restaurant</button>
-      </div>
+      ${filtersHtml}
       <div class="reco-grid">${cards}</div>
     </section>`;
 }
@@ -2016,8 +2027,14 @@ async function buildLivret(IdMaison) {
        <p onclick="window.open('https://idylliq.fr/')" style="cursor:pointer">idylliq.fr</p>
      </footer>`;
 
+  // Gallery images are not zoomable — strip lightbox/zoom handlers (reco cards carry no images)
+  const htmlNoZoom = html
+    .replace(/\s*onclick="toggleZoom\(this\)"/g, '')
+    .replace(/\s*onclick="openLightbox\([^"]*\)"/g, '')
+    .replace(/cursor:\s*zoom-in;?/g, '');
+
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('livret-container').innerHTML = html;
+  document.getElementById('livret-container').innerHTML = htmlNoZoom;
 
   initScrollSpy();
 
@@ -2125,15 +2142,10 @@ if (!idMaison) {
       btn.addEventListener('click', () => {
         filters.forEach(f => f.classList.remove('active'));
         btn.classList.add('active');
-        const filterText = btn.innerText.toLowerCase();
+        const want = (btn.dataset.filter || '').toLowerCase();
         cards.forEach(card => {
-          if (filterText === 'tout') {
-            card.style.display = '';
-          } else {
-            const cardText = card.innerText.toLowerCase();
-            const keyword = filterText.split(' ')[0];
-            card.style.display = (cardText.includes('famille') || cardText.includes(keyword) || Math.random() > 0.5) ? '' : 'none';
-          }
+          const cat = (card.dataset.category || '').toLowerCase();
+          card.style.display = (!want || cat === want) ? '' : 'none';
         });
       });
     });

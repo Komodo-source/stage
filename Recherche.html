@@ -405,22 +405,53 @@ border-color: var(--primary);
         margin-top: 0.2rem;
       }
 
+      #edit-editor {
+        position: relative;
+      }
+      #edit-highlight,
       #edit-textarea {
         width: 100%;
         min-height: 140px;
         padding: 0.75rem;
+        margin: 0;
         border: 1.5px solid var(--border);
         border-radius: 10px;
         font-size: 0.875rem;
         font-family: 'Inter', sans-serif;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+      /* Backdrop layer that paints the syntax tint (visual only) */
+      #edit-highlight {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        color: var(--text);
+        background: white;
+        border-color: transparent;
+        overflow: hidden;
+        z-index: 0;
+      }
+      #edit-highlight .tok-tag {
+        color: #9ca3af;
+      }
+      #edit-textarea {
+        position: relative;
+        z-index: 1;
         resize: vertical;
         outline: none;
-        color: var(--text);
-        line-height: 1.5;
+        color: transparent;
+        background: transparent;
+        caret-color: var(--text);
         transition: border-color 0.2s;
       }
       #edit-textarea:focus {
         border-color: var(--primary);
+      }
+      #edit-textarea::selection {
+        background: rgba(31, 109, 103, 0.25);
       }
 
       #edit-actions {
@@ -430,7 +461,7 @@ border-color: var(--primary);
         margin-top: 1rem;
       }
 
-      #edit-cancel-btn {
+      #edit-cancel-btn, #edit-preview-btn{
         padding: 0.6rem 1.2rem;
         border: 1.5px solid var(--border);
         border-radius: 10px;
@@ -443,9 +474,12 @@ border-color: var(--primary);
           border-color 0.15s,
           color 0.15s;
       }
-      #edit-cancel-btn:hover {
+      #edit-cancel-btn:hover, #edit-preview-btn{
         border-color: var(--muted);
         color: var(--text);
+      }
+      #edit-preview-btn{
+        background-color: #0370e2;
       }
 
       #edit-save-btn {
@@ -1690,6 +1724,18 @@ border-color: var(--primary);
       }
       #login-submit:hover { opacity: 0.88; }
       #login-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+      .edit-buttons > button {
+    border: transparent;
+    border-radius: 10px;
+    padding: 0.7rem;
+        cursor: pointer;
+    transition: 0.3s;
+    background-color: #dedede;
+}
+.edit-buttons > button:hover {
+    background-color: rgb(157 157 157);
+    /* color: #fff; */
+}
     </style>
   </head>
   <body id="body">
@@ -1867,13 +1913,28 @@ border-color: var(--primary);
       <div id="edit-card">
         <div id="edit-card-header">
           <div>
+            <div class="edit-buttons">
+              <button type="button" id="fmt-bold" title="Gras"><b>B</b></button>
+              <button type="button" id="fmt-italic" title="Italique"><i>I</i></button>
+              <button type="button" id="fmt-underline" title="Souligner"><u>S</u></button>
+              <input type="color" id="fmt-color-input" value="#F54927">
+              <button type="button" id="fmt-color" title="Colorer le texte">Colorer</button>
+              <input type="number" id="fmt-size-input" value="19.2" step="0.1" min="1" style="width:4.5rem">
+              <button type="button" id="fmt-size" title="Taille du texte">Taille</button>
+              <button type="button" id="fmt-link" title="Insérer un lien">Hyperlien</button>
+              <button type="button" id="fmt-title" title="Titre (majuscule + nouvelle ligne)">Titre</button>
+            </div>
             <div id="edit-field-name"></div>
             <div id="edit-meta"></div>
           </div>
           <button id="edit-close-btn">✕</button>
         </div>
-        <textarea id="edit-textarea" spellcheck="false"></textarea>
+        <div id="edit-editor">
+          <div id="edit-highlight" aria-hidden="true"></div>
+          <textarea id="edit-textarea" spellcheck="false"></textarea>
+        </div>
         <div id="edit-actions">
+          <button id="edit-preview-btn">Livret Preview</button>
           <button id="edit-cancel-btn">Annuler</button>
           <button id="edit-save-btn">Sauvegarder</button>
         </div>
@@ -3419,6 +3480,7 @@ document.addEventListener('keydown', (event) => {
         document.getElementById('edit-meta').textContent =
           `${table}  ·  ${recId}`;
         document.getElementById('edit-textarea').value = rawValue;
+        updateEditHighlight();
         document.getElementById('edit-save-btn').disabled = false;
         document.getElementById('edit-save-btn').textContent = 'Sauvegarder';
         document.getElementById('edit-modal').classList.add('open');
@@ -3454,6 +3516,116 @@ document.addEventListener('keydown', (event) => {
       document.getElementById('edit-modal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeEditModal();
       });
+
+      // ── Formatting toolbar: wrap the user-selected text in the textarea ──
+      (function setupEditFormatting() {
+        const getTa = () => document.getElementById('edit-textarea');
+
+        // Remember the last selection range, because clicking a toolbar
+        // button/input moves focus out of the textarea in some browsers.
+        let lastSel = { start: 0, end: 0 };
+        const ta = getTa();
+        if (ta) {
+          const remember = () => {
+            lastSel = { start: ta.selectionStart, end: ta.selectionEnd };
+          };
+          ['keyup', 'mouseup', 'select', 'blur'].forEach((ev) =>
+            ta.addEventListener(ev, remember),
+          );
+        }
+
+        function applyWrap(before, after, transform) {
+          const el = getTa();
+          if (!el) return;
+          // Prefer the live selection; fall back to the remembered one.
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          if (start === end && lastSel.start !== lastSel.end) {
+            start = lastSel.start;
+            end = lastSel.end;
+          }
+          const selected = el.value.slice(start, end);
+          const inner = transform ? transform(selected) : selected;
+          const insert = before + inner + after;
+          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
+          // Re-select the formatted text so multiple styles can be stacked.
+          el.focus();
+          el.selectionStart = start + before.length;
+          el.selectionEnd = el.selectionStart + inner.length;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+          // refresh the grey tint after a programmatic edit
+          el.dispatchEvent(new Event('input'));
+        }
+
+        const on = (id, fn) => {
+          const b = document.getElementById(id);
+          // Use mousedown so focus never leaves the textarea before we read it.
+          if (b)
+            b.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              fn();
+            });
+        };
+
+        on('fmt-bold', () =>
+          applyWrap('<h style="font-weight: bold">', '</h>'),
+        );
+        on('fmt-italic', () =>
+          applyWrap('<h style="font-style: italic">', '</h>'),
+        );
+        on('fmt-underline', () =>
+          applyWrap('<h style="text-decoration: underline;">', '</h>'),
+        );
+        on('fmt-color', () => {
+          const color =
+            document.getElementById('fmt-color-input').value || '#000000';
+          applyWrap(`<h style="color: ${color}">`, '</h>');
+        });
+        on('fmt-size', () => {
+          const size = document.getElementById('fmt-size-input').value || '16';
+          applyWrap(`<h style="font-size: ${size}">`, '</h>');
+        });
+        on('fmt-link', () => {
+          const url = prompt('Entrer votre lien la dedans (format: https://url-de-votre-site.domain)');
+          if (!url) return;
+          applyWrap(`<a href="${url}">`, '</a>');
+        });
+        on('fmt-title', () =>
+          applyWrap('\n', '\n', (t) => t.toUpperCase()),
+        );
+      })();
+
+      // ── Syntax tint: paint HTML tags grey in the editor (visual only) ──
+      // The textarea text is transparent; this backdrop renders the same
+      // content with <…> tags greyed out. The saved value is never changed.
+      function updateEditHighlight() {
+        const ta = document.getElementById('edit-textarea');
+        const hl = document.getElementById('edit-highlight');
+        if (!ta || !hl) return;
+        const tinted = ta.value
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(
+            /&lt;\/?[a-zA-Z][\s\S]*?&gt;/g,
+            (m) => `<span class="tok-tag">${m}</span>`,
+          );
+        // trailing newline keeps the last empty line aligned with the textarea
+        hl.innerHTML = tinted + '\n';
+        hl.scrollTop = ta.scrollTop;
+        hl.scrollLeft = ta.scrollLeft;
+      }
+
+      (function setupEditHighlight() {
+        const ta = document.getElementById('edit-textarea');
+        const hl = document.getElementById('edit-highlight');
+        if (!ta || !hl) return;
+        ta.addEventListener('input', updateEditHighlight);
+        ta.addEventListener('scroll', () => {
+          hl.scrollTop = ta.scrollTop;
+          hl.scrollLeft = ta.scrollLeft;
+        });
+      })();
 
       document
         .getElementById('edit-save-btn')
