@@ -110,10 +110,12 @@
         color: var(--text);
         transition: border-color 0.2s;
         cursor: pointer;
+        transition: 0.7s;
       }
 
       #delete_search:hover {
-border-color: var(--primary);
+        border-color: var(--primary);
+        transform: scale(1.2);
       }
 
       #house-filter{
@@ -563,6 +565,7 @@ border-color: var(--primary);
       #edit-preview-btn{
         background-color: #0370e2;
         color: #fff;
+            border: transparent;
       }
 
       #edit-save-btn {
@@ -1835,10 +1838,7 @@ border-color: var(--primary);
     </div>
     <header class="header">
       <button
-        onclick="
-          window.history.go(-1);
-          return false;
-        "
+        onclick="window.location.href='https://idylliq.fr/admin_livret'"
         id="back"
       >
         ←
@@ -1996,16 +1996,18 @@ border-color: var(--primary);
       <div id="edit-card">
         <div id="edit-card-header">
           <div>
-            <div class="edit-buttons">
+            <div class="edit-buttons" style="margin-bottom: 1rem;">
               <button type="button" id="fmt-bold" title="Gras"><b>B</b></button>
               <button type="button" id="fmt-italic" title="Italique"><i>I</i></button>
               <button type="button" id="fmt-underline" title="Souligner"><u>S</u></button>
               <input type="color" id="fmt-color-input" value="#F54927">
               <button type="button" id="fmt-color" title="Colorer le texte">Colorer</button>
+              <button type="button" id="fmt-fluo" title="Fluoter le texte">Fluo</button>
               <input type="number" id="fmt-size-input" value="19.2" step="0.1" min="1" style="width:4.5rem">
               <button type="button" id="fmt-size" title="Taille du texte">Taille</button>
               <button type="button" id="fmt-link" title="Insérer un lien">Hyperlien</button>
               <button type="button" id="fmt-title" title="Titre (majuscule + nouvelle ligne)">Titre</button>
+              <button type="button" id="fmt-suppr" title="Suppri" style="background-color: red; color: #fff;">X Suppr. mise en forme</button>
             </div>
             <div id="edit-field-name"></div>
             <div id="edit-meta"></div>
@@ -2018,13 +2020,13 @@ border-color: var(--primary);
         </div>
         <div id="edit-actions">
           <button id="edit-cancel-btn">Annuler</button>
-          <button id="edit-preview-btn">Livret Preview (Beta)</button>
+          <button id="edit-preview-btn">Livret Preview (beta)</button>
           <button id="edit-save-btn">Sauvegarder</button>
         </div>
       </div>
       <div id="livret-preview-pane">
         <div id="livret-preview-head">
-          <span>Aperçu du livret — mise à jour en direct</span>
+          <span>Aperçu du livret mise à jour en direct (Beta)</span>
           <button id="livret-preview-close" title="Fermer l'aperçu">✕</button>
         </div>
         <div id="livret-preview-frame-wrap">
@@ -2533,10 +2535,10 @@ document.addEventListener('keydown', (event) => {
 
               // Getting Point Attention and Instruction Depart EXCLUSIVELY from fonctionnementMaison
               const ptAtt = rec.fields.Livret_PointAttention || rec.fields.PointAttention || '';
-              if (ptAtt) descParts.push({ field: 'PointAttention', value: ptAtt });
+              if (ptAtt) descParts.push({ field: 'Livret_PointAttention', value: ptAtt });
 
               const instDep = rec.fields.Livret_InstructionDepart || rec.fields.InstructionDepart || '';
-              if (instDep) descParts.push({ field: 'InstructionDepart', value: instDep });
+              if (instDep) descParts.push({ field: 'Livret_InstructionDepart', value: instDep });
 
               rows.push({
                 type: 'equip',
@@ -3596,10 +3598,16 @@ document.addEventListener('keydown', (event) => {
           alert("Les link représentent les liens entre les tables, Soyez extrêmement prudent avant de les modifier")
         }
         if(field.includes("Catégorie")){
-          alert("Si c'est une catégorie le choix est entre: fonctionnement, wifi, extérieur, intérieur");
+          alert("Si c'est une catégorie d'un fonctionnement le choix est entre: fonctionnement, wifi, extérieur, intérieur");
         }
         if(field.includes("Livret_Reco_Categorie")){
           alert("Si c'est une catégorie de reco le choix est entre: Restaurant, Commerce, Visite, Autre");
+        }
+        if(field.includes("FS_Chauffage")){
+          alert("Si c'est un chauffage le choix est entre: Chauffé, Non Chauffé, Pompe à chaleur, Non renseingé");
+        }
+        if(field.includes("FS_Desinfectant")){
+          alert("Si c'est un désinfectant le choix est entre: Chlore, Sel, Autre");
         }
         document.getElementById('edit-meta').textContent =
           `${table}  ·  ${recId}`;
@@ -3706,9 +3714,14 @@ document.addEventListener('keydown', (event) => {
             document.getElementById('fmt-color-input').value || '#000000';
           applyWrap(`<h style="color: ${color}">`, '</h>');
         });
+        on('fmt-fluo', () => {
+          const color =
+            document.getElementById('fmt-color-input').value || '	#ffff62';
+          applyWrap(`<h style="background-color: ${color}">`, '</h>');
+        });
         on('fmt-size', () => {
           const size = document.getElementById('fmt-size-input').value || '16';
-          applyWrap(`<h style="font-size: ${size}">`, '</h>');
+          applyWrap(`<h style="font-size: ${size}px">`, '</h>');
         });
         on('fmt-link', () => {
           const url = prompt('Entrer votre lien la dedans (format: https://url-de-votre-site.domain)');
@@ -3718,6 +3731,45 @@ document.addEventListener('keydown', (event) => {
         on('fmt-title', () =>
           applyWrap('\n', '\n', (t) => t.toUpperCase()),
         );
+
+        // Clean up text: strip HTML tags and de-capitalise CAPS-LOCK words.
+        const cleanText = (s) => {
+          let out = s
+            // remove HTML tags
+            .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
+            // decode the few entities our editor produces
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+          // Detect "caps lock" words: runs of 2+ letters that are all uppercase
+          // (accents included) and convert them to lowercase.
+          out = out.replace(
+            /\p{Lu}[\p{Lu}'’-]*\p{Lu}/gu,
+            (w) => w.toLowerCase(),
+          );
+          return out;
+        };
+
+        on('fmt-suppr', () => {
+          const el = getTa();
+          if (!el) return;
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          // If nothing is selected, clean the whole field.
+          if (start === end) {
+            start = 0;
+            end = el.value.length;
+          }
+          const cleaned = cleanText(el.value.slice(start, end));
+          el.value = el.value.slice(0, start) + cleaned + el.value.slice(end);
+          el.focus();
+          el.selectionStart = start;
+          el.selectionEnd = start + cleaned.length;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+          el.dispatchEvent(new Event('input'));
+        });
+
       })();
 
       // ── Syntax tint: paint HTML tags grey in the editor (visual only) ──

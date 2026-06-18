@@ -75,13 +75,13 @@
     .cover-brand-name { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; color: var(--white); }
 
     .cover-content { position: absolute; bottom: 9rem; left: 4rem; right: 4rem; z-index: 2; }
-    .cover-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: clamp(3.5rem, 7vw, 7rem); color: var(--white); line-height: 0.9; margin-bottom: 1rem; text-transform: none; text-shadow: 0 15px 40px rgba(0,0,0,0.4); word-wrap: break-word; hyphens: auto; letter-spacing: -1px; }
+    .cover-title {  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: clamp(3.5rem, 7vw, 7rem); color: var(--white); line-height: 0.9; margin-bottom: 1rem; text-transform: none; text-shadow: 0 15px 40px rgba(0,0,0,0.4); word-wrap: break-word; hyphens: auto; letter-spacing: -1px; font-size: 5rem;}
 
     .cover-chapters { display: flex; gap: 1rem; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2.5rem; }
     .cover-chapter { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; cursor: pointer; transition: var(--transition); }
     .cover-chapter:hover { transform: translateY(-4px); }
     .cover-chapter-num { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
-    .cover-chapter-name { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--white); transition: color 0.3s ease; }
+    .cover-chapter-name { font-family: 'League Spartan', sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--white); transition: color 0.3s ease;     font-size: 0.8rem;}
     .cover-chapter:hover .cover-chapter-name { color: var(--accent); }
 
     .cover-strip { position: absolute; bottom: 0; width: 100%; z-index: 3; background: rgba(15,61,58,0.25); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 1.5rem 4rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.15); box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
@@ -186,6 +186,52 @@
 
     .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--green-dark); margin: 3rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
     .section-label:first-child { margin-top: 0; }
+
+     /* ── LIGHTBOX ── */
+      #lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.82);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      #lightbox.open {
+        display: flex;
+      }
+
+      #lightbox-img {
+        max-width: 90vw;
+        max-height: 88vh;
+        border-radius: 12px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        object-fit: contain;
+      }
+
+      #lightbox-close {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.4rem;
+        background: white;
+        border: none;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #111;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.15s;
+      }
+      #lightbox-close:hover {
+        transform: scale(1.1);
+      }
+
 
     /* ── OWNER MESSAGE ── */
     .owner-message-card {
@@ -330,7 +376,7 @@
     .rules-section { margin-top: 4rem; padding: 3.5rem; background: var(--green-light); border-radius: var(--radius); border: 1px solid rgba(26,92,86,0.15); box-shadow: var(--shadow-soft); }
     .rules-section .section-label { border-bottom-color: rgba(26,92,86,0.2); }
     .rules-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.5rem; }
-    .rule-item { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem 2rem; background: var(--white); border-radius: var(--radius-sm); border-left: 6px solid var(--accent); transition: var(--transition); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .rule-item { border: 0.2px solid var(--accent); display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem 2rem; background: var(--white); border-radius: var(--radius-sm); border-left: 6px solid var(--accent); transition: var(--transition); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .rule-item:hover { transform: translateX(6px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
     .rule-num { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.5rem; font-weight: 600; color: var(--accent); line-height: 1; min-width: 35px; }
     .rule-text { font-size: 1.15rem; color: var(--ink); line-height: 1.7; font-weight: 400; }
@@ -408,8 +454,8 @@
       .theme-page, .presentation-end, .icons-section { padding: 3rem 1.5rem; }
       .cover-brand { top: 2rem; left: 1.5rem; right: 1.5rem; }
       .cover-content { bottom: 8rem; left: 1.5rem; right: 1.5rem; }
-      .cover-title { font-size: 1rem; }
-      .cover-chapters { gap: 1.5rem; padding-bottom: 6rem;}
+      .cover-title { font-size: 2rem; }
+      .cover-chapters { padding-bottom: 6rem;}
       .cover-strip { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; }
       .grid-2 { grid-template-columns: 1fr; }
       .card-body { padding: 2rem; }
@@ -602,6 +648,11 @@
   <a class="nav-link" href="#instruction-depart">Départ</a>
 </nav>
 
+    <div id="lightbox">
+      <button id="lightbox-close">✕</button>
+      <img id="lightbox-img" src="" alt="" />
+    </div>
+
 <div class="floating-menu" id="floating-menu">
   <div class="floating-items">
     <a onclick="toggleSearch()" class="floating-btn" title="Rechercher" style="cursor:pointer; font-size: 1.2rem;">🔍</a>
@@ -631,6 +682,31 @@
 </div>
 
 <script>
+  /* ── lightbox ── */
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('card-desc')) {
+          document.getElementById('lightbox-img').src = e.target.dataset.full;
+          document.getElementById('lightbox').classList.add('open');
+        }
+      });
+      document.getElementById('lightbox').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget)
+          document.getElementById('lightbox').classList.remove('open');
+      });
+      document
+        .getElementById('lightbox-close')
+        .addEventListener('click', () => {
+          document.getElementById('lightbox').classList.remove('open');
+        });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.getElementById('lightbox').classList.remove('open');
+          closeEditModal();
+          closeCreateModal();
+          closePhotoEditor();
+          closeDataViewer();
+        }
+      });
 
 const TOKEN   = 'patYI6cIMmXu0OLsn.d36bdefc63925bf68ade486880a8b0829a0362436b35a8822eed725147f6b373';
 const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
