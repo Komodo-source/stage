@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  .left-panel{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(99 73 141);
+    height: 100%;
+  }
+  .main-container{
+    display: flex;
+    flex-direction: row;
+  }
+  .top-tool{
+    text-align: center;
+  }
+</style>
+<body>
+  <main>
+    <div class="top-tool">
+      <button>+ Créer</button>
+      <button>Filtrer par table</button>
+      <input type="text" placeholder="Rechercher dans cette table">
+    </div>
+    <div class="main-container">
+
+      <div class="left-panel">
+        <p>Interface Galleries</p>
+      <button>fonctionnementMaison</button>
+      <button>Maison</button>
+      <button>Piscine</button>
+      <button>ListeMaison</button>
+      <button>Propriétaire</button>
+      <button>DispositionMaison</button>
+      <button>ConditionLocation</button>
+      <button>WorkFlowBreezeway</button>
+      <button>Recommandation</button>
+      <button>KnownIssues</button>
+    </div>
+    <div class="container-visualisation">
+
+    </div>
+  </div>
+  </main>
+
+  <script>
+    let actual_table = "fonctionnementMaison";
+    let formulaire_creation = {}
+  </script>
+</body>
+</html>

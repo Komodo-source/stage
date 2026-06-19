@@ -1227,9 +1227,14 @@ function parseDescriptionWithInline(text, attachments, videos) {
   const rendered = [];
   let inList = false;
   const closeList = () => { if (inList) { rendered.push('</ul>'); inList = false; } };
+  // Accumulate consecutive plain-text lines so a text with line returns stays
+  // in a single <p> (line breaks become <br>) instead of one <p> per line.
+  let textBuf = [];
+  const flushText = () => { if (textBuf.length) { rendered.push(`<p>${textBuf.join('<br>')}</p>`); textBuf = []; } };
 
   for (const line of lines) {
     if (/^(?:<img onclick="toggleZoom(this)"\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
+      flushText();
       closeList();
       rendered.push(line);
       continue;
@@ -1240,6 +1245,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
       (/^[A-ZÉÈÀÙÂÊÎÔÛÇ][\w\s]{2,40}:$/.test(line) && line.length < 50)
     );
     if (isSectionHeader && line.length > 2) {
+      flushText();
       closeList();
       rendered.push(`<p class="section-label">${escapeHtml(line.replace(/:$/, ''))}</p>`);
       continue;
@@ -1247,6 +1253,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
 
     const bulletMatch = line.match(/^(?:[-•*]\s+|N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\s*[.)]\s+)/i);
     if (bulletMatch) {
+      flushText();
       const clean = line.slice(bulletMatch[0].length).trim();
       if (!inList) { rendered.push('<ul class="desc-list">'); inList = true; }
       rendered.push(`<li>${clean}</li>`);
@@ -1255,17 +1262,10 @@ function parseDescriptionWithInline(text, attachments, videos) {
 
     closeList();
 
-    /*const colonIdx = line.indexOf(': ');
-    if (colonIdx > 0 && colonIdx < 55 && !line.startsWith('<')) {
-      const left = line.slice(0, colonIdx), right = line.slice(colonIdx + 2);
-      if (!left.includes('<') && !/https?:\/\//.test(left)) {
-        rendered.push(`<div class="kv-line"><span class="kv-key">${escapeHtml(left)}</span><span class="kv-val">${right}</span></div>`);
-        continue;
-      }
-    }*/
-
-    rendered.push(`<p>${line}</p>`);
+    // A text with a colon is left as-is (no side-by-side key/value layout).
+    textBuf.push(line);
   }
+  flushText();
   closeList();
   return groupConsecutiveImages(rendered.join(''));
 }
@@ -1287,12 +1287,8 @@ function renderOwnerMessage(text) {
   // Force a line break right after the opening greeting "Chers invités"
   // (handles an optional trailing comma / ! / . and collapses any following whitespace).
   let normalized = text.replace(/^(\s*Chers invités\s*[,!.]?)\s*/i, '$1\n');
-  // Respect newlines: blank lines split paragraphs, single newlines become <br>.
-  const paragraphs = normalized
-    .trim()
-    .split(/\n{2,}/)
-    .map(p => `<p>${escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>`)
-    .join('');
+  // Keep all the text in a single <p>; every line return becomes a <br>.
+  const paragraphs = `<p>${escapeHtml(normalized.trim()).replace(/\n+/g, '<br>')}</p>`;
   return `
     <div class="owner-message-card reveal">
       <div class="owner-message-label">✦ Message des propriétaires</div>
