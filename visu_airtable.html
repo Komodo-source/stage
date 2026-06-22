@@ -316,20 +316,29 @@
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.45);
     z-index: 1000;
-    align-items: center; justify-content: center;
-    padding: 2rem;
+    align-items: stretch; justify-content: flex-end;
+    padding: 0;
   }
   .modal.open { display: flex; }
   .modal-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 16px 0 0 16px;
     width: 100%;
-    max-width: 620px;
-    max-height: 86vh;
+    max-width: 520px;
+    height: 100vh;
+    max-height: 100vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    box-shadow: -12px 0 48px rgba(0,0,0,0.22);
     overflow: hidden;
+    animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  @media (max-width: 560px) {
+    .modal-card { max-width: 100%; border-radius: 0; }
   }
   .modal-head {
     display: flex; align-items: flex-start; justify-content: space-between;
@@ -344,6 +353,41 @@
   }
   .modal-close:hover { color: var(--text); }
   .modal-body { padding: 1.1rem 1.4rem; overflow-y: auto; flex: 1; }
+
+  /* ── FORMATTING TOOLBAR (dans le panneau d'édition) ── */
+  .edit-modal {
+    padding: 0.6rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    background: #fafafd;
+  }
+  .edit-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .edit-buttons button {
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.55rem;
+    border-radius: 7px;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.15s;
+  }
+  .edit-buttons button:hover { border-color: var(--accent); color: var(--accent); }
+  .edit-buttons input[type="color"] {
+    width: 28px; height: 28px; padding: 0;
+    border: 1.5px solid var(--border); border-radius: 7px;
+    background: #fff; cursor: pointer;
+  }
+  .edit-buttons input[type="number"] {
+    padding: 0.3rem 0.4rem; border: 1.5px solid var(--border);
+    border-radius: 7px; font-size: 0.75rem;
+  }
 
   .form-group { margin-bottom: 0.85rem; }
   .form-group > label {
@@ -490,6 +534,10 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           Liste
         </button>
+          <button data-view="list" title="Vue table">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Table
+        </button>
       </div>
       <input type="text" class="search" id="search" placeholder="Rechercher dans cette table…" autocomplete="off" />
     </div>
@@ -523,6 +571,21 @@
           <div class="msub" id="modal-sub"></div>
         </div>
         <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="edit-modal">
+        <div class="edit-buttons">
+          <button type="button" id="fmt-bold" title="Gras"><b>B</b></button>
+          <button type="button" id="fmt-italic" title="Italique"><i>I</i></button>
+          <button type="button" id="fmt-underline" title="Souligner"><u>S</u></button>
+          <input type="color" id="fmt-color-input" value="#F54927">
+          <button type="button" id="fmt-color" title="Colorer le texte">Colorer</button>
+          <button type="button" id="fmt-fluo" title="Fluoter le texte">Fluo</button>
+          <input type="number" id="fmt-size-input" value="19.2" step="0.1" min="1" style="width:4.5rem">
+          <button type="button" id="fmt-size" title="Taille du texte">Taille</button>
+          <button type="button" id="fmt-link" title="Insérer un lien">Hyperlien</button>
+          <button type="button" id="fmt-title" title="Titre (majuscule + nouvelle ligne)">Titre</button>
+          <button type="button" id="fmt-suppr" title="Suppri" style="background-color: red; color: #fff;">X Suppr. mise en forme</button>
+        </div>
       </div>
       <div class="modal-body" id="modal-fields"></div>
       <div class="modal-foot">
@@ -565,6 +628,8 @@
     let currentQuery = '';
     const db = {};                                // tableName → [records]
     const tableSchemas = {};                      // tableName → [fieldName,...] (ordre Meta API)
+    const tableFieldsMeta = {};                   // tableName → [{name,type,options},...] (Meta API)
+    const tableIdToName = {};                     // tableId → tableName (pour résoudre les liens)
 
     /* ─────────────── utilities ─────────────── */
     function esc(s) {
@@ -602,6 +667,45 @@
     function fieldIsBoolean(table, field) {
       return (db[table] || []).some(r => typeof r.fields[field] === 'boolean');
     }
+    /* métadonnées Meta API d'un champ (type, options…) */
+    function fieldMeta(table, field) {
+      return (tableFieldsMeta[table] || []).find(f => f.name === field) || null;
+    }
+    function isLinkField(table, field) {
+      const m = fieldMeta(table, field);
+      return !!m && m.type === 'multipleRecordLinks';
+    }
+    function isSelectField(table, field) {
+      const m = fieldMeta(table, field);
+      return !!m && (m.type === 'singleSelect' || m.type === 'multipleSelects');
+    }
+    function linkedTableName(table, field) {
+      const m = fieldMeta(table, field);
+      return m && m.options ? tableIdToName[m.options.linkedTableId] : undefined;
+    }
+    /* charge en arrière-plan les tables liées d'une table donnée (pour peupler les dropdowns) */
+    async function ensureLinkedTablesLoaded(table) {
+      const links = (tableFieldsMeta[table] || []).filter(f => f.type === 'multipleRecordLinks');
+      for (const f of links) {
+        const ln = tableIdToName[f.options && f.options.linkedTableId];
+        if (ln && db[ln] === undefined) {
+          try { db[ln] = await fetchAll(ln); } catch (e) { db[ln] = []; }
+        }
+      }
+    }
+    /* valeur affichable d'un champ : résout les liens en titres lisibles */
+    function displayFieldValue(table, field, rec) {
+      const v = rec.fields[field];
+      if (isLinkField(table, field)) {
+        const ln = linkedTableName(table, field);
+        const ids = Array.isArray(v) ? v : (v ? [v] : []);
+        return ids.map(id => {
+          const lr = ln ? (db[ln] || []).find(r => r.id === id) : null;
+          return lr ? recordTitle(lr, ln) : id;
+        }).join(', ');
+      }
+      return flat(v);
+    }
     function attachmentsOf(rec, field) {
       const v = rec.fields[field];
       if (!Array.isArray(v)) return [];
@@ -638,6 +742,168 @@
       return rec.id;
     }
 
+
+    (function setupEditFormatting() {
+        const fieldsRoot = document.getElementById('modal-fields');
+        const isEditTa = (el) =>
+          el && el.tagName === 'TEXTAREA' && el.classList.contains('edit-textarea');
+
+        // Track WHICH textarea the user is editing + its last selection.
+        // Fields are rendered dynamically and a toolbar click moves focus out
+        // of the textarea, so we remember both via delegated events.
+        let activeTa = null;
+        let lastSel = { start: 0, end: 0 };
+        const remember = (e) => {
+          const el = e.target;
+          if (!isEditTa(el)) return;
+          activeTa = el;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+        };
+        if (fieldsRoot) {
+          ['keyup', 'mouseup', 'select', 'focus', 'click'].forEach((ev) =>
+            fieldsRoot.addEventListener(ev, remember, true),
+          );
+        }
+        const getTa = () => {
+          if (activeTa && document.body.contains(activeTa)) return activeTa;
+          return fieldsRoot ? fieldsRoot.querySelector('textarea.edit-textarea') : null;
+        };
+
+        function applyWrap(before, after, transform) {
+          const el = getTa();
+          if (!el) return;
+          // Prefer the live selection; fall back to the remembered one.
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          if (start === end && lastSel.start !== lastSel.end) {
+            start = lastSel.start;
+            end = lastSel.end;
+          }
+          const selected = el.value.slice(start, end);
+          const inner = transform ? transform(selected) : selected;
+          const insert = before + inner + after;
+          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
+          // Re-select the formatted text so multiple styles can be stacked.
+          el.focus();
+          el.selectionStart = start + before.length;
+          el.selectionEnd = el.selectionStart + inner.length;
+          activeTa = el;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+          // refresh the grey tint after a programmatic edit
+          el.dispatchEvent(new Event('input'));
+        }
+
+        const on = (id, fn) => {
+          const b = document.getElementById(id);
+          // Use mousedown so focus never leaves the textarea before we read it.
+          if (b)
+            b.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              fn();
+            });
+        };
+
+        on('fmt-bold', () =>
+          applyWrap('<h style="font-weight: bold">', '</h>'),
+        );
+        on('fmt-italic', () =>
+          applyWrap('<h style="font-style: italic">', '</h>'),
+        );
+        on('fmt-underline', () =>
+          applyWrap('<h style="text-decoration: underline;">', '</h>'),
+        );
+        on('fmt-color', () => {
+          const color =
+            document.getElementById('fmt-color-input').value || '#000000';
+          applyWrap(`<h style="color: ${color}">`, '</h>');
+        });
+        on('fmt-fluo', () => {
+          const color =
+            document.getElementById('fmt-color-input').value || '	#ffff62';
+          applyWrap(`<h style="background-color: ${color}">`, '</h>');
+        });
+        on('fmt-size', () => {
+          const size = document.getElementById('fmt-size-input').value || '16';
+          applyWrap(`<h style="font-size: ${size}px">`, '</h>');
+        });
+        on('fmt-link', () => {
+          const url = prompt('Entrer votre lien la dedans (format: https://url-de-votre-site.domain)');
+          if (!url) return;
+          applyWrap(`<a href="${url}">`, '</a>');
+        });
+        on('fmt-title', () =>
+          applyWrap('\n', '\n', (t) => t.toUpperCase()),
+        );
+
+        // Clean up text: strip HTML tags and de-capitalise CAPS-LOCK words.
+        const cleanText = (s) => {
+          let out = s
+            // remove HTML tags
+            .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
+            // decode the few entities our editor produces
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+          // Detect "caps lock" words: runs of 2+ letters that are all uppercase
+          // (accents included) and convert them to lowercase.
+          out = out.replace(
+            /\p{Lu}[\p{Lu}'’-]*\p{Lu}/gu,
+            (w) => w.toLowerCase(),
+          );
+          return out;
+        };
+
+        on('fmt-suppr', () => {
+          const el = getTa();
+          if (!el) return;
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          // If nothing is selected, clean the whole field.
+          if (start === end) {
+            start = 0;
+            end = el.value.length;
+          }
+          const cleaned = cleanText(el.value.slice(start, end));
+          el.value = el.value.slice(0, start) + cleaned + el.value.slice(end);
+          el.focus();
+          el.selectionStart = start;
+          el.selectionEnd = start + cleaned.length;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+          el.dispatchEvent(new Event('input'));
+        });
+
+      })();
+
+      function updateEditHighlight() {
+        const ta = document.getElementById('edit-textarea');
+        const hl = document.getElementById('edit-highlight');
+        if (!ta || !hl) return;
+        const tinted = ta.value
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(
+            /&lt;\/?[a-zA-Z][\s\S]*?&gt;/g,
+            (m) => `<span class="tok-tag">${m}</span>`,
+          );
+        // trailing newline keeps the last empty line aligned with the textarea
+        hl.innerHTML = tinted + '\n';
+        hl.scrollTop = ta.scrollTop;
+        hl.scrollLeft = ta.scrollLeft;
+      }
+
+      (function setupEditHighlight() {
+        const ta = document.getElementById('edit-textarea');
+        const hl = document.getElementById('edit-highlight');
+        if (!ta || !hl) return;
+        ta.addEventListener('input', updateEditHighlight);
+        ta.addEventListener('scroll', () => {
+          hl.scrollTop = ta.scrollTop;
+          hl.scrollLeft = ta.scrollLeft;
+        });
+      })();
+
     /* ─────────────── API ─────────────── */
     async function fetchAll(table) {
       let records = [], offset = null;
@@ -658,7 +924,11 @@
           { headers: { Authorization: `Bearer ${TOKEN}` } });
         if (!res.ok) return;
         const data = await res.json();
-        (data.tables || []).forEach(t => { tableSchemas[t.name] = (t.fields || []).map(f => f.name); });
+        (data.tables || []).forEach(t => {
+          tableSchemas[t.name] = (t.fields || []).map(f => f.name);
+          tableFieldsMeta[t.name] = t.fields || [];
+          tableIdToName[t.id] = t.name;
+        });
       } catch (e) { /* fallback sur les clés observées */ }
     }
     async function createRecord(table, fields) {
@@ -744,7 +1014,7 @@
         const cover = firstImage(rec, fields);
         const title = esc(recordTitle(rec, actual_table));
         const previews = scal.slice(0, 5).map(f => {
-          const val = flat(rec.fields[f]);
+          const val = displayFieldValue(actual_table, f, rec);
           return `<div class="gfield"><span class="k">${esc(f)}</span>
             <span class="v ${val ? '' : 'empty'}">${val ? esc(val) : '—'}</span></div>`;
         }).join('');
@@ -773,7 +1043,7 @@
         const cover = firstImage(rec, fields);
         const title = esc(recordTitle(rec, actual_table));
         const sub = scal.slice(0, 4).map(f => {
-          const val = flat(rec.fields[f]);
+          const val = displayFieldValue(actual_table, f, rec);
           if (!val) return '';
           return `<b>${esc(f)}:</b> ${esc(val.length > 40 ? val.slice(0, 40) + '…' : val)}`;
         }).filter(Boolean).join(' &nbsp;·&nbsp; ');
@@ -817,6 +1087,45 @@
 
     function fieldInputHtml(table, field, rec) {
       const val = rec ? rec.fields[field] : undefined;
+      // Champ lien -> dropdown des enregistrements de la table liée
+      if (isLinkField(table, field)) {
+        const ln = linkedTableName(table, field);
+        const meta = fieldMeta(table, field);
+        const single = !!(meta && meta.options && meta.options.prefersSingleRecordLink);
+        const curIds = Array.isArray(val) ? val : (val ? [val] : []);
+        const recs = ln ? (db[ln] || []) : [];
+        const opts = recs.map(r => {
+          const label = recordTitle(r, ln);
+          const sel = curIds.includes(r.id) ? 'selected' : '';
+          return `<option value="${esc(r.id)}" ${sel}>${esc(label)}</option>`;
+        }).join('');
+        const multiAttr = single ? '' : 'multiple size="6"';
+        const emptyOpt = single ? `<option value="" ${curIds.length ? '' : 'selected'}>— (vide)</option>` : '';
+        const hint = single ? '(lien)' : '(liens — Ctrl/Cmd pour en choisir plusieurs)';
+        return `<div class="form-group" data-field="${esc(field)}" data-type="link">
+          <label>${esc(field)} <span style="opacity:.6;font-weight:400">${hint}</span></label>
+          <select ${multiAttr}>${emptyOpt}${opts}</select>
+          ${recs.length ? '' : '<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem">Aucun enregistrement dans la table liée.</div>'}
+        </div>`;
+      }
+      // Champ select (singleSelect / multipleSelects) -> dropdown des choix
+      if (isSelectField(table, field)) {
+        const meta = fieldMeta(table, field);
+        const multi = meta.type === 'multipleSelects';
+        const choices = (meta.options && meta.options.choices) ? meta.options.choices : [];
+        const curVals = multi ? (Array.isArray(val) ? val : []) : [val];
+        const opts = choices.map(c => {
+          const sel = curVals.includes(c.name) ? 'selected' : '';
+          return `<option value="${esc(c.name)}" ${sel}>${esc(c.name)}</option>`;
+        }).join('');
+        const multiAttr = multi ? 'multiple size="6"' : '';
+        const emptyOpt = multi ? '' : `<option value="" ${(!val) ? 'selected' : ''}>— (vide)</option>`;
+        const hint = multi ? '(choix multiples — Ctrl/Cmd)' : '(choix)';
+        return `<div class="form-group" data-field="${esc(field)}" data-type="select" data-multi="${multi}">
+          <label>${esc(field)} <span style="opacity:.6;font-weight:400">${hint}</span></label>
+          <select ${multiAttr}>${emptyOpt}${opts}</select>
+        </div>`;
+      }
       // Attachments
       if (fieldIsAttachment(table, field)) {
         const atts = rec ? attachmentsOf(rec, field) : [];
@@ -846,11 +1155,11 @@
       const text = flat(val);
       return `<div class="form-group" data-field="${esc(field)}" data-type="text">
         <label>${esc(field)}</label>
-        <textarea rows="2" placeholder="${esc(field)}">${esc(text)}</textarea>
+        <textarea rows="2" placeholder="${esc(field)}" class="edit-textarea">${esc(text)}</textarea>
       </div>`;
     }
 
-    function openCreateModal() {
+    async function openCreateModal() {
       if (db[actual_table] === undefined) { toast('Table non chargée', false); return; }
       recordCtx = { mode: 'create', table: actual_table, recId: null };
       document.getElementById('modal-table-name').textContent = actual_table;
@@ -858,11 +1167,15 @@
       document.getElementById('modal-delete').style.display = 'none';
       document.getElementById('modal-save').textContent = 'Créer';
       document.getElementById('modal-fields').innerHTML =
-        fieldsFor(actual_table).map(f => fieldInputHtml(actual_table, f, null)).join('');
+        '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
       document.getElementById('record-modal').classList.add('open');
+      await ensureLinkedTablesLoaded(actual_table);
+      if (!recordCtx || recordCtx.mode !== 'create') return;   // modal fermé entre-temps
+      document.getElementById('modal-fields').innerHTML =
+        fieldsFor(actual_table).map(f => fieldInputHtml(actual_table, f, null)).join('');
     }
 
-    function openEditModal(recId) {
+    async function openEditModal(recId) {
       const rec = (db[actual_table] || []).find(r => r.id === recId);
       if (!rec) return;
       recordCtx = { mode: 'edit', table: actual_table, recId };
@@ -871,8 +1184,12 @@
       document.getElementById('modal-delete').style.display = '';
       document.getElementById('modal-save').textContent = 'Enregistrer';
       document.getElementById('modal-fields').innerHTML =
-        fieldsFor(actual_table).map(f => fieldInputHtml(actual_table, f, rec)).join('');
+        '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
       document.getElementById('record-modal').classList.add('open');
+      await ensureLinkedTablesLoaded(actual_table);
+      if (!recordCtx || recordCtx.recId !== recId) return;     // modal fermé/changé entre-temps
+      document.getElementById('modal-fields').innerHTML =
+        fieldsFor(actual_table).map(f => fieldInputHtml(actual_table, f, rec)).join('');
     }
 
     function closeModal() {
@@ -895,6 +1212,30 @@
           if (newUrls.length || removedAny) {
             fields[field] = [...kept, ...newUrls];
             changed = true;
+          }
+        } else if (type === 'link') {
+          const sel = g.querySelector('select');
+          const newArr = sel.multiple
+            ? [...sel.selectedOptions].map(o => o.value).filter(Boolean)
+            : (sel.value ? [sel.value] : []);
+          const orig = rec ? (Array.isArray(rec.fields[field]) ? rec.fields[field] : []) : [];
+          const same = JSON.stringify([...orig].sort()) === JSON.stringify([...newArr].sort());
+          if (!rec) { if (newArr.length) { fields[field] = newArr; changed = true; } }
+          else if (!same) { fields[field] = newArr; changed = true; }
+        } else if (type === 'select') {
+          const sel = g.querySelector('select');
+          const multi = g.dataset.multi === 'true';
+          if (multi) {
+            const newArr = [...sel.selectedOptions].map(o => o.value).filter(Boolean);
+            const orig = rec ? (Array.isArray(rec.fields[field]) ? rec.fields[field] : []) : [];
+            const same = JSON.stringify([...orig].sort()) === JSON.stringify([...newArr].sort());
+            if (!rec) { if (newArr.length) { fields[field] = newArr; changed = true; } }
+            else if (!same) { fields[field] = newArr; changed = true; }
+          } else {
+            const v = sel.value;
+            const orig = rec ? (rec.fields[field] || '') : '';
+            if (!rec) { if (v) { fields[field] = v; changed = true; } }
+            else if (v !== orig) { fields[field] = v === '' ? null : v; changed = true; }
           }
         } else if (type === 'boolean') {
           const v = g.querySelector('select').value;

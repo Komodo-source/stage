@@ -8,6 +8,17 @@
   <link rel="icon" href="https://idylliq.fr/favicon.png" type="image/png" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script type="text/javascript">
+    // Initialisation du widget Google Traduction (caché, piloté par le bouton drapeau)
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        { pageLanguage: 'fr', includedLanguages: 'fr,en', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <style>
     /* ── Couleur du site Idylliq ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -635,18 +646,29 @@
     /* Gallery images are not zoomable */
     #livret-container img { cursor: default !important; }
 
+    /* Masquer la barre/bandeau injecté par Google Traduction */
+    .goog-te-banner-frame.skiptranslate,
+    .goog-te-gadget-icon,
+    #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+    .goog-text-highlight { background: none !important; box-shadow: none !important; }
+    body { top: 0 !important; position: static !important; }
+    #google_translate_element { display: none !important; }
+
   </style>
 </head>
 <body id="main-part-download">
+<div id="google_translate_element"></div>
 <div id="progress-bar"></div>
 <nav class="sticky-nav" id="sticky-nav">
   <a class="nav-link" href="#section-info">arrivée</a>
   <a class="nav-link" href="#point-attention">Point d'attention</a>
-  <a class="nav-link" href="#intérieur">Equipements intérieur</a>
+  <a class="nav-link" href="#intérieur">Equipements intérieurs</a>
   <a class="nav-link" href="#extérieur">Equipements extérieurs</a>
   <a class="nav-link" href="#section-reco">Recommandations</a>
   <a class="nav-link" href="#instruction-depart">Départ</a>
 </nav>
+
+
 
     <div id="lightbox">
       <button id="lightbox-close">✕</button>
@@ -654,9 +676,11 @@
     </div>
 
 <div class="floating-menu" id="floating-menu">
+
   <div class="floating-items">
     <a onclick="toggleSearch()" class="floating-btn" title="Rechercher" style="cursor:pointer; font-size: 1.2rem;">🔍</a>
   </div>
+  <button onclick="toggleLanguage()" class="floating-btn" title="lang"  id="lang" style="cursor:pointer; font-size: 1.2rem;">🇫🇷</button>
   <button onclick="toggleSearch()" class="floating-btn" title="Rechercher">🔍</button>
 </div>
 
@@ -1489,8 +1513,8 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
         <nav class="cover-chapters">
           <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
           <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
-          <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieur</span></a>
-          <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieur</span></a>
+          <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieurs</span></a>
+          <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieurs</span></a>
           ${has_piscine ? `<a href="#section-piscine"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Piscine</span></a>` : ''}
           <a href="#section-reco"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Recommandations</span></a>
           <a href="#instruction-depart" class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Départ</span></a>
@@ -2147,6 +2171,36 @@ function toggleSearch() {
     document.getElementById('floating-menu').classList.remove('active');
   }
 }
+
+  let language = 1; // 1 = français (original), 2 = anglais
+
+  // Applique la langue au widget Google Traduction (le <select> caché arrive en asynchrone)
+  function applyGoogleLang(lang, tries){
+    tries = tries || 0;
+    const combo = document.querySelector('select.goog-te-combo');
+    if (combo) {
+      combo.value = lang;
+      combo.dispatchEvent(new Event('change'));
+      return;
+    }
+    if (tries < 40) {
+      setTimeout(() => applyGoogleLang(lang, tries + 1), 150);
+    } else {
+      console.warn('Google Traduction indisponible (widget non chargé)');
+    }
+  }
+
+  function toggleLanguage(){
+    if (language === 1){
+      applyGoogleLang('en');
+      language = 2;
+      document.getElementById("lang").innerText = "🇫🇷";
+    } else {
+      applyGoogleLang('fr');   // revient à la langue d'origine
+      language = 1;
+      document.getElementById("lang").innerText = "🇬🇧";
+    }
+  }
 
 function doSearch(query) {
   const normalize = s => s.toLowerCase().replace(/-/g, '');
