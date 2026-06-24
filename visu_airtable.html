@@ -103,6 +103,42 @@
     color: #fff;
   }
 
+  /* ── HOUSE FILTER BAR ── */
+  .filtre {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.4rem;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+  .filtre p { font-size: 0.8rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .filtre select {
+    padding: 0.45rem 0.7rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+    min-width: 240px;
+    transition: border-color 0.2s;
+  }
+  .filtre select:focus { border-color: var(--accent); }
+  .filtre .filtre-clear {
+    padding: 0.45rem 0.8rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filtre .filtre-clear:hover { border-color: var(--accent); color: var(--accent); }
+
   /* ── LAYOUT ── */
   .main-container { display: flex; flex-direction: row; min-height: calc(100vh - 60px); }
 
@@ -541,12 +577,22 @@
       </div>
       <input type="text" class="search" id="search" placeholder="Rechercher dans cette table…" autocomplete="off" />
     </div>
+    <div class="filtre" id="filtre">
+      <p>Filtrer par maison (ID) :</p>
+      <select name="filtre-select" id="filtre-select">
+        <option value="">Toutes les maisons</option>
+      </select>
+      <button type="button" class="filtre-clear" id="filtre-clear">Réinitialiser</button>
+    </div>
 
     <div class="main-container">
       <!-- ── LEFT PANEL : table selector ── -->
       <div class="left-panel" id="left-panel">
-        <div class="panel-title">Tables</div>
-        <!-- buttons injected by JS -->
+        <div class="value" style="position: fixed;">
+
+          <div class="panel-title">Tables</div>
+          <!-- buttons injected by JS -->
+        </div>
       </div>
 
       <!-- ── VISUALISATION ── -->
@@ -556,7 +602,7 @@
           <span class="meta" id="vis-meta"></span>
         </div>
         <div id="vis-content">
-          <div class="state-box">Connectez-vous pour afficher les données.</div>
+          <div class="state-box">appuyez sur une table pour commencez.</div>
         </div>
       </div>
     </div>
@@ -602,6 +648,7 @@
   <script>
     /* ─────────────── Airtable config (identique à Recherche.html) ─────────────── */
     let TOKEN = '';
+    let MaisonId = [];
     const ENCRYPTED_TOKEN =
       '0b0145ca4c673cb45c786fba29d6219dfa4e824accc237dccc256f56b92d546a6f675907feeeb7bfa39250b84adc9a79210073cdd36a1117a64beb07c8a1b961f5ccce9f0fe7e7c3418f7c64d4e6e09db30e';
     const BASE_ID = 'appLWhCKR6pEGE02s';
@@ -626,6 +673,7 @@
     let formulaire_creation = {};                // (conservé du squelette d'origine)
     let viewMode = 'gallery';                     // 'gallery' | 'list'
     let currentQuery = '';
+    let selectedHouseId = '';                     // ID_Maison sélectionné dans le filtre
     const db = {};                                // tableName → [records]
     const tableSchemas = {};                      // tableName → [fieldName,...] (ordre Meta API)
     const tableFieldsMeta = {};                   // tableName → [{name,type,options},...] (Meta API)
@@ -682,6 +730,61 @@
     function linkedTableName(table, field) {
       const m = fieldMeta(table, field);
       return m && m.options ? tableIdToName[m.options.linkedTableId] : undefined;
+    }
+
+    /* ─────────────── House (ID_Maison) filter helpers ─────────────── */
+    /* Champs "lien" d'une table qui pointent vers la table Maison */
+    function maisonLinkFields(table) {
+      return (tableFieldsMeta[table] || [])
+        .filter(f => f.type === 'multipleRecordLinks'
+          && f.options && tableIdToName[f.options.linkedTableId] === 'Maison')
+        .map(f => f.name);
+    }
+    /* Ensemble des ID_Maison auxquels un enregistrement est rattaché */
+    function recordHouseIds(table, rec) {
+      const ids = new Set();
+      // 1) Champs ID_Maison directs (valeur ou lookup tableau) présents sur la table
+      Object.keys(rec.fields).forEach(k => {
+        if (/^id[_ ]?maison$/i.test(k)) {
+          const v = rec.fields[k];
+          (Array.isArray(v) ? v : [v]).forEach(x => {
+            if (x != null && x !== '') ids.add(String(x).trim());
+          });
+        }
+      });
+      // 2) Via les liens vers la table Maison -> lire son ID_Maison
+      if (table !== 'Maison') {
+        const maisons = db['Maison'] || [];
+        maisonLinkFields(table).forEach(field => {
+          const v = rec.fields[field];
+          const recIds = Array.isArray(v) ? v : (v ? [v] : []);
+          recIds.forEach(rid => {
+            const m = maisons.find(r => r.id === rid);
+            const hid = m && m.fields.ID_Maison;
+            if (hid != null && hid !== '') ids.add(String(hid).trim());
+          });
+        });
+      }
+      return ids;
+    }
+    /* Charge la table Maison (si besoin) et remplit le menu déroulant du filtre */
+    async function populateHouseFilter() {
+      if (db['Maison'] === undefined) {
+        try { db['Maison'] = await fetchAll('Maison'); }
+        catch (e) { db['Maison'] = []; }
+      }
+      const ids = new Set();
+      (db['Maison'] || []).forEach(r => {
+        const hid = r.fields.ID_Maison;
+        if (hid != null && hid !== '') ids.add(String(hid).trim());
+      });
+      const sorted = [...ids].sort((a, b) =>
+        a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+      const sel = document.getElementById('filtre-select');
+      sel.innerHTML = '<option value="">Toutes les maisons</option>' +
+        sorted.map(id => `<option value="${esc(id)}">${esc(id)}</option>`).join('');
+      sel.value = selectedHouseId;
+      renderLeftPanel();
     }
     /* charge en arrière-plan les tables liées d'une table donnée (pour peupler les dropdowns) */
     async function ensureLinkedTablesLoaded(table) {
@@ -975,7 +1078,10 @@
 
     /* ─────────────── RENDER (gallery / list) ─────────────── */
     function filteredRecords() {
-      const recs = db[actual_table] || [];
+      let recs = db[actual_table] || [];
+      if (selectedHouseId) {
+        recs = recs.filter(r => recordHouseIds(actual_table, r).has(selectedHouseId));
+      }
       const q = currentQuery.trim().toLowerCase();
       if (!q) return recs;
       return recs.filter(r =>
@@ -1073,6 +1179,7 @@
       if (db[name] === undefined) {
         try {
           db[name] = await fetchAll(name);
+          if (name === 'Maison') populateHouseFilter();
         } catch (err) {
           db[name] = [];
           toast('Erreur : ' + err.message, false);
@@ -1107,7 +1214,10 @@
           <select ${multiAttr}>${emptyOpt}${opts}</select>
           ${recs.length ? '' : '<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem">Aucun enregistrement dans la table liée.</div>'}
         </div>`;
+
       }
+
+
       // Champ select (singleSelect / multipleSelects) -> dropdown des choix
       if (isSelectField(table, field)) {
         const meta = fieldMeta(table, field);
@@ -1344,6 +1454,16 @@
       render();
     }, 200));
 
+    document.getElementById('filtre-select').addEventListener('change', e => {
+      selectedHouseId = e.target.value;
+      render();
+    });
+    document.getElementById('filtre-clear').addEventListener('click', () => {
+      selectedHouseId = '';
+      document.getElementById('filtre-select').value = '';
+      render();
+    });
+
     document.getElementById('create-btn').addEventListener('click', openCreateModal);
     document.getElementById('modal-close').addEventListener('click', closeModal);
     document.getElementById('modal-cancel').addEventListener('click', closeModal);
@@ -1444,6 +1564,7 @@
       try {
         await fetchSchemas();
         await selectTable(actual_table);   // charge la table par défaut
+        await populateHouseFilter();       // charge Maison + remplit le filtre par ID
       } catch (err) {
         document.getElementById('vis-content').innerHTML =
           `<div class="state-box">Erreur : ${esc(err.message)}</div>`;

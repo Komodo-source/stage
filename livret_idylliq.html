@@ -2062,6 +2062,56 @@ async function buildLivret(IdMaison) {
     }
   });
 
+  // Point d'attention & Instruction Départ peuvent AUSSI provenir de la table
+  // Piscine. Colonnes Piscine : Livret_pointdattention / Livret_instructionsdépart.
+  piscineRecs.forEach(rec => {
+    const f = rec.fields;
+    const piscinePhotos = (f.Photo || []).filter(a => is_file_image(a));
+    const piscineYoutube = f.lienYoutube
+      ? f.lienYoutube.split(';').map(v => v.trim()).filter(Boolean) : [];
+    const piscineAttachedVids = (f.Photo || [])
+      .filter(a => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''))
+      .map(a => a.url);
+    const piscineVideos = [...piscineYoutube, ...piscineAttachedVids];
+    const piscineOrder = parseFloat(f.Livret_ordre ?? f.OrdreMaison) || 9999;
+
+    // Point d'attention (Piscine)
+    const attRaw = f['Livret_pointdattention'] || f['Livret_PointAttention'];
+    if (attRaw && String(attRaw).trim()) {
+      const attText = dedupParas(String(attRaw).trim());
+      const attNorm = attText.replace(/\s+/g, ' ');
+      if (!seenAttention.has(attNorm)) {
+        seenAttention.add(attNorm);
+        attentionItems.push({
+          order: piscineOrder,
+          html: `<div class="search-item attention-item" style="margin-bottom: 1.5rem;">
+          <strong class="search-item-title" style="color:var(--accent); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">Piscine</strong>
+          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescriptionWithInline(attText, piscinePhotos, piscineVideos)}</div>
+        </div>`
+        });
+      }
+    }
+
+    // Instruction Départ (Piscine)
+    const deptRaw = f['Livret_instructionsdépart'] || f['Livret_InstructionDepart'];
+    if (deptRaw && String(deptRaw).trim()) {
+      const deptText = dedupParas(String(deptRaw).trim());
+      const deptNorm = deptText.replace(/\s+/g, ' ');
+      if (!seenDepart.has(deptNorm)) {
+        seenDepart.add(deptNorm);
+        departItems.push({
+          order: piscineOrder,
+          name: 'Piscine',
+          text: deptText,
+          html: `<div style="margin-bottom: 1.5rem;">
+          <strong style="color:var(--green-dark); font-family: 'League Spartan', sans-serif; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem;">Piscine</strong>
+          <div class="card-desc" style="margin-top: 0.5rem;">${parseDescription(deptText, [], false)}</div>
+        </div>`
+        });
+      }
+    }
+  });
+
   // Apply Livret_ordre to points d'attention and instructions de départ,
   // just like fonctionnement (equipment) cards.
   attentionItems.sort((a, b) => a.order - b.order);

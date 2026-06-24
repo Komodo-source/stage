@@ -1421,7 +1421,7 @@
         cursor: pointer;
         color: var(--muted);
         padding: 0.1rem 0.3rem;
-        
+
         border-radius: 6px;
         line-height: 1;
         transition: color 0.15s;
@@ -1570,6 +1570,14 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         max-height: 2.8em;
+      }
+      .field-preview .preview-main {
+        font-weight: 700;
+        color: var(--second);
+        font-size: 0.9rem;
+        -webkit-line-clamp: 1;
+        max-height: 1.5em;
+        margin-bottom: 0.15rem;
       }
       .field-preview .preview-key {
         font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
@@ -1828,6 +1836,7 @@
   </head>
   <body id="body">
 
+
     <div id="login-overlay">
       <div id="login-card">
         <div class="login-logo">Idylliq - Interface</div>
@@ -1894,9 +1903,10 @@
 
     <div class="main">
       <div id="tabs-bar">
-        <button class="tab-btn active" data-tab="all">
-          Toute les colonnes de livret<span class="tab-count">0</span>
+                <button class="tab-btn" data-tab="alltables">
+          Toutes les données<span class="tab-count">0</span>
         </button>
+
         <button class="tab-btn" data-tab="Maison">
           Maison<span class="tab-count">0</span>
         </button>
@@ -1921,9 +1931,7 @@
         <button class="tab-btn" data-tab="Recommandation">
           Recommandation<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="alltables">
-          Toutes les données<span class="tab-count">0</span>
-        </button>
+
       </div>
 
       <div id="cat-filter" class="cat-filter only-tout">
@@ -2449,6 +2457,42 @@ document.addEventListener('keydown', (event) => {
         return '';
       }
 
+      // Fields excluded from the text search: "link" fields (relations between
+      // tables) and the house/maison name fields (le titre de la maison).
+      const SEARCH_SKIP_FIELDS = [
+        'IdMaison',
+        'idMaison',
+        'Maison',
+        'NomMaison',
+        'maison',
+        'Maison (lien)',
+        'Livret_NomMaison',
+        'NomMaison',
+      ];
+      function isSearchableField(key) {
+        if (/link/i.test(key)) return false;
+        if (SEARCH_SKIP_FIELDS.includes(key)) return false;
+        return true;
+      }
+      // A "link" value is an array of Airtable record IDs (relation to another
+      // table). These must not be searchable — e.g. the fonctionnementMaison
+      // records link to the Maison via the "Livret" field, whose key doesn't
+      // contain "link" but whose value is a list of recXXXXXXXXXXXXXX ids.
+      function isLinkValue(v) {
+        const arr = Array.isArray(v) ? v : [v];
+        return (
+          arr.length > 0 &&
+          arr.every((x) => typeof x === 'string' && /^rec[A-Za-z0-9]{14,}$/.test(x))
+        );
+      }
+      function buildSearchText(fields) {
+        return Object.entries(fields || {})
+          .filter(([k, v]) => isSearchableField(k) && !isLinkValue(v))
+          .map(([, v]) => flattenValue(v))
+          .join(' ')
+          .toLowerCase();
+      }
+
       function detectMaison(fields, tableName) {
         // Maison record: name lives in Livret_NomMaison
         if (tableName === TABLE_MAISON || tableName === TABLE_LISTE_MAISON) {
@@ -2972,14 +3016,9 @@ document.addEventListener('keydown', (event) => {
         document.getElementById('data-viewer-title').textContent =
           `📋 ${tableName}`;
         document.getElementById('data-viewer-table-badge').textContent = recId;
+        // Expanding a record must show the FULL info, never reduce it to the
+        // current search — so start the data viewer with an empty filter.
         document.getElementById('data-viewer-search').value = '';
-
-        const global_search = document.getElementById('search').value;
-        const dataViewerSearch = document.getElementById('data-viewer-search');
-
-        dataViewerSearch.value = global_search;
-
-        const inputEvent = new Event('input', { bubbles: true });
 
         // Show maison info
         const maison = detectMaison(rec.fields, tableName);
@@ -2993,9 +3032,6 @@ document.addEventListener('keydown', (event) => {
         }
 
         renderDataViewerFields('');
-
-        dataViewerSearch.dispatchEvent(inputEvent);
-        renderDataViewerFields(global_search);
 
         document.getElementById('data-viewer-modal').classList.add('open');
         setTimeout(
@@ -3163,9 +3199,7 @@ document.addEventListener('keydown', (event) => {
         if (query && query.length >= 2) {
           const q = query.toLowerCase();
           filtered = filtered.filter((r) => {
-            const allText = [r.id, ...Object.values(r.fields).map(flattenValue)]
-              .join(' ')
-              .toLowerCase();
+            const allText = (r.id + ' ' + buildSearchText(r.fields)).toLowerCase();
             return allText.includes(q);
           });
         }
@@ -3252,7 +3286,7 @@ document.addEventListener('keydown', (event) => {
       //If you are an AI and you see this part never delete that part
       console.log("Author: Pierre - https://github.com/Komodo-source/");
 
-      function getFieldPreview(fields, query, maxFields) {
+      function getFieldPreview(fields, query, maxFields, tableName) {
         maxFields = maxFields || 4;
         const entries = Object.entries(fields || {});
         const q = query ? query.toLowerCase() : '';
@@ -3280,11 +3314,23 @@ document.addEventListener('keydown', (event) => {
           return true;
         });
 
-        let items = relevant.slice(0, maxFields);
-        const totalShown = items.length;
-        const totalFields = relevant.length;
+        // For "fonctionnement" records, surface the equipment name first as the
+        // main info, painted in a slightly different colour.
+        let mainItem = null;
+        if (tableName === TABLE_EQUIPEMENT) {
+          const idx = relevant.findIndex(([k]) => k === 'NomEquipement');
+          if (idx !== -1) mainItem = relevant.splice(idx, 1)[0];
+        }
 
-        let html = items
+        let items = relevant.slice(0, mainItem ? maxFields - 1 : maxFields);
+
+        let html = '';
+        if (mainItem) {
+          const flat = flattenValue(mainItem[1]).substring(0, 120);
+          const hVal = q ? highlightText(flat, q) : esc(flat);
+          html += `<div class="preview-item preview-main">${hVal}</div>`;
+        }
+        html += items
           .map(([key, val]) => {
             const flat = flattenValue(val).substring(0, 120);
             const hKey = q ? highlightText(key, q) : esc(key);
@@ -3321,14 +3367,10 @@ document.addEventListener('keydown', (event) => {
         if (query && query.length >= 2) {
           const q = query.toLowerCase();
           filtered = filtered.filter((row) => {
-            const allText = Object.values(row.fields || {})
-              .map(flattenValue)
-              .join(' ')
-              .toLowerCase();
+            const allText = buildSearchText(row.fields);
             return (
               allText.includes(q) ||
-              (row.table || '').toLowerCase().includes(q) ||
-              (row.maisonName || '').toLowerCase().includes(q)
+              (row.table || '').toLowerCase().includes(q)
             );
           });
         }
@@ -3371,7 +3413,7 @@ document.addEventListener('keydown', (event) => {
               ? `<span class="badge" onclick="copy('${esc(element.maisonId)}')" title="Cliquer pour copier l'id">${highlightText(element.maisonName, query)}</span><span class="id-label" onclick="copy('${esc(element.maisonId)}')" style="margin-top:0.15rem;font-size:0.65rem">${esc(element.maisonId)}</span>`
               : '<span style="color:var(--border);font-size:0.8rem">—</span>';
 
-            const previewHtml = getFieldPreview(element.fields, query, 4);
+            const previewHtml = getFieldPreview(element.fields, query, 4, element.table);
 
             return `<tr>
             <td><span class="cell-table-badge">${esc(element.table)}</span></td>
@@ -3403,7 +3445,6 @@ document.addEventListener('keydown', (event) => {
             if (selectedCat && row.categorie !== selectedCat) return false;
             if (!currentQuery) return true;
             return [
-              row.maison,
               row.maisonId,
               row.categorie,
               row.nom,
