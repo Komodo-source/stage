@@ -833,6 +833,14 @@
       .table-cell-wrap .cell-val {
         flex: 1;
         min-width: 0;
+        /* Couper le texte trop long dans la vue Table (max ~3 lignes) */
+        max-width: 380px;
+        max-height: 4.6em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
       }
 
       .linked-rec {
@@ -2006,7 +2014,61 @@
     .lmain .ltitle { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.15rem; }
     .lmain .lsub { font-size: 0.78rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .lmain .lsub b { color: var(--primary); font-weight: 600; }
-    .lactions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .lactions { display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; align-items: flex-end; }
+    .lactions-btns { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+
+    /* ── Inline photo manager (vue Liste, panneau de droite) ── */
+    .inline-photos {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      max-width: 340px;
+    }
+    .inline-thumb {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .inline-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+    .inline-thumb-del {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: #dc2626;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.6rem;
+      cursor: pointer;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .inline-add-photo {
+      width: 46px;
+      height: 46px;
+      border: 1.5px dashed var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .inline-add-photo:hover { background: var(--primary); color: #fff; }
 
     /* ════════════════ VUES PERSO (custom views) ════════════════ */
     .vw-tabs { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
@@ -2447,15 +2509,6 @@
             autocomplete="off"
           />
         </div>
-        <input
-          type="text"
-          id="house-filter"
-          list="house-filter-list"
-          placeholder="Filtrer par Maison (ID ou Nom)..."
-          autocomplete="off"
-        />
-        <datalist id="house-filter-list"></datalist>
-        <button id="delete_search" onclick="document.getElementById('house-filter').value = '' ">X</button>
       </div>
     </header>
 
@@ -2493,9 +2546,6 @@
         <button class="tab-btn" data-tab="fiche" style="margin-left:auto">
           📋 Fiche synthèse
         </button>
-        <button class="tab-btn" data-tab="visualise">
-          🖼 Visualiser
-        </button>
         <button class="tab-btn" data-tab="vues">
           🧩 Vues perso<span class="tab-count">0</span>
         </button>
@@ -2508,6 +2558,11 @@
 
       <div class="meta-bar">
         <div id="results-count"></div>
+        <div class="vz-toggle" id="view-toggle" style="display:none; margin-left:1rem">
+          <button data-mode="table" class="active">▤ Table</button>
+          <button data-mode="list">☰ Liste</button>
+          <button data-mode="gallery">▦ Galerie</button>
+        </div>
         <div class="pagination-controls" id="pagination-controls">
           <button class="page-btn" id="page-prev" disabled>‹</button>
           <span class="page-info" id="page-info"></span>
@@ -2564,9 +2619,12 @@
         </div>
       </div>
 
-      <!-- ── VISUALISER PANE (gallery / list) ── -->
+      <!-- ── CARTES (galerie / liste) — hôte d'affichage des vues par table ── -->
       <div id="visualise-pane" style="display: none">
-        <div class="vz-toolbar">
+        <!-- ancienne barre d'outils Visualiser conservée (cachée) pour ne pas
+             casser ses écouteurs JS ; la sélection de table = onglet courant,
+             le bascule Table/Liste/Galerie est dans la meta-bar. -->
+        <div class="vz-toolbar" style="display: none">
           <select id="vz-table-select"></select>
           <div class="vz-toggle" id="vz-toggle">
             <button data-view="gallery" class="active">▦ Galerie</button>
@@ -2734,6 +2792,8 @@
         </div>
       </div>
     </div>
+
+    <input type="file" id="inline-photo-input" accept="image/*" multiple style="display: none" />
 
     <div id="photo-modal">
       <div id="photo-card">
@@ -2926,7 +2986,8 @@ document.addEventListener('keydown', (event) => {
   if (!event.repeat) {
     console.log(`Initial press: ${event.key}`);
    if(event.key === "Delete"){
-     document.getElementById('house-filter').value = '';
+     const _hf = document.getElementById('house-filter');
+     if (_hf) _hf.value = '';
    }
   }
 });
@@ -3021,7 +3082,9 @@ document.addEventListener('keydown', (event) => {
 
       /* ── Helper to resolve House selection cleanly ── */
       function getSelectedHouseName() {
-        const raw = document.getElementById('house-filter').value.trim();
+        const _hf = document.getElementById('house-filter');
+        if (!_hf) return ''; // filtre par Maison retiré de l'interface
+        const raw = _hf.value.trim();
         if (!raw) return '';
         // If they clicked an exact option generated by our list:
         if (window.labelToMaisonName && window.labelToMaisonName[raw]) {
@@ -4075,8 +4138,9 @@ document.addEventListener('keydown', (event) => {
                 return `<td class="cell-photos">${renderAttachments(val, query, tableName, rec.id, key)}</td>`;
               }
               const withLinks = flattenWithLinks(val, query);
+              const plain = flatV(val);
               const editBtn = `<button class="edit-btn" data-table="${esc(tableName)}" data-recid="${esc(rec.id)}" data-field="${esc(key)}" title="Modifier ${esc(key)}">${pencil}</button>`;
-              return `<td><div class="table-cell-wrap"><span class="field-header">${editBtn}</span><span class="cell-val">${withLinks || '—'}</span></div></td>`;
+              return `<td><div class="table-cell-wrap"><span class="field-header">${editBtn}</span><span class="cell-val"${plain && plain.length > 120 ? ` title="${esc(plain)}"` : ''}>${withLinks || '—'}</span></div></td>`;
             });
             return `<tr>${cells.join('')}</tr>`;
           })
@@ -4280,16 +4344,69 @@ document.addEventListener('keydown', (event) => {
           renderToutRows(filtered);
         } else if (currentTab === 'alltables') {
           renderAllTables(currentQuery);
-        } else if (currentTab === 'visualise') {
-          renderVisualisePane();
         } else if (currentTab === 'vues') {
           renderVuesPane();
         } else if (currentTab === 'fiche') {
           renderFichePane();
         } else {
-          renderTableData(currentTab, currentQuery);
+          renderCurrentTableView();
         }
       }
+
+      /* ── Per-table view modes: table | list | gallery ───────────────── */
+      let tableViewMode = 'table'; // 'table' | 'list' | 'gallery'
+      const CARD_TABLES = [
+        'Maison',
+        'fonctionnementMaison',
+        'Piscine',
+        'DispositionMaison',
+        'WorkFlowBreezeway',
+        'ConditionLocation',
+        'Proprietaire',
+        'Recommandation',
+      ];
+
+      function renderCurrentTableView() {
+        const tableWrap = document.querySelector('.table-wrap');
+        const cards = document.getElementById('visualise-pane');
+        const pag = document.getElementById('pagination-controls');
+        if (tableViewMode === 'table') {
+          tableWrap.style.display = '';
+          cards.style.display = 'none';
+          pag.style.display = '';
+          renderTableData(currentTab, currentQuery);
+        } else {
+          tableWrap.style.display = 'none';
+          cards.style.display = 'block';
+          pag.style.display = 'none';
+          vzTable = currentTab;
+          vzView = tableViewMode === 'gallery' ? 'gallery' : 'list';
+          renderTableCards();
+        }
+      }
+
+      function renderTableCards() {
+        const host = document.getElementById('vz-content');
+        const recs = vzFilteredRecords();
+        const count = document.getElementById('results-count');
+        count.textContent = `${recs.length} résultat${recs.length !== 1 ? 's' : ''}`;
+        if (!recs.length) {
+          host.innerHTML = `<div class="state-box">Aucun résultat${currentQuery ? ' pour cette recherche' : ''}.</div>`;
+          return;
+        }
+        host.innerHTML =
+          vzView === 'gallery' ? vzGallery(recs) : vzListView(recs);
+      }
+
+      document.getElementById('view-toggle').addEventListener('click', (e) => {
+        const b = e.target.closest('button[data-mode]');
+        if (!b) return;
+        tableViewMode = b.dataset.mode;
+        document
+          .querySelectorAll('#view-toggle button')
+          .forEach((x) => x.classList.toggle('active', x.dataset.mode === tableViewMode));
+        applyFilter();
+      });
 
       /* ── tab switching ── */
       async function switchTab(tabName) {
@@ -4309,16 +4426,20 @@ document.addEventListener('keydown', (event) => {
           document.body.classList.add('show-table');
         }
 
-        /* Toggle the special panes (Visualiser / Vues perso) vs. the table view */
-        const isVisualise = tabName === 'visualise';
+        /* Special panes (Fiche synthèse / Vues perso) vs. the table view */
         const isVues = tabName === 'vues';
         const isFiche = tabName === 'fiche';
-        const special = isVisualise || isVues || isFiche;
-        document.getElementById('visualise-pane').style.display = isVisualise ? 'block' : 'none';
+        const special = isVues || isFiche;
         document.getElementById('vues-pane').style.display = isVues ? 'block' : 'none';
         document.getElementById('fiche-pane').style.display = isFiche ? 'block' : 'none';
+        // The cards host (gallery/list) is driven by renderCurrentTableView; hide by default here.
+        document.getElementById('visualise-pane').style.display = 'none';
+        // Table / List / Gallery switch: only for single-table tabs.
+        document.getElementById('view-toggle').style.display =
+          CARD_TABLES.includes(tabName) ? 'inline-flex' : 'none';
         document.querySelector('.table-wrap').style.display = special ? 'none' : '';
         document.querySelector('.meta-bar').style.display = special ? 'none' : 'flex';
+        document.getElementById('pagination-controls').style.display = special ? 'none' : '';
         if (special) {
           applyFilter();
           return;
@@ -4395,13 +4516,6 @@ document.addEventListener('keydown', (event) => {
         allTablesPage = 1;
         applyFilter();
       }, 250));
-
-      // Datalist triggers "input" event as you select
-      document.getElementById('house-filter').addEventListener('input', () => {
-        tablePage = 1;
-        allTablesPage = 1;
-        applyFilter();
-      });
 
       document
         .getElementById('page-prev')
@@ -4950,7 +5064,7 @@ document.addEventListener('keydown', (event) => {
       document.getElementById('create-btn').addEventListener('click', () => {
         if (
           currentTab &&
-          !['all', 'alltables', 'visualise', 'vues'].includes(currentTab)
+          !['all', 'alltables', 'fiche', 'vues'].includes(currentTab)
         ) {
           openRecModal('create', currentTab);
         }
@@ -5521,13 +5635,6 @@ document.addEventListener('keydown', (event) => {
 
           all_houses = maisonList;
 
-          const dl = document.getElementById('house-filter-list');
-          maisonList.forEach((m) => {
-            const opt = document.createElement('option');
-            opt.value = m.label;
-            dl.appendChild(opt);
-          });
-
           window.labelToMaisonName = {};
           maisonList.forEach(m => window.labelToMaisonName[m.label] = m.name);
 
@@ -5554,14 +5661,15 @@ document.addEventListener('keydown', (event) => {
           // Update tab counts
           updateTabCounts();
 
-          // Render initial Tout view
+          // Guide overlay (if any)
           const guideHtml = get_guide();
           if (guideHtml) {
             document
               .getElementById('body')
               .insertAdjacentHTML('beforeend', guideHtml);
           }
-          renderToutRows(rows);
+          // Au démarrage : ouvrir directement l'onglet Maison.
+          switchTab('Maison');
         } catch (err) {
           console.error(err);
           document.getElementById('tbody').innerHTML =
@@ -5679,6 +5787,44 @@ document.addEventListener('keydown', (event) => {
           .join('');
       }
 
+      // Vue Liste : bandeau de photos directement éditable dans le panneau de
+      // droite (miniatures supprimables + bouton « ＋ » pour ajouter des fichiers).
+      function vzInlinePhotos(rec) {
+        const af = attachmentFieldsFor(vzTable);
+        if (!af.length) return '';
+        const field = af[0];
+        const atts = (rec.fields[field] || []).filter(
+          (a) =>
+            a &&
+            a.url &&
+            !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
+        );
+        const thumbs = atts
+          .map(
+            (a) =>
+              `<div class="inline-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt="">
+                <button class="inline-thumb-del" title="Supprimer cette photo" data-del-photo="${esc(a.id)}" data-table="${esc(vzTable)}" data-recid="${esc(rec.id)}" data-field="${esc(field)}">✕</button>
+              </div>`,
+          )
+          .join('');
+        return `<div class="inline-photos">
+          ${thumbs}
+          <button class="inline-add-photo" title="Ajouter des photos (${esc(field)})" data-add-photo data-table="${esc(vzTable)}" data-recid="${esc(rec.id)}" data-field="${esc(field)}">＋</button>
+        </div>`;
+      }
+      // Boutons « 📷 » pour les éventuels champs photo supplémentaires (ex. Maison).
+      function vzExtraPhotoButtons(rec) {
+        const af = attachmentFieldsFor(vzTable);
+        if (af.length <= 1) return '';
+        return af
+          .slice(1)
+          .map((f) => {
+            const n = (rec.fields[f] || []).filter((a) => a && a.url).length;
+            return `<button class="act-btn photo-edit-btn" data-table="${esc(vzTable)}" data-recid="${esc(rec.id)}" data-field="${esc(f)}" title="Photos (${esc(f)})">📷 ${esc(f)}${n ? ` (${n})` : ''}</button>`;
+          })
+          .join('');
+      }
+
       function vzGallery(recs) {
         const fields = fieldsFor(vzTable);
         const scal = scalarFields(vzTable);
@@ -5739,9 +5885,12 @@ document.addEventListener('keydown', (event) => {
                   <div class="lsub">${sub || `<span class="rec-id" data-copy="${esc(rec.id)}">${esc(rec.id)}</span>`}</div>
                 </div>
                 <div class="lactions">
-                  ${vzPhotoButtons(rec)}
-                  <button class="act-btn edit" data-vz-edit="${esc(rec.id)}">✎ Modifier</button>
-                  <button class="act-btn del" data-vz-del="${esc(rec.id)}">🗑 Supprimer</button>
+                  ${vzInlinePhotos(rec)}
+                  <div class="lactions-btns">
+                    ${vzExtraPhotoButtons(rec)}
+                    <button class="act-btn edit" data-vz-edit="${esc(rec.id)}">✎ Modifier</button>
+                    <button class="act-btn del" data-vz-del="${esc(rec.id)}">🗑 Supprimer</button>
+                  </div>
                 </div>
               </div>`;
             })
@@ -5799,6 +5948,30 @@ document.addEventListener('keydown', (event) => {
         openRecModal('create', vzTable);
       });
       document.getElementById('vz-content').addEventListener('click', (e) => {
+        // Inline photo: add (＋)
+        const addBtn = e.target.closest('[data-add-photo]');
+        if (addBtn) {
+          e.stopPropagation();
+          inlinePhotoCtx = {
+            table: addBtn.dataset.table,
+            recId: addBtn.dataset.recid,
+            field: addBtn.dataset.field,
+          };
+          document.getElementById('inline-photo-input').click();
+          return;
+        }
+        // Inline photo: delete one thumbnail (✕)
+        const delPhoto = e.target.closest('[data-del-photo]');
+        if (delPhoto) {
+          e.stopPropagation();
+          inlineDeletePhoto(
+            delPhoto.dataset.table,
+            delPhoto.dataset.recid,
+            delPhoto.dataset.field,
+            delPhoto.dataset.delPhoto,
+          );
+          return;
+        }
         const ed = e.target.closest('[data-vz-edit]');
         if (ed) {
           openRecModal('edit', vzTable, ed.dataset.vzEdit);
@@ -5812,6 +5985,69 @@ document.addEventListener('keydown', (event) => {
         const cp = e.target.closest('[data-copy]');
         if (cp) copy(cp.dataset.copy);
       });
+
+      /* ── Inline photo add / delete (vue Liste) ───────────────────────── */
+      let inlinePhotoCtx = null; // { table, recId, field }
+
+      document
+        .getElementById('inline-photo-input')
+        .addEventListener('change', async (e) => {
+          const files = e.target.files;
+          if (files && files.length && inlinePhotoCtx) {
+            const ctx = inlinePhotoCtx;
+            await inlineAddPhotos(ctx.table, ctx.recId, ctx.field, files);
+          }
+          e.target.value = '';
+          inlinePhotoCtx = null;
+        });
+
+      async function inlineAddPhotos(table, recId, field, files) {
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        if (!rec) return;
+        vtoast('Upload des photos…');
+        const existing = (rec.fields[field] || [])
+          .filter((a) => a && a.id)
+          .map((a) => ({ id: a.id }));
+        const added = [];
+        for (const f of files) {
+          if (!f.type.startsWith('image/')) continue;
+          const up = await uploadPendingFileToHosting(f, f.name);
+          if (up) added.push({ url: up.url, filename: up.filename });
+        }
+        if (!added.length) {
+          vtoast('Aucune image uploadée', false);
+          return;
+        }
+        try {
+          const data = await updateRecordFields(table, recId, {
+            [field]: [...existing, ...added],
+          });
+          rec.fields[field] = data.fields[field];
+          vtoast(`${added.length} photo(s) ajoutée(s)`);
+          refreshAfterMutation(table);
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+        }
+      }
+
+      async function inlineDeletePhoto(table, recId, field, photoId) {
+        if (!confirm('Supprimer cette photo ?')) return;
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        if (!rec) return;
+        const kept = (rec.fields[field] || [])
+          .filter((a) => a && a.id && a.id !== photoId)
+          .map((a) => ({ id: a.id }));
+        try {
+          const data = await updateRecordFields(table, recId, {
+            [field]: kept,
+          });
+          rec.fields[field] = data.fields[field] || [];
+          vtoast('Photo supprimée');
+          refreshAfterMutation(table);
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+        }
+      }
 
       async function quickDeleteRecord(table, recId) {
         if (!confirm('Supprimer définitivement cet enregistrement ?\n' + recId))
