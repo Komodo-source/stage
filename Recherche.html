@@ -1832,6 +1832,564 @@
     background-color: rgb(157 157 157);
     /* color: #fff; */
 }
+
+    /* ════════════════ VISUALISER (gallery / list) ════════════════ */
+    .vz-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    #vz-table-select {
+      padding: 0.5rem 0.8rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      background: white;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      min-width: 200px;
+    }
+    #vz-table-select:focus { border-color: var(--primary); }
+    .vz-toggle {
+      display: inline-flex;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .vz-toggle button {
+      border: none;
+      background: white;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .vz-toggle button.active { background: var(--primary); color: white; }
+    .vz-create-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 1.1rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .vz-create-btn:hover { opacity: 0.88; }
+    .vz-meta { font-size: 0.82rem; color: var(--muted); margin-left: auto; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+    .gcard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .gcard:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(31, 109, 103, 0.14); }
+    .gcard-cover {
+      height: 160px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .gcard-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .gcard-cover .no-img { color: var(--primary); opacity: 0.4; }
+    .gcard-body { padding: 0.85rem 1rem; flex: 1; }
+    .gcard-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+    }
+    .gfield { margin-bottom: 0.4rem; font-size: 0.8rem; line-height: 1.4; }
+    .gfield .k {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: var(--primary);
+      opacity: 0.7;
+      text-transform: uppercase;
+      display: block;
+    }
+    .gfield .v {
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .gfield .v.empty { color: var(--border); font-style: italic; }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1rem;
+      border-top: 1px solid var(--border);
+      background: #fafbfd;
+    }
+    .card-actions .rec-id {
+      flex: 1;
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .card-actions .rec-id:hover { color: var(--primary); }
+    .act-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: white;
+      transition: all 0.15s;
+    }
+    .act-btn.edit { color: var(--primary); border-color: var(--primary); }
+    .act-btn.edit:hover { background: var(--primary); color: white; }
+    .act-btn.del { color: #dc2626; border-color: #f3c4c4; }
+    .act-btn.del:hover { background: #dc2626; color: white; border-color: #dc2626; }
+    .card-actions .photo-edit-btn,
+    .lactions .photo-edit-btn { margin-top: 0; color: var(--primary); border-color: var(--primary); }
+    .card-actions .photo-edit-btn:hover,
+    .lactions .photo-edit-btn:hover { background: var(--primary); color: white; }
+
+    .vz-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .lrow {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.7rem 0.9rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .lrow:hover { border-color: var(--primary); box-shadow: 0 2px 10px rgba(31, 109, 103, 0.08); }
+    .lthumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 9px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--primary-light);
+    }
+    .lthumb.placeholder { display: flex; align-items: center; justify-content: center; color: var(--primary); opacity: 0.4; }
+    .lmain { flex: 1; min-width: 0; }
+    .lmain .ltitle { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.15rem; }
+    .lmain .lsub { font-size: 0.78rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lmain .lsub b { color: var(--primary); font-weight: 600; }
+    .lactions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+    /* ════════════════ VUES PERSO (custom views) ════════════════ */
+    .vw-tabs { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; }
+    .vw-tab {
+      padding: 0.4rem 0.85rem;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: white;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .vw-tab:hover { border-color: var(--primary); color: var(--primary); }
+    .vw-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+    .vw-view-head {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+    }
+    .vw-view-head h2 { font-size: 1.1rem; color: var(--primary); }
+    .vw-btn {
+      padding: 0.45rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .vw-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .vw-btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
+    .vw-btn.danger { color: #dc2626; border-color: #f3c4c4; }
+    .vw-btn.danger:hover { background: #dc2626; color: white; }
+
+    .vw-table-wrap {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: auto;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+    table.vw-table { width: 100%; border-collapse: collapse; min-width: 100%; }
+    table.vw-table thead th {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.6rem 0.7rem;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid #c8dedd;
+      position: relative;
+    }
+    table.vw-table thead th .col-src {
+      display: block;
+      font-size: 0.6rem;
+      opacity: 0.6;
+      font-weight: 600;
+      text-transform: none;
+    }
+    table.vw-table thead th .col-del {
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s;
+    }
+    table.vw-table thead th:hover .col-del { opacity: 1; }
+    table.vw-table thead th .col-del:hover { color: #dc2626; }
+    table.vw-table tbody td {
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      vertical-align: top;
+    }
+    table.vw-table tbody td input {
+      width: 100%;
+      min-width: 120px;
+      border: none;
+      padding: 0.55rem 0.7rem;
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+    }
+    table.vw-table tbody td input:focus { background: var(--primary-light); }
+    table.vw-table tbody tr:hover { background: #fafbfd; }
+    table.vw-table td.vw-row-actions { text-align: center; padding: 0 0.4rem; white-space: nowrap; }
+    .vw-row-del {
+      border: none;
+      background: transparent;
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.3rem;
+      border-radius: 6px;
+    }
+    .vw-row-del:hover { background: #fde8e8; }
+
+    /* ════════════════ RICH RECORD MODAL ════════════════ */
+    #rec-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      align-items: stretch;
+      justify-content: flex-end;
+    }
+    #rec-modal.open { display: flex; }
+    #rec-card {
+      background: white;
+      width: 100%;
+      max-width: 520px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -12px 0 48px rgba(0, 0, 0, 0.22);
+      overflow: hidden;
+    }
+    #rec-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    #rec-title { font-family: monospace; font-weight: 700; color: var(--primary); font-size: 1rem; }
+    #rec-sub { font-size: 0.72rem; color: var(--muted); font-family: monospace; margin-top: 0.2rem; }
+    #rec-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
+    #rec-close:hover { color: var(--text); }
+    #rec-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      padding: 0.6rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      background: #fafbfd;
+    }
+    #rec-toolbar button {
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.3rem 0.55rem;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    #rec-toolbar button:hover { border-color: var(--primary); color: var(--primary); }
+    #rec-toolbar input[type='color'] { width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--border); border-radius: 7px; cursor: pointer; }
+    #rec-toolbar input[type='number'] { padding: 0.3rem 0.4rem; border: 1.5px solid var(--border); border-radius: 7px; font-size: 0.74rem; }
+    #rec-fields { padding: 1.1rem 1.4rem; overflow-y: auto; flex: 1; }
+    #rec-fields .form-group { margin-bottom: 0.85rem; }
+    #rec-fields .form-group > label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      opacity: 0.85;
+      font-family: monospace;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+    #rec-fields textarea,
+    #rec-fields input,
+    #rec-fields select {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      color: var(--text);
+      resize: vertical;
+      background: white;
+    }
+    #rec-fields textarea:focus,
+    #rec-fields input:focus,
+    #rec-fields select:focus { border-color: var(--primary); }
+    #rec-fields .att-thumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.45rem; }
+    #rec-fields .att-thumb { position: relative; width: 56px; height: 56px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); }
+    #rec-fields .att-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    #rec-fields .att-thumb.removed { opacity: 0.3; filter: grayscale(1); }
+    #rec-fields .att-rm {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      width: 18px;
+      height: 18px;
+      border: none;
+      background: #dc2626;
+      color: white;
+      border-radius: 50%;
+      font-size: 0.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    #rec-foot {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--border);
+    }
+    #rec-foot button { padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+    #rec-cancel { border: 1.5px solid var(--border); background: white; color: var(--muted); }
+    #rec-save { border: none; background: var(--primary); color: white; }
+    #rec-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    #rec-delete { border: 1.5px solid #f3c4c4; background: white; color: #dc2626; }
+    #rec-delete:hover { background: #dc2626; color: white; }
+
+    /* ════════════════ VIEW BUILDER MODAL ════════════════ */
+    #view-builder-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    #view-builder-modal.open { display: flex; }
+    #vb-card {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    #vb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    #vb-title { font-weight: 700; color: var(--primary); }
+    #vb-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
+    #vb-body { padding: 1.1rem 1.4rem; overflow-y: auto; }
+    .vb-group { margin-bottom: 1rem; }
+    .vb-group > label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 0.35rem; font-family: monospace; }
+    .vb-group input,
+    .vb-group select {
+      padding: 0.5rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      color: var(--text);
+      background: white;
+    }
+    .vb-group input:focus, .vb-group select:focus { border-color: var(--primary); }
+    .vb-row { display: flex; gap: 0.4rem; align-items: center; }
+    .vb-row select, .vb-row input { flex: 1; min-width: 0; }
+    .vb-row button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .vb-staged { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 2rem; }
+    .vb-staged .vb-empty { color: var(--muted); font-size: 0.8rem; font-style: italic; }
+    .vb-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+    }
+    .vb-chip button { border: none; background: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; line-height: 1; }
+    .vb-chip button:hover { color: #dc2626; }
+    #vb-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--border);
+    }
+    #vb-foot button { padding: 0.6rem 1.3rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+    #vb-cancel { border: 1.5px solid var(--border); background: white; color: var(--muted); }
+    #vb-save { border: none; background: var(--primary); color: white; }
+
+    /* ════════════════ FICHE SYNTHÈSE ════════════════ */
+    .fiche-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+    .fiche-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding: 0.85rem 1.2rem;
+      background: var(--primary-light);
+      border-bottom: 1px solid #c8dedd;
+    }
+    .fiche-head .fiche-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; }
+    .fiche-head .fiche-meta-r { display: flex; align-items: center; gap: 0.6rem; }
+    .fiche-head .fiche-id { font-family: monospace; font-size: 0.72rem; color: var(--muted); cursor: pointer; }
+    .fiche-head .fiche-id:hover { color: var(--primary); }
+    .fiche-print {
+      border: 1.5px solid var(--primary);
+      background: white;
+      color: var(--primary);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .fiche-print:hover { background: var(--primary); color: white; }
+    .fiche-body { padding: 1rem 1.2rem; }
+    .fiche-section { margin-bottom: 1.1rem; }
+    .fiche-section:last-child { margin-bottom: 0; }
+    .fiche-section > h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--second);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.6rem;
+    }
+    .fiche-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.5rem 1.2rem;
+    }
+    .fiche-sub {
+      border-left: 3px solid var(--primary-light);
+      padding-left: 0.7rem;
+      margin-bottom: 0.7rem;
+      grid-column: 1 / -1;
+    }
+    .fiche-sub-title { font-weight: 600; font-size: 0.82rem; color: var(--text); margin-bottom: 0.4rem; }
+    .fiche-field { margin-bottom: 0.4rem; }
+    .fiche-field .k {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: var(--primary);
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      display: block;
+    }
+    .fiche-field .v { font-size: 0.86rem; color: var(--text); white-space: pre-wrap; line-height: 1.5; word-break: break-word; }
+    .fiche-empty-sec { color: var(--muted); font-style: italic; font-size: 0.85rem; }
     </style>
   </head>
   <body id="body">
@@ -1932,6 +2490,16 @@
           Recommandation<span class="tab-count">0</span>
         </button>
 
+        <button class="tab-btn" data-tab="fiche" style="margin-left:auto">
+          📋 Fiche synthèse
+        </button>
+        <button class="tab-btn" data-tab="visualise">
+          🖼 Visualiser
+        </button>
+        <button class="tab-btn" data-tab="vues">
+          🧩 Vues perso<span class="tab-count">0</span>
+        </button>
+
       </div>
 
       <div id="cat-filter" class="cat-filter only-tout">
@@ -1993,6 +2561,51 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- ── VISUALISER PANE (gallery / list) ── -->
+      <div id="visualise-pane" style="display: none">
+        <div class="vz-toolbar">
+          <select id="vz-table-select"></select>
+          <div class="vz-toggle" id="vz-toggle">
+            <button data-view="gallery" class="active">▦ Galerie</button>
+            <button data-view="list">☰ Liste</button>
+          </div>
+          <button class="vz-create-btn" id="vz-create-btn">＋ Créer</button>
+          <span class="vz-meta" id="vz-meta"></span>
+        </div>
+        <div id="vz-content">
+          <div class="state-box">Choisissez une table.</div>
+        </div>
+      </div>
+
+      <!-- ── FICHE SYNTHÈSE PANE (all FS_ fields, grouped per Maison) ── -->
+      <div id="fiche-pane" style="display: none">
+        <div class="vz-toolbar">
+          <span style="font-weight: 700; color: var(--primary)">📋 Fiche synthèse</span>
+          <span style="font-size: 0.8rem; color: var(--muted)">Toutes les colonnes « FS_ » (fiche synthèse) regroupées par Maison. Filtrez par Maison ci-dessus.</span>
+          <span class="vz-meta" id="fiche-meta"></span>
+        </div>
+        <div id="fiche-content">
+          <div class="state-box">Chargement…</div>
+        </div>
+      </div>
+
+      <!-- ── VUES PERSO PANE (custom SQL-like views, localStorage) ── -->
+      <div id="vues-pane" style="display: none">
+        <div class="vz-toolbar">
+          <button class="vz-create-btn" id="vw-new-btn">＋ Nouvelle vue</button>
+          <button class="vz-create-btn" id="vw-master-btn" style="background:var(--second)" title="Une table avec toutes les données liées à chaque Maison">📊 Table complète par Maison</button>
+          <div class="vw-tabs" id="vw-tabs"></div>
+        </div>
+        <div id="vw-content">
+          <div class="state-box">
+            Aucune vue. Cliquez sur « ＋ Nouvelle vue » pour combiner des
+            colonnes de différentes tables (comme en SQL, mais manuellement). Les
+            vues et leurs données sont enregistrées dans votre navigateur
+            (cookies / localStorage).
+          </div>
         </div>
       </div>
     </div>
@@ -2229,6 +2842,82 @@
       </div>
     </div>
 
+    <!-- ── RICH RECORD MODAL (create + edit, imported from visu_airtable) ── -->
+    <div id="rec-modal">
+      <div id="rec-card">
+        <div id="rec-head">
+          <div>
+            <div id="rec-title"></div>
+            <div id="rec-sub"></div>
+          </div>
+          <button id="rec-close" title="Fermer">✕</button>
+        </div>
+        <div id="rec-toolbar">
+          <button type="button" id="rfmt-bold" title="Gras"><b>B</b></button>
+          <button type="button" id="rfmt-italic" title="Italique"><i>I</i></button>
+          <button type="button" id="rfmt-underline" title="Souligner"><u>S</u></button>
+          <input type="color" id="rfmt-color-input" value="#F54927" />
+          <button type="button" id="rfmt-color" title="Colorer">Colorer</button>
+          <button type="button" id="rfmt-fluo" title="Surligner">Fluo</button>
+          <input type="number" id="rfmt-size-input" value="19.2" step="0.1" min="1" style="width: 4.2rem" />
+          <button type="button" id="rfmt-size" title="Taille">Taille</button>
+          <button type="button" id="rfmt-link" title="Lien">Lien</button>
+          <button type="button" id="rfmt-suppr" title="Nettoyer" style="background:#dc2626;color:#fff">X mise en forme</button>
+        </div>
+        <div id="rec-fields"></div>
+        <div id="rec-foot">
+          <button id="rec-delete" style="display: none">Supprimer</button>
+          <div style="flex: 1"></div>
+          <button id="rec-cancel">Annuler</button>
+          <button id="rec-save">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIEW BUILDER MODAL (create custom view / add a column) ── -->
+    <div id="view-builder-modal">
+      <div id="vb-card">
+        <div id="vb-header">
+          <span id="vb-title">Nouvelle vue</span>
+          <button id="vb-close" title="Fermer">✕</button>
+        </div>
+        <div id="vb-body">
+          <div class="vb-group" id="vb-name-group">
+            <label>Nom de la vue</label>
+            <input type="text" id="vb-name" placeholder="Ex : Suivi piscines" />
+          </div>
+          <div class="vb-group" id="vb-joined-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-family:'Inter',sans-serif;text-transform:none;font-weight:600;color:var(--text)">
+              <input type="checkbox" id="vb-joined" checked style="width:auto;accent-color:var(--primary)" />
+              Joindre automatiquement par Maison (comme un JOIN SQL — une ligne par Maison, les tables liées sont rapprochées)
+            </label>
+          </div>
+          <div class="vb-group">
+            <label>Ajouter une colonne depuis une table</label>
+            <div class="vb-row">
+              <select id="vb-table"></select>
+              <select id="vb-field"></select>
+              <button type="button" id="vb-add-col">Ajouter</button>
+            </div>
+            <div class="vb-row" style="margin-top: 0.5rem">
+              <input type="text" id="vb-custom" placeholder="…ou colonne libre (nom)" />
+              <button type="button" id="vb-add-custom">Ajouter libre</button>
+            </div>
+          </div>
+          <div class="vb-group">
+            <label>Colonnes sélectionnées</label>
+            <div id="vb-staged" class="vb-staged">
+              <span class="vb-empty">Aucune colonne pour l'instant.</span>
+            </div>
+          </div>
+        </div>
+        <div id="vb-foot">
+          <button id="vb-cancel">Annuler</button>
+          <button id="vb-save">Créer la vue</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
       //shortcut
@@ -2272,6 +2961,23 @@ document.addEventListener('keydown', (event) => {
       const recIdToHouseName = {}; // Airtable recId → maison name (for linked record lookup)
       const recordIdToTable = {}; // recId → tableName (for cross-table navigation)
       const tableSchemas = {}; // tableName → [fieldName, ...] in real column order (from Meta API)
+      const tableFieldsMeta = {}; // tableName → [{name,type,options}, ...] (from Meta API)
+      const tableIdToName = {}; // tableId → tableName (resolve linked tables)
+
+      /* ── Visualiser / Vues perso state ── */
+      const VZ_TABLES = [
+        { name: 'Maison', label: 'Maison' },
+        { name: 'fonctionnementMaison', label: 'Fonctionnement' },
+        { name: 'Piscine', label: 'Piscine' },
+        { name: 'DispositionMaison', label: 'Disposition' },
+        { name: 'WorkFlowBreezeway', label: 'WorkFlow' },
+        { name: 'ConditionLocation', label: 'Condition Loc.' },
+        { name: 'Proprietaire', label: 'Propriétaire' },
+        { name: 'Recommandation', label: 'Recommandation' },
+        { name: 'ListeMaison', label: 'ListeMaison' },
+      ];
+      let vzTable = 'Maison'; // table shown in Visualiser
+      let vzView = 'gallery'; // 'gallery' | 'list'
 
       /* ── photo editor state ── */
       let photoCtx = null; // { table, recId, field }
@@ -2369,9 +3075,126 @@ document.addEventListener('keydown', (event) => {
           const data = await res.json();
           (data.tables || []).forEach((t) => {
             tableSchemas[t.name] = (t.fields || []).map((f) => f.name);
+            tableFieldsMeta[t.name] = t.fields || [];
+            tableIdToName[t.id] = t.name;
           });
         } catch (e) {
           /* ignore – viewer falls back to keys seen in records */
+        }
+      }
+
+      /* ── Field-type helpers (shared by gallery + rich record form) ── */
+      function flatV(v) {
+        if (v == null || v === '') return '';
+        if (typeof v === 'boolean') return v ? 'Oui' : 'Non';
+        if (Array.isArray(v)) {
+          if (!v.length) return '';
+          if (typeof v[0] === 'string' || typeof v[0] === 'number') return v.join(', ');
+          if (v[0] && typeof v[0] === 'object' && v[0].url) return '';
+          return v
+            .map((x) => (x && typeof x === 'object' ? x.name || x.id || '' : String(x)))
+            .filter(Boolean)
+            .join(', ');
+        }
+        return String(v);
+      }
+      function fieldMeta(table, field) {
+        return (tableFieldsMeta[table] || []).find((f) => f.name === field) || null;
+      }
+      function isLinkField(table, field) {
+        const m = fieldMeta(table, field);
+        return !!m && m.type === 'multipleRecordLinks';
+      }
+      function isSelectField(table, field) {
+        const m = fieldMeta(table, field);
+        return !!m && (m.type === 'singleSelect' || m.type === 'multipleSelects');
+      }
+      function linkedTableName(table, field) {
+        const m = fieldMeta(table, field);
+        return m && m.options ? tableIdToName[m.options.linkedTableId] : undefined;
+      }
+      function fieldIsAttachment(table, field) {
+        const m = fieldMeta(table, field);
+        if (m && m.type === 'multipleAttachments') return true;
+        return (db[table] || []).some((r) => {
+          const v = r.fields[field];
+          return Array.isArray(v) && v[0] && typeof v[0] === 'object' && v[0].url;
+        });
+      }
+      function fieldIsBoolean(table, field) {
+        const m = fieldMeta(table, field);
+        if (m && m.type === 'checkbox') return true;
+        return (db[table] || []).some((r) => typeof r.fields[field] === 'boolean');
+      }
+      function attachmentsOf(rec, field) {
+        const v = rec.fields[field];
+        if (!Array.isArray(v)) return [];
+        return v.filter((a) => a && typeof a === 'object' && a.url);
+      }
+      function firstImage(rec, fields) {
+        for (const f of fields) {
+          const atts = attachmentsOf(rec, f).filter(
+            (a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
+          );
+          if (atts.length) return atts[0].url;
+        }
+        return '';
+      }
+      function fieldsFor(table) {
+        if (tableSchemas[table] && tableSchemas[table].length) {
+          return tableSchemas[table].filter((f) => !f.startsWith('_'));
+        }
+        const set = new Set();
+        (db[table] || []).forEach((r) =>
+          Object.keys(r.fields).forEach((k) => {
+            if (!k.startsWith('_')) set.add(k);
+          }),
+        );
+        return [...set];
+      }
+      function scalarFields(table) {
+        return fieldsFor(table).filter((f) => !fieldIsAttachment(table, f));
+      }
+      function recordTitle(rec, table) {
+        for (const f of scalarFields(table)) {
+          const val = flatV(rec.fields[f]);
+          if (val) return val.length > 70 ? val.slice(0, 70) + '…' : val;
+        }
+        return rec.id;
+      }
+      function displayFieldValue(table, field, rec) {
+        const v = rec.fields[field];
+        if (isLinkField(table, field)) {
+          const ln = linkedTableName(table, field);
+          const ids = Array.isArray(v) ? v : v ? [v] : [];
+          return ids
+            .map((id) => {
+              const lr = ln ? (db[ln] || []).find((r) => r.id === id) : null;
+              return lr ? recordTitle(lr, ln) : id;
+            })
+            .join(', ');
+        }
+        return flatV(v);
+      }
+      async function ensureTableLoaded(table) {
+        if (db[table] === undefined) {
+          try {
+            db[table] = await fetchAll(table);
+            (db[table] || []).forEach((rec) => {
+              recordIdToTable[rec.id] = table;
+            });
+          } catch (e) {
+            db[table] = [];
+          }
+        }
+      }
+      async function ensureLinkedTablesLoaded(table) {
+        const links = (tableFieldsMeta[table] || []).filter(
+          (f) => f.type === 'multipleRecordLinks',
+        );
+        for (const f of links) {
+          const ln = tableIdToName[f.options && f.options.linkedTableId];
+          if (ln) await ensureTableLoaded(ln);
         }
       }
 
@@ -3457,6 +4280,12 @@ document.addEventListener('keydown', (event) => {
           renderToutRows(filtered);
         } else if (currentTab === 'alltables') {
           renderAllTables(currentQuery);
+        } else if (currentTab === 'visualise') {
+          renderVisualisePane();
+        } else if (currentTab === 'vues') {
+          renderVuesPane();
+        } else if (currentTab === 'fiche') {
+          renderFichePane();
         } else {
           renderTableData(currentTab, currentQuery);
         }
@@ -3480,12 +4309,28 @@ document.addEventListener('keydown', (event) => {
           document.body.classList.add('show-table');
         }
 
+        /* Toggle the special panes (Visualiser / Vues perso) vs. the table view */
+        const isVisualise = tabName === 'visualise';
+        const isVues = tabName === 'vues';
+        const isFiche = tabName === 'fiche';
+        const special = isVisualise || isVues || isFiche;
+        document.getElementById('visualise-pane').style.display = isVisualise ? 'block' : 'none';
+        document.getElementById('vues-pane').style.display = isVues ? 'block' : 'none';
+        document.getElementById('fiche-pane').style.display = isFiche ? 'block' : 'none';
+        document.querySelector('.table-wrap').style.display = special ? 'none' : '';
+        document.querySelector('.meta-bar').style.display = special ? 'none' : 'flex';
+        if (special) {
+          applyFilter();
+          return;
+        }
+
         /* Lazy-load tables the first time a tab is accessed */
+        const realTableTab = !['all', 'alltables'].includes(tabName);
         const lazyTables = tabName === 'alltables'
           ? [TABLE_MAISON, TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON,
              TABLE_DISPOSITION, TABLE_WORKFLOW, TABLE_CONDITION, TABLE_PROPRIETAIRE, TABLE_RECOMMANDATION]
               .filter(t => db[t] === undefined)
-          : (tabName !== 'all' && db[tabName] === undefined ? [tabName] : []);
+          : (realTableTab && db[tabName] === undefined ? [tabName] : []);
 
         if (lazyTables.length > 0) {
           document.getElementById('tbody').innerHTML =
@@ -3513,6 +4358,7 @@ document.addEventListener('keydown', (event) => {
         Object.keys(db).forEach((t) => {
           counts[t] = (db[t] || []).length;
         });
+        counts.vues = loadViews().length;
         document.querySelectorAll('.tab-btn').forEach((btn) => {
           const t = btn.dataset.tab;
           const span = btn.querySelector('.tab-count');
@@ -3594,6 +4440,8 @@ document.addEventListener('keydown', (event) => {
           closeCreateModal();
           closePhotoEditor();
           closeDataViewer();
+          closeRecModal();
+          closeViewBuilder();
         }
       });
 
@@ -4100,8 +4948,11 @@ document.addEventListener('keydown', (event) => {
       }
 
       document.getElementById('create-btn').addEventListener('click', () => {
-        if (currentTab && currentTab !== 'all' && currentTab !== 'alltables') {
-          openCreateModal(currentTab);
+        if (
+          currentTab &&
+          !['all', 'alltables', 'visualise', 'vues'].includes(currentTab)
+        ) {
+          openRecModal('create', currentTab);
         }
       });
 
@@ -4716,6 +5567,1386 @@ document.addEventListener('keydown', (event) => {
           document.getElementById('tbody').innerHTML =
             `<tr><td colspan="6"><div class="state-box">Erreur : ${esc(err.message)}</div></td></tr>`;
         }
+      }
+
+      /* ═══════════════════════════════════════════════════════════════════
+         VISUALISER + VUES PERSO + RICH RECORD FORM (merged from visu_airtable)
+         ═══════════════════════════════════════════════════════════════════ */
+      function vtoast(text, ok = true) {
+        Toastify({
+          text,
+          duration: 2400,
+          style: { background: ok ? '#1F6D67' : '#dc2626' },
+        }).showToast();
+      }
+
+      async function updateRecordFields(table, recId, fields) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`;
+        const res = await fetch(url, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fields }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
+      async function deleteRecordApi(table, recId) {
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`;
+        const res = await fetch(url, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
+
+      /* Rebuild in-memory derived data after a create/edit/delete. */
+      function refreshAfterMutation(table) {
+        if (
+          [
+            TABLE_MAISON,
+            TABLE_EQUIPEMENT,
+            TABLE_PISCINE,
+            TABLE_LISTE_MAISON,
+            TABLE_RECOMMANDATION,
+          ].includes(table)
+        ) {
+          const { rows } = buildData();
+          allRows = rows;
+        }
+        window._allTablesData = build_all_tables();
+        updateTabCounts();
+        applyFilter();
+      }
+
+      /* ──────────────── VISUALISER (gallery / list) ──────────────── */
+      function vzFilteredRecords() {
+        let recs = db[vzTable] || [];
+        const house = getSelectedHouseName();
+        if (house) {
+          // Filtre par Maison basé sur le LIEN (Link_Maison), pas sur du texte :
+          // chaque table est reliée à Maison, on suit donc la relation.
+          const exact = houseNameToId[house]; // recId de la Maison sélectionnée
+          const hl = house.toLowerCase();
+          recs = recs.filter((r) => {
+            if (exact) {
+              const dm = detectMaison(r.fields, vzTable);
+              return (
+                dm &&
+                (dm.maisonId === exact ||
+                  (dm.maisonName || '').toLowerCase() === hl)
+              );
+            }
+            // Maison inconnue (texte libre) → repli sur une recherche textuelle.
+            return Object.values(r.fields).some((v) =>
+              flatV(v).toLowerCase().includes(hl),
+            );
+          });
+        }
+        const q = (currentQuery || '').trim().toLowerCase();
+        if (q) {
+          recs = recs.filter((r) =>
+            Object.values(r.fields).some((v) =>
+              flatV(v).toLowerCase().includes(q),
+            ),
+          );
+        }
+        return recs;
+      }
+
+      const VZ_NOIMG = `<span class="no-img"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>`;
+
+      // Tous les champs « pièces jointes » d'une table (pour gérer les photos).
+      function attachmentFieldsFor(table) {
+        return fieldsFor(table).filter((f) => fieldIsAttachment(table, f));
+      }
+      // Un bouton « 📷 Photos » par champ pièce-jointe : ouvre l'éditeur de photos
+      // existant (ajout par URL / fichier + suppression), réutilisé tel quel.
+      function vzPhotoButtons(rec) {
+        const af = attachmentFieldsFor(vzTable);
+        if (!af.length) return '';
+        return af
+          .map((f) => {
+            const n = (rec.fields[f] || []).filter((a) => a && a.url).length;
+            const label = af.length > 1 ? esc(f) : 'Photos';
+            return `<button class="act-btn photo-edit-btn" data-table="${esc(vzTable)}" data-recid="${esc(rec.id)}" data-field="${esc(f)}" title="Ajouter / supprimer des photos (${esc(f)})">📷 ${label}${n ? ` (${n})` : ''}</button>`;
+          })
+          .join('');
+      }
+
+      function vzGallery(recs) {
+        const fields = fieldsFor(vzTable);
+        const scal = scalarFields(vzTable);
+        return (
+          `<div class="gallery">` +
+          recs
+            .map((rec) => {
+              const cover = firstImage(rec, fields);
+              const title = esc(recordTitle(rec, vzTable));
+              const previews = scal
+                .slice(0, 5)
+                .map((f) => {
+                  const val = displayFieldValue(vzTable, f, rec);
+                  return `<div class="gfield"><span class="k">${esc(f)}</span><span class="v ${val ? '' : 'empty'}">${val ? esc(val) : '—'}</span></div>`;
+                })
+                .join('');
+              return `<div class="gcard">
+                <div class="gcard-cover">${cover ? `<img class="thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : VZ_NOIMG}</div>
+                <div class="gcard-body">
+                  <div class="gcard-title">${title}</div>
+                  ${previews}
+                </div>
+                <div class="card-actions">
+                  <span class="rec-id" data-copy="${esc(rec.id)}" title="Copier l'ID">${esc(rec.id)}</span>
+                  ${vzPhotoButtons(rec)}
+                  <button class="act-btn edit" data-vz-edit="${esc(rec.id)}">✎ Modifier</button>
+                  <button class="act-btn del" data-vz-del="${esc(rec.id)}">🗑</button>
+                </div>
+              </div>`;
+            })
+            .join('') +
+          `</div>`
+        );
+      }
+
+      function vzListView(recs) {
+        const fields = fieldsFor(vzTable);
+        const scal = scalarFields(vzTable);
+        return (
+          `<div class="vz-list">` +
+          recs
+            .map((rec) => {
+              const cover = firstImage(rec, fields);
+              const title = esc(recordTitle(rec, vzTable));
+              const sub = scal
+                .slice(0, 4)
+                .map((f) => {
+                  const val = displayFieldValue(vzTable, f, rec);
+                  if (!val) return '';
+                  return `<b>${esc(f)}:</b> ${esc(val.length > 40 ? val.slice(0, 40) + '…' : val)}`;
+                })
+                .filter(Boolean)
+                .join(' &nbsp;·&nbsp; ');
+              return `<div class="lrow">
+                ${cover ? `<img class="lthumb thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : `<div class="lthumb placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
+                <div class="lmain">
+                  <div class="ltitle">${title}</div>
+                  <div class="lsub">${sub || `<span class="rec-id" data-copy="${esc(rec.id)}">${esc(rec.id)}</span>`}</div>
+                </div>
+                <div class="lactions">
+                  ${vzPhotoButtons(rec)}
+                  <button class="act-btn edit" data-vz-edit="${esc(rec.id)}">✎ Modifier</button>
+                  <button class="act-btn del" data-vz-del="${esc(rec.id)}">🗑 Supprimer</button>
+                </div>
+              </div>`;
+            })
+            .join('') +
+          `</div>`
+        );
+      }
+
+      async function renderVisualisePane() {
+        const sel = document.getElementById('vz-table-select');
+        if (!sel.dataset.filled) {
+          sel.innerHTML = VZ_TABLES.map(
+            (t) => `<option value="${esc(t.name)}">${esc(t.label)}</option>`,
+          ).join('');
+          sel.value = vzTable;
+          sel.dataset.filled = '1';
+        }
+        document
+          .querySelectorAll('#vz-toggle button')
+          .forEach((b) => b.classList.toggle('active', b.dataset.view === vzView));
+
+        const content = document.getElementById('vz-content');
+        if (db[vzTable] === undefined) {
+          content.innerHTML =
+            '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+          await ensureTableLoaded(vzTable);
+          await ensureLinkedTablesLoaded(vzTable);
+          updateTabCounts();
+          if (currentTab !== 'visualise') return;
+        }
+        const recs = vzFilteredRecords();
+        document.getElementById('vz-meta').textContent =
+          `${recs.length} enregistrement(s)`;
+        if (!recs.length) {
+          content.innerHTML = `<div class="state-box">Aucun enregistrement${currentQuery ? ' pour cette recherche' : ''}.</div>`;
+          return;
+        }
+        content.innerHTML =
+          vzView === 'gallery' ? vzGallery(recs) : vzListView(recs);
+      }
+
+      document
+        .getElementById('vz-table-select')
+        .addEventListener('change', (e) => {
+          vzTable = e.target.value;
+          renderVisualisePane();
+        });
+      document.getElementById('vz-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-view]');
+        if (!btn) return;
+        vzView = btn.dataset.view;
+        renderVisualisePane();
+      });
+      document.getElementById('vz-create-btn').addEventListener('click', () => {
+        openRecModal('create', vzTable);
+      });
+      document.getElementById('vz-content').addEventListener('click', (e) => {
+        const ed = e.target.closest('[data-vz-edit]');
+        if (ed) {
+          openRecModal('edit', vzTable, ed.dataset.vzEdit);
+          return;
+        }
+        const del = e.target.closest('[data-vz-del]');
+        if (del) {
+          quickDeleteRecord(vzTable, del.dataset.vzDel);
+          return;
+        }
+        const cp = e.target.closest('[data-copy]');
+        if (cp) copy(cp.dataset.copy);
+      });
+
+      async function quickDeleteRecord(table, recId) {
+        if (!confirm('Supprimer définitivement cet enregistrement ?\n' + recId))
+          return;
+        try {
+          await deleteRecordApi(table, recId);
+          db[table] = (db[table] || []).filter((r) => r.id !== recId);
+          vtoast('Supprimé');
+          refreshAfterMutation(table);
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+        }
+      }
+
+      /* ──────────────── RICH RECORD MODAL (create / edit / delete) ──────────────── */
+      let recCtx = null; // { mode:'create'|'edit', table, recId }
+
+      function recFieldInputHtml(table, field, rec) {
+        const val = rec ? rec.fields[field] : undefined;
+        if (isLinkField(table, field)) {
+          const ln = linkedTableName(table, field);
+          const meta = fieldMeta(table, field);
+          const single = !!(
+            meta &&
+            meta.options &&
+            meta.options.prefersSingleRecordLink
+          );
+          const curIds = Array.isArray(val) ? val : val ? [val] : [];
+          const recs = ln ? db[ln] || [] : [];
+          const opts = recs
+            .map(
+              (r) =>
+                `<option value="${esc(r.id)}" ${curIds.includes(r.id) ? 'selected' : ''}>${esc(recordTitle(r, ln))}</option>`,
+            )
+            .join('');
+          const multiAttr = single ? '' : 'multiple size="6"';
+          const emptyOpt = single
+            ? `<option value="" ${curIds.length ? '' : 'selected'}>— (vide)</option>`
+            : '';
+          const hint = single
+            ? '(lien)'
+            : '(liens — Ctrl/Cmd pour en choisir plusieurs)';
+          return `<div class="form-group" data-field="${esc(field)}" data-type="link">
+            <label>${esc(field)} <span style="opacity:.6;font-weight:400">${hint}</span></label>
+            <select ${multiAttr}>${emptyOpt}${opts}</select>
+            ${recs.length ? '' : '<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem">Aucun enregistrement dans la table liée.</div>'}
+          </div>`;
+        }
+        if (isSelectField(table, field)) {
+          const meta = fieldMeta(table, field);
+          const multi = meta.type === 'multipleSelects';
+          const choices =
+            meta.options && meta.options.choices ? meta.options.choices : [];
+          const curVals = multi ? (Array.isArray(val) ? val : []) : [val];
+          const opts = choices
+            .map(
+              (c) =>
+                `<option value="${esc(c.name)}" ${curVals.includes(c.name) ? 'selected' : ''}>${esc(c.name)}</option>`,
+            )
+            .join('');
+          const multiAttr = multi ? 'multiple size="6"' : '';
+          const emptyOpt = multi
+            ? ''
+            : `<option value="" ${!val ? 'selected' : ''}>— (vide)</option>`;
+          const hint = multi ? '(choix multiples — Ctrl/Cmd)' : '(choix)';
+          return `<div class="form-group" data-field="${esc(field)}" data-type="select" data-multi="${multi}">
+            <label>${esc(field)} <span style="opacity:.6;font-weight:400">${hint}</span></label>
+            <select ${multiAttr}>${emptyOpt}${opts}</select>
+          </div>`;
+        }
+        if (fieldIsAttachment(table, field)) {
+          const atts = rec ? attachmentsOf(rec, field) : [];
+          const thumbs = atts
+            .map(
+              (a) =>
+                `<div class="att-thumb" data-id="${esc(a.id)}"><img src="${esc(a.url)}" alt=""><button type="button" class="att-rm" title="Retirer">✕</button></div>`,
+            )
+            .join('');
+          return `<div class="form-group" data-field="${esc(field)}" data-type="attachment">
+            <label>${esc(field)} <span style="opacity:.6;font-weight:400">(photos)</span></label>
+            <div class="att-thumbs">${thumbs}</div>
+            <textarea class="att-new" rows="2" placeholder="Ajouter des URLs d'images (une par ligne)"></textarea>
+          </div>`;
+        }
+        if (fieldIsBoolean(table, field)) {
+          const cur = val === true ? 'true' : val === false ? 'false' : '';
+          return `<div class="form-group" data-field="${esc(field)}" data-type="boolean">
+            <label>${esc(field)}</label>
+            <select>
+              <option value="" ${cur === '' ? 'selected' : ''}>— (vide)</option>
+              <option value="true" ${cur === 'true' ? 'selected' : ''}>true (Oui)</option>
+              <option value="false" ${cur === 'false' ? 'selected' : ''}>false (Non)</option>
+            </select>
+          </div>`;
+        }
+        const text = flatV(val);
+        return `<div class="form-group" data-field="${esc(field)}" data-type="text">
+          <label>${esc(field)}</label>
+          <textarea rows="2" placeholder="${esc(field)}" class="rec-textarea">${esc(text)}</textarea>
+        </div>`;
+      }
+
+      async function openRecModal(mode, table, recId) {
+        recCtx = { mode, table, recId: recId || null };
+        document.getElementById('rec-title').textContent = table;
+        document.getElementById('rec-sub').textContent =
+          mode === 'edit' ? recId : 'Nouvel enregistrement';
+        document.getElementById('rec-delete').style.display =
+          mode === 'edit' ? '' : 'none';
+        document.getElementById('rec-save').textContent =
+          mode === 'edit' ? 'Enregistrer' : 'Créer';
+        document.getElementById('rec-save').disabled = false;
+        document.getElementById('rec-fields').innerHTML =
+          '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+        document.getElementById('rec-modal').classList.add('open');
+
+        await ensureTableLoaded(table);
+        await ensureLinkedTablesLoaded(table);
+        if (!recCtx || recCtx.table !== table || recCtx.recId !== (recId || null))
+          return;
+        const rec =
+          mode === 'edit'
+            ? (db[table] || []).find((r) => r.id === recId)
+            : null;
+        document.getElementById('rec-fields').innerHTML = fieldsFor(table)
+          .map((f) => recFieldInputHtml(table, f, rec))
+          .join('');
+      }
+
+      function closeRecModal() {
+        document.getElementById('rec-modal').classList.remove('open');
+        recCtx = null;
+      }
+
+      function recCollectForm(rec) {
+        const groups = document.querySelectorAll('#rec-fields .form-group');
+        const fields = {};
+        let changed = false;
+        groups.forEach((g) => {
+          const field = g.dataset.field;
+          const type = g.dataset.type;
+          if (type === 'attachment') {
+            const kept = [...g.querySelectorAll('.att-thumb:not(.removed)')].map(
+              (t) => ({ id: t.dataset.id }),
+            );
+            const newUrls = g
+              .querySelector('.att-new')
+              .value.split(/[\n,]/)
+              .map((s) => s.trim())
+              .filter(Boolean)
+              .map((u) => ({ url: u }));
+            const removedAny = g.querySelector('.att-thumb.removed') !== null;
+            if (newUrls.length || removedAny) {
+              fields[field] = [...kept, ...newUrls];
+              changed = true;
+            }
+          } else if (type === 'link') {
+            const selEl = g.querySelector('select');
+            const newArr = selEl.multiple
+              ? [...selEl.selectedOptions].map((o) => o.value).filter(Boolean)
+              : selEl.value
+                ? [selEl.value]
+                : [];
+            const orig = rec
+              ? Array.isArray(rec.fields[field])
+                ? rec.fields[field]
+                : []
+              : [];
+            const same =
+              JSON.stringify([...orig].sort()) ===
+              JSON.stringify([...newArr].sort());
+            if (!rec) {
+              if (newArr.length) {
+                fields[field] = newArr;
+                changed = true;
+              }
+            } else if (!same) {
+              fields[field] = newArr;
+              changed = true;
+            }
+          } else if (type === 'select') {
+            const selEl = g.querySelector('select');
+            const multi = g.dataset.multi === 'true';
+            if (multi) {
+              const newArr = [...selEl.selectedOptions]
+                .map((o) => o.value)
+                .filter(Boolean);
+              const orig = rec
+                ? Array.isArray(rec.fields[field])
+                  ? rec.fields[field]
+                  : []
+                : [];
+              const same =
+                JSON.stringify([...orig].sort()) ===
+                JSON.stringify([...newArr].sort());
+              if (!rec) {
+                if (newArr.length) {
+                  fields[field] = newArr;
+                  changed = true;
+                }
+              } else if (!same) {
+                fields[field] = newArr;
+                changed = true;
+              }
+            } else {
+              const v = selEl.value;
+              const orig = rec ? rec.fields[field] || '' : '';
+              if (!rec) {
+                if (v) {
+                  fields[field] = v;
+                  changed = true;
+                }
+              } else if (v !== orig) {
+                fields[field] = v === '' ? null : v;
+                changed = true;
+              }
+            }
+          } else if (type === 'boolean') {
+            const v = g.querySelector('select').value;
+            const orig = rec ? rec.fields[field] : undefined;
+            if (v === '') {
+              if (rec && orig !== undefined && orig !== null) {
+                fields[field] = null;
+                changed = true;
+              }
+            } else {
+              const bool = v === 'true';
+              if (!rec || orig !== bool) {
+                fields[field] = bool;
+                changed = true;
+              }
+            }
+          } else {
+            const v = g.querySelector('textarea').value;
+            const orig = rec ? flatV(rec.fields[field]) : '';
+            if (!rec) {
+              if (v.trim() !== '') {
+                fields[field] = v;
+                changed = true;
+              }
+            } else if (v !== orig) {
+              fields[field] = v === '' ? null : v;
+              changed = true;
+            }
+          }
+        });
+        return { fields, changed };
+      }
+
+      async function saveRecModal() {
+        if (!recCtx) return;
+        const saveBtn = document.getElementById('rec-save');
+        const rec =
+          recCtx.mode === 'edit'
+            ? (db[recCtx.table] || []).find((r) => r.id === recCtx.recId)
+            : null;
+        const { fields, changed } = recCollectForm(rec);
+
+        if (recCtx.mode === 'create' && Object.keys(fields).length === 0) {
+          vtoast('Renseignez au moins un champ', false);
+          return;
+        }
+        if (recCtx.mode === 'edit' && !changed) {
+          vtoast('Aucune modification');
+          closeRecModal();
+          return;
+        }
+        saveBtn.disabled = true;
+        saveBtn.textContent =
+          recCtx.mode === 'create' ? 'Création…' : 'Enregistrement…';
+        try {
+          if (recCtx.mode === 'create') {
+            const result = await createRecord(recCtx.table, fields);
+            if (!db[recCtx.table]) db[recCtx.table] = [];
+            db[recCtx.table].push(result);
+            recordIdToTable[result.id] = recCtx.table;
+            vtoast('Créé avec succès !');
+          } else {
+            const result = await updateRecordFields(
+              recCtx.table,
+              recCtx.recId,
+              fields,
+            );
+            const arr = db[recCtx.table];
+            const idx = arr.findIndex((r) => r.id === recCtx.recId);
+            if (idx >= 0) arr[idx] = result;
+            vtoast('Modifié avec succès !');
+          }
+          const t = recCtx.table;
+          closeRecModal();
+          refreshAfterMutation(t);
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+          saveBtn.disabled = false;
+          saveBtn.textContent =
+            recCtx.mode === 'create' ? 'Créer' : 'Enregistrer';
+        }
+      }
+
+      async function deleteRecModal() {
+        if (!recCtx || recCtx.mode !== 'edit') return;
+        if (
+          !confirm(
+            'Supprimer définitivement cet enregistrement ?\n' + recCtx.recId,
+          )
+        )
+          return;
+        const btn = document.getElementById('rec-delete');
+        btn.disabled = true;
+        btn.textContent = 'Suppression…';
+        try {
+          await deleteRecordApi(recCtx.table, recCtx.recId);
+          db[recCtx.table] = (db[recCtx.table] || []).filter(
+            (r) => r.id !== recCtx.recId,
+          );
+          const t = recCtx.table;
+          vtoast('Supprimé');
+          closeRecModal();
+          refreshAfterMutation(t);
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Supprimer';
+        }
+      }
+
+      document.getElementById('rec-close').addEventListener('click', closeRecModal);
+      document.getElementById('rec-cancel').addEventListener('click', closeRecModal);
+      document.getElementById('rec-save').addEventListener('click', saveRecModal);
+      document.getElementById('rec-delete').addEventListener('click', deleteRecModal);
+      document.getElementById('rec-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeRecModal();
+      });
+      document.getElementById('rec-fields').addEventListener('click', (e) => {
+        const rm = e.target.closest('.att-rm');
+        if (rm) rm.closest('.att-thumb').classList.toggle('removed');
+      });
+
+      /* Formatting toolbar for the rich record form (targets the focused textarea) */
+      (function setupRecFormatting() {
+        const root = document.getElementById('rec-fields');
+        const isTa = (el) =>
+          el && el.tagName === 'TEXTAREA' && el.classList.contains('rec-textarea');
+        let activeTa = null;
+        let lastSel = { start: 0, end: 0 };
+        const remember = (e) => {
+          if (!isTa(e.target)) return;
+          activeTa = e.target;
+          lastSel = { start: e.target.selectionStart, end: e.target.selectionEnd };
+        };
+        ['keyup', 'mouseup', 'select', 'focus', 'click'].forEach((ev) =>
+          root.addEventListener(ev, remember, true),
+        );
+        const getTa = () =>
+          activeTa && document.body.contains(activeTa)
+            ? activeTa
+            : root.querySelector('textarea.rec-textarea');
+        function applyWrap(before, after, transform) {
+          const el = getTa();
+          if (!el) return;
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          if (start === end && lastSel.start !== lastSel.end) {
+            start = lastSel.start;
+            end = lastSel.end;
+          }
+          const selected = el.value.slice(start, end);
+          const inner = transform ? transform(selected) : selected;
+          const insert = before + inner + after;
+          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
+          el.focus();
+          el.selectionStart = start + before.length;
+          el.selectionEnd = el.selectionStart + inner.length;
+          activeTa = el;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+        }
+        const on = (id, fn) => {
+          const b = document.getElementById(id);
+          if (b)
+            b.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              fn();
+            });
+        };
+        on('rfmt-bold', () => applyWrap('<h style="font-weight: bold">', '</h>'));
+        on('rfmt-italic', () =>
+          applyWrap('<h style="font-style: italic">', '</h>'),
+        );
+        on('rfmt-underline', () =>
+          applyWrap('<h style="text-decoration: underline;">', '</h>'),
+        );
+        on('rfmt-color', () =>
+          applyWrap(
+            `<h style="color: ${document.getElementById('rfmt-color-input').value || '#000'}">`,
+            '</h>',
+          ),
+        );
+        on('rfmt-fluo', () =>
+          applyWrap(
+            `<h style="background-color: ${document.getElementById('rfmt-color-input').value || '#ffff62'}">`,
+            '</h>',
+          ),
+        );
+        on('rfmt-size', () =>
+          applyWrap(
+            `<h style="font-size: ${document.getElementById('rfmt-size-input').value || '16'}px">`,
+            '</h>',
+          ),
+        );
+        on('rfmt-link', () => {
+          const url = prompt('Entrer le lien (https://…)');
+          if (url) applyWrap(`<a href="${url}">`, '</a>');
+        });
+        on('rfmt-suppr', () => {
+          const el = getTa();
+          if (!el) return;
+          let start = el.selectionStart,
+            end = el.selectionEnd;
+          if (start === end) {
+            start = 0;
+            end = el.value.length;
+          }
+          const cleaned = el.value
+            .slice(start, end)
+            .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+          el.value = el.value.slice(0, start) + cleaned + el.value.slice(end);
+          el.focus();
+          el.selectionStart = start;
+          el.selectionEnd = start + cleaned.length;
+        });
+      })();
+
+      /* ──────────────── VUES PERSO (custom views, localStorage) ──────────────── */
+      const VIEWS_KEY = 'idylliq_custom_views';
+      let activeViewId = null;
+      let vbMode = 'create'; // 'create' | 'addcol'
+      let vbStaged = []; // [{ table, field, custom, label }]
+
+      function loadViews() {
+        try {
+          return JSON.parse(localStorage.getItem(VIEWS_KEY)) || [];
+        } catch (e) {
+          return [];
+        }
+      }
+      function saveViews(v) {
+        localStorage.setItem(VIEWS_KEY, JSON.stringify(v));
+      }
+      function getActiveView() {
+        return loadViews().find((v) => v.id === activeViewId) || null;
+      }
+      function persistView(view) {
+        const views = loadViews();
+        const idx = views.findIndex((v) => v.id === view.id);
+        if (idx >= 0) views[idx] = view;
+        saveViews(views);
+      }
+      function uid(prefix) {
+        return (
+          prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+        );
+      }
+
+      async function renderVuesPane() {
+        const views = loadViews();
+        const tabs = document.getElementById('vw-tabs');
+        tabs.innerHTML = views
+          .map(
+            (v) =>
+              `<button class="vw-tab ${v.id === activeViewId ? 'active' : ''}" data-view-id="${esc(v.id)}">${v.joined ? '🔗 ' : ''}${esc(v.name)}</button>`,
+          )
+          .join('');
+        const content = document.getElementById('vw-content');
+        if (!views.length) {
+          activeViewId = null;
+          content.innerHTML =
+            '<div class="state-box">Aucune vue. Cliquez sur « ＋ Nouvelle vue » pour combiner des colonnes de différentes tables (jointes par Maison), ou sur « 📊 Table complète par Maison » pour tout voir d\'un coup. Tout est enregistré dans votre navigateur.</div>';
+          return;
+        }
+        if (!activeViewId || !views.find((v) => v.id === activeViewId))
+          activeViewId = views[0].id;
+        tabs
+          .querySelectorAll('.vw-tab')
+          .forEach((b) =>
+            b.classList.toggle('active', b.dataset.viewId === activeViewId),
+          );
+        const view = getActiveView();
+        if (view && view.joined) {
+          content.innerHTML =
+            '<div class="state-box"><div class="spinner"></div>Jointure des tables par Maison…</div>';
+          await ensureJoinTablesLoaded(view);
+          // Bail out if the user switched views while we were loading.
+          if (activeViewId !== view.id || currentTab !== 'vues') return;
+          content.innerHTML = renderJoinedViewTable(view);
+        } else {
+          content.innerHTML = renderViewTable(view);
+        }
+      }
+
+      /* ── Auto-jointure par Maison (comme un JOIN SQL) ──────────────── */
+      // Charge la table Maison + toutes les tables référencées par la vue.
+      async function ensureJoinTablesLoaded(view) {
+        const tables = new Set([TABLE_MAISON]);
+        (view.columns || []).forEach((c) => {
+          if (!c.custom && c.table) tables.add(c.table);
+        });
+        for (const t of tables) {
+          await ensureTableLoaded(t);
+          await ensureLinkedTablesLoaded(t);
+        }
+      }
+
+      // Tous les enregistrements d'une table reliés à une Maison donnée.
+      function joinLinkedRecords(table, maisonRec) {
+        if (table === TABLE_MAISON) return [maisonRec];
+        const name = (recIdToHouseName[maisonRec.id] || '').toLowerCase();
+        return (db[table] || []).filter((r) => {
+          const dm = detectMaison(r.fields, table);
+          if (!dm) return false;
+          return (
+            dm.maisonId === maisonRec.id ||
+            (dm.maisonName || '').toLowerCase() === name
+          );
+        });
+      }
+
+      // Une ligne par Maison ; chaque cellule rassemble les valeurs des
+      // enregistrements liés (séparées par « | » quand il y en a plusieurs).
+      function computeJoinedRows(view) {
+        const cols = view.columns || [];
+        let maisons = db[TABLE_MAISON] || [];
+        const house = getSelectedHouseName();
+        if (house) {
+          const exact = houseNameToId[house];
+          const hl = house.toLowerCase();
+          maisons = maisons.filter((m) =>
+            exact
+              ? m.id === exact
+              : (recIdToHouseName[m.id] || '').toLowerCase().includes(hl),
+          );
+        }
+        const q = (currentQuery || '').trim().toLowerCase();
+        const rows = maisons.map((m) => {
+          const name =
+            recIdToHouseName[m.id] || m.fields.Livret_NomMaison || m.id;
+          const cache = {};
+          const cells = {};
+          cols.forEach((c) => {
+            if (c.custom) {
+              cells[c.id] = '';
+              return;
+            }
+            if (!cache[c.table]) cache[c.table] = joinLinkedRecords(c.table, m);
+            const vals = cache[c.table]
+              .map((r) => displayFieldValue(c.table, c.field, r))
+              .filter((x) => x !== '' && x != null);
+            cells[c.id] = [...new Set(vals)].join('  |  ');
+          });
+          return { id: m.id, name, cells };
+        });
+        if (!q) return rows;
+        return rows.filter(
+          (row) =>
+            row.name.toLowerCase().includes(q) ||
+            Object.values(row.cells).some((v) =>
+              String(v).toLowerCase().includes(q),
+            ),
+        );
+      }
+
+      function renderJoinedViewTable(view) {
+        const cols = view.columns || [];
+        const head = `<div class="vw-view-head">
+          <h2>🧩 ${esc(view.name)} <span style="font-size:.68rem;font-weight:600;color:var(--muted);background:var(--primary-light);padding:.15rem .5rem;border-radius:20px">🔗 jointure auto par Maison</span></h2>
+          <button class="vw-btn" id="vw-add-col">＋ Colonne</button>
+          <button class="vw-btn" id="vw-rename">✎ Renommer</button>
+          <button class="vw-btn danger" id="vw-del-view">🗑 Supprimer la vue</button>
+        </div>`;
+        if (!cols.length)
+          return (
+            head +
+            `<div class="state-box">Cette vue n'a pas encore de colonnes.<br>Cliquez sur « ＋ Colonne » pour ajouter des champs depuis n'importe quelle table : ils seront automatiquement rapprochés par Maison.</div>`
+          );
+        const rows = computeJoinedRows(view);
+        const ths =
+          `<th>Maison</th>` +
+          cols
+            .map(
+              (c) =>
+                `<th>${esc(c.label)}<span class="col-src">${c.custom ? '(libre)' : esc(c.table + '.' + c.field)}</span><button class="col-del" data-col-id="${esc(c.id)}" title="Supprimer la colonne">✕</button></th>`,
+            )
+            .join('');
+        const trs = rows
+          .map((r) => {
+            const cells = cols
+              .map((c) => {
+                const v = esc(r.cells[c.id] || '');
+                return `<td style="padding:.5rem .7rem;white-space:pre-wrap;max-width:340px;font-size:.82rem">${v || '<span style="color:var(--border)">—</span>'}</td>`;
+              })
+              .join('');
+            return `<tr><td style="padding:.5rem .7rem"><span class="dv-table-badge">🏠 ${esc(r.name)}</span></td>${cells}</tr>`;
+          })
+          .join('');
+        const countNote = `<div style="font-size:.78rem;color:var(--muted);margin:.4rem 0">${rows.length} maison(s)${currentQuery ? ' (filtré)' : ''}</div>`;
+        return (
+          head +
+          countNote +
+          `<div class="vw-table-wrap"><table class="vw-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`
+        );
+      }
+
+      // Champs « plats » d'une table (sans pièces jointes ni liens) — utilisés
+      // pour pré-remplir la table complète.
+      function joinableScalarFields(table) {
+        return fieldsFor(table).filter(
+          (f) => !fieldIsAttachment(table, f) && !isLinkField(table, f),
+        );
+      }
+
+      // Crée (ou rouvre) une vue jointe contenant TOUTES les données reliées à
+      // chaque Maison : un gros tableau, une ligne par Maison.
+      function createMasterView() {
+        const views = loadViews();
+        const existing = views.find((v) => v.master);
+        if (existing) {
+          activeViewId = existing.id;
+          renderVuesPane();
+          return;
+        }
+        const tablesOrder = [
+          TABLE_MAISON,
+          TABLE_EQUIPEMENT,
+          TABLE_PISCINE,
+          TABLE_DISPOSITION,
+          TABLE_WORKFLOW,
+          TABLE_CONDITION,
+          TABLE_PROPRIETAIRE,
+          TABLE_RECOMMANDATION,
+        ];
+        const cols = [];
+        tablesOrder.forEach((t) => {
+          joinableScalarFields(t).forEach((f) => {
+            cols.push({
+              id: uid('c'),
+              table: t,
+              field: f,
+              custom: false,
+              label: t === TABLE_MAISON ? f : `${t} · ${f}`,
+            });
+          });
+        });
+        const view = {
+          id: uid('v'),
+          name: 'Toutes les données par Maison',
+          joined: true,
+          master: true,
+          columns: cols,
+          rows: [],
+        };
+        views.push(view);
+        saveViews(views);
+        activeViewId = view.id;
+        updateTabCounts();
+        renderVuesPane();
+      }
+
+      /* ──────────────── FICHE SYNTHÈSE (colonnes FS_) ──────────────── */
+      // Tables qui portent des champs « FS_ », dans l'ordre d'affichage de la fiche.
+      const FICHE_TABLES = [
+        { table: TABLE_MAISON, label: 'Général / Accès' },
+        { table: TABLE_PROPRIETAIRE, label: 'Propriétaires' },
+        { table: TABLE_CONDITION, label: 'Conditions de location' },
+        { table: TABLE_PISCINE, label: 'Piscine' },
+        { table: TABLE_EQUIPEMENT, label: 'Fonctionnement / Équipements' },
+        { table: 'KnownIssues', label: 'Problèmes connus' },
+      ];
+
+      // Les champs d'une table dont le nom commence par « FS ».
+      function fsFieldsFor(table) {
+        return fieldsFor(table).filter((f) => /^FS/i.test(f));
+      }
+      // Libellé lisible d'un champ FS_ (sans le préfixe technique).
+      function labelizeFs(f) {
+        return f
+          .replace(/^FS_?/i, '')
+          .replace(/^KnownIssues_?/i, '')
+          .replace(/_/g, ' ')
+          .trim();
+      }
+
+      // Charge la Maison + toutes les tables porteuses de champs FS et leurs liens.
+      async function ensureFicheTablesLoaded() {
+        const tables = new Set([TABLE_MAISON]);
+        FICHE_TABLES.forEach((t) => tables.add(t.table));
+        for (const t of tables) {
+          await ensureTableLoaded(t);
+          await ensureLinkedTablesLoaded(t);
+        }
+      }
+
+      // Construit le HTML (et le texte de recherche) d'une fiche pour une Maison.
+      function ficheDocHtml(maisonRec) {
+        let searchText = (recIdToHouseName[maisonRec.id] || '').toLowerCase();
+        const sections = [];
+
+        FICHE_TABLES.forEach(({ table, label }) => {
+          const fsFields = fsFieldsFor(table);
+          if (!fsFields.length) return;
+          const recs = joinLinkedRecords(table, maisonRec);
+          if (!recs.length) return;
+
+          // Pour la Maison elle-même : un seul bloc « à plat ».
+          if (table === TABLE_MAISON) {
+            const fieldsHtml = fsFields
+              .map((f) => {
+                const v = displayFieldValue(table, f, recs[0]);
+                if (!v) return '';
+                searchText += ' ' + v.toLowerCase();
+                return `<div class="fiche-field"><span class="k">${esc(labelizeFs(f))}</span><span class="v">${esc(v)}</span></div>`;
+              })
+              .filter(Boolean)
+              .join('');
+            if (fieldsHtml)
+              sections.push(
+                `<div class="fiche-section"><h4>${esc(label)}</h4><div class="fiche-grid">${fieldsHtml}</div></div>`,
+              );
+            return;
+          }
+
+          // Tables liées : un sous-bloc par enregistrement (plusieurs propriétaires,
+          // plusieurs équipements, plusieurs issues, etc.).
+          const subs = recs
+            .map((r) => {
+              const fieldsHtml = fsFields
+                .map((f) => {
+                  const v = displayFieldValue(table, f, r);
+                  if (!v) return '';
+                  searchText += ' ' + v.toLowerCase();
+                  return `<div class="fiche-field"><span class="k">${esc(labelizeFs(f))}</span><span class="v">${esc(v)}</span></div>`;
+                })
+                .filter(Boolean)
+                .join('');
+              if (!fieldsHtml) return '';
+              const title = esc(recordTitle(r, table));
+              return `<div class="fiche-sub"><div class="fiche-sub-title">${title}</div>${fieldsHtml}</div>`;
+            })
+            .filter(Boolean)
+            .join('');
+          if (subs)
+            sections.push(
+              `<div class="fiche-section"><h4>${esc(label)} <span style="opacity:.6;font-weight:600">(${recs.length})</span></h4><div class="fiche-grid">${subs}</div></div>`,
+            );
+        });
+
+        const name = esc(recIdToHouseName[maisonRec.id] || maisonRec.fields.Livret_NomMaison || maisonRec.id);
+        const idM = esc(maisonRec.fields.ID_Maison || maisonRec.fields.IdMaison || '');
+        const body = sections.length
+          ? sections.join('')
+          : '<div class="fiche-empty-sec">Aucune donnée de fiche synthèse (FS) pour cette maison.</div>';
+        const html = `<div class="fiche-card" data-maison="${esc(maisonRec.id)}">
+          <div class="fiche-head">
+            <span class="fiche-title">🏠 ${name}</span>
+            <span class="fiche-meta-r">
+              <span class="fiche-id" data-copy="${idM}" title="Copier l'ID">${idM}</span>
+              <button class="fiche-print" data-fiche-print="${esc(maisonRec.id)}">🖨 Imprimer</button>
+            </span>
+          </div>
+          <div class="fiche-body">${body}</div>
+        </div>`;
+        return { html, searchText };
+      }
+
+      async function renderFichePane() {
+        const content = document.getElementById('fiche-content');
+        content.innerHTML =
+          '<div class="state-box"><div class="spinner"></div>Chargement des fiches synthèse…</div>';
+        await ensureFicheTablesLoaded();
+        if (currentTab !== 'fiche') return;
+
+        let maisons = db[TABLE_MAISON] || [];
+        const house = getSelectedHouseName();
+        if (house) {
+          const exact = houseNameToId[house];
+          const hl = house.toLowerCase();
+          maisons = maisons.filter((m) =>
+            exact
+              ? m.id === exact
+              : (recIdToHouseName[m.id] || '').toLowerCase().includes(hl),
+          );
+        }
+
+        const q = (currentQuery || '').trim().toLowerCase();
+        let docs = maisons.map((m) => ficheDocHtml(m));
+        if (q) docs = docs.filter((d) => d.searchText.includes(q));
+
+        document.getElementById('fiche-meta').textContent =
+          `${docs.length} fiche(s)`;
+
+        if (!docs.length) {
+          content.innerHTML = `<div class="state-box">Aucune fiche${house || q ? ' pour ce filtre' : ''}.</div>`;
+          return;
+        }
+        content.innerHTML = docs.map((d) => d.html).join('');
+      }
+
+      // Impression d'une fiche isolée dans une nouvelle fenêtre.
+      function printFiche(maisonId) {
+        const card = document.querySelector(
+          `.fiche-card[data-maison="${maisonId}"]`,
+        );
+        if (!card) return;
+        const clone = card.cloneNode(true);
+        clone.querySelectorAll('.fiche-print').forEach((b) => b.remove());
+        const w = window.open('', '_blank');
+        if (!w) return;
+        w.document.write(
+          `<!doctype html><html><head><meta charset="utf-8"><title>Fiche synthèse</title>
+          <style>
+            body{font-family:Inter,Arial,sans-serif;color:#111;padding:1.5rem;max-width:900px;margin:auto}
+            .fiche-head{display:flex;justify-content:space-between;border-bottom:2px solid #1f6d67;padding-bottom:.5rem;margin-bottom:1rem}
+            .fiche-title{font-weight:700;color:#1f6d67;font-size:1.3rem}
+            .fiche-id{font-family:monospace;font-size:.75rem;color:#666}
+            .fiche-section{margin-bottom:1.1rem;page-break-inside:avoid}
+            .fiche-section>h4{font-size:.85rem;text-transform:uppercase;color:#26837b;border-bottom:1px solid #ddd;padding-bottom:.25rem}
+            .fiche-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1.2rem}
+            .fiche-sub{grid-column:1/-1;border-left:3px solid #e6f2f1;padding-left:.7rem;margin-bottom:.6rem}
+            .fiche-sub-title{font-weight:600;margin-bottom:.3rem}
+            .fiche-field .k{font-size:.62rem;font-weight:700;color:#1f6d67;text-transform:uppercase;display:block}
+            .fiche-field .v{font-size:.85rem;white-space:pre-wrap}
+          </style></head><body>${clone.outerHTML}</body></html>`,
+        );
+        w.document.close();
+        w.focus();
+        setTimeout(() => w.print(), 300);
+      }
+
+      document.getElementById('fiche-content').addEventListener('click', (e) => {
+        const pr = e.target.closest('[data-fiche-print]');
+        if (pr) {
+          printFiche(pr.dataset.fichePrint);
+          return;
+        }
+        const cp = e.target.closest('[data-copy]');
+        if (cp) copy(cp.dataset.copy);
+      });
+
+      function renderViewTable(view) {
+        const cols = view.columns || [];
+        const head = `<div class="vw-view-head">
+          <h2>🧩 ${esc(view.name)}</h2>
+          <button class="vw-btn" id="vw-add-col">＋ Colonne</button>
+          <button class="vw-btn primary" id="vw-add-row">＋ Ligne</button>
+          <button class="vw-btn" id="vw-import">⤓ Importer des lignes</button>
+          <button class="vw-btn" id="vw-rename">✎ Renommer</button>
+          <button class="vw-btn danger" id="vw-del-view">🗑 Supprimer la vue</button>
+        </div>`;
+        if (!cols.length)
+          return (
+            head +
+            `<div class="state-box">Cette vue n'a pas encore de colonnes.<br>Cliquez sur « ＋ Colonne » pour en choisir depuis vos tables.</div>`
+          );
+        const q = (currentQuery || '').trim().toLowerCase();
+        const indexed = (view.rows || []).map((r, i) => ({ r, i }));
+        const filtered = q
+          ? indexed.filter(({ r }) =>
+              cols.some((c) =>
+                String(r[c.id] ?? '')
+                  .toLowerCase()
+                  .includes(q),
+              ),
+            )
+          : indexed;
+        const ths = cols
+          .map(
+            (c) =>
+              `<th>${esc(c.label)}<span class="col-src">${c.custom ? '(libre)' : esc(c.table + '.' + c.field)}</span><button class="col-del" data-col-id="${esc(c.id)}" title="Supprimer la colonne">✕</button></th>`,
+          )
+          .join('');
+        const trs = filtered
+          .map(
+            ({ r, i }) =>
+              `<tr>${cols
+                .map(
+                  (c) =>
+                    `<td><input data-row="${i}" data-col="${esc(c.id)}" value="${esc(r[c.id] ?? '')}"></td>`,
+                )
+                .join('')}<td class="vw-row-actions"><button class="vw-row-del" data-row="${i}" title="Supprimer la ligne">🗑</button></td></tr>`,
+          )
+          .join('');
+        const countNote = q
+          ? `<div style="font-size:.78rem;color:var(--muted);margin:.4rem 0">${filtered.length} / ${indexed.length} ligne(s)</div>`
+          : '';
+        return (
+          head +
+          countNote +
+          `<div class="vw-table-wrap"><table class="vw-table"><thead><tr>${ths}<th></th></tr></thead><tbody>${trs}</tbody></table></div>`
+        );
+      }
+
+      /* View builder modal */
+      function vbRenderStaged() {
+        const box = document.getElementById('vb-staged');
+        if (!vbStaged.length) {
+          box.innerHTML = '<span class="vb-empty">Aucune colonne pour l\'instant.</span>';
+          return;
+        }
+        box.innerHTML = vbStaged
+          .map(
+            (c, i) =>
+              `<span class="vb-chip">${esc(c.label)}<button data-stage-rm="${i}">✕</button></span>`,
+          )
+          .join('');
+      }
+      function vbPopulateFields() {
+        const t = document.getElementById('vb-table').value;
+        const fields = fieldsFor(t);
+        document.getElementById('vb-field').innerHTML = fields.length
+          ? fields.map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join('')
+          : '<option value="">(schéma non chargé)</option>';
+      }
+      function openViewBuilder(mode) {
+        vbMode = mode;
+        vbStaged = [];
+        document.getElementById('vb-title').textContent =
+          mode === 'create' ? 'Nouvelle vue' : 'Ajouter une colonne';
+        document.getElementById('vb-name-group').style.display =
+          mode === 'create' ? 'block' : 'none';
+        // The JOIN mode is only chosen when creating a view (not when adding a column).
+        document.getElementById('vb-joined-group').style.display =
+          mode === 'create' ? 'block' : 'none';
+        document.getElementById('vb-joined').checked = true;
+        document.getElementById('vb-save').textContent =
+          mode === 'create' ? 'Créer la vue' : 'Ajouter';
+        document.getElementById('vb-name').value = '';
+        document.getElementById('vb-custom').value = '';
+        document.getElementById('vb-table').innerHTML = VZ_TABLES.map(
+          (t) => `<option value="${esc(t.name)}">${esc(t.label)}</option>`,
+        ).join('');
+        vbPopulateFields();
+        vbRenderStaged();
+        document.getElementById('view-builder-modal').classList.add('open');
+      }
+      function closeViewBuilder() {
+        document.getElementById('view-builder-modal').classList.remove('open');
+      }
+
+      document.getElementById('vw-new-btn').addEventListener('click', () =>
+        openViewBuilder('create'),
+      );
+      document
+        .getElementById('vw-master-btn')
+        .addEventListener('click', createMasterView);
+      document.getElementById('vb-close').addEventListener('click', closeViewBuilder);
+      document.getElementById('vb-cancel').addEventListener('click', closeViewBuilder);
+      document.getElementById('view-builder-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeViewBuilder();
+      });
+      document.getElementById('vb-table').addEventListener('change', vbPopulateFields);
+      document.getElementById('vb-add-col').addEventListener('click', () => {
+        const table = document.getElementById('vb-table').value;
+        const field = document.getElementById('vb-field').value;
+        if (!field) {
+          vtoast('Aucun champ à ajouter', false);
+          return;
+        }
+        vbStaged.push({ table, field, custom: false, label: field });
+        vbRenderStaged();
+      });
+      document.getElementById('vb-add-custom').addEventListener('click', () => {
+        const name = document.getElementById('vb-custom').value.trim();
+        if (!name) return;
+        vbStaged.push({ custom: true, field: name, label: name });
+        document.getElementById('vb-custom').value = '';
+        vbRenderStaged();
+      });
+      document.getElementById('vb-staged').addEventListener('click', (e) => {
+        const rm = e.target.closest('[data-stage-rm]');
+        if (!rm) return;
+        vbStaged.splice(parseInt(rm.dataset.stageRm), 1);
+        vbRenderStaged();
+      });
+      document.getElementById('vb-save').addEventListener('click', () => {
+        if (!vbStaged.length) {
+          vtoast('Ajoutez au moins une colonne', false);
+          return;
+        }
+        const cols = vbStaged.map((c) => ({ ...c, id: uid('c') }));
+        if (vbMode === 'create') {
+          const name =
+            document.getElementById('vb-name').value.trim() || 'Vue sans nom';
+          const joined = document.getElementById('vb-joined').checked;
+          const views = loadViews();
+          const view = { id: uid('v'), name, columns: cols, rows: [], joined };
+          views.push(view);
+          saveViews(views);
+          activeViewId = view.id;
+        } else {
+          const view = getActiveView();
+          if (!view) return;
+          view.columns = (view.columns || []).concat(cols);
+          persistView(view);
+        }
+        closeViewBuilder();
+        updateTabCounts();
+        renderVuesPane();
+      });
+
+      document.getElementById('vw-tabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.vw-tab');
+        if (!btn) return;
+        activeViewId = btn.dataset.viewId;
+        renderVuesPane();
+      });
+
+      document.getElementById('vw-content').addEventListener('click', (e) => {
+        if (e.target.closest('#vw-add-col')) {
+          openViewBuilder('addcol');
+        } else if (e.target.closest('#vw-add-row')) {
+          const view = getActiveView();
+          if (!view) return;
+          if (view.joined) {
+            vtoast('Vue jointe : les lignes sont générées automatiquement par Maison.', false);
+            return;
+          }
+          view.rows = view.rows || [];
+          view.rows.push({});
+          persistView(view);
+          renderVuesPane();
+        } else if (e.target.closest('#vw-import')) {
+          vwImportRows();
+        } else if (e.target.closest('#vw-rename')) {
+          const view = getActiveView();
+          if (!view) return;
+          const name = prompt('Nom de la vue :', view.name);
+          if (name && name.trim()) {
+            view.name = name.trim();
+            persistView(view);
+            renderVuesPane();
+          }
+        } else if (e.target.closest('#vw-del-view')) {
+          const view = getActiveView();
+          if (!view) return;
+          if (!confirm(`Supprimer la vue « ${view.name} » et ses données ?`))
+            return;
+          saveViews(loadViews().filter((v) => v.id !== view.id));
+          activeViewId = null;
+          updateTabCounts();
+          renderVuesPane();
+        } else {
+          const colDel = e.target.closest('.col-del');
+          if (colDel) {
+            const view = getActiveView();
+            if (!view) return;
+            if (!confirm('Supprimer cette colonne ?')) return;
+            view.columns = view.columns.filter(
+              (c) => c.id !== colDel.dataset.colId,
+            );
+            view.rows = (view.rows || []).map((r) => {
+              delete r[colDel.dataset.colId];
+              return r;
+            });
+            persistView(view);
+            renderVuesPane();
+            return;
+          }
+          const rowDel = e.target.closest('.vw-row-del');
+          if (rowDel) {
+            const view = getActiveView();
+            if (!view) return;
+            view.rows.splice(parseInt(rowDel.dataset.row), 1);
+            persistView(view);
+            renderVuesPane();
+          }
+        }
+      });
+
+      /* Inline cell editing (persists to localStorage on change) */
+      document.getElementById('vw-content').addEventListener('change', (e) => {
+        const input = e.target.closest('input[data-row][data-col]');
+        if (!input) return;
+        const view = getActiveView();
+        if (!view || view.joined) return;
+        const i = parseInt(input.dataset.row);
+        if (!view.rows[i]) view.rows[i] = {};
+        view.rows[i][input.dataset.col] = input.value;
+        persistView(view);
+      });
+
+      async function vwImportRows() {
+        const view = getActiveView();
+        if (!view) return;
+        if (view.joined) {
+          vtoast('Vue jointe : déjà remplie automatiquement par Maison.', false);
+          return;
+        }
+        const tables = [
+          ...new Set(view.columns.filter((c) => !c.custom).map((c) => c.table)),
+        ];
+        if (!tables.length) {
+          vtoast('Aucune colonne liée à une table à importer.', false);
+          return;
+        }
+        let table = tables[0];
+        if (tables.length > 1) {
+          const ans = prompt(
+            'Importer les lignes depuis quelle table ?\n' +
+              tables.map((t, i) => `${i + 1}. ${t}`).join('\n'),
+            '1',
+          );
+          if (ans == null) return;
+          const idx = parseInt(ans) - 1;
+          if (isNaN(idx) || idx < 0 || idx >= tables.length) return;
+          table = tables[idx];
+        }
+        vtoast('Import en cours…');
+        await ensureTableLoaded(table);
+        await ensureLinkedTablesLoaded(table);
+        const recs = db[table] || [];
+        const newRows = recs.map((rec) => {
+          const row = {};
+          view.columns.forEach((c) => {
+            if (!c.custom && c.table === table)
+              row[c.id] = displayFieldValue(table, c.field, rec);
+          });
+          return row;
+        });
+        view.rows = (view.rows || []).concat(newRows);
+        persistView(view);
+        vtoast(`${newRows.length} ligne(s) importée(s) depuis ${table}`);
+        renderVuesPane();
       }
     </script>
   </body>
