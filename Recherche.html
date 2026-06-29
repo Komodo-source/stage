@@ -14,14 +14,35 @@
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
       :root {
-        --primary: #1f6d67;
+        --primary: #1a6b65;
+        --primary-dark: #155450;
         --second: #26837b;
-        --primary-light: #e6f2f1;
-        --bg: #f5f7fb;
+        --primary-light: #e0f0ee;
+        --primary-glow: rgba(26, 107, 101, 0.12);
+        --bg: #f4f6fa;
+        --bg-alt: #eef1f6;
         --card: #ffffff;
-        --text: #111827;
-        --muted: #6b7280;
-        --border: #e5e7eb;
+        --surface-2: #fafbfd;
+        --header-bg: rgba(255, 255, 255, 0.92);
+        --text: #0f172a;
+        --text-secondary: #334155;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --border-focus: #94a3b8;
+        --danger: #dc2626;
+        --danger-light: #fef2f2;
+        --success: #16a34a;
+        --success-light: #f0fdf4;
+        --warning: #f59e0b;
+        --warning-light: #fffbeb;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       * {
@@ -31,35 +52,47 @@
         font-family: 'Inter', sans-serif;
       }
 
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
       body {
         background: var(--bg);
         color: var(--text);
+        -webkit-font-smoothing: antialiased;
       }
+
+      /* ── selection ── */
+      ::selection { background: var(--primary-glow); color: var(--primary-dark); }
 
       /* ── HEADER ── */
       .header {
-        background: white;
+        background: var(--header-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border);
-
-        padding: 0.9rem 2rem;
+        padding: 0.75rem 2rem;
         position: sticky;
         top: 0;
         display: flex;
         align-items: center;
-        gap: 1.5rem;
-        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-        z-index: 2;
+        gap: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        z-index: 100;
       }
 
       .header-logo {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: var(--primary);
         white-space: nowrap;
         display: flex;
         align-items: center;
-        gap: 0.45rem;
+        gap: 0.4rem;
       }
+      .header-logo svg { transition: transform var(--transition); }
+      .header-logo:hover svg { transform: scale(1.1); }
 
       .controls {
         display: flex;
@@ -74,7 +107,7 @@
 
       .search-icon {
         position: absolute;
-        left: 0.85rem;
+        left: 0.9rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--muted);
@@ -83,86 +116,226 @@
 
       #search {
         width: 100%;
-        padding: 0.65rem 1rem 0.65rem 2.4rem;
+        padding: 0.6rem 1rem 0.6rem 2.4rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        font-size: 0.9rem;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
         background: var(--bg);
         outline: none;
-        transition: border-color 0.2s;
+        transition: border-color var(--transition), box-shadow var(--transition);
         color: var(--text);
       }
       #search:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
-      #search::placeholder {
+      #search::placeholder { color: var(--muted); }
+
+      /* ── HOUSE FILTER (searchable dropdown) ── */
+      .house-filter-wrap {
+        position: relative;
+        flex: 0 0 290px;
+        min-width: 210px;
+      }
+      .house-filter-icon {
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
         color: var(--muted);
+        pointer-events: none;
+        transition: color var(--transition);
       }
-      #delete_search {
-      padding: 0.65rem 1rem;
+      .house-filter-wrap.has-value .house-filter-icon { color: var(--primary); }
+      #house-filter {
+        width: 100%;
+        padding: 0.6rem 2.1rem 0.6rem 2.4rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        font-size: 0.9rem;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
         background: var(--bg);
         outline: none;
-        cursor: text;
-        min-width: 2rem;
-        color: var(--text);
-        transition: border-color 0.2s;
         cursor: pointer;
-        transition: 0.7s;
-      }
-
-      #delete_search:hover {
-        border-color: var(--primary);
-        transform: scale(1.2);
-      }
-
-      #house-filter{
-        padding: 0.65rem 1rem;
-        border: 1.5px solid var(--border);
-        border-radius: 10px;
-        font-size: 0.9rem;
-        background: var(--bg);
-        outline: none;
-        cursor: text;
-        min-width: 280px;
+        text-overflow: ellipsis;
+        transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
         color: var(--text);
-        transition: border-color 0.2s;
       }
       #house-filter:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+        background: var(--card);
+        cursor: text;
+      }
+      #house-filter::placeholder { color: var(--muted); }
+      .house-filter-wrap.has-value #house-filter {
+        border-color: var(--primary);
+        background: var(--primary-light);
+        font-weight: 600;
+        color: var(--primary-dark);
+      }
+      .house-caret {
+        position: absolute;
+        right: 0.7rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+        transition: transform var(--transition);
+      }
+      .house-filter-wrap.open .house-caret { transform: translateY(-50%) rotate(180deg); }
+      .house-filter-wrap.has-value .house-caret { display: none; }
+      .house-clear {
+        position: absolute;
+        right: 0.45rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.45rem;
+        height: 1.45rem;
+        border: none;
+        background: transparent;
+        color: var(--primary-dark);
+        font-size: 1.15rem;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition);
+      }
+      .house-clear:hover { background: rgba(26, 107, 101, 0.15); }
+      .house-filter-wrap.has-value .house-clear { display: flex; }
+      .house-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        max-height: 340px;
+        overflow-y: auto;
+        z-index: 200;
+        display: none;
+        padding: 0.35rem;
+        animation: fadeIn 0.15s ease;
+      }
+      .house-filter-wrap.open .house-dropdown { display: block; }
+      .house-option {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.5rem 0.6rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: var(--text);
+        transition: background var(--transition);
+      }
+      .house-option:hover,
+      .house-option.active { background: var(--primary-light); }
+      .house-option .house-id {
+        flex-shrink: 0;
+        min-width: 2.4rem;
+        text-align: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        background: var(--primary-light);
+        padding: 0.18rem 0.5rem;
+        border-radius: 20px;
+        font-family: 'SF Mono', 'Consolas', monospace;
+      }
+      .house-option:hover .house-id,
+      .house-option.active .house-id { background: #fff; }
+      .house-option .house-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .house-option mark {
+        background: var(--warning-light);
+        color: var(--primary-dark);
+        font-weight: 700;
+        border-radius: 3px;
+        padding: 0 1px;
+      }
+      .house-all-option {
+        color: var(--muted);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        margin-bottom: 0.25rem;
+      }
+      .house-empty {
+        padding: 0.9rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 720px) {
+        .controls { flex-wrap: wrap; }
+        .house-filter-wrap { flex: 1 1 100%; }
+      }
+
+      #back {
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1.5px solid var(--border);
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+        background: var(--card);
+        color: var(--text-secondary);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition);
+        flex-shrink: 0;
+      }
+      #back:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
       }
 
       .main {
         padding: 1.25rem 2rem 3rem;
+        animation: fadeIn 0.3s ease;
       }
+
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
       .meta-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 0.75rem;
         margin-bottom: 0.85rem;
+        flex-wrap: wrap;
       }
 
       #results-count {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: var(--muted);
         font-weight: 500;
       }
 
       /* ── TABLE ── */
       .table-wrap {
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         border: 1px solid var(--border);
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow var(--transition);
       }
+      .table-wrap:hover { box-shadow: var(--shadow-md); }
 
-      .table-scroll {
-        overflow-x: auto;
-      }
+      .table-scroll { overflow-x: auto; }
 
       table {
         width: 100%;
@@ -172,65 +345,62 @@
 
       thead th {
         background: var(--primary-light);
-        color: var(--primary);
-        font-size: 0.73rem;
+        color: var(--primary-dark);
+        font-size: 0.7rem;
         font-weight: 700;
-        letter-spacing: 0.06em;
-        padding: 0.8rem 1rem;
+        letter-spacing: 0.05em;
+        padding: 0.75rem 1rem;
         text-align: left;
         border-bottom: 1px solid #c8dedd;
         white-space: nowrap;
         user-select: none;
+        text-transform: uppercase;
       }
 
-      thead th.col-photos {
-        text-align: center;
-      }
+      thead th.col-photos { text-align: center; }
 
       tbody tr {
         border-bottom: 1px solid var(--border);
-        transition: background 0.12s;
+        transition: background var(--transition);
       }
-      tbody tr:last-child {
-        border-bottom: none;
-      }
-      tbody tr:hover {
-        background: #fafbfd;
-      }
+      tbody tr:last-child { border-bottom: none; }
+      tbody tr:hover { background: var(--surface-2); }
+      tbody tr:active { background: #f1f5f9; }
 
       tbody td {
-        padding: 0.85rem 1rem;
-        font-size: 0.875rem;
+        padding: 0.8rem 1rem;
+        font-size: 0.85rem;
         vertical-align: top;
         line-height: 1.5;
       }
 
-      /* Cell types */
       .cell-maison .badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         font-weight: 600;
-        font-size: 0.78rem;
-        padding: 0.28rem 0.7rem;
+        font-size: 0.76rem;
+        padding: 0.26rem 0.65rem;
         border-radius: 20px;
         white-space: nowrap;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
       .cell-maison .badge:hover {
-        opacity: 0.8;
+        background: var(--primary);
+        color: white;
+        transform: translateY(-1px);
       }
 
       .cell-cat .tag {
         display: inline-block;
-        background: #f3f4f6;
-        color: #374151;
-        font-size: 0.76rem;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 0.74rem;
         font-weight: 500;
-        padding: 0.25rem 0.65rem;
+        padding: 0.22rem 0.6rem;
         border-radius: 20px;
         white-space: nowrap;
       }
@@ -246,26 +416,27 @@
       /* ── CATEGORY CHIPS ── */
       .cat-filter {
         display: flex;
-        gap: 0.45rem;
+        gap: 0.4rem;
         flex-wrap: wrap;
         margin-bottom: 1rem;
       }
 
       .cat-chip {
-        padding: 0.3rem 0.8rem;
+        padding: 0.28rem 0.75rem;
         border-radius: 20px;
         border: 1.5px solid var(--border);
-        background: white;
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
         white-space: nowrap;
       }
       .cat-chip:hover {
         border-color: var(--primary);
         color: var(--primary);
+        background: var(--primary-light);
       }
       .cat-chip.active {
         background: var(--primary);
@@ -275,116 +446,104 @@
 
       .cell-maison .id-label {
         display: block;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         color: var(--muted);
-        font-family: monospace;
-        margin-top: 0.3rem;
+        font-family: 'SF Mono', 'Consolas', monospace;
+        margin-top: 0.25rem;
         cursor: pointer;
-        transition: color 0.15s;
+        transition: color var(--transition);
       }
-      .cell-maison .id-label:hover {
-        color: var(--primary);
-      }
+      .cell-maison .id-label:hover { color: var(--primary); }
 
-      .cell-nom {
-        font-weight: 600;
-        color: var(--text);
-      }
+      .cell-nom { font-weight: 600; color: var(--text); }
 
-      .cell-desc {
-        color: var(--muted);
-        max-width: 360px;
-      }
+      .cell-desc { color: var(--muted); max-width: 360px; }
 
-      .cell-photos {
-        text-align: center;
-      }
+      .cell-photos { text-align: center; }
 
       /* ── FIELD LABELS ── */
       .field-label {
         display: block;
-        font-family: monospace;
-        font-size: 0.65rem;
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.62rem;
         color: var(--primary);
-        opacity: 0.65;
+        opacity: 0.7;
         font-weight: 600;
-        margin-bottom: 0.15rem;
-        letter-spacing: 0.02em;
+        margin-bottom: 0.12rem;
+        letter-spacing: 0.03em;
       }
 
-      .field-block {
-        margin-bottom: 0.7rem;
-      }
-      .field-block:last-child {
-        margin-bottom: 0;
-      }
+      .field-block { margin-bottom: 0.6rem; }
+      .field-block:last-child { margin-bottom: 0; }
 
       .field-header {
         display: flex;
         align-items: center;
-        gap: 0.3rem;
-        margin-bottom: 0.15rem;
+        gap: 0.25rem;
+        margin-bottom: 0.12rem;
       }
-      .field-header .field-label {
-        margin-bottom: 0;
-      }
+      .field-header .field-label { margin-bottom: 0; }
 
       /* ── EDIT BUTTON ── */
       .edit-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
         border: none;
         background: transparent;
         color: var(--muted);
         cursor: pointer;
-        border-radius: 4px;
+        border-radius: 6px;
         padding: 0;
-        transition:
-          opacity 0.15s,
-          background 0.15s,
-          color 0.15s;
+        opacity: 0.3;
+        transition: all var(--transition);
         flex-shrink: 0;
       }
       .field-block:hover .edit-btn,
       .cell-nom:hover .edit-btn,
-      .dv-field-group:hover .edit-btn {
-        opacity: 1;
+      .dv-field-group:hover .edit-btn,
+      .table-cell-wrap:hover .edit-btn {
+        opacity: 0.7;
       }
       .edit-btn:hover {
+        opacity: 1 !important;
         background: var(--primary-light);
         color: var(--primary);
+        transform: scale(1.1);
       }
-      .dv-field-key .edit-btn {
-        opacity: 0;
-      }
+      .dv-field-key .edit-btn { opacity: 0; }
+      .dv-field-key:hover .edit-btn { opacity: 0.7; }
 
+      /* ── EDIT MODAL ── */
       #edit-modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 1000;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1200;
         align-items: center;
         justify-content: center;
         padding: 2rem;
+        animation: fadeIn 0.15s ease;
       }
-      #edit-modal.open {
-        display: flex;
-        z-index: 3;
-      }
+      #edit-modal.open { display: flex; z-index: 1200; }
 
       #edit-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
         width: 100%;
         max-width: 560px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
         z-index: 86;
+        animation: slideUp 0.2s ease;
       }
+
+      @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
       /* ── LIVRET PREVIEW (split view) ── */
       #livret-preview-pane {
@@ -394,10 +553,11 @@
         min-width: 0;
         max-width: 760px;
         height: 90vh;
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.2s ease;
       }
       #livret-preview-head {
         display: flex;
@@ -413,30 +573,21 @@
       #livret-preview-close {
         background: none;
         border: none;
-        font-size: 1.05rem;
+        font-size: 1rem;
         cursor: pointer;
         color: var(--muted);
-        padding: 0.1rem 0.35rem;
+        padding: 0.15rem 0.35rem;
         border-radius: 6px;
         line-height: 1;
-        transition: color 0.15s;
+        transition: all var(--transition);
       }
       #livret-preview-close:hover {
         color: var(--text);
+        background: var(--bg);
       }
-      #livret-preview-frame-wrap {
-        flex: 1;
-        min-height: 0;
-        background: #fcfaf8;
-      }
-      #livret-preview-frame {
-        width: 100%;
-        height: 100%;
-        border: none;
-        display: block;
-      }
+      #livret-preview-frame-wrap { flex: 1; min-height: 0; background: #fcfaf8; }
+      #livret-preview-frame { width: 100%; height: 100%; border: none; display: block; }
 
-      /* When the preview is open, lay the editor card and the livret side by side */
       #edit-modal.preview-open {
         align-items: center;
         justify-content: center;
@@ -449,9 +600,7 @@
         max-height: 90vh;
         overflow-y: auto;
       }
-      #edit-modal.preview-open #livret-preview-pane {
-        display: flex;
-      }
+      #edit-modal.preview-open #livret-preview-pane { display: flex; }
 
       @media (max-width: 880px) {
         #edit-modal.preview-open {
@@ -459,13 +608,8 @@
           align-items: stretch;
           overflow-y: auto;
         }
-        #edit-modal.preview-open #edit-card {
-          max-width: 100%;
-        }
-        #livret-preview-pane {
-          height: 70vh;
-          max-width: 100%;
-        }
+        #edit-modal.preview-open #edit-card { max-width: 100%; }
+        #livret-preview-pane { height: 70vh; max-width: 100%; }
       }
 
       #edit-card-header {
@@ -476,30 +620,27 @@
       }
 
       #edit-field-name {
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
         font-size: 1rem;
         font-weight: 700;
         color: var(--primary);
       }
 
       #edit-meta {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--muted);
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
         margin-top: 0.2rem;
       }
 
-      #edit-editor {
-        position: relative;
-      }
-      #edit-highlight,
-      #edit-textarea {
+      #edit-editor { position: relative; }
+      #edit-highlight, #edit-textarea {
         width: 100%;
         min-height: 140px;
         padding: 0.75rem;
         margin: 0;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         font-size: 0.875rem;
         font-family: 'Inter', sans-serif;
         line-height: 1.5;
@@ -507,20 +648,17 @@
         overflow-wrap: break-word;
         word-break: break-word;
       }
-      /* Backdrop layer that paints the syntax tint (visual only) */
       #edit-highlight {
         position: absolute;
         inset: 0;
         pointer-events: none;
         color: var(--text);
-        background: white;
+        background: var(--card);
         border-color: transparent;
         overflow: hidden;
         z-index: 0;
       }
-      #edit-highlight .tok-tag {
-        color: #9ca3af;
-      }
+      #edit-highlight .tok-tag { color: #94a3b8; }
       #edit-textarea {
         position: relative;
         z-index: 1;
@@ -529,14 +667,13 @@
         color: transparent;
         background: transparent;
         caret-color: var(--text);
-        transition: border-color 0.2s;
+        transition: border-color var(--transition);
       }
       #edit-textarea:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
-      #edit-textarea::selection {
-        background: rgba(31, 109, 103, 0.25);
-      }
+      #edit-textarea::selection { background: rgba(31, 109, 103, 0.25); }
 
       #edit-actions {
         display: flex;
@@ -545,47 +682,45 @@
         margin-top: 1rem;
       }
 
-      #edit-cancel-btn, #edit-preview-btn{
-        padding: 0.6rem 1.2rem;
+      #edit-cancel-btn, #edit-preview-btn {
+        padding: 0.55rem 1.2rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        background: white;
+        border-radius: var(--radius-md);
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 500;
         cursor: pointer;
-        transition:
-          border-color 0.15s,
-          color 0.15s;
+        transition: all var(--transition);
       }
-      #edit-cancel-btn:hover, #edit-preview-btn{
+      #edit-cancel-btn:hover {
         border-color: var(--muted);
         color: var(--text);
+        background: var(--bg);
       }
-      #edit-preview-btn{
-        background-color: #0370e2;
-        color: #fff;
-            border: transparent;
+      #edit-preview-btn {
+        background: #2563eb;
+        color: white;
+        border-color: transparent;
+      }
+      #edit-preview-btn:hover {
+        background: #1d4ed8;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
       }
 
       #edit-save-btn {
-        padding: 0.6rem 1.4rem;
+        padding: 0.55rem 1.4rem;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary);
         color: white;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
-      #edit-save-btn:hover {
-        opacity: 0.85;
-      }
-      #edit-save-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      #edit-save-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3); }
+      #edit-save-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
       #edit-close-btn {
         background: none;
@@ -596,207 +731,218 @@
         padding: 0.1rem 0.3rem;
         border-radius: 6px;
         line-height: 1;
-        transition: color 0.15s;
+        transition: all var(--transition);
       }
-      #edit-close-btn:hover {
+      #edit-close-btn:hover { color: var(--text); background: var(--bg); }
+
+      /* ── FORMATTING TOOLBAR ── */
+      .edit-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding: 0.4rem;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+      }
+      .edit-buttons > button {
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 0.4rem 0.55rem;
+        cursor: pointer;
+        transition: all var(--transition);
+        background: var(--card);
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+        font-weight: 500;
+        line-height: 1;
+      }
+      .edit-buttons > button:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+      .edit-buttons input[type="color"] {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+        background: none;
+      }
+      .edit-buttons input[type="number"] {
+        width: 4.2rem;
+        padding: 0.3rem 0.4rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.78rem;
         color: var(--text);
+        background: var(--card);
+        outline: none;
       }
 
-      /* Thumbnails */
+      /* ── Thumbnails ── */
       .thumbs {
         display: flex;
         gap: 0.35rem;
         flex-wrap: wrap;
         justify-content: center;
       }
-
       .thumb {
-        width: 52px;
-        height: 52px;
+        width: 48px;
+        height: 48px;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         cursor: zoom-in;
         border: 2px solid transparent;
-        transition:
-          border-color 0.15s,
-          transform 0.15s;
+        transition: all var(--transition);
         display: block;
       }
       .thumb:hover {
         border-color: var(--primary);
         transform: scale(1.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
 
       .video-chip {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        padding: 0.28rem 0.6rem;
-        border-radius: 8px;
+        padding: 0.25rem 0.55rem;
+        border-radius: var(--radius-sm);
         background: var(--primary-light);
-        color: var(--primary);
-        font-size: 0.72rem;
+        color: var(--primary-dark);
+        font-size: 0.7rem;
         font-weight: 600;
         text-decoration: none;
         white-space: nowrap;
         border: 1.5px solid transparent;
-        transition:
-          border-color 0.15s,
-          background 0.15s;
+        transition: all var(--transition);
       }
       .video-chip:hover {
         border-color: var(--primary);
-        background: white;
+        background: var(--card);
+        transform: translateY(-1px);
       }
 
       /* ── STATES ── */
       .state-box {
-        padding: 3.5rem 2rem;
+        padding: 3rem 2rem;
         text-align: center;
         color: var(--muted);
       }
 
       .spinner {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
         border: 3px solid var(--border);
         border-top-color: var(--primary);
         border-radius: 50%;
-        animation: spin 0.75s linear infinite;
-        margin: 0 auto 0.9rem;
+        animation: spin 0.7s linear infinite;
+        margin: 0 auto 0.8rem;
       }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
+      @keyframes spin { to { transform: rotate(360deg); } }
 
       /* ── LIGHTBOX ── */
       #lightbox {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.82);
-        z-index: 999;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9999;
         align-items: center;
         justify-content: center;
         padding: 2rem;
+        animation: fadeIn 0.15s ease;
       }
-      #lightbox.open {
-        display: flex;
-      }
+      #lightbox.open { display: flex; }
 
       #lightbox-img {
-        max-width: 90vw;
-        max-height: 88vh;
-        border-radius: 12px;
+        max-width: 92vw;
+        max-height: 90vh;
+        border-radius: var(--radius-md);
         box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
         object-fit: contain;
+        animation: slideUp 0.2s ease;
       }
 
       #lightbox-close {
         position: absolute;
         top: 1.2rem;
         right: 1.4rem;
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
         border: none;
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        font-size: 1rem;
+        font-size: 1.1rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #111;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        transition: transform 0.15s;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        transition: all var(--transition);
       }
-      #lightbox-close:hover {
-        transform: scale(1.1);
-      }
-
-      @media (max-width: 640px) {
-        .header {
-          flex-direction: column;
-          align-items: stretch;
-          gap: 0.6rem;
-          padding: 0.9rem 1rem;
-          z-index: 2;
-        }
-        .main {
-          padding: 1rem 1rem 3rem;
-        }
-      }
-      .create {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        border: 1.5px solid var(--border);
-        background: white;
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.15s;
-        white-space: nowrap;
-      }
-
-      .creation {
-        margin-bottom: 2rem;
-      }
+      #lightbox-close:hover { transform: scale(1.12); background: var(--card); }
 
       /* ── TABS ── */
       #tabs-bar {
         display: flex;
-        gap: 0.3rem;
+        gap: 0.25rem;
         flex-wrap: wrap;
         margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0;
         border-bottom: 2px solid var(--border);
       }
 
       .tab-btn {
-        padding: 0.45rem 0.9rem;
+        padding: 0.45rem 0.85rem;
         border: 1.5px solid var(--border);
         border-radius: 10px 10px 0 0;
-        background: white;
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
         white-space: nowrap;
         border-bottom: none;
         position: relative;
         top: 2px;
+        margin-bottom: -2px;
       }
       .tab-btn:hover {
         color: var(--primary);
         border-color: var(--primary);
+        background: var(--primary-light);
       }
       .tab-btn.active {
         background: var(--primary);
         border-color: var(--primary);
         color: white;
         font-weight: 600;
+        box-shadow: 0 -2px 8px rgba(26, 107, 101, 0.15);
       }
 
       .tab-count {
         display: inline-block;
         background: rgba(0, 0, 0, 0.08);
         color: inherit;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 600;
-        padding: 0.1rem 0.45rem;
+        padding: 0.08rem 0.4rem;
         border-radius: 10px;
-        margin-left: 0.35rem;
-        min-width: 1.4rem;
+        margin-left: 0.3rem;
+        min-width: 1.3rem;
         text-align: center;
       }
-      .tab-btn.active .tab-count {
-        background: rgba(255, 255, 255, 0.25);
-      }
+      .tab-btn.active .tab-count { background: rgba(255, 255, 255, 0.25); }
 
       mark {
         background: #fef08a;
@@ -807,33 +953,28 @@
 
       .cell-id {
         font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         color: var(--primary);
         cursor: pointer;
         white-space: nowrap;
       }
-      .cell-id:hover {
-        text-decoration: underline;
-      }
+      .cell-id:hover { text-decoration: underline; }
 
       /* ── TABLE CELL WRAP ── */
       .table-cell-wrap {
         display: flex;
         align-items: flex-start;
-        gap: 0.3rem;
+        gap: 0.25rem;
       }
       .table-cell-wrap .field-header {
         flex-shrink: 0;
-        opacity: 0.4;
-        transition: opacity 0.15s;
+        opacity: 0.25;
+        transition: opacity var(--transition);
       }
-      .table-cell-wrap:hover .field-header {
-        opacity: 1;
-      }
+      .table-cell-wrap:hover .field-header { opacity: 1; }
       .table-cell-wrap .cell-val {
         flex: 1;
         min-width: 0;
-        /* Couper le texte trop long dans la vue Table (max ~3 lignes) */
         max-width: 380px;
         max-height: 4.6em;
         overflow: hidden;
@@ -847,16 +988,14 @@
         display: inline-flex;
         align-items: center;
         gap: 0.2rem;
-        color: var(--primary);
-        font-family: monospace;
-        font-size: 0.8rem;
+        color: var(--primary-dark);
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.78rem;
         text-decoration: none;
         padding: 0.1rem 0.35rem;
         border-radius: 4px;
         background: var(--primary-light);
-        transition:
-          background 0.15s,
-          color 0.15s;
+        transition: all var(--transition);
         cursor: pointer;
         white-space: nowrap;
       }
@@ -870,30 +1009,30 @@
         display: none;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.5rem 1.2rem;
+        padding: 0.45rem 1.1rem;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary);
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
         white-space: nowrap;
       }
       .create-btn:hover {
-        opacity: 0.85;
+        opacity: 0.92;
+        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
+        transform: translateY(-1px);
       }
-      body.show-table .create-btn {
-        display: inline-flex;
-      }
+      body.show-table .create-btn { display: inline-flex; }
 
       .page-size-select {
         padding: 0.3rem 0.5rem;
         border: 1.5px solid var(--border);
-        border-radius: 8px;
-        font-size: 0.78rem;
-        background: white;
+        border-radius: var(--radius-sm);
+        font-size: 0.76rem;
+        background: var(--card);
         color: var(--text);
         outline: none;
         cursor: pointer;
@@ -905,29 +1044,27 @@
       .pagination-controls {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         margin-left: auto;
       }
       .pagination-controls .page-btn {
-        padding: 0.35rem 0.7rem;
+        padding: 0.35rem 0.65rem;
         border: 1.5px solid var(--border);
-        border-radius: 8px;
-        background: white;
-        color: var(--text);
+        border-radius: var(--radius-sm);
+        background: var(--card);
+        color: var(--text-secondary);
         font-size: 0.8rem;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
         line-height: 1;
         user-select: none;
       }
       .pagination-controls .page-btn:hover:not(:disabled) {
         border-color: var(--primary);
         color: var(--primary);
+        background: var(--primary-light);
       }
-      .pagination-controls .page-btn:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
+      .pagination-controls .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
       .pagination-controls .page-info {
         font-size: 0.8rem;
         color: var(--muted);
@@ -941,25 +1078,26 @@
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         z-index: 1000;
         align-items: center;
         justify-content: center;
         padding: 2rem;
       }
-      #create-modal.open {
-        display: flex;
-      }
+      #create-modal.open { display: flex; }
 
       #create-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
         width: 100%;
         max-width: 620px;
         max-height: 80vh;
         overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.2s ease;
       }
 
       #create-card-header {
@@ -970,39 +1108,39 @@
       }
 
       #create-table-name {
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
         font-size: 1rem;
         font-weight: 700;
         color: var(--primary);
       }
 
-      .create-field-group {
-        margin-bottom: 0.8rem;
-      }
+      .create-field-group { margin-bottom: 0.75rem; }
       .create-field-group label {
         display: block;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 600;
         color: var(--muted);
         margin-bottom: 0.25rem;
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
       }
       .create-field-group input,
       .create-field-group textarea {
         width: 100%;
-        padding: 0.55rem 0.7rem;
+        padding: 0.5rem 0.7rem;
         border: 1.5px solid var(--border);
-        border-radius: 8px;
-        font-size: 0.875rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
         font-family: 'Inter', sans-serif;
         outline: none;
         color: var(--text);
         resize: vertical;
-        transition: border-color 0.2s;
+        transition: all var(--transition);
+        background: var(--card);
       }
       .create-field-group input:focus,
       .create-field-group textarea:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
 
       #create-actions {
@@ -1013,41 +1151,35 @@
       }
 
       #create-cancel-btn {
-        padding: 0.6rem 1.2rem;
+        padding: 0.55rem 1.2rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        background: white;
+        border-radius: var(--radius-md);
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 500;
         cursor: pointer;
-        transition:
-          border-color 0.15s,
-          color 0.15s;
+        transition: all var(--transition);
       }
       #create-cancel-btn:hover {
         border-color: var(--muted);
         color: var(--text);
+        background: var(--bg);
       }
 
       #create-save-btn {
-        padding: 0.6rem 1.4rem;
+        padding: 0.55rem 1.4rem;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary);
         color: white;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
-      #create-save-btn:hover {
-        opacity: 0.85;
-      }
-      #create-save-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      #create-save-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3); }
+      #create-save-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
       #create-close-btn {
         background: none;
@@ -1058,36 +1190,35 @@
         padding: 0.1rem 0.3rem;
         border-radius: 6px;
         line-height: 1;
-        transition: color 0.15s;
+        transition: all var(--transition);
       }
-      #create-close-btn:hover {
-        color: var(--text);
-      }
+      #create-close-btn:hover { color: var(--text); background: var(--bg); }
 
       /* ── PHOTO EDITOR MODAL ── */
       #photo-modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 1000;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1300;
         align-items: center;
         justify-content: center;
         padding: 2rem;
       }
-      #photo-modal.open {
-        display: flex;
-      }
+      #photo-modal.open { display: flex; }
 
       #photo-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
         width: 100%;
         max-width: 700px;
         max-height: 85vh;
         overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.2s ease;
       }
 
       #photo-card-header {
@@ -1098,16 +1229,16 @@
       }
 
       #photo-field-name {
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
         font-size: 1rem;
         font-weight: 700;
         color: var(--primary);
       }
 
       #photo-meta {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--muted);
-        font-family: monospace;
+        font-family: 'SF Mono', 'Consolas', monospace;
         margin-top: 0.2rem;
       }
 
@@ -1120,11 +1251,9 @@
         padding: 0.1rem 0.3rem;
         border-radius: 6px;
         line-height: 1;
-        transition: color 0.15s;
+        transition: all var(--transition);
       }
-      #photo-close-btn:hover {
-        color: var(--text);
-      }
+      #photo-close-btn:hover { color: var(--text); background: var(--bg); }
 
       .photo-grid {
         display: grid;
@@ -1135,23 +1264,19 @@
 
       .photo-grid-item {
         position: relative;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         overflow: hidden;
         border: 2px solid var(--border);
         aspect-ratio: 1;
-        background: #f9f9f9;
-        transition: border-color 0.15s;
+        background: var(--surface-2);
+        transition: all var(--transition);
       }
       .photo-grid-item:hover {
         border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
 
-      .photo-grid-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
+      .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
       .photo-delete-btn {
         position: absolute;
@@ -1167,34 +1292,29 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         opacity: 0;
-        transition:
-          opacity 0.15s,
-          transform 0.15s;
+        transition: all var(--transition);
         line-height: 1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
-      .photo-grid-item:hover .photo-delete-btn {
-        opacity: 1;
-      }
+      .photo-grid-item:hover .photo-delete-btn { opacity: 1; }
       .photo-delete-btn:hover {
         transform: scale(1.15);
-        background: rgba(220, 38, 38, 1);
+        background: #dc2626;
       }
 
       .photo-add-section {
         border: 2px dashed var(--border);
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         padding: 1rem;
         margin: 1rem 0;
-        transition: border-color 0.2s;
+        transition: all var(--transition);
       }
-      .photo-add-section:hover {
-        border-color: var(--primary);
-      }
+      .photo-add-section:hover { border-color: var(--primary); background: var(--primary-light); }
 
       .photo-add-section h4 {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 600;
         color: var(--muted);
         margin-bottom: 0.6rem;
@@ -1207,59 +1327,55 @@
       }
       .photo-url-row input {
         flex: 1;
-        padding: 0.5rem 0.7rem;
+        padding: 0.45rem 0.65rem;
         border: 1.5px solid var(--border);
-        border-radius: 8px;
-        font-size: 0.85rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.83rem;
         outline: none;
         color: var(--text);
-        transition: border-color 0.2s;
+        transition: all var(--transition);
+        background: var(--card);
       }
       .photo-url-row input:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
 
       .photo-add-btn {
-        padding: 0.5rem 1rem;
+        padding: 0.45rem 0.9rem;
         border: none;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         background: var(--primary);
         color: white;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 600;
         cursor: pointer;
         white-space: nowrap;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
-      .photo-add-btn:hover {
-        opacity: 0.85;
-      }
-      .photo-add-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      .photo-add-btn:hover { opacity: 0.9; box-shadow: 0 2px 6px rgba(26, 107, 101, 0.3); }
+      .photo-add-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
       .photo-file-label {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.5rem 1rem;
+        padding: 0.45rem 0.9rem;
         border: 1.5px solid var(--border);
-        border-radius: 8px;
-        background: white;
-        color: var(--text);
-        font-size: 0.8rem;
+        border-radius: var(--radius-sm);
+        background: var(--card);
+        color: var(--text-secondary);
+        font-size: 0.78rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
       }
       .photo-file-label:hover {
         border-color: var(--primary);
         color: var(--primary);
+        background: var(--primary-light);
       }
-      .photo-file-label input[type='file'] {
-        display: none;
-      }
+      .photo-file-label input[type='file'] { display: none; }
 
       .photo-pending-preview {
         display: flex;
@@ -1271,15 +1387,11 @@
         position: relative;
         width: 60px;
         height: 60px;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         overflow: hidden;
         border: 2px solid var(--primary);
       }
-      .photo-pending-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+      .photo-pending-item img { width: 100%; height: 100%; object-fit: cover; }
       .photo-pending-item .remove-pending {
         position: absolute;
         top: -1px;
@@ -1297,6 +1409,7 @@
         justify-content: center;
         line-height: 1;
         padding: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
       }
 
       .photo-actions {
@@ -1309,69 +1422,59 @@
       }
 
       .photo-cancel-btn {
-        padding: 0.6rem 1.2rem;
+        padding: 0.55rem 1.2rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        background: white;
+        border-radius: var(--radius-md);
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 500;
         cursor: pointer;
-        transition:
-          border-color 0.15s,
-          color 0.15s;
+        transition: all var(--transition);
       }
       .photo-cancel-btn:hover {
         border-color: var(--muted);
         color: var(--text);
+        background: var(--bg);
       }
 
       #photo-save-btn {
-        padding: 0.6rem 1.4rem;
+        padding: 0.55rem 1.4rem;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary);
         color: white;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
-      #photo-save-btn:hover {
-        opacity: 0.85;
-      }
-      #photo-save-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+      #photo-save-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3); }
+      #photo-save-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
       .photo-empty-state {
         text-align: center;
         padding: 2rem;
         color: var(--muted);
-        font-size: 0.85rem;
+        font-size: 0.83rem;
       }
-      .photo-empty-state svg {
-        display: block;
-        margin: 0 auto 0.5rem;
-        opacity: 0.3;
-      }
+      .photo-empty-state svg { display: block; margin: 0 auto 0.5rem; opacity: 0.3; }
 
       .photo-edit-btn {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        padding: 0.2rem 0.5rem;
+        padding: 0.22rem 0.5rem;
         border: 1px solid var(--border);
         border-radius: 6px;
-        background: white;
+        background: var(--card);
         color: var(--muted);
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
         white-space: nowrap;
-        margin-top: 0.3rem;
+        margin-top: 0.25rem;
       }
       .photo-edit-btn:hover {
         border-color: var(--primary);
@@ -1384,27 +1487,28 @@
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 2;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1000;
         align-items: center;
         justify-content: center;
         padding: 2rem;
       }
-      #data-viewer-modal.open {
-        display: flex;
-      }
+      #data-viewer-modal.open { display: flex; }
 
       #data-viewer-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--card);
+        border-radius: var(--radius-lg);
         padding: 0;
         width: 100%;
         max-width: 700px;
         max-height: 85vh;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-lg);
         overflow: hidden;
+        animation: slideUp 0.2s ease;
       }
 
       #data-viewer-header {
@@ -1416,11 +1520,7 @@
         flex-shrink: 0;
       }
 
-      #data-viewer-title {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--primary);
-      }
+      #data-viewer-title { font-size: 1rem; font-weight: 700; color: var(--primary); }
 
       #data-viewer-close-btn {
         background: none;
@@ -1429,15 +1529,11 @@
         cursor: pointer;
         color: var(--muted);
         padding: 0.1rem 0.3rem;
-
         border-radius: 6px;
         line-height: 1;
-        transition: color 0.15s;
+        transition: all var(--transition);
       }
-      #data-viewer-close-btn:hover {
-        color: var(--text);
-        transform: scale(1.2);
-      }
+      #data-viewer-close-btn:hover { color: var(--text); background: var(--bg); }
 
       #data-viewer-search-wrap {
         position: relative;
@@ -1457,21 +1553,20 @@
 
       #data-viewer-search {
         width: 100%;
-        padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+        padding: 0.5rem 0.85rem 0.5rem 2.2rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        font-size: 0.85rem;
+        border-radius: var(--radius-md);
+        font-size: 0.83rem;
         background: var(--bg);
         outline: none;
-        transition: border-color 0.2s;
+        transition: all var(--transition);
         color: var(--text);
       }
       #data-viewer-search:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
-      #data-viewer-search::placeholder {
-        color: var(--muted);
-      }
+      #data-viewer-search::placeholder { color: var(--muted); }
 
       #data-viewer-body {
         padding: 0.75rem 1.5rem 1.5rem;
@@ -1480,34 +1575,39 @@
       }
 
       #data-viewer-count {
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         color: var(--muted);
         font-weight: 500;
         margin-bottom: 0.5rem;
       }
 
       .dv-field-group {
-        margin-bottom: 0.6rem;
-        padding: 0.65rem 0.85rem;
-        border-radius: 10px;
+        margin-bottom: 0.55rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: var(--radius-md);
         background: var(--bg);
         border: 1px solid var(--border);
-        transition: border-color 0.15s;
+        transition: all var(--transition);
       }
       .dv-field-group:hover {
         border-color: var(--primary);
+        background: var(--primary-light);
       }
       .dv-field-key {
         font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 700;
-        color: var(--primary);
-        opacity: 0.7;
+        color: var(--primary-dark);
+        opacity: 0.8;
         letter-spacing: 0.02em;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.15rem;
         text-transform: uppercase;
         word-break: break-all;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
       }
+      .dv-field-key span { flex: 1; }
 
       .dv-field-value {
         font-size: 0.85rem;
@@ -1516,24 +1616,15 @@
         word-break: break-word;
         white-space: pre-wrap;
       }
+      .dv-field-value.empty { color: var(--border); font-style: italic; }
 
-      .dv-field-value.empty {
-        color: var(--border);
-        font-style: italic;
-      }
-
-      .dv-field-group mark {
-        background: #fef08a;
-        color: inherit;
-        padding: 0.05em 0.15em;
-        border-radius: 3px;
-      }
+      .dv-field-group mark { background: #fef08a; color: inherit; padding: 0.05em 0.15em; border-radius: 3px; }
 
       .dv-empty-state {
         text-align: center;
         padding: 2rem;
         color: var(--muted);
-        font-size: 0.85rem;
+        font-size: 0.83rem;
       }
 
       .dv-table-badge {
@@ -1541,10 +1632,10 @@
         align-items: center;
         gap: 0.3rem;
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         font-weight: 600;
-        font-size: 0.72rem;
-        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        padding: 0.18rem 0.55rem;
         border-radius: 20px;
         white-space: nowrap;
       }
@@ -1555,21 +1646,21 @@
         gap: 0.3rem;
       }
       .dv-field-value.array-val .array-item {
-        background: #f3f4f6;
-        padding: 0.15rem 0.5rem;
+        background: #f1f5f9;
+        padding: 0.12rem 0.45rem;
         border-radius: 6px;
-        font-size: 0.8rem;
-        color: #374151;
+        font-size: 0.78rem;
+        color: #475569;
       }
 
       /* ── ALL-TABLES FIELD PREVIEW ── */
       .field-preview {
         display: flex;
         flex-direction: column;
-        gap: 0.3rem;
+        gap: 0.25rem;
       }
       .field-preview .preview-item {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text);
         line-height: 1.4;
         overflow: hidden;
@@ -1582,50 +1673,48 @@
       .field-preview .preview-main {
         font-weight: 700;
         color: var(--second);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         -webkit-line-clamp: 1;
         max-height: 1.5em;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.1rem;
       }
       .field-preview .preview-key {
         font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-        font-size: 0.65rem;
+        font-size: 0.62rem;
         font-weight: 700;
         color: var(--primary);
-        opacity: 0.6;
+        opacity: 0.65;
         text-transform: uppercase;
         letter-spacing: 0.02em;
         margin-right: 0.25rem;
       }
       .field-preview .preview-more {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--muted);
         font-weight: 500;
         font-style: italic;
       }
 
-      .cell-actions {
-        text-align: center;
-        white-space: nowrap;
-      }
+      .cell-actions { text-align: center; white-space: nowrap; }
       .cell-actions .view-btn {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
         padding: 0.35rem 0.75rem;
         border: 1.5px solid var(--primary);
-        border-radius: 8px;
-        background: white;
+        border-radius: var(--radius-sm);
+        background: var(--card);
         color: var(--primary);
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all var(--transition);
         white-space: nowrap;
       }
       .cell-actions .view-btn:hover {
         background: var(--primary);
         color: white;
+        box-shadow: 0 2px 6px rgba(26, 107, 101, 0.25);
       }
 
       /* ── MAISON BANNER IN DATA VIEWER ── */
@@ -1633,27 +1722,25 @@
         display: none;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.6rem 0.85rem;
+        padding: 0.55rem 0.85rem;
         margin-bottom: 0.75rem;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary-light);
         border: 1px solid #c8dedd;
-        font-size: 0.85rem;
-        color: var(--primary);
+        font-size: 0.83rem;
+        color: var(--primary-dark);
         font-weight: 600;
       }
-      #dv-maison-banner.show {
-        display: flex;
-      }
+      #dv-maison-banner.show { display: flex; }
       #dv-maison-banner .maison-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        background: white;
-        color: var(--primary);
+        background: var(--card);
+        color: var(--primary-dark);
         font-weight: 600;
-        font-size: 0.8rem;
-        padding: 0.2rem 0.65rem;
+        font-size: 0.78rem;
+        padding: 0.18rem 0.6rem;
         border-radius: 20px;
         border: 1px solid var(--primary);
         white-space: nowrap;
@@ -1663,11 +1750,11 @@
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        background: #f3f4f6;
-        color: #374151;
+        background: #f1f5f9;
+        color: #475569;
         font-weight: 600;
-        font-size: 0.72rem;
-        padding: 0.2rem 0.6rem;
+        font-size: 0.7rem;
+        padding: 0.18rem 0.55rem;
         border-radius: 20px;
         white-space: nowrap;
       }
@@ -1678,15 +1765,13 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.5rem;
-        background: #f0fdf4;
-        border-radius: 8px;
+        background: var(--success-light);
+        border-radius: var(--radius-sm);
         margin-top: 0.5rem;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #166534;
       }
-      .upload-progress.active {
-        display: flex;
-      }
+      .upload-progress.active { display: flex; }
 
       .upload-spinner {
         width: 16px;
@@ -1697,83 +1782,82 @@
         animation: spin 0.6s linear infinite;
         flex-shrink: 0;
       }
-      #back {
-        width: 5rem;
-        height: 2.5rem;
-        margin: 1rem 0  1rem;
-        border: var(--border) solid 2px;
-        cursor: pointer;
-        border-radius: 7px;
-        background-color: transparent;
-        transition: 0.7s;
-      }
 
-      #back:hover {
-        transform: translateY(-5px);
-        border: var(--primary) solid 2px;
-      }
       .guide {
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%); /* Centers the card perfectly */
-        border-radius: 15px;
-
-        background-color: var(--card);
+        transform: translate(-50%, -50%);
+        border-radius: var(--radius-lg);
+        background: var(--card);
         padding: 2rem;
-
-        /* Adding a max-width and box-shadow for a better "card" feel */
         width: 90%;
-        max-width: 400px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        font-family: sans-serif;
+        max-width: 420px;
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        animation: slideUp 0.2s ease;
+        border: 1px solid var(--border);
       }
-
-      /* Basic button styling for the example */
+      .guide h2 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+      }
+      .guide h3 {
+        font-size: 0.85rem;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+      }
+      .guide p {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 0.75rem;
+      }
       .guide button {
-        margin-top: 1.5rem;
-        padding: 0.5rem 1.5rem;
+        margin: 0.5rem 0.25rem 0;
+        padding: 0.45rem 1.2rem;
         border: none;
-        border-radius: 5px;
-        background-color: var(--primary);
+        border-radius: var(--radius-sm);
+        background: var(--primary);
         color: white;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all var(--transition);
       }
+      .guide button:hover { opacity: 0.9; box-shadow: 0 2px 6px rgba(26, 107, 101, 0.3); }
+      .guide button:last-child { background: var(--muted); }
+      .guide button:last-child:hover { background: #475569; }
 
-      .guide button:hover {
-        background-color: var(--second);
-      }
-
-      body.show-table .only-tout {
-        display: none !important;
-      }
+      body.show-table .only-tout { display: none !important; }
 
       /* ── LOGIN MODAL ── */
       #login-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(4px);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      #login-overlay.hidden {
-        display: none;
-      }
+      #login-overlay.hidden { display: none; }
       #login-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2.2rem 2.4rem;
+        background: var(--card);
+        border-radius: var(--radius-xl);
+        padding: 2.4rem 2.6rem;
         width: 100%;
         max-width: 380px;
-        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
         text-align: center;
+        animation: slideUp 0.3s ease;
       }
       #login-card .login-logo {
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--primary);
         margin-bottom: 0.3rem;
@@ -1786,29 +1870,30 @@
       #login-card label {
         display: block;
         text-align: left;
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         font-weight: 600;
         color: var(--text);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.35rem;
         letter-spacing: 0.03em;
       }
       #login-password {
         width: 100%;
-        padding: 0.7rem 1rem;
+        padding: 0.65rem 1rem;
         border: 1.5px solid var(--border);
-        border-radius: 10px;
-        font-size: 0.9rem;
+        border-radius: var(--radius-md);
+        font-size: 0.88rem;
         outline: none;
         color: var(--text);
         background: var(--bg);
-        transition: border-color 0.2s;
+        transition: all var(--transition);
         margin-bottom: 0.6rem;
       }
       #login-password:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
       }
       #login-error {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         color: #dc2626;
         min-height: 1.1rem;
         margin-bottom: 0.8rem;
@@ -1816,185 +1901,202 @@
       }
       #login-submit {
         width: 100%;
-        padding: 0.7rem;
+        padding: 0.65rem;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--primary);
         color: white;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.15s;
+        transition: all var(--transition);
       }
-      #login-submit:hover { opacity: 0.88; }
+      #login-submit:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3); }
       #login-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-      .edit-buttons > button {
-    border: transparent;
-    border-radius: 10px;
-    padding: 0.7rem;
+
+      /* ── VISUALISER (gallery / list) ── */
+      .vz-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      #vz-table-select {
+        padding: 0.45rem 0.75rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        font-size: 0.83rem;
+        background: var(--card);
+        color: var(--text);
+        outline: none;
         cursor: pointer;
-    transition: 0.3s;
-    background-color: #dedede;
-}
-.edit-buttons > button:hover {
-    background-color: rgb(157 157 157);
-    /* color: #fff; */
-}
+        min-width: 200px;
+        transition: border-color var(--transition);
+      }
+      #vz-table-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+      .vz-toggle {
+        display: inline-flex;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        background: var(--card);
+      }
+      .vz-toggle button {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.45rem 0.85rem;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .vz-toggle button.active { background: var(--primary); color: white; }
+      .vz-toggle button.vmode-sep { border-left: 2px solid var(--border); }
+      .vz-toggle button:disabled { opacity: 0.4; cursor: not-allowed; }
+      .vz-toggle button:disabled:hover { background: transparent; color: var(--muted); }
+      .vz-create-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 1rem;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--primary);
+        color: white;
+        font-size: 0.83rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+      }
+      .vz-create-btn:hover { opacity: 0.92; box-shadow: 0 2px 6px rgba(26, 107, 101, 0.3); }
+      .vz-meta { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
 
-    /* ════════════════ VISUALISER (gallery / list) ════════════════ */
-    .vz-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-    #vz-table-select {
-      padding: 0.5rem 0.8rem;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.85rem;
-      background: white;
-      color: var(--text);
-      outline: none;
-      cursor: pointer;
-      min-width: 200px;
-    }
-    #vz-table-select:focus { border-color: var(--primary); }
-    .vz-toggle {
-      display: inline-flex;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .vz-toggle button {
-      border: none;
-      background: white;
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.5rem 0.9rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .vz-toggle button.active { background: var(--primary); color: white; }
-    .vz-create-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.5rem 1.1rem;
-      border: none;
-      border-radius: 10px;
-      background: var(--primary);
-      color: white;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-      white-space: nowrap;
-    }
-    .vz-create-btn:hover { opacity: 0.88; }
-    .vz-meta { font-size: 0.82rem; color: var(--muted); margin-left: auto; }
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      .gcard {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition);
+        cursor: pointer;
+      }
+      .gcard:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(26, 107, 101, 0.16); border-color: var(--primary); }
+      .gcard-cover {
+        position: relative;
+        height: 160px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .gcard-edit-hint {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.22rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: white;
+        background: rgba(26, 107, 101, 0.92);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: all var(--transition);
+        pointer-events: none;
+      }
+      .gcard:hover .gcard-edit-hint { opacity: 1; transform: translateY(0); }
+      .gcard-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+      .gcard:hover .gcard-cover img { transform: scale(1.05); }
+      .gcard-cover .no-img { color: var(--primary); opacity: 0.4; }
+      .gcard-body { padding: 0.85rem 1rem; flex: 1; }
+      .gcard-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        word-break: break-word;
+      }
+      .gfield { margin-bottom: 0.35rem; font-size: 0.78rem; line-height: 1.4; }
+      .gfield .k {
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--primary);
+        opacity: 0.7;
+        text-transform: uppercase;
+        display: block;
+      }
+      .gfield .v {
+        color: var(--text-secondary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .gfield .v.empty { color: var(--border); font-style: italic; }
+      .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.65rem 1rem;
+        border-top: 1px solid var(--border);
+        background: var(--surface-2);
+      }
+      .card-actions .rec-id {
+        flex: 1;
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.65rem;
+        color: var(--muted);
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: color var(--transition);
+      }
+      .card-actions .rec-id:hover { color: var(--primary); }
+      .act-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.73rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid var(--border);
+        background: var(--card);
+        transition: all var(--transition);
+      }
+      .act-btn.edit { color: var(--primary); border-color: var(--primary); }
+      .act-btn.edit:hover { background: var(--primary); color: white; box-shadow: 0 2px 6px rgba(26, 107, 101, 0.25); }
+      .act-btn.del { color: #dc2626; border-color: #f3c4c4; }
+      .act-btn.del:hover { background: #dc2626; color: white; border-color: #dc2626; }
+      .card-actions .photo-edit-btn,
+      .lactions .photo-edit-btn { margin-top: 0; color: var(--primary); border-color: var(--primary); }
+      .card-actions .photo-edit-btn:hover,
+      .lactions .photo-edit-btn:hover { background: var(--primary); color: white; }
 
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1rem;
-    }
-    .gcard {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .gcard:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(31, 109, 103, 0.14); }
-    .gcard-cover {
-      height: 160px;
-      background: var(--primary-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .gcard-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .gcard-cover .no-img { color: var(--primary); opacity: 0.4; }
-    .gcard-body { padding: 0.85rem 1rem; flex: 1; }
-    .gcard-title {
-      font-weight: 700;
-      font-size: 0.98rem;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-      word-break: break-word;
-    }
-    .gfield { margin-bottom: 0.4rem; font-size: 0.8rem; line-height: 1.4; }
-    .gfield .k {
-      font-family: 'SF Mono', 'Consolas', monospace;
-      font-size: 0.64rem;
-      font-weight: 700;
-      color: var(--primary);
-      opacity: 0.7;
-      text-transform: uppercase;
-      display: block;
-    }
-    .gfield .v {
-      color: var(--text);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .gfield .v.empty { color: var(--border); font-style: italic; }
-    .card-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.7rem 1rem;
-      border-top: 1px solid var(--border);
-      background: #fafbfd;
-    }
-    .card-actions .rec-id {
-      flex: 1;
-      font-family: monospace;
-      font-size: 0.68rem;
-      color: var(--muted);
-      cursor: pointer;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .card-actions .rec-id:hover { color: var(--primary); }
-    .act-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.4rem 0.7rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1.5px solid var(--border);
-      background: white;
-      transition: all 0.15s;
-    }
-    .act-btn.edit { color: var(--primary); border-color: var(--primary); }
-    .act-btn.edit:hover { background: var(--primary); color: white; }
-    .act-btn.del { color: #dc2626; border-color: #f3c4c4; }
-    .act-btn.del:hover { background: #dc2626; color: white; border-color: #dc2626; }
-    .card-actions .photo-edit-btn,
-    .lactions .photo-edit-btn { margin-top: 0; color: var(--primary); border-color: var(--primary); }
-    .card-actions .photo-edit-btn:hover,
-    .lactions .photo-edit-btn:hover { background: var(--primary); color: white; }
-
-    .vz-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .lrow {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      background: var(--card);
+      .vz-list { display: flex; flex-direction: column; gap: 0.5rem; }
+      .lrow {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 0.7rem 0.9rem;
@@ -2076,7 +2178,7 @@
       padding: 0.4rem 0.85rem;
       border: 1.5px solid var(--border);
       border-radius: 20px;
-      background: white;
+      background: var(--card);
       color: var(--muted);
       font-size: 0.8rem;
       font-weight: 600;
@@ -2098,7 +2200,7 @@
       padding: 0.45rem 0.9rem;
       border: 1.5px solid var(--border);
       border-radius: 9px;
-      background: white;
+      background: var(--card);
       color: var(--text);
       font-size: 0.8rem;
       font-weight: 600;
@@ -2111,7 +2213,7 @@
     .vw-btn.danger:hover { background: #dc2626; color: white; }
 
     .vw-table-wrap {
-      background: white;
+      background: var(--card);
       border-radius: 14px;
       border: 1px solid var(--border);
       overflow: auto;
@@ -2167,7 +2269,7 @@
       outline: none;
     }
     table.vw-table tbody td input:focus { background: var(--primary-light); }
-    table.vw-table tbody tr:hover { background: #fafbfd; }
+    table.vw-table tbody tr:hover { background: var(--surface-2); }
     table.vw-table td.vw-row-actions { text-align: center; padding: 0 0.4rem; white-space: nowrap; }
     .vw-row-del {
       border: none;
@@ -2192,7 +2294,7 @@
     }
     #rec-modal.open { display: flex; }
     #rec-card {
-      background: white;
+      background: var(--card);
       width: 100%;
       max-width: 520px;
       height: 100vh;
@@ -2219,11 +2321,11 @@
       align-items: center;
       padding: 0.6rem 1.4rem;
       border-bottom: 1px solid var(--border);
-      background: #fafbfd;
+      background: var(--surface-2);
     }
     #rec-toolbar button {
       border: 1.5px solid var(--border);
-      background: white;
+      background: var(--card);
       color: var(--text);
       font-size: 0.74rem;
       font-weight: 600;
@@ -2258,7 +2360,7 @@
       outline: none;
       color: var(--text);
       resize: vertical;
-      background: white;
+      background: var(--card);
     }
     #rec-fields textarea:focus,
     #rec-fields input:focus,
@@ -2289,11 +2391,44 @@
       border-top: 1px solid var(--border);
     }
     #rec-foot button { padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
-    #rec-cancel { border: 1.5px solid var(--border); background: white; color: var(--muted); }
+    #rec-cancel { border: 1.5px solid var(--border); background: var(--card); color: var(--muted); }
     #rec-save { border: none; background: var(--primary); color: white; }
     #rec-save:disabled { opacity: 0.5; cursor: not-allowed; }
-    #rec-delete { border: 1.5px solid #f3c4c4; background: white; color: #dc2626; }
+    #rec-delete { border: 1.5px solid #f3c4c4; background: var(--card); color: #dc2626; }
     #rec-delete:hover { background: #dc2626; color: white; }
+
+    /* Managed media field inside the record modal */
+    #rec-fields .rec-media-widget {
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      padding: 0.6rem;
+      background: var(--surface-2);
+    }
+    #rec-fields .rec-media-thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.55rem;
+      min-height: 8px;
+    }
+    #rec-fields .rec-media-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      background: var(--primary-light);
+    }
+    #rec-fields .rec-media-thumb img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+    #rec-fields .rec-media-empty { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+    #rec-fields .rec-media-btn {
+      width: 100%;
+      justify-content: center;
+      color: var(--primary);
+      border-color: var(--primary);
+      padding: 0.5rem;
+    }
+    #rec-fields .rec-media-btn:hover { background: var(--primary); color: white; }
 
     /* ════════════════ VIEW BUILDER MODAL ════════════════ */
     #view-builder-modal {
@@ -2308,7 +2443,7 @@
     }
     #view-builder-modal.open { display: flex; }
     #vb-card {
-      background: white;
+      background: var(--card);
       border-radius: 16px;
       width: 100%;
       max-width: 560px;
@@ -2338,7 +2473,7 @@
       font-size: 0.85rem;
       outline: none;
       color: var(--text);
-      background: white;
+      background: var(--card);
     }
     .vb-group input:focus, .vb-group select:focus { border-color: var(--primary); }
     .vb-row { display: flex; gap: 0.4rem; align-items: center; }
@@ -2377,8 +2512,209 @@
       border-top: 1px solid var(--border);
     }
     #vb-foot button { padding: 0.6rem 1.3rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
-    #vb-cancel { border: 1.5px solid var(--border); background: white; color: var(--muted); }
+    #vb-cancel { border: 1.5px solid var(--border); background: var(--card); color: var(--muted); }
     #vb-save { border: none; background: var(--primary); color: white; }
+
+    /* ════════════════ LIVRET (side-by-side editor) ════════════════ */
+    .livret-toolbar { gap: 0.6rem; align-items: center; }
+    #livret-maison-select {
+      padding: 0.45rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--card);
+      min-width: 220px;
+      cursor: pointer;
+    }
+    #livret-maison-select:focus { border-color: var(--primary); outline: none; }
+    .livret-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1rem;
+      height: calc(100vh - 230px);
+      min-height: 480px;
+    }
+    .livret-editor {
+      overflow-y: auto;
+      padding-right: 0.4rem;
+    }
+    .livret-rec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 0.9rem;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .livret-rec-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .livret-rec-head .lr-icon { font-size: 0.95rem; }
+    .livret-rec-head .lr-title { font-weight: 700; color: var(--text); font-size: 0.88rem; }
+    .livret-rec-head .lr-tag {
+      font-size: 0.66rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+    }
+    .livret-rec-head .lr-id {
+      margin-left: auto;
+      font-family: monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .livret-rec-body { padding: 0.7rem 0.9rem; }
+    .livret-field { margin-bottom: 0.75rem; }
+    .livret-field:last-child { margin-bottom: 0; }
+    .livret-field > label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary);
+      opacity: 0.85;
+      font-family: monospace;
+      margin-bottom: 0.25rem;
+    }
+    .livret-field textarea {
+      width: 100%;
+      min-height: 64px;
+      padding: 0.55rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--card);
+      outline: none;
+      resize: vertical;
+    }
+    .livret-field textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .livret-field.dirty textarea,
+    .livret-field.dirty select.livret-input { border-color: var(--warning); background: var(--warning-light); }
+    .livret-field select.livret-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--card);
+      outline: none;
+    }
+    .livret-field select.livret-input:focus { border-color: var(--primary); }
+    .livret-ro {
+      padding: 0.5rem 0.7rem;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: var(--surface-2);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    /* media widget reused from the record modal, scoped to the livret editor */
+    #livret-editor .rec-media-widget {
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      padding: 0.55rem;
+      background: var(--surface-2);
+    }
+    #livret-editor .rec-media-thumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem; min-height: 8px; }
+    #livret-editor .rec-media-thumb { width: 56px; height: 56px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); background: var(--primary-light); }
+    #livret-editor .rec-media-thumb img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+    #livret-editor .rec-media-empty { font-size: 0.76rem; color: var(--muted); font-style: italic; }
+    #livret-editor .rec-media-btn { width: 100%; justify-content: center; color: var(--primary); border-color: var(--primary); padding: 0.45rem; }
+    #livret-editor .rec-media-btn:hover { background: var(--primary); color: #fff; }
+    /* sticky formatting toolbar at the top of the editor column */
+    #livret-fmt-bar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      align-items: center;
+      padding: 0.5rem;
+      margin-bottom: 0.7rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+    #livret-fmt-bar button {
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.3rem 0.55rem;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    #livret-fmt-bar button:hover { border-color: var(--primary); color: var(--primary); }
+    #livret-fmt-bar input[type='color'] { width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--border); border-radius: 7px; cursor: pointer; }
+    #livret-fmt-bar input[type='number'] { width: 4.2rem; padding: 0.3rem 0.4rem; border: 1.5px solid var(--border); border-radius: 7px; font-size: 0.74rem; }
+    #livret-fmt-bar .fmt-hint { font-size: 0.68rem; color: var(--muted); margin-left: auto; }
+    .livret-preview-col {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
+    }
+    .livret-preview-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .livret-preview-bar button {
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 7px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    .livret-preview-bar button:hover { border-color: var(--primary); color: var(--primary); }
+    .livret-frame-wrap { position: relative; flex: 1; min-height: 0; background: #fcfaf8; }
+    #livret-edit-frame { width: 100%; height: 100%; border: none; display: block; }
+    .livret-frame-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+    @media (max-width: 900px) {
+      .livret-split { grid-template-columns: 1fr; height: auto; }
+      .livret-preview-col { height: 70vh; }
+    }
 
     /* ════════════════ FICHE SYNTHÈSE ════════════════ */
     .fiche-card {
@@ -2404,7 +2740,7 @@
     .fiche-head .fiche-id:hover { color: var(--primary); }
     .fiche-print {
       border: 1.5px solid var(--primary);
-      background: white;
+      background: var(--card);
       color: var(--primary);
       font-size: 0.74rem;
       font-weight: 600;
@@ -2457,8 +2793,8 @@
   <body id="body">
 
 
-    <div id="login-overlay">
-      <div id="login-card">
+    <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Connexion">
+      <div id="login-card" role="document">
         <div class="login-logo">Idylliq - Interface</div>
         <div class="login-subtitle">Entrez le mot de passe pour accéder aux données</div>
         <label for="login-password">Mot de passe</label>
@@ -2470,7 +2806,7 @@
     <header class="header">
       <button
         onclick="window.location.href='https://idylliq.fr/admin_livret'"
-        id="back"
+        id="back" aria-label="Retour"
       >
         ←
       </button>
@@ -2509,45 +2845,89 @@
             autocomplete="off"
           />
         </div>
+
+        <div class="house-filter-wrap" id="house-filter-wrap">
+          <svg
+            class="house-filter-icon"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <input
+            type="text"
+            id="house-filter"
+            placeholder="Toutes les maisons"
+            autocomplete="off"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="house-dropdown"
+            aria-label="Filtrer par maison"
+          />
+          <svg
+            class="house-caret"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+          <button
+            type="button"
+            class="house-clear"
+            id="house-clear"
+            aria-label="Effacer le filtre maison"
+            title="Effacer le filtre"
+          >
+            ×
+          </button>
+          <div
+            class="house-dropdown"
+            id="house-dropdown"
+            role="listbox"
+            aria-label="Liste des maisons"
+          ></div>
+        </div>
       </div>
     </header>
 
     <div class="main">
-      <div id="tabs-bar">
-                <button class="tab-btn" data-tab="alltables">
+      <div id="tabs-bar" role="tablist">
+                <button class="tab-btn" role="tab" data-tab="alltables">
           Toutes les données<span class="tab-count">0</span>
         </button>
 
-        <button class="tab-btn" data-tab="Maison">
+        <button class="tab-btn" role="tab" data-tab="Maison">
           Maison<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="fonctionnementMaison">
+        <button class="tab-btn" role="tab" data-tab="fonctionnementMaison">
           fonctionnementMaison<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="Piscine">
+        <button class="tab-btn" role="tab" data-tab="Piscine">
           Piscine<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="DispositionMaison">
+        <button class="tab-btn" role="tab" data-tab="DispositionMaison">
           Disposition<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="WorkFlowBreezeway">
+        <button class="tab-btn" role="tab" data-tab="WorkFlowBreezeway">
           WorkFlow<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="ConditionLocation">
+        <button class="tab-btn" role="tab" data-tab="ConditionLocation">
           Condition Loc.<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="Proprietaire">
+        <button class="tab-btn" role="tab" data-tab="Proprietaire">
           Propriétaire<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" data-tab="Recommandation">
+        <button class="tab-btn" role="tab" data-tab="Recommandation">
           Recommandation<span class="tab-count">0</span>
-        </button>
-
-        <button class="tab-btn" data-tab="fiche" style="margin-left:auto">
-          📋 Fiche synthèse
-        </button>
-        <button class="tab-btn" data-tab="vues">
-          🧩 Vues perso<span class="tab-count">0</span>
         </button>
 
       </div>
@@ -2558,15 +2938,18 @@
 
       <div class="meta-bar">
         <div id="results-count"></div>
-        <div class="vz-toggle" id="view-toggle" style="display:none; margin-left:1rem">
+        <div class="vz-toggle" id="view-toggle" style="margin-left:1rem">
           <button data-mode="table" class="active">▤ Table</button>
           <button data-mode="list">☰ Liste</button>
           <button data-mode="gallery">▦ Galerie</button>
+          <button data-mode="fiche" class="vmode-sep" title="Fiche synthèse — toutes les colonnes FS_ regroupées par Maison">📋 Fiche</button>
+          <button data-mode="vues" title="Vues perso — colonnes combinées, jointes par Maison">🧩 Vues</button>
+          <button data-mode="livret" title="Livret — édition côte à côte de tous les champs et de l'aperçu du livret">📖 Livret</button>
         </div>
         <div class="pagination-controls" id="pagination-controls">
-          <button class="page-btn" id="page-prev" disabled>‹</button>
+          <button class="page-btn" id="page-prev" disabled aria-label="Page précédente">‹</button>
           <span class="page-info" id="page-info"></span>
-          <button class="page-btn" id="page-next" disabled>›</button>
+          <button class="page-btn" id="page-next" disabled aria-label="Page suivante">›</button>
         </div>
         <button
           class="create-btn"
@@ -2666,15 +3049,44 @@
           </div>
         </div>
       </div>
+
+      <!-- ── LIVRET PANE (side-by-side editor + live preview) ── -->
+      <div id="livret-pane" style="display: none">
+        <div class="vz-toolbar livret-toolbar">
+          <span style="font-weight: 700; color: var(--primary)">📖 Livret</span>
+          <select id="livret-maison-select" aria-label="Choisir une maison">
+            <option value="">— Choisir une maison —</option>
+          </select>
+          <span class="vz-meta" id="livret-meta"></span>
+          <div style="flex: 1"></div>
+          <button class="vz-create-btn" id="livret-open-btn" title="Ouvrir le livret dans un nouvel onglet" style="background: var(--second)">↗ Ouvrir</button>
+          <button class="vz-create-btn" id="livret-save-btn" disabled>💾 Tout enregistrer</button>
+        </div>
+        <div class="livret-split" id="livret-split">
+          <div id="livret-editor" class="livret-editor">
+            <div class="state-box">Choisissez une maison pour éditer son livret.</div>
+          </div>
+          <div class="livret-preview-col">
+            <div class="livret-preview-bar">
+              <span>Aperçu en direct</span>
+              <button id="livret-refresh-btn" title="Recharger l'aperçu">⟳</button>
+            </div>
+            <div class="livret-frame-wrap">
+              <iframe id="livret-edit-frame" title="Aperçu du livret"></iframe>
+              <div class="livret-frame-empty" id="livret-frame-empty">L'aperçu s'affichera ici.</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="lightbox">
-      <button id="lightbox-close">✕</button>
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="Aperçu photo">
+      <button id="lightbox-close" aria-label="Fermer">✕</button>
       <img id="lightbox-img" src="" alt="" />
     </div>
 
-    <div id="edit-modal">
-      <div id="edit-card">
+    <div id="edit-modal" role="dialog" aria-modal="true" aria-label="Édition">
+      <div id="edit-card" role="document">
         <div id="edit-card-header">
           <div>
             <div class="edit-buttons" style="margin-bottom: 1rem;">
@@ -2716,8 +3128,8 @@
       </div>
     </div>
 
-    <div id="create-modal">
-      <div id="create-card">
+    <div id="create-modal" role="dialog" aria-modal="true" aria-label="Création">
+      <div id="create-card" role="document">
         <div id="create-card-header">
           <div>
             <div id="create-table-name"></div>
@@ -2743,8 +3155,8 @@
       </div>
     </div>
 
-    <div id="data-viewer-modal">
-      <div id="data-viewer-card">
+    <div id="data-viewer-modal" role="dialog" aria-modal="true" aria-label="Visualiseur de données">
+      <div id="data-viewer-card" role="document">
         <div id="data-viewer-header">
           <div style="display: flex; align-items: center; gap: 0.6rem">
             <span id="data-viewer-title">Données</span>
@@ -2795,8 +3207,8 @@
 
     <input type="file" id="inline-photo-input" accept="image/*" multiple style="display: none" />
 
-    <div id="photo-modal">
-      <div id="photo-card">
+    <div id="photo-modal" role="dialog" aria-modal="true" aria-label="Ajouter une photo">
+      <div id="photo-card" role="document">
         <div id="photo-card-header">
           <div>
             <div id="photo-field-name"></div>
@@ -2832,7 +3244,7 @@
 
           function get_guide() {
             if (localStorage.getItem('guide') !== 'false') {
-              return ` <div class="guide" id="guide">
+              return ` <div class="guide" id="guide" role="dialog" aria-label="Guide">
                 <h2 style="text-align: center;">Petit Guide</h2>
                 <h3>Quand vous changer une valeur: </h3>
                 <p>Faites attention, au typage <br>•si c'est du texte = mettre du texte
@@ -2984,10 +3396,15 @@
 
 document.addEventListener('keydown', (event) => {
   if (!event.repeat) {
-    console.log(`Initial press: ${event.key}`);
    if(event.key === "Delete"){
-     const _hf = document.getElementById('house-filter');
-     if (_hf) _hf.value = '';
+     // Don't hijack Delete while the user is editing a field.
+     const el = document.activeElement;
+     const typing = el && (
+       el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
+     ) && el.id !== 'house-filter';
+     if (!typing && typeof window._clearHouseFilter === 'function') {
+       window._clearHouseFilter();
+     }
    }
   }
 });
@@ -3017,6 +3434,9 @@ document.addEventListener('keydown', (event) => {
       let allTablesPage = 1;
       const PAGE_SIZE = 50;
       let currentFilteredCount = 0;
+      const tableFullyLoaded = {}; // table → true once the ENTIRE table is cached in db[table]
+      const browseOffsets = {};    // table → [null, tok1, tok2, …] forward-only Airtable page cursors
+      let browseSearch = { table: null, query: null, records: [] }; // server-side search result cache
       const houseNameToId = {}; // maison name → IdMaison (for per-table filtering)
       const idToHouseName = {}; // IdMaison → maison name (reverse lookup)
       const recIdToHouseName = {}; // Airtable recId → maison name (for linked record lookup)
@@ -3239,16 +3659,19 @@ document.addEventListener('keydown', (event) => {
         }
         return flatV(v);
       }
+      // Guarantees the WHOLE table is in db[table]. Single-table browse tabs may
+      // have merged in only a few pages (#2/#3), so we gate on tableFullyLoaded
+      // (not "db[table] === undefined") and do a full fetch when not complete.
       async function ensureTableLoaded(table) {
-        if (db[table] === undefined) {
-          try {
-            db[table] = await fetchAll(table);
-            (db[table] || []).forEach((rec) => {
-              recordIdToTable[rec.id] = table;
-            });
-          } catch (e) {
-            db[table] = [];
-          }
+        if (tableFullyLoaded[table]) return;
+        try {
+          db[table] = await fetchAll(table);
+          (db[table] || []).forEach((rec) => {
+            recordIdToTable[rec.id] = table;
+          });
+          tableFullyLoaded[table] = true;
+        } catch (e) {
+          if (db[table] === undefined) db[table] = [];
         }
       }
       async function ensureLinkedTablesLoaded(table) {
@@ -4055,51 +4478,11 @@ document.addEventListener('keydown', (event) => {
         applyFilter();
       }
 
-      function renderTableData(tableName, query) {
-        const records = db[tableName] || [];
+      // Paints an already-paged list of records into the main table. Shared by
+      // the client renderer and the server-side paging/search paths (#2/#3).
+      function paintTableRows(tableName, paged, query) {
         const tbody = document.getElementById('tbody');
-        const count = document.getElementById('results-count');
-        const thead = document.getElementById('thead'); // filter by house
-        const houseVal = getSelectedHouseName();
-        let filtered = records;
-        if (houseVal) {
-          const maisonRecId = houseNameToId[houseVal] || '';
-          filtered = records.filter((r) => {
-            // For Maison table itself: match by Livret_NomMaison
-            if (tableName === TABLE_MAISON) {
-              return r.fields.Livret_NomMaison === houseVal;
-            }
-            // Other tables: Link_Maison or Link_maison contains Maison recIds
-            const link = r.fields.Link_Maison || r.fields.Link_maison;
-            if (Array.isArray(link)) {
-              return link.some((id) => String(id) === maisonRecId || recIdToHouseName[String(id)] === houseVal);
-            }
-            if (typeof link === 'string') {
-              return link === maisonRecId || recIdToHouseName[link] === houseVal;
-            }
-            return false;
-          });
-        }
-
-        // search filter
-        if (query && query.length >= 2) {
-          const q = query.toLowerCase();
-          filtered = filtered.filter((r) => {
-            const allText = (r.id + ' ' + buildSearchText(r.fields)).toLowerCase();
-            return allText.includes(q);
-          });
-        }
-
-        // Pagination
-        const page = tablePage;
-        const totalFiltered = filtered.length;
-        const pageSize = PAGE_SIZE;
-        const start = (page - 1) * pageSize;
-        const paged = filtered.slice(start, start + pageSize);
-
-        count.textContent = `${totalFiltered} résultat${totalFiltered !== 1 ? 's' : ''}`;
-        currentFilteredCount = totalFiltered;
-        renderPagination(totalFiltered, page, pageSize);
+        const thead = document.getElementById('thead');
 
         // build header
         const headers = buildTableHeader(tableName);
@@ -4109,7 +4492,7 @@ document.addEventListener('keydown', (event) => {
           '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
         thead.innerHTML = `<tr>${headers.map((h) => `<th>${h === '_recId' ? '🆔 ID' : h === '_maison' ? 'Maison' : esc(h)}</th>`).join('')}</tr>`;
 
-        if (paged.length === 0) {
+        if (!paged.length) {
           tbody.innerHTML = `<tr><td colspan="${headers.length}"><div class="state-box">Aucun résultat.</div></td></tr>`;
           return;
         }
@@ -4145,6 +4528,187 @@ document.addEventListener('keydown', (event) => {
             return `<tr>${cells.join('')}</tr>`;
           })
           .join('');
+      }
+
+      // Client renderer: filters + paginates the full in-memory table. Used when
+      // the whole table is already cached (tableFullyLoaded), e.g. the eager
+      // tables or once a table has been fully loaded by Fiche/Vues/All-tables.
+      function renderTableData(tableName, query) {
+        const records = db[tableName] || [];
+        const count = document.getElementById('results-count');
+        const houseVal = getSelectedHouseName();
+        let filtered = records;
+        if (houseVal) {
+          const maisonRecId = houseNameToId[houseVal] || '';
+          filtered = records.filter((r) => {
+            if (tableName === TABLE_MAISON) {
+              return r.fields.Livret_NomMaison === houseVal;
+            }
+            const link = r.fields.Link_Maison || r.fields.Link_maison;
+            if (Array.isArray(link)) {
+              return link.some((id) => String(id) === maisonRecId || recIdToHouseName[String(id)] === houseVal);
+            }
+            if (typeof link === 'string') {
+              return link === maisonRecId || recIdToHouseName[link] === houseVal;
+            }
+            return false;
+          });
+        }
+        if (query && query.length >= 2) {
+          const q = query.toLowerCase();
+          filtered = filtered.filter((r) => {
+            const allText = (r.id + ' ' + buildSearchText(r.fields)).toLowerCase();
+            return allText.includes(q);
+          });
+        }
+        const page = tablePage;
+        const totalFiltered = filtered.length;
+        const pageSize = PAGE_SIZE;
+        const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+        count.textContent = `${totalFiltered} résultat${totalFiltered !== 1 ? 's' : ''}`;
+        currentFilteredCount = totalFiltered;
+        renderPagination(totalFiltered, page, pageSize);
+        paintTableRows(tableName, paged, query);
+      }
+
+      /* ════════ Server-side paging & search for single-table tabs (#2/#3) ════════
+         Big tables aren't fully pulled up front. While a table is not yet fully
+         cached we browse it page-by-page from Airtable (forward-only offset
+         cursors) and push the search query to the server via filterByFormula, so
+         matches are found even before the whole table is loaded. db[table] stays
+         the authoritative cache: pages are merged in, and any feature needing the
+         *entire* table (Fiche/Vues/All-tables) still calls ensureTableLoaded(). */
+
+      async function fetchTablePage(table, { pageSize, offset, filterFormula }) {
+        const url = new URL(
+          `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`,
+        );
+        if (pageSize) url.searchParams.set('pageSize', pageSize);
+        if (offset) url.searchParams.set('offset', offset);
+        if (filterFormula) url.searchParams.set('filterByFormula', filterFormula);
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || JSON.stringify(data));
+        return { records: data.records || [], offset: data.offset || null };
+      }
+
+      // OR(SEARCH(q, LOWER({field}&"")) …) over every scalar field + record id.
+      function buildSearchFormula(table, query) {
+        const q = String(query).toLowerCase().replace(/["\\]/g, '\\$&');
+        const terms = scalarFields(table).map(
+          (f) => `SEARCH("${q}",LOWER({${f.replace(/[{}]/g, '')}}&""))`,
+        );
+        terms.push(`SEARCH("${q}",LOWER(RECORD_ID()))`);
+        return `OR(${terms.join(',')})`;
+      }
+
+      // Add freshly-fetched records into the cache without clobbering existing
+      // ones (does NOT mark the table fully loaded — only ensureTableLoaded does).
+      function mergeRecords(table, recs) {
+        if (!db[table]) db[table] = [];
+        const seen = new Set(db[table].map((r) => r.id));
+        recs.forEach((r) => {
+          if (!seen.has(r.id)) {
+            db[table].push(r);
+            seen.add(r.id);
+          }
+          recordIdToTable[r.id] = table;
+        });
+      }
+
+      // Prev/Next display for server browse (total unknown → "Page N").
+      function renderServerPagination(page, hasNext) {
+        const info = document.getElementById('page-info');
+        const prev = document.getElementById('page-prev');
+        const next = document.getElementById('page-next');
+        prev.style.display = '';
+        next.style.display = '';
+        info.textContent = `Page ${page}`;
+        prev.disabled = page <= 1;
+        next.disabled = !hasNext;
+      }
+
+      // Entry point for a single-table tab in Table mode. Picks client vs server.
+      async function renderTableTab(table) {
+        const query = currentQuery;
+        if (tableFullyLoaded[table]) {
+          renderTableData(table, query);
+          return;
+        }
+        if (query && query.length >= 2) {
+          await renderServerSearch(table, query);
+        } else {
+          await renderServerPage(table);
+        }
+      }
+
+      async function renderServerPage(table) {
+        const tbody = document.getElementById('tbody');
+        const count = document.getElementById('results-count');
+        if (!browseOffsets[table]) browseOffsets[table] = [null];
+        // If we lack a cursor for the requested page (e.g. a stale jump), clamp
+        // to the last page we know how to fetch.
+        if (browseOffsets[table][tablePage - 1] === undefined) {
+          tablePage = browseOffsets[table].length;
+        }
+        const page = tablePage;
+        const offset = browseOffsets[table][page - 1];
+        tbody.innerHTML =
+          '<tr><td colspan="20"><div class="state-box"><div class="spinner"></div>Chargement…</div></td></tr>';
+        let res;
+        try {
+          res = await fetchTablePage(table, { pageSize: PAGE_SIZE, offset });
+        } catch (e) {
+          // Fall back to a full load + client render.
+          await ensureTableLoaded(table);
+          if (currentTab === table && tableViewMode === 'table' && !currentQuery)
+            renderTableData(table, '');
+          return;
+        }
+        // Drop the result if the user moved on while we were fetching.
+        if (currentTab !== table || tableViewMode !== 'table' || currentQuery) return;
+        mergeRecords(table, res.records);
+        if (res.offset) browseOffsets[table][page] = res.offset;
+        else browseOffsets[table].length = page; // reached the end: no further cursor
+        count.textContent = `Page ${page}`;
+        renderServerPagination(page, !!res.offset);
+        paintTableRows(table, res.records, '');
+      }
+
+      async function renderServerSearch(table, query) {
+        const tbody = document.getElementById('tbody');
+        // Re-use cached matches when the table+query are unchanged.
+        if (!(browseSearch.table === table && browseSearch.query === query)) {
+          tbody.innerHTML =
+            '<tr><td colspan="20"><div class="state-box"><div class="spinner"></div>Recherche côté serveur…</div></td></tr>';
+          let records;
+          try {
+            records = await fetchAll(table, buildSearchFormula(table, query));
+          } catch (e) {
+            // Formula too long / invalid → fall back to a full client search.
+            await ensureTableLoaded(table);
+            if (currentTab === table && tableViewMode === 'table' && currentQuery === query)
+              renderTableData(table, query);
+            return;
+          }
+          if (currentTab !== table || tableViewMode !== 'table' || currentQuery !== query)
+            return;
+          mergeRecords(table, records);
+          browseSearch = { table, query, records };
+          tablePage = 1;
+        }
+        paintSearchPage(table, query);
+      }
+
+      function paintSearchPage(table, query) {
+        const count = document.getElementById('results-count');
+        const total = browseSearch.records.length;
+        const page = tablePage;
+        const paged = browseSearch.records.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+        count.textContent = `${total} résultat${total !== 1 ? 's' : ''}`;
+        currentFilteredCount = total;
+        renderPagination(total, page, PAGE_SIZE);
+        paintTableRows(table, paged, query);
       }
 
       /* ── All-Tables tab rendering ── */
@@ -4323,7 +4887,29 @@ document.addEventListener('keydown', (event) => {
           .value.toLowerCase()
           .trim();
 
+        // Fiche & Vues were folded into the view switch (#8): they are global
+        // view modes that ignore the active data tab.
+        if (tableViewMode === 'fiche') {
+          setActivePanes('fiche');
+          document.getElementById('results-count').textContent = '';
+          renderFichePane();
+          return;
+        }
+        if (tableViewMode === 'vues') {
+          setActivePanes('vues');
+          document.getElementById('results-count').textContent = '';
+          renderVuesPane();
+          return;
+        }
+        if (tableViewMode === 'livret') {
+          setActivePanes('livret');
+          document.getElementById('results-count').textContent = '';
+          renderLivretPane();
+          return;
+        }
+
         if (currentTab === 'all') {
+          setActivePanes('table');
           document.getElementById('thead').innerHTML =
             '<tr><th>Maison</th><th>Catégorie</th><th>Titre</th><th>Contenu</th><th class="col-photos">Photos</th><th>Actions</th></tr>';
           const house = getSelectedHouseName();
@@ -4343,18 +4929,15 @@ document.addEventListener('keydown', (event) => {
           });
           renderToutRows(filtered);
         } else if (currentTab === 'alltables') {
+          setActivePanes('table');
           renderAllTables(currentQuery);
-        } else if (currentTab === 'vues') {
-          renderVuesPane();
-        } else if (currentTab === 'fiche') {
-          renderFichePane();
         } else {
           renderCurrentTableView();
         }
       }
 
       /* ── Per-table view modes: table | list | gallery ───────────────── */
-      let tableViewMode = 'table'; // 'table' | 'list' | 'gallery'
+      let tableViewMode = 'table'; // 'table' | 'list' | 'gallery' | 'fiche' | 'vues'
       const CARD_TABLES = [
         'Maison',
         'fonctionnementMaison',
@@ -4366,22 +4949,57 @@ document.addEventListener('keydown', (event) => {
         'Recommandation',
       ];
 
-      function renderCurrentTableView() {
+      /* Central pane visibility for the 5 view modes (table | list | gallery |
+         fiche | vues). The meta-bar stays visible so the view switch is always
+         reachable — Fiche/Vues no longer have their own tab to leave from. */
+      function setActivePanes(mode) {
         const tableWrap = document.querySelector('.table-wrap');
         const cards = document.getElementById('visualise-pane');
+        const fiche = document.getElementById('fiche-pane');
+        const vues = document.getElementById('vues-pane');
+        const livret = document.getElementById('livret-pane');
         const pag = document.getElementById('pagination-controls');
-        if (tableViewMode === 'table') {
-          tableWrap.style.display = '';
-          cards.style.display = 'none';
-          pag.style.display = '';
-          renderTableData(currentTab, currentQuery);
-        } else {
-          tableWrap.style.display = 'none';
-          cards.style.display = 'block';
-          pag.style.display = 'none';
+        const metaBar = document.querySelector('.meta-bar');
+        metaBar.style.display = 'flex';
+        tableWrap.style.display = mode === 'table' ? '' : 'none';
+        cards.style.display = mode === 'list' || mode === 'gallery' ? 'block' : 'none';
+        fiche.style.display = mode === 'fiche' ? 'block' : 'none';
+        vues.style.display = mode === 'vues' ? 'block' : 'none';
+        if (livret) livret.style.display = mode === 'livret' ? 'block' : 'none';
+        // Pagination only applies to the paged table view (not Tout, cards, fiche, vues).
+        pag.style.display = mode === 'table' && currentTab !== 'all' ? '' : 'none';
+      }
+
+      /* Reflect the current mode + tab in the view switch. Liste/Galerie only
+         make sense for a single data table, so disable them elsewhere. */
+      function updateViewToggleUI() {
+        const toggle = document.getElementById('view-toggle');
+        toggle.style.display = 'inline-flex';
+        const cardOk = CARD_TABLES.includes(currentTab);
+        toggle.querySelectorAll('button[data-mode]').forEach((b) => {
+          const m = b.dataset.mode;
+          b.classList.toggle('active', m === tableViewMode);
+          if (m === 'list' || m === 'gallery') b.disabled = !cardOk;
+        });
+      }
+
+      async function renderCurrentTableView() {
+        if (tableViewMode === 'list' || tableViewMode === 'gallery') {
+          setActivePanes(tableViewMode);
           vzTable = currentTab;
           vzView = tableViewMode === 'gallery' ? 'gallery' : 'list';
+          // Cards show every record at once → make sure the whole table is in.
+          if (!tableFullyLoaded[currentTab]) {
+            document.getElementById('vz-content').innerHTML =
+              '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+            await ensureTableLoaded(currentTab);
+            if (currentTab !== vzTable ||
+                (tableViewMode !== 'list' && tableViewMode !== 'gallery')) return;
+          }
           renderTableCards();
+        } else {
+          setActivePanes('table');
+          renderTableTab(currentTab);
         }
       }
 
@@ -4400,11 +5018,9 @@ document.addEventListener('keydown', (event) => {
 
       document.getElementById('view-toggle').addEventListener('click', (e) => {
         const b = e.target.closest('button[data-mode]');
-        if (!b) return;
+        if (!b || b.disabled) return;
         tableViewMode = b.dataset.mode;
-        document
-          .querySelectorAll('#view-toggle button')
-          .forEach((x) => x.classList.toggle('active', x.dataset.mode === tableViewMode));
+        updateViewToggleUI();
         applyFilter();
       });
 
@@ -4426,47 +5042,31 @@ document.addEventListener('keydown', (event) => {
           document.body.classList.add('show-table');
         }
 
-        /* Special panes (Fiche synthèse / Vues perso) vs. the table view */
-        const isVues = tabName === 'vues';
-        const isFiche = tabName === 'fiche';
-        const special = isVues || isFiche;
-        document.getElementById('vues-pane').style.display = isVues ? 'block' : 'none';
-        document.getElementById('fiche-pane').style.display = isFiche ? 'block' : 'none';
-        // The cards host (gallery/list) is driven by renderCurrentTableView; hide by default here.
-        document.getElementById('visualise-pane').style.display = 'none';
-        // Table / List / Gallery switch: only for single-table tabs.
-        document.getElementById('view-toggle').style.display =
-          CARD_TABLES.includes(tabName) ? 'inline-flex' : 'none';
-        document.querySelector('.table-wrap').style.display = special ? 'none' : '';
-        document.querySelector('.meta-bar').style.display = special ? 'none' : 'flex';
-        document.getElementById('pagination-controls').style.display = special ? 'none' : '';
-        if (special) {
-          applyFilter();
-          return;
-        }
+        /* Fiche / Vues are global view modes now (#8), not tabs. Clicking a data
+           tab is an explicit request to see that table → snap back to Table.
+           Liste/Galerie only apply to single-table tabs. */
+        if (tableViewMode === 'fiche' || tableViewMode === 'vues' || tableViewMode === 'livret')
+          tableViewMode = 'table';
+        if ((tableViewMode === 'list' || tableViewMode === 'gallery') && !CARD_TABLES.includes(tabName))
+          tableViewMode = 'table';
+        updateViewToggleUI();
 
-        /* Lazy-load tables the first time a tab is accessed */
-        const realTableTab = !['all', 'alltables'].includes(tabName);
-        const lazyTables = tabName === 'alltables'
-          ? [TABLE_MAISON, TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON,
+        /* Data loading:
+           - 'alltables' needs every table fully cached (cross-table search), so
+             complete any that aren't fully loaded yet.
+           - single-table tabs page/search server-side on demand (renderTableTab),
+             so they are NOT eager-loaded here.
+           - 'all' (Tout) is served from the preloaded allRows. */
+        if (tabName === 'alltables') {
+          const need = [TABLE_MAISON, TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON,
              TABLE_DISPOSITION, TABLE_WORKFLOW, TABLE_CONDITION, TABLE_PROPRIETAIRE, TABLE_RECOMMANDATION]
-              .filter(t => db[t] === undefined)
-          : (realTableTab && db[tabName] === undefined ? [tabName] : []);
-
-        if (lazyTables.length > 0) {
-          document.getElementById('tbody').innerHTML =
-            '<tr><td colspan="10"><div class="state-box"><div class="spinner"></div>Chargement…</div></td></tr>';
-          try {
-            await Promise.all(lazyTables.map(async t => {
-              db[t] = await fetchAll(t);
-              (db[t] || []).forEach(rec => { recordIdToTable[rec.id] = t; });
-            }));
-            if (tabName === 'alltables') window._allTablesData = build_all_tables();
-            updateTabCounts();
-          } catch (err) {
+              .filter(t => !tableFullyLoaded[t]);
+          if (need.length > 0) {
             document.getElementById('tbody').innerHTML =
-              `<tr><td colspan="10"><div class="state-box">Erreur : ${esc(err.message)}</div></td></tr>`;
-            return;
+              '<tr><td colspan="20"><div class="state-box"><div class="spinner"></div>Chargement…</div></td></tr>';
+            await Promise.all(need.map(t => ensureTableLoaded(t)));
+            window._allTablesData = build_all_tables();
+            updateTabCounts();
           }
         }
 
@@ -4498,13 +5098,29 @@ document.addEventListener('keydown', (event) => {
           if (newPage < 1 || newPage > totalPages) return;
           allTablesPage = newPage;
         } else if (currentTab !== 'all') {
-          const totalPages = Math.max(
-            1,
-            Math.ceil(currentFilteredCount / PAGE_SIZE),
-          );
-          const newPage = tablePage + direction;
-          if (newPage < 1 || newPage > totalPages) return;
-          tablePage = newPage;
+          // Known total when the table is fully cached, or when an active search
+          // has already collected all matches; otherwise it's a server browse.
+          const known =
+            tableFullyLoaded[currentTab] || (currentQuery && currentQuery.length >= 2);
+          if (known) {
+            const totalPages = Math.max(
+              1,
+              Math.ceil(currentFilteredCount / PAGE_SIZE),
+            );
+            const newPage = tablePage + direction;
+            if (newPage < 1 || newPage > totalPages) return;
+            tablePage = newPage;
+          } else {
+            // Server browse: forward-only. Advance only if we hold the cursor.
+            const newPage = tablePage + direction;
+            if (newPage < 1) return;
+            if (
+              direction > 0 &&
+              !(browseOffsets[currentTab] && browseOffsets[currentTab][tablePage] !== undefined)
+            )
+              return;
+            tablePage = newPage;
+          }
         } else {
           return;
         }
@@ -4516,6 +5132,172 @@ document.addEventListener('keydown', (event) => {
         allTablesPage = 1;
         applyFilter();
       }, 250));
+
+      /* ── House filter: searchable dropdown (ID - nom) ───────────────────
+         Reuses the existing house-filter pipeline: getSelectedHouseName()
+         reads #house-filter.value and resolves it via window.labelToMaisonName.
+         Selecting an option sets the input to the canonical "ID - nom" label. */
+      (function initHouseFilter() {
+        const wrap = document.getElementById('house-filter-wrap');
+        const input = document.getElementById('house-filter');
+        const dropdown = document.getElementById('house-dropdown');
+        const clearBtn = document.getElementById('house-clear');
+        if (!wrap || !input || !dropdown) return;
+
+        let activeIndex = -1;
+        let committedLabel = ''; // last confirmed "ID - nom" selection
+
+        const escHtml = (s) =>
+          String(s).replace(/[&<>"]/g, (c) =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]),
+          );
+        function highlight(text, q) {
+          text = String(text);
+          if (!q) return escHtml(text);
+          const i = text.toLowerCase().indexOf(q.toLowerCase());
+          if (i < 0) return escHtml(text);
+          return (
+            escHtml(text.slice(0, i)) +
+            '<mark>' +
+            escHtml(text.slice(i, i + q.length)) +
+            '</mark>' +
+            escHtml(text.slice(i + q.length))
+          );
+        }
+
+        function open() {
+          wrap.classList.add('open');
+          input.setAttribute('aria-expanded', 'true');
+        }
+        function close() {
+          wrap.classList.remove('open');
+          input.setAttribute('aria-expanded', 'false');
+          activeIndex = -1;
+        }
+        function syncHasValue() {
+          wrap.classList.toggle('has-value', !!committedLabel);
+        }
+
+        function renderOptions() {
+          // While showing the committed selection, list every house so the
+          // user can switch; otherwise filter by what they typed.
+          const showingCommitted = committedLabel && input.value === committedLabel;
+          const q = showingCommitted ? '' : input.value.trim();
+          let list = all_houses;
+          if (q) {
+            const lq = q.toLowerCase();
+            list = all_houses.filter(
+              (h) =>
+                h.label.toLowerCase().includes(lq) ||
+                h.name.toLowerCase().includes(lq) ||
+                String(h.id).toLowerCase().includes(lq),
+            );
+          }
+          let html =
+            '<div class="house-option house-all-option" data-label="" role="option">🏘️ Toutes les maisons</div>';
+          if (!list.length) {
+            html += '<div class="house-empty">Aucune maison trouvée</div>';
+          } else {
+            html += list
+              .map(
+                (h) =>
+                  `<div class="house-option" data-label="${escHtml(h.label)}" role="option" title="${escHtml(h.label)}">` +
+                  `<span class="house-id">${highlight(h.id, q)}</span>` +
+                  `<span class="house-name">${highlight(h.name, q)}</span>` +
+                  '</div>',
+              )
+              .join('');
+          }
+          dropdown.innerHTML = html;
+          activeIndex = -1;
+        }
+
+        function commit(label) {
+          committedLabel = label;
+          input.value = label;
+          syncHasValue();
+          close();
+          tablePage = 1;
+          allTablesPage = 1;
+          applyFilter();
+          input.blur();
+        }
+
+        function clear() {
+          committedLabel = '';
+          input.value = '';
+          syncHasValue();
+          close();
+          tablePage = 1;
+          allTablesPage = 1;
+          applyFilter();
+        }
+
+        function updateActive(opts) {
+          opts.forEach((o, i) => o.classList.toggle('active', i === activeIndex));
+          if (opts[activeIndex]) opts[activeIndex].scrollIntoView({ block: 'nearest' });
+        }
+
+        input.addEventListener('focus', () => {
+          renderOptions();
+          open();
+          input.select();
+        });
+        input.addEventListener('input', () => {
+          committedLabel = '';
+          syncHasValue();
+          renderOptions();
+          open();
+        });
+
+        dropdown.addEventListener('mousedown', (e) => {
+          const opt = e.target.closest('.house-option');
+          if (!opt) return;
+          e.preventDefault(); // keep focus from bouncing before commit
+          commit(opt.dataset.label || '');
+        });
+
+        clearBtn.addEventListener('click', clear);
+
+        input.addEventListener('keydown', (e) => {
+          const opts = Array.from(dropdown.querySelectorAll('.house-option'));
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!wrap.classList.contains('open')) {
+              renderOptions();
+              open();
+              return;
+            }
+            activeIndex = Math.min(activeIndex + 1, opts.length - 1);
+            updateActive(opts);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, 0);
+            updateActive(opts);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex >= 0 && opts[activeIndex]) {
+              commit(opts[activeIndex].dataset.label || '');
+            } else if (opts.length) {
+              const first = opts.find((o) => o.dataset.label) || opts[0];
+              commit(first.dataset.label || '');
+            }
+          } else if (e.key === 'Escape') {
+            close();
+            input.blur();
+          }
+        });
+
+        // Click outside → close, dropping any uncommitted typed text.
+        document.addEventListener('click', (e) => {
+          if (wrap.contains(e.target)) return;
+          input.value = committedLabel;
+          close();
+        });
+
+        // Let the Delete-key shortcut (and others) reset cleanly.
+        window._clearHouseFilter = clear;
+      })();
 
       document
         .getElementById('page-prev')
@@ -4548,14 +5330,28 @@ document.addEventListener('keydown', (event) => {
           document.getElementById('lightbox').classList.remove('open');
         });
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          document.getElementById('lightbox').classList.remove('open');
-          closeEditModal();
-          closeCreateModal();
-          closePhotoEditor();
-          closeDataViewer();
-          closeRecModal();
-          closeViewBuilder();
+        if (e.key !== 'Escape') return;
+        // Close only the top-most open layer so dismissing a media/field editor
+        // doesn't also close the record modal underneath it.
+        const lb = document.getElementById('lightbox');
+        if (lb.classList.contains('open')) {
+          lb.classList.remove('open');
+          return;
+        }
+        const layers = [
+          ['photo-modal', closePhotoEditor],
+          ['edit-modal', closeEditModal],
+          ['data-viewer-modal', closeDataViewer],
+          ['create-modal', closeCreateModal],
+          ['view-builder-modal', closeViewBuilder],
+          ['rec-modal', closeRecModal],
+        ];
+        for (const [id, close] of layers) {
+          const el = document.getElementById(id);
+          if (el && el.classList.contains('open')) {
+            close();
+            return;
+          }
         }
       });
 
@@ -4988,6 +5784,10 @@ document.addEventListener('keydown', (event) => {
       // The iframe tells us when it is ready to receive the data snapshot.
       window.addEventListener('message', (e) => {
         if (e.data && e.data.type === 'PREVIEW_READY') {
+          // Only react to the edit-modal's own preview frame (the Livret view
+          // has its own frame + handler).
+          const ownFrame = document.getElementById('livret-preview-frame');
+          if (ownFrame && e.source !== ownFrame.contentWindow) return;
           previewReady = true;
           sendPreviewInit();
         }
@@ -5446,6 +6246,11 @@ document.addEventListener('keydown', (event) => {
             rec.fields[photoCtx.field] = data.fields[photoCtx.field];
           }
 
+          // Keep the record modal's media widget in sync if it is open.
+          syncRecMediaWidget(photoCtx.table, photoCtx.recId, photoCtx.field);
+          // Keep the Livret editor's media widget + live preview in sync.
+          syncLivretMedia(photoCtx.table, photoCtx.recId, photoCtx.field);
+
           // Rebuild Tout data if needed
           if (
             photoCtx.table === TABLE_MAISON ||
@@ -5588,6 +6393,9 @@ document.addEventListener('keydown', (event) => {
           db[TABLE_PISCINE] = piscineRecs;
           db[TABLE_LISTE_MAISON] = listRecs;
           db[TABLE_RECOMMANDATION] = recoRecs;
+          // These were pulled in full → client-side renderer can serve them.
+          [TABLE_MAISON, TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON, TABLE_RECOMMANDATION]
+            .forEach((t) => { tableFullyLoaded[t] = true; });
 
           // Build lookup maps: Maison.Livret_NomMaison is the canonical house name.
           // Key: Maison recId  →  name (used by Link_Maison / Link_maison in every other table)
@@ -5841,8 +6649,8 @@ document.addEventListener('keydown', (event) => {
                   return `<div class="gfield"><span class="k">${esc(f)}</span><span class="v ${val ? '' : 'empty'}">${val ? esc(val) : '—'}</span></div>`;
                 })
                 .join('');
-              return `<div class="gcard">
-                <div class="gcard-cover">${cover ? `<img class="thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : VZ_NOIMG}</div>
+              return `<div class="gcard" data-vz-card="${esc(rec.id)}" title="Cliquer pour modifier cette fiche">
+                <div class="gcard-cover">${cover ? `<img class="thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : VZ_NOIMG}<span class="gcard-edit-hint">✎ Modifier</span></div>
                 <div class="gcard-body">
                   <div class="gcard-title">${title}</div>
                   ${previews}
@@ -5983,7 +6791,21 @@ document.addEventListener('keydown', (event) => {
           return;
         }
         const cp = e.target.closest('[data-copy]');
-        if (cp) copy(cp.dataset.copy);
+        if (cp) {
+          copy(cp.dataset.copy);
+          return;
+        }
+        // Click anywhere on a gallery card (except buttons, the cover image
+        // lightbox, photo controls or the id) opens the edit modal.
+        const card = e.target.closest('[data-vz-card]');
+        if (
+          card &&
+          !e.target.closest(
+            'button, a, .thumb, .card-actions, .inline-photos, [data-copy]',
+          )
+        ) {
+          openRecModal('edit', vzTable, card.dataset.vzCard);
+        }
       });
 
       /* ── Inline photo add / delete (vue Liste) ───────────────────────── */
@@ -6120,16 +6942,30 @@ document.addEventListener('keydown', (event) => {
         }
         if (fieldIsAttachment(table, field)) {
           const atts = rec ? attachmentsOf(rec, field) : [];
-          const thumbs = atts
-            .map(
-              (a) =>
-                `<div class="att-thumb" data-id="${esc(a.id)}"><img src="${esc(a.url)}" alt=""><button type="button" class="att-rm" title="Retirer">✕</button></div>`,
-            )
-            .join('');
+          // EDIT mode → use the dedicated media manager (photo-modal): upload
+          // files, paste URLs, delete, reorder — all in the same UI used by the
+          // list/gallery photo buttons.
+          if (rec) {
+            const thumbs = atts
+              .map(
+                (a) =>
+                  `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
+              )
+              .join('');
+            return `<div class="form-group" data-field="${esc(field)}" data-type="attachment" data-managed="1">
+              <label>${esc(field)} <span style="opacity:.6;font-weight:400">(médias)</span></label>
+              <div class="rec-media-widget">
+                <div class="rec-media-thumbs">${thumbs || '<span class="rec-media-empty">Aucun média</span>'}</div>
+                <button type="button" class="act-btn photo-edit-btn rec-media-btn" data-table="${esc(table)}" data-recid="${esc(rec.id)}" data-field="${esc(field)}">📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}</button>
+              </div>
+            </div>`;
+          }
+          // CREATE mode → no record id yet, so fall back to URL entry.
           return `<div class="form-group" data-field="${esc(field)}" data-type="attachment">
             <label>${esc(field)} <span style="opacity:.6;font-weight:400">(photos)</span></label>
-            <div class="att-thumbs">${thumbs}</div>
+            <div class="att-thumbs"></div>
             <textarea class="att-new" rows="2" placeholder="Ajouter des URLs d'images (une par ligne)"></textarea>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem">Enregistrez la fiche, puis utilisez « 📷 Gérer les médias » pour téléverser des fichiers.</div>
           </div>`;
         }
         if (fieldIsBoolean(table, field)) {
@@ -6182,6 +7018,37 @@ document.addEventListener('keydown', (event) => {
         recCtx = null;
       }
 
+      // Refresh the thumbnails + count of a managed media field inside the open
+      // record modal (called after the photo-modal saves its changes).
+      function syncRecMediaWidget(table, recId, field) {
+        if (
+          !recCtx ||
+          recCtx.mode !== 'edit' ||
+          recCtx.table !== table ||
+          recCtx.recId !== recId
+        )
+          return;
+        const groups = document.querySelectorAll(
+          '#rec-fields .form-group[data-managed="1"]',
+        );
+        const g = [...groups].find((el) => el.dataset.field === field);
+        if (!g) return;
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        const atts = rec ? attachmentsOf(rec, field) : [];
+        const thumbsWrap = g.querySelector('.rec-media-thumbs');
+        const btn = g.querySelector('.rec-media-btn');
+        if (thumbsWrap)
+          thumbsWrap.innerHTML =
+            atts
+              .map(
+                (a) =>
+                  `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
+              )
+              .join('') || '<span class="rec-media-empty">Aucun média</span>';
+        if (btn)
+          btn.textContent = `📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}`;
+      }
+
       function recCollectForm(rec) {
         const groups = document.querySelectorAll('#rec-fields .form-group');
         const fields = {};
@@ -6190,6 +7057,9 @@ document.addEventListener('keydown', (event) => {
           const field = g.dataset.field;
           const type = g.dataset.type;
           if (type === 'attachment') {
+            // Managed media fields are saved by the photo-modal directly, so
+            // they have no inline inputs to collect here.
+            if (g.dataset.managed === '1' || !g.querySelector('.att-new')) return;
             const kept = [...g.querySelectorAll('.att-thumb:not(.removed)')].map(
               (t) => ({ id: t.dataset.id }),
             );
@@ -6545,7 +7415,7 @@ document.addEventListener('keydown', (event) => {
             '<div class="state-box"><div class="spinner"></div>Jointure des tables par Maison…</div>';
           await ensureJoinTablesLoaded(view);
           // Bail out if the user switched views while we were loading.
-          if (activeViewId !== view.id || currentTab !== 'vues') return;
+          if (activeViewId !== view.id || tableViewMode !== 'vues') return;
           content.innerHTML = renderJoinedViewTable(view);
         } else {
           content.innerHTML = renderViewTable(view);
@@ -6830,7 +7700,7 @@ document.addEventListener('keydown', (event) => {
         content.innerHTML =
           '<div class="state-box"><div class="spinner"></div>Chargement des fiches synthèse…</div>';
         await ensureFicheTablesLoaded();
-        if (currentTab !== 'fiche') return;
+        if (tableViewMode !== 'fiche') return;
 
         let maisons = db[TABLE_MAISON] || [];
         const house = getSelectedHouseName();
@@ -6857,6 +7727,623 @@ document.addEventListener('keydown', (event) => {
         }
         content.innerHTML = docs.map((d) => d.html).join('');
       }
+
+      /* ──────────────── LIVRET (édition côte à côte) ────────────────
+         Vue « Livret » : à gauche tous les champs texte qui alimentent le
+         livret d'une maison (éditables + mise en forme), à droite l'aperçu du
+         livret (livret_idylliq.html en iframe) mis à jour en direct. */
+      const LIVRET_TABLES = [
+        TABLE_MAISON,
+        TABLE_LISTE_MAISON,
+        TABLE_EQUIPEMENT,
+        TABLE_PISCINE,
+        TABLE_RECOMMANDATION,
+        TABLE_WORKFLOW,
+        TABLE_CONDITION,
+      ];
+      let livretCtx = { idMaison: '', maisonName: '' };
+      let livretFrameReady = false;
+      let livretDirty = {}; // `${table}::${recId}` -> { field: value }
+
+      async function ensureLivretData() {
+        for (const t of LIVRET_TABLES) {
+          await ensureTableLoaded(t);
+          await ensureLinkedTablesLoaded(t);
+        }
+        const { rows } = buildData();
+        allRows = rows;
+      }
+
+      function livretMaisonOptions() {
+        const seen = new Map();
+        allRows.forEach((r) => {
+          if (r.maisonId && !seen.has(r.maisonId)) seen.set(r.maisonId, r.maison);
+        });
+        return [...seen.entries()]
+          .map(([id, name]) => ({ id, name }))
+          .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      }
+
+      /* Exact columns that feed the livret, per source table. fonctionnementMaison
+         is special-cased: ALL its columns are shown (minus links / computed). */
+      const LIVRET_FIELD_CONFIG = {
+        [TABLE_MAISON]: [
+          'Livret_NomMaison',
+          'Livret_InstructionAccess',
+          'InstructionAccess_media',
+          'Livret_Mot_propriétaire',
+          'Livret_regle',
+        ],
+        [TABLE_PISCINE]: [
+          'Livret_InstructionPréliminaire',
+          'Livret_InstructionOuverture',
+          'Livret_InstructionFermeture',
+          'lienYoutube',
+          'Photo',
+        ],
+        [TABLE_RECOMMANDATION]: [
+          'Livret_Reco_Nom',
+          'Livret_Reco_Adress',
+          'Livret_Reco_Categorie',
+          'Livret_Reco_Description',
+          'Livret_Reco_MaisonScore',
+        ],
+      };
+      // Fields always rendered with the special media input.
+      const LIVRET_MEDIA_FIELDS = new Set([
+        'InstructionAccess_media',
+        'Photo',
+        'Photos',
+        'mediaAcces',
+      ]);
+      // Airtable field types that cannot be written back.
+      const LIVRET_RO_TYPES = new Set([
+        'formula',
+        'rollup',
+        'count',
+        'multipleLookupValues',
+        'createdTime',
+        'lastModifiedTime',
+        'createdBy',
+        'lastModifiedBy',
+        'autoNumber',
+        'button',
+        'externalSyncSource',
+      ]);
+      function livretIsComputed(table, field) {
+        const m = fieldMeta(table, field);
+        return !!m && LIVRET_RO_TYPES.has(m.type);
+      }
+      function livretIsMedia(table, field) {
+        return LIVRET_MEDIA_FIELDS.has(field) || fieldIsAttachment(table, field);
+      }
+      // Every column of fonctionnementMaison, excluding links + computed fields.
+      function livretEquipFields() {
+        return fieldsFor(TABLE_EQUIPEMENT).filter(
+          (f) =>
+            f !== '_recId' &&
+            !isLinkField(TABLE_EQUIPEMENT, f) &&
+            !livretIsComputed(TABLE_EQUIPEMENT, f),
+        );
+      }
+
+      // Build the control HTML for one livret field, picking the input type.
+      function livretFieldControl(table, recId, field) {
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        const val = rec ? rec.fields[field] : undefined;
+        const dataAttr = `data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(field)}"`;
+
+        // Media (special input) → opens the photo-modal, saved independently.
+        if (livretIsMedia(table, field)) {
+          const atts = rec ? attachmentsOf(rec, field) : [];
+          const thumbs = atts
+            .map(
+              (a) =>
+                `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
+            )
+            .join('');
+          return `<div class="livret-field" ${dataAttr} data-ctl="media">
+            <label>${esc(field)} <span style="opacity:.6;font-weight:400">(médias)</span></label>
+            <div class="rec-media-widget">
+              <div class="rec-media-thumbs">${thumbs || '<span class="rec-media-empty">Aucun média</span>'}</div>
+              <button type="button" class="act-btn photo-edit-btn rec-media-btn" data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(field)}">📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}</button>
+            </div>
+          </div>`;
+        }
+
+        // Links → read-only (structural, not livret content).
+        if (isLinkField(table, field)) {
+          return `<div class="livret-field" ${dataAttr} data-ctl="ro">
+            <label>${esc(field)} <span style="opacity:.6;font-weight:400">(lien — lecture seule)</span></label>
+            <div class="livret-ro">${esc(flatV(val)) || '—'}</div>
+          </div>`;
+        }
+
+        // Boolean (checkbox)
+        if (fieldIsBoolean(table, field)) {
+          const cur = val === true ? 'true' : val === false ? 'false' : '';
+          return `<div class="livret-field" ${dataAttr} data-ctl="boolean">
+            <label>${esc(field)}</label>
+            <select class="livret-input">
+              <option value="" ${cur === '' ? 'selected' : ''}>— (vide)</option>
+              <option value="true" ${cur === 'true' ? 'selected' : ''}>Oui</option>
+              <option value="false" ${cur === 'false' ? 'selected' : ''}>Non</option>
+            </select>
+          </div>`;
+        }
+
+        // Single / multiple select
+        if (isSelectField(table, field)) {
+          const meta = fieldMeta(table, field);
+          const multi = meta && meta.type === 'multipleSelects';
+          const choices = (meta && meta.options && meta.options.choices) || [];
+          const cur = multi ? (Array.isArray(val) ? val : []) : [val];
+          const opts = choices
+            .map(
+              (c) =>
+                `<option value="${esc(c.name)}" ${cur.includes(c.name) ? 'selected' : ''}>${esc(c.name)}</option>`,
+            )
+            .join('');
+          if (multi) {
+            return `<div class="livret-field" ${dataAttr} data-ctl="multiselect">
+              <label>${esc(field)} <span style="opacity:.6;font-weight:400">(choix multiples)</span></label>
+              <select class="livret-input" multiple size="4">${opts}</select>
+            </div>`;
+          }
+          return `<div class="livret-field" ${dataAttr} data-ctl="select">
+            <label>${esc(field)}</label>
+            <select class="livret-input"><option value="" ${!val ? 'selected' : ''}>— (vide)</option>${opts}</select>
+          </div>`;
+        }
+
+        // Default → free text (with live preview + formatting toolbar)
+        return `<div class="livret-field" ${dataAttr} data-ctl="text">
+          <label>${esc(field)}</label>
+          <textarea class="livret-textarea" ${dataAttr} spellcheck="false">${esc(flatV(val))}</textarea>
+        </div>`;
+      }
+
+      // Read the current value of a livret field control (typed).
+      function livretReadControl(fieldEl) {
+        const ctl = fieldEl.dataset.ctl;
+        if (ctl === 'text') return fieldEl.querySelector('textarea').value;
+        if (ctl === 'select') return fieldEl.querySelector('select').value;
+        if (ctl === 'boolean') {
+          const v = fieldEl.querySelector('select').value;
+          return v === '' ? null : v === 'true';
+        }
+        if (ctl === 'multiselect')
+          return [...fieldEl.querySelector('select').selectedOptions]
+            .map((o) => o.value)
+            .filter(Boolean);
+        return undefined;
+      }
+
+      async function renderLivretPane() {
+        const editor = document.getElementById('livret-editor');
+        const sel = document.getElementById('livret-maison-select');
+        if (!sel.dataset.filled) {
+          editor.innerHTML =
+            '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+          await ensureLivretData();
+          if (tableViewMode !== 'livret') return;
+          const opts = livretMaisonOptions();
+          sel.innerHTML =
+            '<option value="">— Choisir une maison —</option>' +
+            opts
+              .map(
+                (o) =>
+                  `<option value="${esc(o.id)}">${esc(o.name)} (${esc(o.id)})</option>`,
+              )
+              .join('');
+          sel.dataset.filled = '1';
+          const house = getSelectedHouseName();
+          if (house) {
+            const match = opts.find((o) => o.name === house);
+            if (match) sel.value = match.id;
+          }
+        }
+        const idMaison = sel.value;
+        if (!idMaison) {
+          editor.innerHTML =
+            '<div class="state-box">Choisissez une maison pour éditer son livret.</div>';
+          document.getElementById('livret-meta').textContent = '';
+          document.getElementById('livret-frame-empty').style.display = 'flex';
+          document.getElementById('livret-edit-frame').src = 'about:blank';
+          document.getElementById('livret-save-btn').disabled = true;
+          livretCtx = { idMaison: '', maisonName: '' };
+          return;
+        }
+        // Don't rebuild (and reload the iframe / discard edits) on incidental
+        // re-renders — e.g. typing in the search box — when the maison is the
+        // same and the editor is already built.
+        const alreadyBuilt = !!document.getElementById('livret-fmt-bar');
+        if (idMaison === livretCtx.idMaison && alreadyBuilt) return;
+        livretRenderEditorFor(idMaison);
+      }
+
+      function livretGroupsFor(idMaison) {
+        const groups = [];
+
+        // 🏠 Maison record (always shown) with its fixed livret columns.
+        const maisonRec = (db[TABLE_MAISON] || []).find(
+          (r) => normIdMaison(r.fields.ID_Maison || r.fields.IdMaison) === idMaison,
+        );
+        if (maisonRec) {
+          groups.push({
+            table: TABLE_MAISON,
+            recId: maisonRec.id,
+            type: 'maison',
+            categorie: '',
+            title: 'Maison — infos & accès',
+            fields: LIVRET_FIELD_CONFIG[TABLE_MAISON],
+          });
+        }
+
+        // Linked records (équipements / piscine / reco) — recIds come from the
+        // already-resolved Tout rows so we reuse the link logic.
+        const seen = new Set();
+        allRows
+          .filter((r) => r.maisonId === idMaison)
+          .forEach((row) => {
+            const key = row.recTable + '::' + row.recId;
+            if (seen.has(key)) return;
+            if (
+              ![TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_RECOMMANDATION].includes(
+                row.recTable,
+              )
+            )
+              return;
+            seen.add(key);
+            const rec = (db[row.recTable] || []).find((r) => r.id === row.recId);
+            const f = rec ? rec.fields : {};
+            if (row.recTable === TABLE_EQUIPEMENT) {
+              groups.push({
+                table: row.recTable,
+                recId: row.recId,
+                type: 'equip',
+                categorie: row.categorie || '',
+                title: f.NomEquipement || row.nom || 'Équipement',
+                fields: livretEquipFields(),
+              });
+            } else if (row.recTable === TABLE_PISCINE) {
+              groups.push({
+                table: row.recTable,
+                recId: row.recId,
+                type: 'piscine',
+                categorie: 'Piscine',
+                title: f.ID_Maison_Piscine || row.nom || 'Piscine',
+                fields: LIVRET_FIELD_CONFIG[TABLE_PISCINE],
+              });
+            } else {
+              groups.push({
+                table: row.recTable,
+                recId: row.recId,
+                type: 'reco',
+                categorie: f.Livret_Reco_Categorie || row.categorie || '',
+                title: f.Livret_Reco_Nom || row.nom || 'Recommandation',
+                fields: LIVRET_FIELD_CONFIG[TABLE_RECOMMANDATION],
+              });
+            }
+          });
+
+        const order = { maison: 0, equip: 1, piscine: 2, reco: 3 };
+        return groups.sort(
+          (a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9),
+        );
+      }
+
+      function livretRenderEditorFor(idMaison) {
+        const editor = document.getElementById('livret-editor');
+        const groups = livretGroupsFor(idMaison);
+        const maisonName =
+          (livretMaisonOptions().find((o) => o.id === idMaison) || {}).name ||
+          idMaison;
+        livretCtx = { idMaison, maisonName };
+        livretDirty = {};
+        document.getElementById('livret-save-btn').disabled = true;
+
+        if (!groups.length) {
+          editor.innerHTML =
+            '<div class="state-box">Aucun champ livret pour cette maison.</div>';
+        } else {
+          const icon = (t) =>
+            t === 'maison' ? '🏠' : t === 'piscine' ? '🏊' : t === 'reco' ? '📍' : '🔧';
+          let html = `<div id="livret-fmt-bar">
+            <button type="button" data-lf="bold" title="Gras"><b>B</b></button>
+            <button type="button" data-lf="italic" title="Italique"><i>I</i></button>
+            <button type="button" data-lf="underline" title="Souligner"><u>S</u></button>
+            <input type="color" id="livret-fmt-color" value="#F54927">
+            <button type="button" data-lf="color" title="Colorer le texte">Colorer</button>
+            <button type="button" data-lf="fluo" title="Surligner">Fluo</button>
+            <input type="number" id="livret-fmt-size" value="19.2" step="0.1" min="1">
+            <button type="button" data-lf="size" title="Taille du texte">Taille</button>
+            <button type="button" data-lf="link" title="Insérer un lien">Lien</button>
+            <button type="button" data-lf="title" title="Titre (majuscule + saut de ligne)">Titre</button>
+            <button type="button" data-lf="clear" title="Nettoyer la mise en forme" style="background:#dc2626;color:#fff">✕ mise en forme</button>
+            <span class="fmt-hint">Sélectionnez du texte puis appliquez un format</span>
+          </div>`;
+          groups.forEach((g) => {
+            const fieldsHtml = g.fields
+              .map((f) => livretFieldControl(g.table, g.recId, f))
+              .join('');
+            html += `<div class="livret-rec-card">
+              <div class="livret-rec-head">
+                <span class="lr-icon">${icon(g.type)}</span>
+                <span class="lr-title">${esc(g.title)}</span>
+                ${g.categorie ? `<span class="lr-tag">${esc(g.categorie)}</span>` : ''}
+                <span class="lr-id" data-copy="${esc(g.recId)}" title="Copier l'ID">${esc(g.recId)}</span>
+              </div>
+              <div class="livret-rec-body">${fieldsHtml || '<div class="state-box" style="padding:.8rem">Aucun champ.</div>'}</div>
+            </div>`;
+          });
+          editor.innerHTML = html;
+        }
+
+        const nFields = editor.querySelectorAll('.livret-field').length;
+        document.getElementById('livret-meta').textContent =
+          `${groups.length} bloc(s) · ${nFields} champ(s)`;
+
+        // (Re)load the preview iframe for this maison.
+        livretFrameReady = false;
+        document.getElementById('livret-frame-empty').style.display = 'none';
+        document.getElementById('livret-edit-frame').src =
+          'livret_idylliq.html?preview=1&maison=' + encodeURIComponent(idMaison);
+      }
+
+      function livretSendInit() {
+        const frame = document.getElementById('livret-edit-frame');
+        if (!livretFrameReady || !livretCtx.idMaison || !frame.contentWindow) return;
+        frame.contentWindow.postMessage(
+          { type: 'INIT_DB', db, idMaison: livretCtx.idMaison },
+          '*',
+        );
+      }
+
+      // Re-init the preview from canonical data, then replay any unsaved edits so
+      // they aren't lost when the preview is rebuilt (e.g. after a media save).
+      function livretResync() {
+        livretSendInit();
+        const frame = document.getElementById('livret-edit-frame');
+        if (!livretFrameReady || !frame.contentWindow) return;
+        Object.values(livretDirty).forEach((entry) => {
+          Object.entries(entry.fields).forEach(([field, value]) => {
+            frame.contentWindow.postMessage(
+              {
+                type: 'UPDATE_FIELD',
+                table: entry._table,
+                recId: entry._recId,
+                field,
+                value,
+                idMaison: livretCtx.idMaison,
+              },
+              '*',
+            );
+          });
+        });
+      }
+
+      const livretSendUpdate = throttle((table, recId, field, value) => {
+        const frame = document.getElementById('livret-edit-frame');
+        if (!livretFrameReady || !frame.contentWindow) return;
+        frame.contentWindow.postMessage(
+          { type: 'UPDATE_FIELD', table, recId, field, value, idMaison: livretCtx.idMaison },
+          '*',
+        );
+      }, 180);
+
+      function livretMarkDirty(table, recId, field, value) {
+        const key = table + '::' + recId;
+        if (!livretDirty[key]) livretDirty[key] = { _table: table, _recId: recId, fields: {} };
+        livretDirty[key].fields[field] = value;
+        document.getElementById('livret-save-btn').disabled = false;
+      }
+
+      // Refresh a media field's thumbnails inside the livret editor + the live
+      // preview after the photo-modal saves (it persists media on its own).
+      function syncLivretMedia(table, recId, field) {
+        if (tableViewMode !== 'livret') return;
+        const editor = document.getElementById('livret-editor');
+        if (!editor) return;
+        const fieldEl = [
+          ...editor.querySelectorAll('.livret-field[data-ctl="media"]'),
+        ].find(
+          (el) =>
+            el.dataset.table === table &&
+            el.dataset.recid === recId &&
+            el.dataset.field === field,
+        );
+        if (fieldEl) {
+          const rec = (db[table] || []).find((r) => r.id === recId);
+          const atts = rec ? attachmentsOf(rec, field) : [];
+          const thumbsWrap = fieldEl.querySelector('.rec-media-thumbs');
+          const btn = fieldEl.querySelector('.rec-media-btn');
+          if (thumbsWrap)
+            thumbsWrap.innerHTML =
+              atts
+                .map(
+                  (a) =>
+                    `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
+                )
+                .join('') || '<span class="rec-media-empty">Aucun média</span>';
+          if (btn)
+            btn.textContent = `📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}`;
+        }
+        livretResync();
+      }
+
+      async function livretSaveAll() {
+        const keys = Object.keys(livretDirty);
+        if (!keys.length) return;
+        const btn = document.getElementById('livret-save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement…';
+        let ok = 0;
+        let touchedTable = null;
+        try {
+          for (const key of keys) {
+            const entry = livretDirty[key];
+            const payload = {};
+            Object.entries(entry.fields).forEach(([f, v]) => {
+              payload[f] = v === '' ? null : v;
+            });
+            const data = await updateRecordFields(entry._table, entry._recId, payload);
+            const rec = (db[entry._table] || []).find((r) => r.id === entry._recId);
+            if (rec) rec.fields = data.fields;
+            touchedTable = entry._table;
+            ok++;
+          }
+          livretDirty = {};
+          vtoast(`${ok} enregistrement(s) sauvegardé(s)`);
+          // Rebuild derived data and re-sync the preview with canonical values.
+          if (touchedTable) refreshAfterMutation(touchedTable);
+          document
+            .querySelectorAll('#livret-editor .livret-field.dirty')
+            .forEach((el) => el.classList.remove('dirty'));
+          livretSendInit();
+          btn.textContent = '💾 Tout enregistrer';
+        } catch (err) {
+          vtoast('Erreur : ' + err.message, false);
+          btn.disabled = false;
+          btn.textContent = '💾 Tout enregistrer';
+        }
+      }
+
+      /* Editor interactions (delegated) */
+      function livretOnFieldChange(fieldEl) {
+        const { table, recid, field } = fieldEl.dataset;
+        const value = livretReadControl(fieldEl);
+        if (value === undefined) return; // media / read-only
+        fieldEl.classList.add('dirty');
+        livretMarkDirty(table, recid, field, value);
+        livretSendUpdate(table, recid, field, value);
+      }
+      const livretEditorEl = document.getElementById('livret-editor');
+      livretEditorEl.addEventListener('input', (e) => {
+        const fieldEl = e.target.closest('.livret-field[data-ctl="text"]');
+        if (fieldEl) livretOnFieldChange(fieldEl);
+      });
+      livretEditorEl.addEventListener('change', (e) => {
+        const fieldEl = e.target.closest('.livret-field');
+        if (
+          fieldEl &&
+          ['select', 'boolean', 'multiselect'].includes(fieldEl.dataset.ctl)
+        )
+          livretOnFieldChange(fieldEl);
+      });
+      livretEditorEl.addEventListener('click', (e) => {
+        const cp = e.target.closest('[data-copy]');
+        if (cp) copy(cp.dataset.copy);
+      });
+
+      /* Formatting toolbar — wraps the selection in the focused livret textarea
+         using the same inline-<h> convention as the edit modal. */
+      (function setupLivretFormatting() {
+        const root = document.getElementById('livret-editor');
+        let activeTa = null;
+        let lastSel = { start: 0, end: 0 };
+        root.addEventListener(
+          'focusin',
+          (e) => {
+            if (e.target.classList && e.target.classList.contains('livret-textarea'))
+              activeTa = e.target;
+          },
+        );
+        ['keyup', 'mouseup', 'select'].forEach((ev) =>
+          root.addEventListener(
+            ev,
+            (e) => {
+              const ta = e.target.closest && e.target.closest('.livret-textarea');
+              if (ta) {
+                activeTa = ta;
+                lastSel = { start: ta.selectionStart, end: ta.selectionEnd };
+              }
+            },
+            true,
+          ),
+        );
+        function applyWrap(before, after, transform) {
+          const el =
+            activeTa && document.body.contains(activeTa)
+              ? activeTa
+              : root.querySelector('.livret-textarea');
+          if (!el) return;
+          let start = el.selectionStart;
+          let end = el.selectionEnd;
+          if (start === end && lastSel.start !== lastSel.end) {
+            start = lastSel.start;
+            end = lastSel.end;
+          }
+          const selected = el.value.slice(start, end);
+          const inner = transform ? transform(selected) : selected;
+          const insert = before + inner + after;
+          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
+          el.focus();
+          el.selectionStart = start + before.length;
+          el.selectionEnd = el.selectionStart + inner.length;
+          lastSel = { start: el.selectionStart, end: el.selectionEnd };
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        root.addEventListener('mousedown', (e) => {
+          const b = e.target.closest('#livret-fmt-bar button[data-lf]');
+          if (!b) return;
+          e.preventDefault();
+          const kind = b.dataset.lf;
+          const colorEl = document.getElementById('livret-fmt-color');
+          const sizeEl = document.getElementById('livret-fmt-size');
+          if (kind === 'bold') applyWrap('<h style="font-weight: bold">', '</h>');
+          else if (kind === 'italic') applyWrap('<h style="font-style: italic">', '</h>');
+          else if (kind === 'underline') applyWrap('<h style="text-decoration: underline;">', '</h>');
+          else if (kind === 'color') applyWrap(`<h style="color: ${(colorEl && colorEl.value) || '#000000'}">`, '</h>');
+          else if (kind === 'fluo') applyWrap(`<h style="background-color: ${(colorEl && colorEl.value) || '#ffff62'}">`, '</h>');
+          else if (kind === 'size') applyWrap(`<h style="font-size: ${(sizeEl && sizeEl.value) || '16'}px">`, '</h>');
+          else if (kind === 'link') {
+            const url = prompt('URL du lien :', 'https://');
+            if (url) applyWrap(`<a href="${url}" target="_blank">`, '</a>');
+          } else if (kind === 'title') applyWrap('\n', '\n', (s) => s.toUpperCase());
+          else if (kind === 'clear') applyWrap('', '', (s) => s.replace(/<\/?[^>]+>/g, ''));
+        });
+      })();
+
+      // Maison selector + toolbar buttons
+      document
+        .getElementById('livret-maison-select')
+        .addEventListener('change', () => {
+          if (Object.keys(livretDirty).length &&
+              !confirm('Des modifications non enregistrées seront perdues. Continuer ?')) {
+            return;
+          }
+          renderLivretPane();
+        });
+      document
+        .getElementById('livret-save-btn')
+        .addEventListener('click', livretSaveAll);
+      document
+        .getElementById('livret-refresh-btn')
+        .addEventListener('click', () => {
+          if (!livretCtx.idMaison) return;
+          livretFrameReady = false;
+          document.getElementById('livret-edit-frame').src =
+            'livret_idylliq.html?preview=1&maison=' +
+            encodeURIComponent(livretCtx.idMaison);
+        });
+      document.getElementById('livret-open-btn').addEventListener('click', () => {
+        if (!livretCtx.idMaison) {
+          vtoast('Choisissez une maison', false);
+          return;
+        }
+        window.open('livret_idylliq.html?maison=' + encodeURIComponent(livretCtx.idMaison), '_blank');
+      });
+
+      // The livret iframe signals readiness; only react to *our* frame.
+      window.addEventListener('message', (e) => {
+        if (!e.data || e.data.type !== 'PREVIEW_READY') return;
+        const frame = document.getElementById('livret-edit-frame');
+        if (frame && e.source === frame.contentWindow) {
+          livretFrameReady = true;
+          livretSendInit();
+        }
+      });
 
       // Impression d'une fiche isolée dans une nouvelle fenêtre.
       function printFiche(maisonId) {
