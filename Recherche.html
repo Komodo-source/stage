@@ -2023,6 +2023,28 @@
       .gcard-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
       .gcard:hover .gcard-cover img { transform: scale(1.05); }
       .gcard-cover .no-img { color: var(--primary); opacity: 0.4; }
+      /* table badge for the "Toutes les données" card/list views */
+      .at-tablebadge {
+        display: inline-block;
+        font-family: 'SF Mono', 'Consolas', monospace;
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--primary);
+        background: var(--primary-light);
+        padding: 0.12rem 0.4rem;
+        border-radius: 999px;
+        vertical-align: middle;
+      }
+      .gcard-cover .at-tablebadge {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        background: rgba(26, 107, 101, 0.92);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+      }
       .gcard-body { padding: 0.85rem 1rem; flex: 1; }
       .gcard-title {
         font-weight: 700;
@@ -4325,9 +4347,12 @@ document.addEventListener('keydown', (event) => {
         document.getElementById('data-viewer-title').textContent =
           `📋 ${tableName}`;
         document.getElementById('data-viewer-table-badge').textContent = recId;
-        // Expanding a record must show the FULL info, never reduce it to the
-        // current search — so start the data viewer with an empty filter.
-        document.getElementById('data-viewer-search').value = '';
+        // Carry the page search into the viewer so the searched term is
+        // highlighted — but in "highlight-only" mode below, every field still
+        // shows (the term is not used to filter on open).
+        const dvPageQuery =
+          (typeof currentQuery === 'string' ? currentQuery : '').trim();
+        document.getElementById('data-viewer-search').value = dvPageQuery;
 
         // Show maison info
         const maison = detectMaison(rec.fields, tableName);
@@ -4340,13 +4365,16 @@ document.addEventListener('keydown', (event) => {
           maisonBanner.classList.remove('show');
         }
 
-        renderDataViewerFields('');
+        renderDataViewerFields(dvPageQuery, true); // highlight-only
 
         document.getElementById('data-viewer-modal').classList.add('open');
-        setTimeout(
-          () => document.getElementById('data-viewer-search').focus(),
-          100,
-        );
+        // Scroll the first highlighted match into view (else focus the search).
+        setTimeout(() => {
+          const c = document.getElementById('data-viewer-fields');
+          const mark = c && c.querySelector('mark');
+          if (mark) mark.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          else document.getElementById('data-viewer-search').focus();
+        }, 120);
       }
 
       function closeDataViewer() {
@@ -4356,22 +4384,27 @@ document.addEventListener('keydown', (event) => {
         dataViewerRecId = '';
       }
 
-      function renderDataViewerFields(query) {
+      function renderDataViewerFields(query, highlightOnly) {
         const container = document.getElementById('data-viewer-fields');
         const countEl = document.getElementById('data-viewer-count');
 
         const entries = Object.entries(dataViewerFields);
         const q = query.toLowerCase().trim();
 
+        // highlightOnly = show every field, just highlight the term (used when
+        // the viewer opens carrying the page search). Typing in the viewer's own
+        // search still filters as before.
         let filtered = entries;
-        if (q.length >= 1) {
+        if (!highlightOnly && q.length >= 1) {
           filtered = entries.filter(([key, val]) => {
             const str = `${key} ${flattenValue(val)}`.toLowerCase();
             return str.includes(q);
           });
         }
 
-        countEl.textContent = `${filtered.length} champ${filtered.length !== 1 ? 's' : ''}${q ? ` (filtré${filtered.length !== 1 ? 's' : ''} sur ${entries.length})` : ''}`;
+        countEl.textContent = highlightOnly
+          ? `${entries.length} champ${entries.length !== 1 ? 's' : ''}${q ? ` · « ${esc(q)} » surligné` : ''}`
+          : `${filtered.length} champ${filtered.length !== 1 ? 's' : ''}${q ? ` (filtré${filtered.length !== 1 ? 's' : ''} sur ${entries.length})` : ''}`;
 
         if (filtered.length === 0) {
           container.innerHTML = `<div class="dv-empty-state">
@@ -4881,6 +4914,125 @@ document.addEventListener('keydown', (event) => {
           .join('');
       }
 
+      /* ── "Toutes les données" as cards (gallery / list) ──────────────────
+         Reuses the card helpers but each row carries its own table, so actions
+         are wired with the explicit table (no reliance on vzTable). */
+      function atFilteredRows() {
+        let rows = window._allTablesData || [];
+        const houseVal = getSelectedHouseName();
+        if (houseVal) {
+          const maisonRecId = houseNameToId[houseVal] || '';
+          rows = rows.filter(
+            (r) =>
+              r.maisonName === houseVal ||
+              (maisonRecId && r.maisonId === maisonRecId),
+          );
+        }
+        const q = (currentQuery || '').toLowerCase();
+        if (q && q.length >= 2) {
+          rows = rows.filter(
+            (r) =>
+              buildSearchText(r.fields).includes(q) ||
+              (r.table || '').toLowerCase().includes(q),
+          );
+        }
+        return rows;
+      }
+
+      function atPhotoButtons(table, recId, rec) {
+        return attachmentFieldsFor(table)
+          .map((f) => {
+            const n = (rec.fields[f] || []).filter((a) => a && a.url).length;
+            return `<button class="act-btn photo-edit-btn" data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(f)}" title="Photos (${esc(f)})">📷${n ? ` ${n}` : ''}</button>`;
+          })
+          .join('');
+      }
+
+      function atGalleryCard(row) {
+        const table = row.table;
+        const rec = { id: row.id, fields: row.fields };
+        const fields = fieldsFor(table);
+        const cover = firstImage(rec, fields);
+        const title = esc(recordTitle(rec, table));
+        const previews = scalarFields(table)
+          .slice(0, 4)
+          .map((f) => {
+            const val = displayFieldValue(table, f, rec);
+            return `<div class="gfield"><span class="k">${esc(f)}</span><span class="v ${val ? '' : 'empty'}">${val ? esc(val) : '—'}</span></div>`;
+          })
+          .join('');
+        return `<div class="gcard">
+          <div class="gcard-cover">${cover ? `<img class="thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : VZ_NOIMG}<span class="at-tablebadge">${esc(table)}</span></div>
+          <div class="gcard-body">
+            <div class="gcard-title">${title}</div>
+            ${row.maisonName ? `<div class="gfield"><span class="k">Maison</span><span class="v">${esc(row.maisonName)}</span></div>` : ''}
+            ${previews}
+          </div>
+          <div class="card-actions">
+            <span class="rec-id" data-copy="${esc(row.id)}" title="Copier l'ID">${esc(row.id)}</span>
+            ${atPhotoButtons(table, row.id, rec)}
+            <button class="act-btn" onclick="openDataViewer('${esc(table)}','${esc(row.id)}')" title="Étendre les infos">👁</button>
+            <button class="act-btn edit" onclick="openRecModal('edit','${esc(table)}','${esc(row.id)}')" title="Modifier">✎</button>
+            <button class="act-btn del" onclick="quickDeleteRecord('${esc(table)}','${esc(row.id)}')" title="Supprimer">🗑</button>
+          </div>
+        </div>`;
+      }
+
+      function atListRow(row) {
+        const table = row.table;
+        const rec = { id: row.id, fields: row.fields };
+        const fields = fieldsFor(table);
+        const cover = firstImage(rec, fields);
+        const title = esc(recordTitle(rec, table));
+        const sub = scalarFields(table)
+          .slice(0, 4)
+          .map((f) => {
+            const val = displayFieldValue(table, f, rec);
+            if (!val) return '';
+            return `<b>${esc(f)}:</b> ${esc(val.length > 40 ? val.slice(0, 40) + '…' : val)}`;
+          })
+          .filter(Boolean)
+          .join(' &nbsp;·&nbsp; ');
+        return `<div class="lrow">
+          ${cover ? `<img class="lthumb thumb" src="${esc(cover)}" data-full="${esc(cover)}" alt="">` : `<div class="lthumb placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
+          <div class="lmain">
+            <div class="ltitle"><span class="at-tablebadge">${esc(table)}</span> ${title}</div>
+            <div class="lsub">${sub || `<span class="rec-id" data-copy="${esc(row.id)}">${esc(row.id)}</span>`}${row.maisonName ? ` &nbsp;·&nbsp; <b>Maison:</b> ${esc(row.maisonName)}` : ''}</div>
+          </div>
+          <div class="lactions">
+            <div class="lactions-btns">
+              ${atPhotoButtons(table, row.id, rec)}
+              <button class="act-btn" onclick="openDataViewer('${esc(table)}','${esc(row.id)}')" title="Étendre les infos">👁</button>
+              <button class="act-btn edit" onclick="openRecModal('edit','${esc(table)}','${esc(row.id)}')">✎ Modifier</button>
+              <button class="act-btn del" onclick="quickDeleteRecord('${esc(table)}','${esc(row.id)}')">🗑</button>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderAllTablesCards(view) {
+        const host = document.getElementById('vz-content');
+        const count = document.getElementById('results-count');
+        const rows = atFilteredRows();
+        count.textContent = `${rows.length} résultat${rows.length !== 1 ? 's' : ''}`;
+        if (!rows.length) {
+          host.innerHTML = `<div class="state-box">Aucun résultat${currentQuery ? ' pour cette recherche' : ''}.</div>`;
+          return;
+        }
+        // Cap the number of cards rendered at once (alltables can be huge).
+        const MAX = 600;
+        const shown = rows.slice(0, MAX);
+        const cards =
+          view === 'gallery'
+            ? `<div class="gallery">${shown.map(atGalleryCard).join('')}</div>`
+            : `<div class="vz-list">${shown.map(atListRow).join('')}</div>`;
+        host.innerHTML =
+          cards +
+          (rows.length > MAX
+            ? `<div class="state-box">Affichage limité à ${MAX} sur ${rows.length}. Affinez la recherche ou le filtre Maison.</div>`
+            : '');
+      }
+
       function applyFilter() {
         currentQuery = document
           .getElementById('search')
@@ -4929,8 +5081,13 @@ document.addEventListener('keydown', (event) => {
           });
           renderToutRows(filtered);
         } else if (currentTab === 'alltables') {
-          setActivePanes('table');
-          renderAllTables(currentQuery);
+          if (tableViewMode === 'list' || tableViewMode === 'gallery') {
+            setActivePanes(tableViewMode);
+            renderAllTablesCards(tableViewMode);
+          } else {
+            setActivePanes('table');
+            renderAllTables(currentQuery);
+          }
         } else {
           renderCurrentTableView();
         }
@@ -4975,7 +5132,7 @@ document.addEventListener('keydown', (event) => {
       function updateViewToggleUI() {
         const toggle = document.getElementById('view-toggle');
         toggle.style.display = 'inline-flex';
-        const cardOk = CARD_TABLES.includes(currentTab);
+        const cardOk = CARD_TABLES.includes(currentTab) || currentTab === 'alltables';
         toggle.querySelectorAll('button[data-mode]').forEach((b) => {
           const m = b.dataset.mode;
           b.classList.toggle('active', m === tableViewMode);
@@ -5047,7 +5204,11 @@ document.addEventListener('keydown', (event) => {
            Liste/Galerie only apply to single-table tabs. */
         if (tableViewMode === 'fiche' || tableViewMode === 'vues' || tableViewMode === 'livret')
           tableViewMode = 'table';
-        if ((tableViewMode === 'list' || tableViewMode === 'gallery') && !CARD_TABLES.includes(tabName))
+        if (
+          (tableViewMode === 'list' || tableViewMode === 'gallery') &&
+          !CARD_TABLES.includes(tabName) &&
+          tabName !== 'alltables'
+        )
           tableViewMode = 'table';
         updateViewToggleUI();
 
@@ -8334,6 +8495,64 @@ document.addEventListener('keydown', (event) => {
         }
         window.open('livret_idylliq.html?maison=' + encodeURIComponent(livretCtx.idMaison), '_blank');
       });
+
+      /* Synchronised scrolling between the editor (left) and the preview iframe
+         (right). Proportional, so differing heights stay aligned. Wrapped in
+         try/catch since cross-document access can be blocked under file://. */
+      (function setupLivretScrollSync() {
+        const editor = document.getElementById('livret-editor');
+        const frame = document.getElementById('livret-edit-frame');
+        if (!editor || !frame) return;
+        let lock = false;
+        const ratioOf = (el) => {
+          const max = el.scrollHeight - el.clientHeight;
+          return max > 0 ? el.scrollTop / max : 0;
+        };
+        const applyRatio = (el, r) => {
+          const max = el.scrollHeight - el.clientHeight;
+          el.scrollTop = r * max;
+        };
+        const frameScroller = () => {
+          try {
+            const doc = frame.contentDocument;
+            return doc ? doc.scrollingElement || doc.documentElement : null;
+          } catch (e) {
+            return null;
+          }
+        };
+        editor.addEventListener(
+          'scroll',
+          () => {
+            if (lock) return;
+            const se = frameScroller();
+            if (!se) return;
+            lock = true;
+            applyRatio(se, ratioOf(editor));
+            requestAnimationFrame(() => (lock = false));
+          },
+          { passive: true },
+        );
+        // (Re)bind the iframe's own scroll each time it loads.
+        frame.addEventListener('load', () => {
+          try {
+            const win = frame.contentWindow;
+            const se = frameScroller();
+            if (!win || !se) return;
+            win.addEventListener(
+              'scroll',
+              () => {
+                if (lock) return;
+                lock = true;
+                applyRatio(editor, ratioOf(se));
+                requestAnimationFrame(() => (lock = false));
+              },
+              { passive: true },
+            );
+          } catch (e) {
+            /* cross-origin (file://) — sync unavailable, ignore */
+          }
+        });
+      })();
 
       // The livret iframe signals readiness; only react to *our* frame.
       window.addEventListener('message', (e) => {

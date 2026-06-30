@@ -20,6 +20,9 @@
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   <style>
+    iframe {
+    display: none;
+}
     /* ── Couleur du site Idylliq ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -704,8 +707,9 @@
     <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 </div>
-
+<!-- <script src="https://cdn.staticfile.net/translate.js/3.18.66/translate.js"></script> -->
 <script>
+
   /* ── lightbox ── */
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('card-desc')) {
@@ -1931,7 +1935,7 @@ async function buildLivret(IdMaison) {
        'Link_FonctionnementMaison','Link_livret','Link_Piscine',
        'Livret_NomMaison','Livret_Mot_propriétaire',
        'Livret_InstructionAccess','InstructionAccess_media',
-       'Livret_regle','FS_Adresse']),
+       'Livret_regle','FS_Adresse', 'Livret_Photo_Maison']),
     fetchFiltered(TABLE_LISTE_MAISON, null, null)
   ]);
 
@@ -1966,8 +1970,12 @@ async function buildLivret(IdMaison) {
     fetchFiltered(TABLE_RECOMMANDATION, null, null)
   ]);
 
-
-  const coverImg  = listData?.fields?.Livret_Maison_cover_pic?.[0]?.url || listData?.fields?.ImageMaison?.[0]?.url || '';
+  console.log("maisonRecs", maisonRecs);
+  // console.log("maisonRecs?.fields", maisonRecs?.fields);
+  // console.log("maisonRecs.fields", maisonRecs.fields);
+  // console.log("maisonRecs.fields.Livret_Photo_Maison[0]?.url", maisonRecs.fields.Livret_Photo_Maison[0]?.url);
+  console.log("listData", listData);
+  const coverImg  =  maisonRecs?.[0]?.fields?.Livret_Photo_Maison?.[0]?.url || '';
 
   const themeMap = {};
   const allEquipItems = [];
@@ -2240,16 +2248,42 @@ function toggleSearch() {
     }
   }
 
-  function toggleLanguage(){
-    if (language === 1){
+  // Applique une langue ('fr' | 'en') : widget + drapeau + mémorisation.
+  function setLanguage(lang){
+    const btn = document.getElementById("lang");
+    if (lang === 'en'){
       applyGoogleLang('en');
       language = 2;
-      document.getElementById("lang").innerText = "🇫🇷";
+      if (btn) btn.innerText = "🇫🇷"; // cliquer = revenir au français
     } else {
       applyGoogleLang('fr');   // revient à la langue d'origine
       language = 1;
-      document.getElementById("lang").innerText = "🇬🇧";
+      if (btn) btn.innerText = "🇬🇧"; // cliquer = passer en anglais
     }
+    try { localStorage.setItem('livret_lang', lang); } catch(e){}
+  }
+
+  function toggleLanguage(){
+    setLanguage(language === 1 ? 'en' : 'fr');
+  }
+
+  // Traduction automatique au chargement.
+  // Priorité : ?lang=en (URL) > choix mémorisé > langue du navigateur.
+  function autoTranslateIfNeeded(){
+    let target = null;
+    try {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p) target = p.toLowerCase().startsWith('en') ? 'en' : 'fr';
+    } catch(e){}
+    if (!target) {
+      try { const s = localStorage.getItem('livret_lang'); if (s) target = s; } catch(e){}
+    }
+    if (!target) {
+      const nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      target = nav.startsWith('en') ? 'en' : 'fr';
+    }
+    // On ne déclenche le widget que pour l'anglais (le français est l'original).
+    if (target === 'en') setLanguage('en');
   }
 
 function doSearch(query) {
@@ -2366,9 +2400,9 @@ if (PREVIEW_MODE) {
       // images render at 0px for a frame, the document collapses, the scroll
       // gets clamped, then it grows back — making the preview jump up & down on
       // every keystroke. The floor is released once images have settled.
-    //  if (builtOnce && container) {
-    //    container.style.minHeight = container.scrollHeight + 'px';
-     // }
+      if (builtOnce && container) {
+        container.style.minHeight = container.scrollHeight + 'px';
+      }
       buildLivret(previewId)
         .then(() => {
           _initRecoFilters();
@@ -2410,11 +2444,26 @@ if (PREVIEW_MODE) {
 } else if (!idMaison) {
   document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
 } else {
-  buildLivret(idMaison).then(_initRecoFilters).catch(err => {
+  buildLivret(idMaison).then(() => {
+    _initRecoFilters();
+    // autoTranslateIfNeeded();
+
+    //     translate.language.setLocal('french');
+    //     translate.service.use('siliconflow');
+    //     translate.execute();
+    //     translate.listener.start();
+
+  }).catch(err => {
     console.error(err);
     document.getElementById('loading').innerText = 'Erreur : ' + err.message;
   });
 }
+
+translate.ignore.tag.push('section-piscine');
+//translate.ignore.class.push('test');
+//translate.setAutoDiscriminateLocalLanguage();
+translate.setUseVersion2();
+translate.execute();
 </script>
 </body>
 </html>
