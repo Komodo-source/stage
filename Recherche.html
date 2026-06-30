@@ -6742,8 +6742,6 @@ document.addEventListener('keydown', (event) => {
       function attachmentFieldsFor(table) {
         return fieldsFor(table).filter((f) => fieldIsAttachment(table, f));
       }
-      // Un bouton « 📷 Photos » par champ pièce-jointe : ouvre l'éditeur de photos
-      // existant (ajout par URL / fichier + suppression), réutilisé tel quel.
       function vzPhotoButtons(rec) {
         const af = attachmentFieldsFor(vzTable);
         if (!af.length) return '';
@@ -6856,7 +6854,6 @@ document.addEventListener('keydown', (event) => {
                 <div class="lactions">
                   ${vzInlinePhotos(rec)}
                   <div class="lactions-btns">
-                    ${vzExtraPhotoButtons(rec)}
                     <button class="act-btn edit" data-vz-edit="${esc(rec.id)}">✎ Modifier</button>
                     <button class="act-btn del" data-vz-del="${esc(rec.id)}">🗑 Supprimer</button>
                   </div>
