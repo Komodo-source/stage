@@ -655,7 +655,8 @@
         color: var(--text);
         background: var(--card);
         border-color: transparent;
-        overflow: hidden;
+        overflow-y: scroll;
+        overflow-x: hidden;
         z-index: 0;
       }
       #edit-highlight .tok-tag { color: #94a3b8; }
@@ -663,6 +664,8 @@
         position: relative;
         z-index: 1;
         resize: vertical;
+        overflow-y: scroll;
+        overflow-x: hidden;
         outline: none;
         color: transparent;
         background: transparent;
@@ -2570,16 +2573,105 @@
       box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
+    /* Big split separating each part of the livret (Maison / Équipements / …). */
+    .livret-section-split {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.8rem 0 1rem;
+      padding: 0.9rem 0.2rem 0.2rem;
+      border-top: 4px solid var(--primary);
+    }
+    .livret-section-split:first-of-type { margin-top: 0.3rem; }
+    .livret-section-split .lss-icon { font-size: 1.25rem; line-height: 1; }
+    .livret-section-split .lss-label {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .livret-section-split .lss-count {
+      margin-left: auto;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+    /* "+ Ajouter…" row closing an addable section */
+    .livret-add { margin: 0 0 0.9rem; }
+    .livret-add-toggle {
+      width: 100%;
+      padding: 0.5rem 0.7rem;
+      border: 1.5px dashed var(--primary);
+      border-radius: 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-align: left;
+    }
+    .livret-add-toggle:hover { background: var(--primary); color: #fff; }
+    .livret-add-form {
+      border: 1.5px solid var(--primary);
+      border-radius: 10px;
+      padding: 0.7rem;
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
+    }
+    .livret-add-form .livret-add-name {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--card);
+      outline: none;
+    }
+    .livret-add-form .livret-add-name:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .livret-add-hint { font-size: 0.72rem; color: var(--muted); margin: 0.4rem 0 0.55rem; line-height: 1.35; }
+    .livret-add-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+    .livret-add-actions button {
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+    }
+    .livret-add-actions .livret-add-confirm { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .livret-add-actions .livret-add-confirm:disabled { opacity: 0.6; cursor: default; }
     .livret-rec-head {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.6rem 0.9rem;
+      padding: 0.65rem 0.9rem;
       background: var(--surface-2);
       border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
     }
-    .livret-rec-head .lr-icon { font-size: 0.95rem; }
-    .livret-rec-head .lr-title { font-weight: 700; color: var(--text); font-size: 0.88rem; }
+    .livret-rec-head:hover { background: var(--primary-light); }
+    .livret-rec-card.collapsed .livret-rec-head { border-bottom-color: transparent; }
+    .livret-rec-head .lr-chev {
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: transform 0.18s ease;
+    }
+    .livret-rec-card.collapsed .lr-chev { transform: rotate(-90deg); }
+    .livret-rec-card.collapsed .livret-rec-body { display: none; }
+    .livret-rec-head .lr-icon { font-size: 1rem; }
+    .livret-rec-head .lr-title { font-weight: 700; color: var(--text); font-size: 0.92rem; }
     .livret-rec-head .lr-tag {
       font-size: 0.66rem;
       font-weight: 700;
@@ -2589,24 +2681,69 @@
       padding: 0.12rem 0.45rem;
       border-radius: 999px;
     }
-    .livret-rec-head .lr-id {
+    /* "unsaved changes" dot — only visible when the block is dirty */
+    .livret-rec-head .lr-dirty {
       margin-left: auto;
-      font-family: monospace;
-      font-size: 0.65rem;
-      color: var(--muted);
-      cursor: pointer;
+      color: var(--warning);
+      font-size: 0.7rem;
+      display: none;
     }
-    .livret-rec-body { padding: 0.7rem 0.9rem; }
-    .livret-field { margin-bottom: 0.75rem; }
+    .livret-rec-card.has-dirty .lr-dirty { display: inline; }
+    .livret-rec-card.has-dirty { border-color: var(--warning); }
+    .livret-rec-head .lr-copy {
+      margin-left: 0.1rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--muted);
+      padding: 0.1rem 0.25rem;
+      border-radius: 6px;
+      line-height: 1;
+    }
+    .livret-rec-card:not(.has-dirty) .lr-copy { margin-left: auto; }
+    .livret-rec-head .lr-copy:hover { color: var(--primary); background: var(--card); }
+    .livret-rec-body { padding: 0.85rem 0.9rem; }
+    /* Friendly intro banner at the top of the editor column */
+    .livret-help {
+      background: var(--primary-light);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.7rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .livret-field { margin-bottom: 1rem; }
     .livret-field:last-child { margin-bottom: 0; }
     .livret-field > label {
       display: block;
-      font-size: 0.7rem;
+      font-size: 0.84rem;
       font-weight: 700;
-      color: var(--primary);
-      opacity: 0.85;
-      font-family: monospace;
-      margin-bottom: 0.25rem;
+      color: var(--text);
+      margin-bottom: 0.1rem;
+    }
+    .livret-field > label .lf-kind {
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.05rem 0.4rem;
+      border-radius: 999px;
+      margin-left: 0.25rem;
+      vertical-align: middle;
+    }
+    .livret-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+      line-height: 1.35;
+    }
+    .livret-field .livret-number {
+      width: 8rem;
+      max-width: 100%;
     }
     .livret-field textarea {
       width: 100%;
@@ -2624,8 +2761,10 @@
     }
     .livret-field textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
     .livret-field.dirty textarea,
+    .livret-field.dirty input.livret-input,
     .livret-field.dirty select.livret-input { border-color: var(--warning); background: var(--warning-light); }
-    .livret-field select.livret-input {
+    .livret-field select.livret-input,
+    .livret-field input.livret-input {
       width: 100%;
       padding: 0.5rem 0.6rem;
       border: 1.5px solid var(--border);
@@ -2636,6 +2775,7 @@
       background: var(--card);
       outline: none;
     }
+    .livret-field input.livret-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
     .livret-field select.livret-input:focus { border-color: var(--primary); }
     .livret-ro {
       padding: 0.5rem 0.7rem;
@@ -2773,7 +2913,7 @@
       white-space: nowrap;
     }
     .fiche-print:hover { background: var(--primary); color: white; }
-    .fiche-body { padding: 1rem 1.2rem; }
+    .fiche-body { padding: 1rem 1.2rem; display: flex;}
     .fiche-section { margin-bottom: 1.1rem; }
     .fiche-section:last-child { margin-bottom: 0; }
     .fiche-section > h4 {
@@ -7922,15 +8062,28 @@ document.addEventListener('keydown', (event) => {
           .sort((a, b) => String(a.name).localeCompare(String(b.name)));
       }
 
-      /* Exact columns that feed the livret, per source table. fonctionnementMaison
-         is special-cased: ALL its columns are shown (minus links / computed). */
+      /* Exact columns that feed the livret, per source table. Only the fields the
+         booklet (livret_idylliq.html) actually renders are listed here, so the
+         editor on the left mirrors the right. A configured field is always shown,
+         even when the record has no value for it (it renders empty). */
       const LIVRET_FIELD_CONFIG = {
         [TABLE_MAISON]: [
           'Livret_NomMaison',
+          'Livret_Photo_Maison',
           'Livret_InstructionAccess',
           'InstructionAccess_media',
           'Livret_Mot_propriétaire',
           'Livret_regle',
+        ],
+        // fonctionnementMaison équipement card — identity + usage columns only.
+        // Livret_PointAttention / Livret_InstructionDepart get their own sections.
+        [TABLE_EQUIPEMENT]: [
+          'NomEquipement',
+          'Catégorie',
+          'Livret_ordre',
+          'Livret_description',
+          'Photos',
+          'lienYoutube',
         ],
         [TABLE_PISCINE]: [
           'Livret_InstructionPréliminaire',
@@ -7950,6 +8103,7 @@ document.addEventListener('keydown', (event) => {
       // Fields always rendered with the special media input.
       const LIVRET_MEDIA_FIELDS = new Set([
         'InstructionAccess_media',
+        'Livret_Photo_Maison',
         'Photo',
         'Photos',
         'mediaAcces',
@@ -7975,13 +8129,157 @@ document.addEventListener('keydown', (event) => {
       function livretIsMedia(table, field) {
         return LIVRET_MEDIA_FIELDS.has(field) || fieldIsAttachment(table, field);
       }
-      // Every column of fonctionnementMaison, excluding links + computed fields.
+      // Only the fonctionnementMaison columns the booklet uses (see config above).
+      // Fields not present on a given record simply render empty.
       function livretEquipFields() {
-        return fieldsFor(TABLE_EQUIPEMENT).filter(
-          (f) =>
-            f !== '_recId' &&
-            !isLinkField(TABLE_EQUIPEMENT, f) &&
-            !livretIsComputed(TABLE_EQUIPEMENT, f),
+        return LIVRET_FIELD_CONFIG[TABLE_EQUIPEMENT];
+      }
+
+      // Icon + label for each left-column section.
+      const LIVRET_SECTION_META = {
+        maison: { icon: '🏠', label: 'Maison' },
+        'equip-int': { icon: '🛋️', label: 'Équipements intérieurs' },
+        'equip-ext': { icon: '🌳', label: 'Équipements extérieurs' },
+        'equip-other': { icon: '🔧', label: 'Autres équipements' },
+        'equip-attention': { icon: '⚠️', label: "Points d'attention" },
+        'equip-depart': { icon: '🧳', label: 'Instructions de départ' },
+        piscine: { icon: '🏊', label: 'Piscine' },
+        reco: { icon: '📍', label: 'Recommandations' },
+      };
+      const LIVRET_SECTION_ORDER = [
+        'maison', 'equip-int', 'equip-ext', 'equip-other',
+        'equip-attention', 'equip-depart', 'piscine', 'reco',
+      ];
+      /* Sections where the user can add an équipement. `field` = the single column
+         being edited (null → full équipement card). `cat` = category stamped on a
+         newly-created équipement so it lands in the right section. */
+      const LIVRET_ADD_SECTIONS = {
+        'equip-int': { field: null, cat: 'Intérieur', label: 'Ajouter un équipement intérieur' },
+        'equip-ext': { field: null, cat: 'Extérieur', label: 'Ajouter un équipement extérieur' },
+        'equip-attention': { field: 'Livret_PointAttention', cat: '', label: "Ajouter un point d'attention" },
+        'equip-depart': { field: 'Livret_InstructionDepart', cat: '', label: 'Ajouter une instruction de départ' },
+      };
+      const livretSectionIcon = (t) => (LIVRET_SECTION_META[t] || { icon: '🔧' }).icon;
+
+      // True when a field holds real content (non-empty text or ≥1 attachment).
+      function livretHasVal(v) {
+        if (v == null) return false;
+        if (Array.isArray(v)) return v.length > 0;
+        return String(flatV(v)).trim() !== '';
+      }
+
+      // The Maison Airtable record backing a livret idMaison (for linking).
+      function livretMaisonRec(idMaison) {
+        return (db[TABLE_MAISON] || []).find(
+          (r) => normIdMaison(r.fields.ID_Maison || r.fields.IdMaison) === idMaison,
+        );
+      }
+
+      // Unique, ordered équipement records linked to a maison.
+      function livretEquipRecs(idMaison) {
+        const seen = new Set();
+        const out = [];
+        allRows
+          .filter((r) => r.maisonId === idMaison && r.recTable === TABLE_EQUIPEMENT)
+          .forEach((row) => {
+            if (seen.has(row.recId)) return;
+            seen.add(row.recId);
+            const rec = (db[TABLE_EQUIPEMENT] || []).find((r) => r.id === row.recId);
+            const f = rec ? rec.fields : {};
+            out.push({
+              recId: row.recId,
+              f,
+              categorie:
+                row.categorie ||
+                (Array.isArray(f['Catégorie']) ? f['Catégorie'][0] : f['Catégorie']) ||
+                '',
+              title: f.NomEquipement || row.nom || 'Équipement',
+            });
+          });
+        out.sort(
+          (a, b) =>
+            (parseFloat(a.f.Livret_ordre) || 0) - (parseFloat(b.f.Livret_ordre) || 0) ||
+            String(a.title).localeCompare(String(b.title)),
+        );
+        return out;
+      }
+
+      // HTML for one block (card). Carries data-section / data-recid so a freshly
+      // added block can be located and de-duplicated.
+      function livretCardHtml(g) {
+        const fieldsHtml = g.fields
+          .map((f) => livretFieldControl(g.table, g.recId, f))
+          .join('');
+        return `<div class="livret-rec-card collapsed" data-section="${esc(g.type)}" data-recid="${esc(g.recId)}">
+          <div class="livret-rec-head" role="button" tabindex="0" title="Cliquer pour replier / déplier">
+            <span class="lr-chev" aria-hidden="true">▾</span>
+            <span class="lr-icon">${livretSectionIcon(g.type)}</span>
+            <span class="lr-title">${esc(g.title)}</span>
+            ${g.categorie ? `<span class="lr-tag">${esc(g.categorie)}</span>` : ''}
+            <span class="lr-dirty" title="Modifications non enregistrées">●</span>
+            <button type="button" class="lr-copy" data-copy="${esc(g.recId)}" title="Copier l'identifiant (${esc(g.recId)})">⧉</button>
+          </div>
+          <div class="livret-rec-body">${fieldsHtml || '<div class="state-box" style="padding:.8rem">Aucun champ.</div>'}</div>
+        </div>`;
+      }
+
+      // The "+ Ajouter…" row that closes an addable section.
+      function livretAddRowHtml(type) {
+        const cfg = LIVRET_ADD_SECTIONS[type];
+        if (!cfg) return '';
+        return `<div class="livret-add" data-add-type="${esc(type)}">
+          <button type="button" class="livret-add-toggle">➕ ${esc(cfg.label)}</button>
+          <div class="livret-add-form" hidden>
+            <input type="text" class="livret-add-name" list="livret-equip-names" placeholder="Nom de l'équipement…" autocomplete="off">
+            <div class="livret-add-hint">Choisissez un équipement existant pour le compléter, ou tapez un nouveau nom pour le créer.</div>
+            <div class="livret-add-actions">
+              <button type="button" class="livret-add-cancel">Annuler</button>
+              <button type="button" class="livret-add-confirm">Ajouter</button>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      /* Plain-French label, helper text and placeholder per livret field so the
+         editor reads naturally instead of exposing raw Airtable column names. */
+      const LIVRET_FIELD_UI = {
+        // Maison
+        Livret_NomMaison: { label: 'Nom de la maison', hint: 'Affiché en grand tout en haut du livret.', ph: 'Ex. Villa des Oliviers' },
+        Livret_Photo_Maison: { label: 'Photo de couverture', hint: 'La grande photo en tête du livret.' },
+        Livret_InstructionAccess: { label: "Instructions d'accès", hint: 'Comment entrer : code, clés, parking…', ph: 'Décrivez comment accéder à la maison…' },
+        InstructionAccess_media: { label: "Photos d'accès", hint: 'Des photos pour aider à trouver ou à entrer.' },
+        'Livret_Mot_propriétaire': { label: 'Mot du propriétaire', hint: 'Message de bienvenue pour les voyageurs.', ph: 'Bienvenue chez nous !…' },
+        Livret_regle: { label: 'Règles de la maison', hint: 'Ce qui est autorisé ou interdit.', ph: 'Ex. Non-fumeur, animaux non admis…' },
+        // fonctionnementMaison (équipements)
+        NomEquipement: { label: "Nom de l'équipement", hint: 'Le titre du bloc équipement.', ph: 'Ex. Télévision, Lave-vaisselle…' },
+        'Catégorie': { label: 'Catégorie', hint: 'Sert à regrouper les équipements.' },
+        Livret_ordre: { label: "Ordre d'affichage", hint: 'Plus le nombre est petit, plus le bloc apparaît tôt.', ph: '1, 2, 3…' },
+        Livret_description: { label: "Description / mode d'emploi", hint: 'Comment utiliser cet équipement.', ph: 'Expliquez le fonctionnement…' },
+        Livret_PointAttention: { label: "Point d'attention", hint: 'À signaler aux voyageurs.', ph: 'Ex. Ne pas forcer la poignée…' },
+        Livret_InstructionDepart: { label: 'Instructions de départ', hint: 'À faire avant de partir.', ph: 'Ex. Éteindre, vider le frigo…' },
+        Photos: { label: 'Photos', hint: "Photos de l'équipement." },
+        lienYoutube: { label: 'Lien vidéo (YouTube)', hint: 'Vidéo de démonstration (facultatif).', ph: 'https://youtu.be/…' },
+        // Piscine
+        'Livret_InstructionPréliminaire': { label: 'Instructions préliminaires', hint: "Avant d'utiliser la piscine.", ph: '' },
+        Livret_InstructionOuverture: { label: "Instructions d'ouverture", hint: 'Pour ouvrir la piscine.', ph: '' },
+        Livret_InstructionFermeture: { label: 'Instructions de fermeture', hint: 'Pour fermer la piscine.', ph: '' },
+        Photo: { label: 'Photos', hint: 'Photos de la piscine.' },
+        // Recommandation
+        Livret_Reco_Nom: { label: 'Nom du lieu', hint: 'Le titre de la recommandation.', ph: 'Ex. Restaurant Le Phare' },
+        Livret_Reco_Adress: { label: 'Adresse', hint: 'Où se trouve le lieu.', ph: '12 rue du Port…' },
+        'Livret_Reco_Categorie': { label: 'Catégorie', hint: 'Restaurant, activité, commerce…' },
+        Livret_Reco_Description: { label: 'Description', hint: 'Pourquoi vous le recommandez.', ph: 'Quelques mots sur ce lieu…' },
+        Livret_Reco_MaisonScore: { label: 'Note', hint: 'Votre appréciation.', ph: 'Ex. 5/5' },
+      };
+      function livretUi(field) {
+        return LIVRET_FIELD_UI[field] || { label: field, hint: '', ph: '' };
+      }
+      // Label + optional kind badge + helper line, shared by every control type.
+      function livretLabelHtml(field, kind) {
+        const ui = livretUi(field);
+        return (
+          `<label>${esc(ui.label)}${kind ? ` <span class="lf-kind">${esc(kind)}</span>` : ''}</label>` +
+          (ui.hint ? `<div class="livret-hint">${esc(ui.hint)}</div>` : '')
         );
       }
 
@@ -7989,6 +8287,7 @@ document.addEventListener('keydown', (event) => {
       function livretFieldControl(table, recId, field) {
         const rec = (db[table] || []).find((r) => r.id === recId);
         const val = rec ? rec.fields[field] : undefined;
+        const ui = livretUi(field);
         const dataAttr = `data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(field)}"`;
 
         // Media (special input) → opens the photo-modal, saved independently.
@@ -8001,10 +8300,10 @@ document.addEventListener('keydown', (event) => {
             )
             .join('');
           return `<div class="livret-field" ${dataAttr} data-ctl="media">
-            <label>${esc(field)} <span style="opacity:.6;font-weight:400">(médias)</span></label>
+            ${livretLabelHtml(field, 'photos')}
             <div class="rec-media-widget">
-              <div class="rec-media-thumbs">${thumbs || '<span class="rec-media-empty">Aucun média</span>'}</div>
-              <button type="button" class="act-btn photo-edit-btn rec-media-btn" data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(field)}">📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}</button>
+              <div class="rec-media-thumbs">${thumbs || '<span class="rec-media-empty">Aucune photo pour le moment</span>'}</div>
+              <button type="button" class="act-btn photo-edit-btn rec-media-btn" data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(field)}">📷 ${atts.length ? `Gérer les photos (${atts.length})` : 'Ajouter des photos'}</button>
             </div>
           </div>`;
         }
@@ -8012,7 +8311,7 @@ document.addEventListener('keydown', (event) => {
         // Links → read-only (structural, not livret content).
         if (isLinkField(table, field)) {
           return `<div class="livret-field" ${dataAttr} data-ctl="ro">
-            <label>${esc(field)} <span style="opacity:.6;font-weight:400">(lien — lecture seule)</span></label>
+            ${livretLabelHtml(field, 'lecture seule')}
             <div class="livret-ro">${esc(flatV(val)) || '—'}</div>
           </div>`;
         }
@@ -8021,7 +8320,7 @@ document.addEventListener('keydown', (event) => {
         if (fieldIsBoolean(table, field)) {
           const cur = val === true ? 'true' : val === false ? 'false' : '';
           return `<div class="livret-field" ${dataAttr} data-ctl="boolean">
-            <label>${esc(field)}</label>
+            ${livretLabelHtml(field)}
             <select class="livret-input">
               <option value="" ${cur === '' ? 'selected' : ''}>— (vide)</option>
               <option value="true" ${cur === 'true' ? 'selected' : ''}>Oui</option>
@@ -8044,20 +8343,29 @@ document.addEventListener('keydown', (event) => {
             .join('');
           if (multi) {
             return `<div class="livret-field" ${dataAttr} data-ctl="multiselect">
-              <label>${esc(field)} <span style="opacity:.6;font-weight:400">(choix multiples)</span></label>
+              ${livretLabelHtml(field, 'plusieurs choix')}
               <select class="livret-input" multiple size="4">${opts}</select>
             </div>`;
           }
           return `<div class="livret-field" ${dataAttr} data-ctl="select">
-            <label>${esc(field)}</label>
+            ${livretLabelHtml(field)}
             <select class="livret-input"><option value="" ${!val ? 'selected' : ''}>— (vide)</option>${opts}</select>
+          </div>`;
+        }
+
+        // Number → friendly numeric input (e.g. ordre d'affichage).
+        const numMeta = fieldMeta(table, field);
+        if (field === 'Livret_ordre' || (numMeta && numMeta.type === 'number')) {
+          return `<div class="livret-field" ${dataAttr} data-ctl="number">
+            ${livretLabelHtml(field)}
+            <input type="number" step="any" class="livret-input livret-number" value="${esc(flatV(val))}" placeholder="${esc(ui.ph || '')}">
           </div>`;
         }
 
         // Default → free text (with live preview + formatting toolbar)
         return `<div class="livret-field" ${dataAttr} data-ctl="text">
-          <label>${esc(field)}</label>
-          <textarea class="livret-textarea" ${dataAttr} spellcheck="false">${esc(flatV(val))}</textarea>
+          ${livretLabelHtml(field)}
+          <textarea class="livret-textarea" ${dataAttr} spellcheck="false" placeholder="${esc(ui.ph || '')}">${esc(flatV(val))}</textarea>
         </div>`;
       }
 
@@ -8065,6 +8373,10 @@ document.addEventListener('keydown', (event) => {
       function livretReadControl(fieldEl) {
         const ctl = fieldEl.dataset.ctl;
         if (ctl === 'text') return fieldEl.querySelector('textarea').value;
+        if (ctl === 'number') {
+          const v = fieldEl.querySelector('input').value;
+          return v === '' ? null : Number(v);
+        }
         if (ctl === 'select') return fieldEl.querySelector('select').value;
         if (ctl === 'boolean') {
           const v = fieldEl.querySelector('select').value;
@@ -8138,34 +8450,25 @@ document.addEventListener('keydown', (event) => {
           });
         }
 
-        // Linked records (équipements / piscine / reco) — recIds come from the
-        // already-resolved Tout rows so we reuse the link logic.
+        // Équipements (shared, filtered, ordered) + piscine / reco linked records.
+        const equipRecs = livretEquipRecs(idMaison);
+        const piscineGroups = [];
+        const recoGroups = [];
         const seen = new Set();
         allRows
           .filter((r) => r.maisonId === idMaison)
           .forEach((row) => {
-            const key = row.recTable + '::' + row.recId;
-            if (seen.has(key)) return;
             if (
-              ![TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_RECOMMANDATION].includes(
-                row.recTable,
-              )
+              ![TABLE_PISCINE, TABLE_RECOMMANDATION].includes(row.recTable)
             )
               return;
+            const key = row.recTable + '::' + row.recId;
+            if (seen.has(key)) return;
             seen.add(key);
             const rec = (db[row.recTable] || []).find((r) => r.id === row.recId);
             const f = rec ? rec.fields : {};
-            if (row.recTable === TABLE_EQUIPEMENT) {
-              groups.push({
-                table: row.recTable,
-                recId: row.recId,
-                type: 'equip',
-                categorie: row.categorie || '',
-                title: f.NomEquipement || row.nom || 'Équipement',
-                fields: livretEquipFields(),
-              });
-            } else if (row.recTable === TABLE_PISCINE) {
-              groups.push({
+            if (row.recTable === TABLE_PISCINE) {
+              piscineGroups.push({
                 table: row.recTable,
                 recId: row.recId,
                 type: 'piscine',
@@ -8174,7 +8477,7 @@ document.addEventListener('keydown', (event) => {
                 fields: LIVRET_FIELD_CONFIG[TABLE_PISCINE],
               });
             } else {
-              groups.push({
+              recoGroups.push({
                 table: row.recTable,
                 recId: row.recId,
                 type: 'reco',
@@ -8185,9 +8488,63 @@ document.addEventListener('keydown', (event) => {
             }
           });
 
-        const order = { maison: 0, equip: 1, piscine: 2, reco: 3 };
+        const catOf = (e) => String(e.categorie || '').toLowerCase();
+        const isExt = (e) => catOf(e).includes('extérieur') || catOf(e).includes('exterieur');
+        const isInt = (e) => catOf(e).includes('intérieur') || catOf(e).includes('interieur');
+        // An équipement card is only shown when it has booklet content (a
+        // description or photos); empty équipements are reachable via "Ajouter".
+        const hasCard = (e) =>
+          livretHasVal(e.f.Livret_description) || livretHasVal(e.f.Photos);
+        const equipCard = (e, type) => ({
+          table: TABLE_EQUIPEMENT,
+          recId: e.recId,
+          type,
+          categorie: e.categorie || '',
+          title: e.title,
+          fields: livretEquipFields(),
+        });
+
+        // 1–3) Équipements (intérieur / extérieur / autres) — only those that
+        // actually appear in the livret.
+        equipRecs.filter((e) => isInt(e) && hasCard(e)).forEach((e) => groups.push(equipCard(e, 'equip-int')));
+        equipRecs.filter((e) => isExt(e) && hasCard(e)).forEach((e) => groups.push(equipCard(e, 'equip-ext')));
+        equipRecs
+          .filter((e) => !isInt(e) && !isExt(e) && hasCard(e))
+          .forEach((e) => groups.push(equipCard(e, 'equip-other')));
+
+        // 4) Points d'attention — only équipements that have one in the livret.
+        equipRecs
+          .filter((e) => livretHasVal(e.f.Livret_PointAttention))
+          .forEach((e) =>
+            groups.push({
+              table: TABLE_EQUIPEMENT,
+              recId: e.recId,
+              type: 'equip-attention',
+              categorie: e.categorie || '',
+              title: e.title,
+              fields: ['Livret_PointAttention'],
+            }),
+          );
+        // 5) Instructions de départ — only équipements that have one in the livret.
+        equipRecs
+          .filter((e) => livretHasVal(e.f.Livret_InstructionDepart))
+          .forEach((e) =>
+            groups.push({
+              table: TABLE_EQUIPEMENT,
+              recId: e.recId,
+              type: 'equip-depart',
+              categorie: e.categorie || '',
+              title: e.title,
+              fields: ['Livret_InstructionDepart'],
+            }),
+          );
+
+        piscineGroups.forEach((g) => groups.push(g));
+        recoGroups.forEach((g) => groups.push(g));
+
+        const order = LIVRET_SECTION_ORDER.reduce((m, t, i) => ((m[t] = i), m), {});
         return groups.sort(
-          (a, b) => (order[a.type] ?? 9) - (order[b.type] ?? 9),
+          (a, b) => (order[a.type] ?? 99) - (order[b.type] ?? 99),
         );
       }
 
@@ -8201,13 +8558,12 @@ document.addEventListener('keydown', (event) => {
         livretDirty = {};
         document.getElementById('livret-save-btn').disabled = true;
 
-        if (!groups.length) {
-          editor.innerHTML =
-            '<div class="state-box">Aucun champ livret pour cette maison.</div>';
-        } else {
-          const icon = (t) =>
-            t === 'maison' ? '🏠' : t === 'piscine' ? '🏊' : t === 'reco' ? '📍' : '🔧';
-          let html = `<div id="livret-fmt-bar">
+        // Toolbar (help + formatting) is always present so the user can add even
+        // when a maison has no livret content yet.
+        let html = `<div class="livret-help">
+            <span>✏️ <b>Cliquez sur le titre d'un bloc</b> pour l'ouvrir · écrivez dans les champs · ajoutez des éléments avec <b>➕ Ajouter</b> · pensez à <b>💾 Tout enregistrer</b>.</span>
+          </div>
+          <div id="livret-fmt-bar">
             <button type="button" data-lf="bold" title="Gras"><b>B</b></button>
             <button type="button" data-lf="italic" title="Italique"><i>I</i></button>
             <button type="button" data-lf="underline" title="Souligner"><u>S</u></button>
@@ -8219,24 +8575,34 @@ document.addEventListener('keydown', (event) => {
             <button type="button" data-lf="link" title="Insérer un lien">Lien</button>
             <button type="button" data-lf="title" title="Titre (majuscule + saut de ligne)">Titre</button>
             <button type="button" data-lf="clear" title="Nettoyer la mise en forme" style="background:#dc2626;color:#fff">✕ mise en forme</button>
+            <button type="button" id="livret-toggle-all" data-expanded="0" title="Déplier ou replier tous les blocs">⊕ Tout déplier</button>
             <span class="fmt-hint">Sélectionnez du texte puis appliquez un format</span>
           </div>`;
-          groups.forEach((g) => {
-            const fieldsHtml = g.fields
-              .map((f) => livretFieldControl(g.table, g.recId, f))
-              .join('');
-            html += `<div class="livret-rec-card">
-              <div class="livret-rec-head">
-                <span class="lr-icon">${icon(g.type)}</span>
-                <span class="lr-title">${esc(g.title)}</span>
-                ${g.categorie ? `<span class="lr-tag">${esc(g.categorie)}</span>` : ''}
-                <span class="lr-id" data-copy="${esc(g.recId)}" title="Copier l'ID">${esc(g.recId)}</span>
-              </div>
-              <div class="livret-rec-body">${fieldsHtml || '<div class="state-box" style="padding:.8rem">Aucun champ.</div>'}</div>
-            </div>`;
-          });
-          editor.innerHTML = html;
-        }
+
+        // Datalist of existing équipement names (for the "Ajouter" autocomplete).
+        const equipNames = livretEquipRecs(idMaison).map((e) => e.title);
+        html += `<datalist id="livret-equip-names">${[...new Set(equipNames)]
+          .map((n) => `<option value="${esc(n)}"></option>`)
+          .join('')}</datalist>`;
+
+        const groupsByType = {};
+        groups.forEach((g) => (groupsByType[g.type] || (groupsByType[g.type] = [])).push(g));
+
+        LIVRET_SECTION_ORDER.forEach((type) => {
+          const list = groupsByType[type] || [];
+          const addable = !!LIVRET_ADD_SECTIONS[type];
+          if (!list.length && !addable) return; // hide empty, non-addable sections
+          const sm = LIVRET_SECTION_META[type] || { icon: '•', label: type };
+          html += `<div class="livret-section-split" data-split="${esc(type)}">
+            <span class="lss-icon">${sm.icon}</span>
+            <span class="lss-label">${esc(sm.label)}</span>
+            <span class="lss-count">${list.length} bloc(s)</span>
+          </div>`;
+          list.forEach((g) => (html += livretCardHtml(g)));
+          if (addable) html += livretAddRowHtml(type);
+        });
+
+        editor.innerHTML = html;
 
         const nFields = editor.querySelectorAll('.livret-field').length;
         document.getElementById('livret-meta').textContent =
@@ -8323,9 +8689,9 @@ document.addEventListener('keydown', (event) => {
                   (a) =>
                     `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
                 )
-                .join('') || '<span class="rec-media-empty">Aucun média</span>';
+                .join('') || '<span class="rec-media-empty">Aucune photo pour le moment</span>';
           if (btn)
-            btn.textContent = `📷 Gérer les médias${atts.length ? ` (${atts.length})` : ''}`;
+            btn.textContent = `📷 ${atts.length ? `Gérer les photos (${atts.length})` : 'Ajouter des photos'}`;
         }
         livretResync();
       }
@@ -8358,6 +8724,9 @@ document.addEventListener('keydown', (event) => {
           document
             .querySelectorAll('#livret-editor .livret-field.dirty')
             .forEach((el) => el.classList.remove('dirty'));
+          document
+            .querySelectorAll('#livret-editor .livret-rec-card.has-dirty')
+            .forEach((el) => el.classList.remove('has-dirty'));
           livretSendInit();
           btn.textContent = '💾 Tout enregistrer';
         } catch (err) {
@@ -8373,26 +8742,174 @@ document.addEventListener('keydown', (event) => {
         const value = livretReadControl(fieldEl);
         if (value === undefined) return; // media / read-only
         fieldEl.classList.add('dirty');
+        // Flag the whole block as having unsaved changes (header dot).
+        const card = fieldEl.closest('.livret-rec-card');
+        if (card) card.classList.add('has-dirty');
         livretMarkDirty(table, recid, field, value);
         livretSendUpdate(table, recid, field, value);
       }
       const livretEditorEl = document.getElementById('livret-editor');
       livretEditorEl.addEventListener('input', (e) => {
-        const fieldEl = e.target.closest('.livret-field[data-ctl="text"]');
+        const fieldEl = e.target.closest(
+          '.livret-field[data-ctl="text"], .livret-field[data-ctl="number"]',
+        );
         if (fieldEl) livretOnFieldChange(fieldEl);
       });
       livretEditorEl.addEventListener('change', (e) => {
         const fieldEl = e.target.closest('.livret-field');
         if (
           fieldEl &&
-          ['select', 'boolean', 'multiselect'].includes(fieldEl.dataset.ctl)
+          ['select', 'boolean', 'multiselect', 'number'].includes(fieldEl.dataset.ctl)
         )
           livretOnFieldChange(fieldEl);
       });
       livretEditorEl.addEventListener('click', (e) => {
+        // Fold / unfold every block at once.
+        const toggleAll = e.target.closest('#livret-toggle-all');
+        if (toggleAll) {
+          const expand = toggleAll.dataset.expanded !== '1';
+          document
+            .querySelectorAll('#livret-editor .livret-rec-card')
+            .forEach((c) => c.classList.toggle('collapsed', !expand));
+          toggleAll.dataset.expanded = expand ? '1' : '0';
+          toggleAll.textContent = expand ? '⊖ Tout replier' : '⊕ Tout déplier';
+          return;
+        }
+        // "Ajouter…" section controls.
+        const addToggle = e.target.closest('.livret-add-toggle');
+        if (addToggle) {
+          const box = addToggle.closest('.livret-add');
+          box.querySelector('.livret-add-form').hidden = false;
+          addToggle.hidden = true;
+          const input = box.querySelector('.livret-add-name');
+          input.value = '';
+          input.focus();
+          return;
+        }
+        const addCancel = e.target.closest('.livret-add-cancel');
+        if (addCancel) {
+          const box = addCancel.closest('.livret-add');
+          box.querySelector('.livret-add-form').hidden = true;
+          box.querySelector('.livret-add-toggle').hidden = false;
+          return;
+        }
+        const addConfirm = e.target.closest('.livret-add-confirm');
+        if (addConfirm) {
+          livretAddConfirm(addConfirm.closest('.livret-add'));
+          return;
+        }
+        // Copy a record id (and don't toggle the block while doing it).
         const cp = e.target.closest('[data-copy]');
-        if (cp) copy(cp.dataset.copy);
+        if (cp) {
+          copy(cp.dataset.copy);
+          return;
+        }
+        // Clicking a block header folds / unfolds it.
+        const head = e.target.closest('.livret-rec-head');
+        if (head) head.closest('.livret-rec-card').classList.toggle('collapsed');
       });
+      livretEditorEl.addEventListener('keydown', (e) => {
+        // Enter in an "Ajouter" name field confirms the add.
+        if (e.key === 'Enter' && e.target.classList.contains('livret-add-name')) {
+          e.preventDefault();
+          livretAddConfirm(e.target.closest('.livret-add'));
+          return;
+        }
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const head = e.target.closest && e.target.closest('.livret-rec-head');
+        if (head && e.target === head) {
+          e.preventDefault();
+          head.closest('.livret-rec-card').classList.toggle('collapsed');
+        }
+      });
+
+      /* Add an équipement (or one of its columns) to a livret section.
+         - Name matches an existing équipement → reveal/append that équipement's
+           card for this section so the user just fills the chosen column.
+         - New name → create a fonctionnementMaison record linked to the Maison,
+           then append its card. */
+      async function livretAddConfirm(box) {
+        if (!box) return;
+        const type = box.dataset.addType;
+        const cfg = LIVRET_ADD_SECTIONS[type];
+        if (!cfg) return;
+        const input = box.querySelector('.livret-add-name');
+        const name = (input.value || '').trim();
+        if (!name) {
+          input.focus();
+          return;
+        }
+        const idMaison = livretCtx.idMaison;
+        const editor = document.getElementById('livret-editor');
+        const fieldsList = cfg.field ? [cfg.field] : livretEquipFields();
+        const existing = livretEquipRecs(idMaison).find(
+          (e) => String(e.title).trim().toLowerCase() === name.toLowerCase(),
+        );
+
+        const revealCard = (recId, categorie, title) => {
+          // Already present in this section? Just open + focus it.
+          const dup = editor.querySelector(
+            `.livret-rec-card[data-section="${type}"][data-recid="${recId}"]`,
+          );
+          const target =
+            dup ||
+            (() => {
+              const tmp = document.createElement('div');
+              tmp.innerHTML = livretCardHtml({
+                table: TABLE_EQUIPEMENT,
+                recId,
+                type,
+                categorie,
+                title,
+                fields: fieldsList,
+              });
+              const node = tmp.firstElementChild;
+              editor.insertBefore(node, box);
+              return node;
+            })();
+          target.classList.remove('collapsed');
+          // Update the section count badge.
+          const split = editor.querySelector(`.livret-section-split[data-split="${type}"] .lss-count`);
+          if (split)
+            split.textContent =
+              editor.querySelectorAll(`.livret-rec-card[data-section="${type}"]`).length +
+              ' bloc(s)';
+          target.scrollIntoView({ block: 'nearest' });
+          const firstField = target.querySelector('textarea, input.livret-input, select.livret-input');
+          if (firstField) firstField.focus();
+        };
+
+        if (existing) {
+          revealCard(existing.recId, existing.categorie || cfg.cat || '', existing.title);
+        } else {
+          const confirmBtn = box.querySelector('.livret-add-confirm');
+          confirmBtn.disabled = true;
+          confirmBtn.textContent = 'Création…';
+          try {
+            const fields = { NomEquipement: name };
+            if (cfg.cat) fields['Catégorie'] = cfg.cat;
+            const maisonRec = livretMaisonRec(idMaison);
+            if (maisonRec) fields['Link_Maison'] = [maisonRec.id];
+            const data = await createRecord(TABLE_EQUIPEMENT, fields);
+            (db[TABLE_EQUIPEMENT] || (db[TABLE_EQUIPEMENT] = [])).push({
+              id: data.id,
+              fields: data.fields,
+            });
+            refreshAfterMutation(TABLE_EQUIPEMENT);
+            livretSendInit(); // surface the new équipement in the live preview
+            vtoast('Équipement créé : ' + name);
+            revealCard(data.id, cfg.cat || '', name);
+          } catch (err) {
+            vtoast('Erreur création : ' + err.message, false);
+          } finally {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Ajouter';
+          }
+        }
+        input.value = '';
+        box.querySelector('.livret-add-form').hidden = true;
+        box.querySelector('.livret-add-toggle').hidden = false;
+      }
 
       /* Formatting toolbar — wraps the selection in the focused livret textarea
          using the same inline-<h> convention as the edit modal. */
@@ -8493,63 +9010,8 @@ document.addEventListener('keydown', (event) => {
         window.open('livret_idylliq.html?maison=' + encodeURIComponent(livretCtx.idMaison), '_blank');
       });
 
-      /* Synchronised scrolling between the editor (left) and the preview iframe
-         (right). Proportional, so differing heights stay aligned. Wrapped in
-         try/catch since cross-document access can be blocked under file://. */
-      (function setupLivretScrollSync() {
-        const editor = document.getElementById('livret-editor');
-        const frame = document.getElementById('livret-edit-frame');
-        if (!editor || !frame) return;
-        let lock = false;
-        const ratioOf = (el) => {
-          const max = el.scrollHeight - el.clientHeight;
-          return max > 0 ? el.scrollTop / max : 0;
-        };
-        const applyRatio = (el, r) => {
-          const max = el.scrollHeight - el.clientHeight;
-          el.scrollTop = r * max;
-        };
-        const frameScroller = () => {
-          try {
-            const doc = frame.contentDocument;
-            return doc ? doc.scrollingElement || doc.documentElement : null;
-          } catch (e) {
-            return null;
-          }
-        };
-        editor.addEventListener(
-          'scroll',
-          () => {
-            if (lock) return;
-            const se = frameScroller();
-            if (!se) return;
-            lock = true;
-            applyRatio(se, ratioOf(editor));
-            requestAnimationFrame(() => (lock = false));
-          },
-          { passive: true },
-        );
-        // (Re)bind the iframe's own scroll each time it loads.
-        frame.addEventListener('load', () => {
-          try {
-            const win = frame.contentWindow;
-            const se = frameScroller();
-            if (!win || !se) return;
-            win.addEventListener(
-              'scroll',
-              () => {
-                if (lock) return;
-                lock = true;
-                applyRatio(editor, ratioOf(se));
-                requestAnimationFrame(() => (lock = false));
-              },
-              { passive: true },
-            );
-          } catch (e) {
-            /* cross-origin (file://) — sync unavailable, ignore */
-          }
-        });
-      })();
+      /* Scroll sync between editor and preview is intentionally disabled — the two
+         columns scroll independently. */
 
       // The livret iframe signals readiness; only react to *our* frame.
       window.addEventListener('message', (e) => {
