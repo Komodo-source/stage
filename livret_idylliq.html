@@ -766,7 +766,7 @@ const ICON_MAP = [
   { keys: ['machine à café','café','nespresso','café à grain', 'Cafetière', 'cafetière'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
   { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
   { keys: ['piscine'], icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: 'Piscine' },
-  { keys: ['lave', 'machine'], icon: 'https://img.icons8.com/?size=100&id=8472&format=png&color=1F6D67', label: 'Machine à Laver' },
+  { keys: ['lave'], icon: 'https://img.icons8.com/?size=100&id=8472&format=png&color=1F6D67', label: 'Machine à Laver' },
   { keys: ['hammam', 'sauna'], icon: 'https://img.icons8.com/?size=100&id=37111&format=png&color=1F6D67', label: 'Sauna' },
   { keys: ['bain nordique'], icon: 'https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67', label: 'Bain Nordique' },
   { keys: ['jacuzzi', 'spa'], icon: 'https://img.icons8.com/?size=100&id=8008&format=png&color=1F6D67', label: 'jacuzzi/spa' },
@@ -787,7 +787,7 @@ const ICON_MAP = [
   { keys: ['Cuisine', 'cuisine'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Cuisine' },
   { keys: ['poêle', 'Poêle'], icon: 'https://img.icons8.com/?size=100&id=mIXbPNP3d6S0&format=png&color=1F6D67', label: 'Poêle' },
   { keys: ['bébé', 'bebe'], icon: 'https://img.icons8.com/?size=100&id=2090&format=png&color=1F6D67', label: 'Équipements bébé' },
-  { keys: ['enceinte', 'audio'], icon: 'https://img.icons8.com/?size=100&id=undefined&format=png&color=1F6D67', label: 'Enceinte/Audio' },
+  { keys: ['enceinte', 'audio'], icon: 'https://img.icons8.com/?size=100&id=11408&format=png&color=1F6D67', label: 'Enceinte/Audio' },
   { keys: ['térasse', 'véranda'], icon: 'https://img.icons8.com/?size=100&id=SlzL4GyBltua&format=png&color=1F6D67', label: 'Térasse/Véranda' },
   { keys: ['ventilateur', 'véranda'], icon: 'https://img.icons8.com/?size=100&id=551&format=png&color=1F6D67', label: 'Ventilateur' },
   { keys: ['ps4', 'switch', 'nintendo', 'ps5', 'console'], icon: 'https://img.icons8.com/?size=100&id=7314&format=png&color=1F6D67', label: 'Console de jeux' },
@@ -1386,19 +1386,26 @@ function renderIconsSection(equipItems) {
   const extChips = [];
   if (has_piscine) {
     extChips.push({icon: {icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: "Piscine"}, item: {Item: 'section-piscine'} });
+    // Réserve le label pour que l'équipement "piscine" ci-dessous ne crée pas
+    // un second chip (doublon) pointant vers une ancre inexistante.
+    seen.add('Piscine');
     has_piscine = false;
   }
 
   equipItems.forEach(item => {
     const entry = getEquipmentIconEntry(item.Item);
     if (entry && !seen.has(entry.label)) {
-      seen.add(entry.label);
       const cat = (item.Categorie || '').toLowerCase().trim();
       if (cat.includes('extérieur') || cat.includes('exterieur')) {
         extChips.push({ icon: entry, item: item });
-      } else if (cat.includes('intérieur') || cat.includes('interieur')) {
+      } else {
+        // Catégorie inconnue/vide (ex. "Général") → on affiche quand même
+        // le chip côté intérieur au lieu de le perdre silencieusement.
         intChips.push({ icon: entry, item: item });
       }
+      // On ne marque le label comme "vu" qu'après l'avoir réellement ajouté,
+      // pour ne pas bloquer un autre item du même type ajouté ensuite.
+      seen.add(entry.label);
     }
   });
 
@@ -1603,8 +1610,9 @@ function getCICO(workflowRecords, maisonId) {
   const cicoRec = related.find(r => r.fields.CI_CO_hours || r.fields.CICO);
   if (!cicoRec) return '';
   const parts    = (cicoRec.fields.CI_CO_hours || cicoRec.fields.CICO || '').split(';');
-  const checkin  = (parts[0] || '').trim().replace(/:\d\d$/, '') || "Non défini";
+  let checkin  = (parts[0] || '').trim().replace(/:\d\d$/, '') || "Non défini";
   const checkout = (parts[1] || '').trim().replace(/:\d\d$/, '') || "Non défini";
+  checkin = checkin.split("-")[1] +" - " +  checkin.split("-")[0]
   return `
     <section id="section-sejour" class="theme-page reveal" style="background:var(--white);">
       <div class="theme-header"><div class="theme-label">Organisation</div><div class="theme-title">Votre Séjour</div></div>
@@ -1725,7 +1733,7 @@ function getRecommandation(data, maisonId) {
     const scoreVal = f.Livret_Reco_MaisonScore || f.Score;
     const score = scoreVal ? parseFloat(scoreVal).toFixed(1) : null;
     const adress = f.Livret_Reco_Adress || f.Adress;
-    if (adress) { mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${encodeURIComponent(adress)}" target="_blank" rel="noopener">Y aller →</a>`; }
+    if (adress) { mapsLink = `<a class="reco-link" href="https://maps.google.com/?q=${encodeURIComponent(f.Livret_Reco_Nom) + encodeURIComponent(adress)}" target="_blank" rel="noopener">Y aller →</a>`; }
     const description = f.Livret_Reco_Description || f.Description;
     const nom = f.Livret_Reco_Nom || f.NomRecommandation;
     const catRaw = (f.Livret_Reco_Categorie || f.Categorie || '').toString().trim();
@@ -2436,8 +2444,26 @@ if (PREVIEW_MODE) {
       }
       if (msg.idMaison) previewId = msg.idMaison;
       rebuildPreview();
+    } else if (msg.type === 'SCROLL_TO') {
+      // Parent (editor) drives our scroll position. postMessage-based so it works
+      // even under file:// where cross-document access is blocked.
+      const se = document.scrollingElement || document.documentElement;
+      const max = se.scrollHeight - se.clientHeight;
+      __scrollLock = true;
+      se.scrollTop = (Number(msg.ratio) || 0) * max;
+      requestAnimationFrame(() => { __scrollLock = false; });
     }
   });
+
+  // Emit our own scroll position back to the parent so the editor can follow.
+  let __scrollLock = false;
+  window.addEventListener('scroll', () => {
+    if (__scrollLock) return;
+    const se = document.scrollingElement || document.documentElement;
+    const max = se.scrollHeight - se.clientHeight;
+    const ratio = max > 0 ? se.scrollTop / max : 0;
+    try { window.parent.postMessage({ type: 'PREVIEW_SCROLL', ratio }, '*'); } catch (e) {}
+  }, { passive: true });
 
   // Tell the parent we are ready to receive data.
   try { window.parent.postMessage({ type: 'PREVIEW_READY' }, '*'); } catch (e) {}
