@@ -786,12 +786,14 @@ const ICON_MAP = [
   { keys: ['musculation','gym','haltères','poids'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Musculation' },
   { keys: ['sport'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Sport' },
   { keys: ['bateau','barque','pédalo','pedalo','canöe','canoe','kayak'], icon: 'https://img.icons8.com/?size=100&id=9317&format=png&color=1F6D67', label: 'Bateau / Pédalo' },
-  { keys: ['cuisine','gazinière','gaziniere','plaques de cuisson','four'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Cuisine' },
+  { keys: ['cuisine','gazinière','gaziniere','plaques de cuisson'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Cuisine' },
+    { keys: ['four'], icon: 'https://img.icons8.com/?size=100&id=lpj0odPX1jdL&format=png&color=1F6D67', label: 'Four' },
   { keys: ['bébé','bebe','chaise haute','lit bébé','parc'], icon: 'https://img.icons8.com/?size=100&id=2090&format=png&color=1F6D67', label: 'Équipements bébé' },
   { keys: ['enceinte','audio','son','musique','haut-parleur','haut parleur'], icon: 'https://img.icons8.com/?size=100&id=11408&format=png&color=1F6D67', label: 'Audio / Enceinte' },
   { keys: ['véranda','auvent'], icon: 'https://img.icons8.com/?size=100&id=SlzL4GyBltua&format=png&color=1F6D67', label: 'Véranda / Auvent' },
   { keys: ['ventilateur','climatisation','clim'], icon: 'https://img.icons8.com/?size=100&id=551&format=png&color=1F6D67', label: 'Ventilateur / Clim' },
   { keys: ['ps4','switch','nintendo','ps5','console','playstation','xbox'], icon: 'https://img.icons8.com/?size=100&id=7314&format=png&color=1F6D67', label: 'Console de jeux' },
+  { keys: ['hamac'], icon: 'https://img.icons8.com/?size=100&id=58233&format=png&color=1F6D67', label: 'Hamac' },
   { keys: ['éclairage extérieur','éclairage exterieur','lumière extérieure','lumiere exterieur','lumière exterieure','eclairage exterieur'], icon: 'https://img.icons8.com/?size=100&id=1091&format=png&color=1F6D67', label: 'Éclairage extérieur' },
 ];
 
@@ -1109,7 +1111,6 @@ function renderEquipCard(item, forceTemplate) {
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
 
-  // CORRECTION ICI : On passe "photos" à la place de "[]"
   const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, photos, videos)}</div>`;
   if (!desc){return "";}
 

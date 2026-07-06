@@ -901,7 +901,6 @@
         flex-wrap: wrap;
         margin-bottom: 1rem;
         padding-bottom: 0;
-        border-bottom: 2px solid var(--border);
       }
 
       .tab-btn {
@@ -1008,26 +1007,7 @@
       }
 
       /* ── CREATE BUTTON ── */
-      .create-btn {
-        display: none;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.45rem 1.1rem;
-        border: none;
-        border-radius: var(--radius-md);
-        background: var(--primary);
-        color: white;
-        font-size: 0.82rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition);
-        white-space: nowrap;
-      }
-      .create-btn:hover {
-        opacity: 0.92;
-        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
-        transform: translateY(-1px);
-      }
+
       body.show-table .create-btn { display: inline-flex; }
 
       .page-size-select {
@@ -1819,10 +1799,12 @@
       #vz-table-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
       .vz-toggle {
         display: inline-flex;
-        border: 1.5px solid var(--border);
+        /* border: 1.5px solid var(--border); */
         border-radius: var(--radius-md);
         overflow: hidden;
-        background: var(--card);
+        /* background: var(--card); */
+        gap: 1rem;
+        padding: 0.5rem;
       }
       .vz-toggle button {
         border: none;
@@ -1833,6 +1815,28 @@
         padding: 0.45rem 0.85rem;
         cursor: pointer;
         transition: all var(--transition);
+            background-color: #fff;
+      }
+
+      .create-btn {
+        display: none;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 1.1rem;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--primary);
+        color: white;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+      }
+      .create-btn:hover {
+        opacity: 0.92;
+        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
+        transform: translateY(-1px);
       }
       .vz-toggle button.active { background: var(--primary); color: white; }
       .vz-toggle button:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -2927,6 +2931,279 @@
       accent-color: var(--primary);
     }
     </style>
+    <style id="nbm-components">
+      /* Styles des composants ajoutés (création Maison / Fonctionnement,
+         téléversement direct de photos) — alignés sur le design d'origine. */
+      .nb-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 1.1rem;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+      }
+      .nb-add-btn:hover {
+        opacity: 0.92;
+        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
+        transform: translateY(-1px);
+      }
+      .nb-add-btn.alt { background: var(--second); }
+      .nb-add-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .nbm-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        z-index: 1200;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 4vh 1rem;
+        overflow-y: auto;
+      }
+      .nbm-overlay.open { display: flex; }
+      .nbm-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .nbm-card.wide { max-width: 720px; }
+      .nbm-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1.2rem;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border);
+      }
+      .nbm-head h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+      .nbm-close {
+        border: none;
+        background: transparent;
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+        color: var(--muted);
+        cursor: pointer;
+        border-radius: 50%;
+        transition: all var(--transition);
+      }
+      .nbm-close:hover { background: rgba(0, 0, 0, 0.06); color: var(--text); }
+      .nbm-body {
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+      .nbm-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--primary-dark);
+        margin-top: 0.4rem;
+      }
+      .nbm-input {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
+        outline: none;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--bg);
+        color: var(--text);
+        transition: border-color var(--transition), box-shadow var(--transition);
+      }
+      .nbm-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+        background: var(--card);
+      }
+      textarea.nbm-input { min-height: 150px; resize: vertical; line-height: 1.45; }
+      .nbm-check {
+        display: flex;
+        gap: 0.55rem;
+        align-items: flex-start;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 0.6rem;
+        cursor: pointer;
+      }
+      .nbm-check input { width: 1.1rem; height: 1.1rem; accent-color: var(--primary); }
+      .nbm-equip-preview {
+        border: 1.5px dashed var(--border);
+        background: var(--surface-2);
+        border-radius: var(--radius-md);
+        padding: 0.6rem 0.8rem;
+        font-size: 0.76rem;
+        line-height: 1.7;
+        max-height: 160px;
+        overflow-y: auto;
+      }
+      .nbm-equip-preview span {
+        display: inline-block;
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 999px;
+        padding: 0 0.55rem;
+        margin: 0.12rem 0.2rem 0.12rem 0;
+        font-weight: 500;
+      }
+      .nbm-progress {
+        border: 1px solid var(--border);
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: var(--radius-md);
+        padding: 0.55rem 0.8rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+      .nbm-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+        padding: 0.9rem 1.2rem;
+        border-top: 1px solid var(--border);
+        background: var(--surface-2);
+      }
+      .nbm-btn {
+        padding: 0.55rem 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--card);
+        color: var(--text);
+        transition: all var(--transition);
+      }
+      .nbm-btn:hover { border-color: var(--primary); color: var(--primary-dark); }
+      .nbm-btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+      .nbm-btn.primary:hover {
+        opacity: 0.92;
+        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
+        color: #fff;
+      }
+      .nbm-btn:disabled { opacity: 0.5; cursor: wait; box-shadow: none; }
+      .nbm-hint { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+      .nbm-form-mode {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: 999px;
+        display: inline-block;
+        align-self: flex-start;
+        padding: 0.15rem 0.7rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      /* ── Téléversement direct (mode création de fiche) ── */
+      .att-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        margin: 0.3rem 0;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        border-radius: var(--radius-md);
+        transition: all var(--transition);
+        user-select: none;
+      }
+      .att-upload-btn:hover {
+        opacity: 0.92;
+        box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3);
+        transform: translateY(-1px);
+      }
+      .att-upload-status {
+        border: 1px solid var(--border);
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: var(--radius-md);
+        padding: 0.4rem 0.7rem;
+        margin-bottom: 0.35rem;
+        font-size: 0.76rem;
+        font-weight: 600;
+      }
+
+      /* ── Export CSV : sélection des maisons ── */
+      .nbm-csv-tools {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .nbm-csv-tools .nbm-input { flex: 1; }
+      .nbm-mini-btn {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.76rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--card);
+        color: var(--text);
+        white-space: nowrap;
+        transition: all var(--transition);
+      }
+      .nbm-mini-btn:hover { border-color: var(--primary); color: var(--primary-dark); }
+      .nbm-house-list {
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface-2);
+        padding: 0.5rem 0.7rem;
+        max-height: 230px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+      .nbm-house-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.84rem;
+        padding: 0.22rem 0.3rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+      }
+      .nbm-house-item:hover { background: var(--primary-light); }
+      .nbm-house-item input { accent-color: var(--primary); width: 1rem; height: 1rem; }
+    </style>
   </head>
   <body id="body">
     <div id="sr-announce" class="sr-only" aria-live="polite" role="status"></div>
@@ -3128,6 +3405,27 @@
             <path d="M12 5v14M5 12h14" />
           </svg>
           Créer
+        </button>
+        <button
+          class="nb-add-btn"
+          id="nb-new-maison-btn"
+          title="Créer une maison avec sa liste d'équipements par défaut"
+        >
+          🏠 ＋ Maison
+        </button>
+        <button
+          class="nb-add-btn alt"
+          id="nb-new-fonc-btn"
+          title="Créer ou compléter un fonctionnement d'une maison"
+        >
+          ⚙ ＋ Fonctionnement
+        </button>
+        <button
+          class="nb-add-btn"
+          id="nb-export-csv-btn"
+          title="Exporter les données d'une ou plusieurs maisons en CSV"
+        >
+          ⬇ CSV
         </button>
       </div>
 
@@ -3528,6 +3826,93 @@
         <div id="vb-foot">
           <button id="vb-cancel">Annuler</button>
           <button id="vb-save">Créer la vue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL : CRÉER UNE MAISON ── -->
+    <div id="nbm-maison-modal" class="nbm-overlay" role="dialog" aria-modal="true" aria-label="Créer une maison">
+      <div class="nbm-card">
+        <div class="nbm-head">
+          <h3>🏠 Nouvelle Maison</h3>
+          <button class="nbm-close" data-nbm-close="nbm-maison-modal" aria-label="Fermer">✕</button>
+        </div>
+        <div class="nbm-body">
+          <label class="nbm-label" for="nbm-maison-nom">Nom de la maison *</label>
+          <input type="text" id="nbm-maison-nom" class="nbm-input" placeholder="Ex. Villa des Oliviers" autocomplete="off" />
+          <label class="nbm-label" for="nbm-maison-id">ID Maison (optionnel)</label>
+          <input type="text" id="nbm-maison-id" class="nbm-input" placeholder="Ex. M42" autocomplete="off" />
+          <label class="nbm-check">
+            <input type="checkbox" id="nbm-maison-equips" checked />
+            <span>Créer automatiquement la liste des équipements standards (catégorie « fonctionnement ») liés à cette maison</span>
+          </label>
+          <div class="nbm-equip-preview" id="nbm-equip-preview"></div>
+          <div class="nbm-progress" id="nbm-maison-progress" hidden></div>
+        </div>
+        <div class="nbm-foot">
+          <button class="nbm-btn ghost" data-nbm-close="nbm-maison-modal">Annuler</button>
+          <button class="nbm-btn primary" id="nbm-maison-save">Créer la maison</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL : CRÉER / COMPLÉTER UN FONCTIONNEMENT ── -->
+    <div id="nbm-fonc-modal" class="nbm-overlay" role="dialog" aria-modal="true" aria-label="Créer un fonctionnement">
+      <div class="nbm-card wide">
+        <div class="nbm-head">
+          <h3>⚙ Fonctionnement</h3>
+          <button class="nbm-close" data-nbm-close="nbm-fonc-modal" aria-label="Fermer">✕</button>
+        </div>
+        <div class="nbm-body">
+          <label class="nbm-label" for="nbm-fonc-maison">1. Choisir la maison *</label>
+          <select id="nbm-fonc-maison" class="nbm-input">
+            <option value="">— Sélectionner une maison —</option>
+          </select>
+          <label class="nbm-label" for="nbm-fonc-existing">2. Équipements déjà associés à cette maison</label>
+          <div class="nbm-hint">Sélectionnez un équipement pour le compléter / mettre à jour, ou créez-en un nouveau.</div>
+          <select id="nbm-fonc-existing" class="nbm-input" disabled>
+            <option value="">— Choisissez d'abord une maison —</option>
+          </select>
+          <button class="nb-add-btn" id="nbm-fonc-new" style="align-self: flex-start" disabled>＋ Nouveau fonctionnement</button>
+          <div id="nbm-fonc-form" hidden>
+            <span class="nbm-form-mode" id="nbm-fonc-mode">Création</span>
+            <label class="nbm-label" for="nbm-fonc-nom">Nom de l'équipement *</label>
+            <input type="text" id="nbm-fonc-nom" class="nbm-input" placeholder="Ex. Chauffage, Machine à café…" autocomplete="off" />
+            <label class="nbm-label" for="nbm-fonc-cat">Catégorie</label>
+            <select id="nbm-fonc-cat" class="nbm-input"></select>
+            <label class="nbm-label" for="nbm-fonc-desc">Description du fonctionnement</label>
+            <textarea id="nbm-fonc-desc" class="nbm-input" placeholder="Expliquez le fonctionnement de cet équipement…"></textarea>
+          </div>
+        </div>
+        <div class="nbm-foot">
+          <button class="nbm-btn ghost" data-nbm-close="nbm-fonc-modal">Fermer</button>
+          <button class="nbm-btn primary" id="nbm-fonc-save" disabled>Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL : EXPORT CSV PAR MAISON(S) ── -->
+    <div id="nbm-csv-modal" class="nbm-overlay" role="dialog" aria-modal="true" aria-label="Exporter en CSV">
+      <div class="nbm-card">
+        <div class="nbm-head">
+          <h3>⬇ Export CSV</h3>
+          <button class="nbm-close" data-nbm-close="nbm-csv-modal" aria-label="Fermer">✕</button>
+        </div>
+        <div class="nbm-body">
+          <label class="nbm-label" for="nbm-csv-table">Table à exporter</label>
+          <select id="nbm-csv-table" class="nbm-input"></select>
+          <label class="nbm-label">Maisons à inclure (une ou plusieurs)</label>
+          <div class="nbm-csv-tools">
+            <input type="text" id="nbm-csv-search" class="nbm-input" placeholder="Filtrer les maisons…" autocomplete="off" />
+            <button type="button" class="nbm-mini-btn" id="nbm-csv-all" title="Sélectionner toutes les maisons affichées">Tout</button>
+            <button type="button" class="nbm-mini-btn" id="nbm-csv-none" title="Vider la sélection">Aucune</button>
+          </div>
+          <div class="nbm-house-list" id="nbm-csv-houses"></div>
+          <div class="nbm-hint" id="nbm-csv-count">0 maison sélectionnée</div>
+        </div>
+        <div class="nbm-foot">
+          <button class="nbm-btn ghost" data-nbm-close="nbm-csv-modal">Annuler</button>
+          <button class="nbm-btn primary" id="nbm-csv-export">⬇ Exporter en CSV</button>
         </div>
       </div>
     </div>
@@ -4721,7 +5106,7 @@
         headers.splice(recIdIdx + 1, 0, '_maison');
         const pencil =
           '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-        thead.innerHTML = `<tr>${headers.map((h) => `<th>${h === '_recId' ? '🆔 ID' : h === '_maison' ? 'Maison' : esc(h)}</th>`).join('')}</tr>`;
+        thead.innerHTML = `<tr>${headers.map((h) => `<th>${h === '_recId' ? ' ID' : h === '_maison' ? 'Maison' : esc(h)}</th>`).join('')}</tr>`;
 
         if (!paged.length) {
           tbody.innerHTML = `<tr><td colspan="${headers.length}"><div class="state-box">Aucun résultat.</div></td></tr>`;
@@ -7433,12 +7818,16 @@
               </div>
             </div>`;
           }
-          // CREATE mode → no record id yet, so fall back to URL entry.
+          // CREATE mode → no record id yet: direct upload (imgbb) + URL entry.
           return `<div class="form-group" data-field="${esc(field)}" data-type="attachment">
             <label>${esc(field)} <span style="opacity:.6;font-weight:400">(photos)</span></label>
             <div class="att-thumbs"></div>
-            <textarea class="att-new" rows="2" placeholder="Ajouter des URLs d'images (une par ligne)"></textarea>
-            <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem">Enregistrez la fiche, puis utilisez « 📷 Gérer les médias » pour téléverser des fichiers.</div>
+            <label class="att-upload-btn">📷 Téléverser des photos
+              <input type="file" class="att-file-input" accept="image/*" multiple hidden>
+            </label>
+            <div class="att-upload-status" hidden></div>
+            <textarea class="att-new" rows="2" placeholder="…ou coller des URLs d'images (une par ligne)"></textarea>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem">Les photos téléversées seront jointes à la fiche lors de l'enregistrement.</div>
           </div>`;
         }
         if (fieldIsBoolean(table, field)) {
@@ -9230,7 +9619,7 @@
         );
         w.document.close();
         w.focus();
-        setTimeout(() => w.print(), 300);
+        //setTimeout(() => w.print(), 300);
       }
 
       document.getElementById('fiche-content').addEventListener('click', (e) => {
@@ -9582,6 +9971,711 @@
         vtoast(`${newRows.length} ligne(s) importée(s) depuis ${table}`);
         renderVuesPane();
       }
+
+      /* ═══════════════════════════════════════════════════════════════
+         CRÉATION MAISON + FONCTIONNEMENT (modales néo-brutalistes)
+         ═══════════════════════════════════════════════════════════════ */
+
+      /* Équipements standards créés avec chaque nouvelle Maison.
+         Chaque entrée devient un enregistrement fonctionnementMaison
+         (NomEquipement + FS_description) lié à la Maison, catégorie
+         « fonctionnement ». */
+      const NBM_DEFAULT_EQUIPEMENTS = [
+        {
+          nom: 'Chauffage',
+          desc: `Le système
+Source d'énergie : fuel, électrique, etc.
+
+Si gaz/fuel/PAC : emplacement de la chaudière. Est-elle accessible par les clients ?
+
+Le contrôle
+Comment régler la température : à distance, sur place sur la chaudière, sur un boîtier, sur les radiateurs…
+
+Si c'est à distance et que le proprio nous délègue les accès : nom de l'appli, codes, instructions sur quoi faire dans l'appli
+
+Si c'est sur place : est-ce que les clients sont censés le faire eux-mêmes ?
+
+Si c'est via un boîtier : où se trouve ce boîtier ?`,
+        },
+        {
+          nom: 'Électricité - tableau',
+          desc: `S'il y a plusieurs tableaux : quelle partie de la maison est contrôlée par quel tableau ?`,
+        },
+        { nom: 'Électricité - linky', desc: '' },
+        { nom: "Arrivée d'eau", desc: '' },
+        {
+          nom: 'Eau chaude',
+          desc: `Si ballon :
+Où sont le/les ballons ?
+
+Y a-t-il un mode boost, si oui comment peut-il être activé ?
+
+Faut-il les allumer/éteindre avant/après la loc ?
+
+Si oui : si à distance, même question que pour le chauffage.
+
+Si sur place : où est le bouton ou fusible pour le faire ?`,
+        },
+        {
+          nom: 'Équipements de cuisine',
+          desc: `Checker en particulier congélo, appareil à raclette pour combien de personnes.
+
+Si pas de congélo, le préciser sur l'annonce.`,
+        },
+        {
+          nom: 'Table à manger',
+          desc: `Pour X personnes à l'intérieur
+Pour Y personnes à l'extérieur
+
+S'il y a des rallonges : où sont-elles ?`,
+        },
+        {
+          nom: 'Machine à café',
+          desc: `PRENDRE EN PHOTO LA MACHINE ET NOTER LE TYPE DE MACHINE (capsule avec la marque, grain ou filtre ?)`,
+        },
+        {
+          nom: 'Gaz - cuisine',
+          desc: `EXPLIQUER COMMENT CHANGER LA BOUTEILLE
+(lien vers vidéo)`,
+        },
+        {
+          nom: 'Gaz - plancha BBQ',
+          desc: `EXPLIQUER
+S'il faut allumer/éteindre le gaz avant de s'en servir.
+
+Et comment allumer/éteindre.`,
+        },
+        { nom: 'Fenêtres / Volets', desc: `Si télécommande : où est-elle ?` },
+        {
+          nom: 'Frigo / Congélateur (à vider ou non ?, éteindre ou non etc…)',
+          desc: '',
+        },
+        {
+          nom: 'Poubelle (Ménagère, Plastique, Verre)',
+          desc: `Ménager : ramassage ? Grande poubelle ou sacs ? Jour et fréquence de ramassage ?
+
+Recyclable : ramassage ? Grande poubelle ou sacs ? Jour et fréquence de ramassage ?
+Lien vers le calendrier :
+[Si pas de ramassage : adresse du container, faut-il un badge, où est ce badge ?]
+
+Verre : lien vers le container à verre`,
+        },
+        {
+          nom: 'Cheminée/Poêle (fonctionnement et stockage du bois)',
+          desc: `PRÉSENCE D'UNE TRAPPE À OUVRIR ?
+PRENDRE UNE PHOTO`,
+        },
+        {
+          nom: 'Stockage linge de lit / Serviettes',
+          desc: `Expliquer le code / accès pour fdm`,
+        },
+        { nom: 'Stockage produit ménager', desc: '' },
+        { nom: 'Stockage consommables', desc: '' },
+        {
+          nom: 'Internet (ADSL/Fibre)',
+          desc: `Emplacement de la box :
+Nom du réseau :
+Mot de passe :`,
+        },
+        { nom: 'Espaces privés', desc: '' },
+      ];
+      const NBM_EQUIP_CATEGORIE = 'fonctionnement';
+
+      /* Champ description des fonctionnements : FS_description si la colonne
+         existe dans Airtable ET est modifiable (pas une formule), sinon repli
+         sur Livret_description. */
+      function nbmDescField() {
+        const cols = tableSchemas[TABLE_EQUIPEMENT] || [];
+        const fs =
+          (cols.includes('FS_description') && 'FS_description') ||
+          cols.find((c) => c.toLowerCase() === 'fs_description');
+        if (fs && nbmWritable(TABLE_EQUIPEMENT, fs)) return fs;
+        if (
+          cols.includes('Livret_description') &&
+          nbmWritable(TABLE_EQUIPEMENT, 'Livret_description')
+        )
+          return 'Livret_description';
+        return fs || 'Livret_description';
+      }
+
+      /* Un champ est-il modifiable (≠ formule / rollup / lookup…) ? */
+      const NBM_COMPUTED_TYPES = [
+        'formula', 'rollup', 'count', 'autoNumber', 'createdTime',
+        'lastModifiedTime', 'createdBy', 'lastModifiedBy', 'multipleLookupValues',
+      ];
+      function nbmWritable(table, field) {
+        const m = fieldMeta(table, field);
+        return !m || !NBM_COMPUTED_TYPES.includes(m.type);
+      }
+
+      /* Création par lot (l'API Airtable accepte 10 enregistrements max/appel).
+         typecast:true crée l'option de sélection si elle n'existe pas encore. */
+      async function nbmCreateRecordsBatch(table, fieldsList, onProgress) {
+        const created = [];
+        for (let i = 0; i < fieldsList.length; i += 10) {
+          const chunk = fieldsList.slice(i, i + 10).map((f) => ({ fields: f }));
+          const res = await fetch(
+            `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${TOKEN}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ records: chunk, typecast: true }),
+            },
+          );
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error?.message || JSON.stringify(data));
+          created.push(...data.records);
+          if (onProgress) onProgress(created.length, fieldsList.length);
+        }
+        return created;
+      }
+
+      /* PATCH avec typecast:true — accepte une valeur de sélection même si
+         l'option n'existe pas encore dans Airtable (elle est créée). */
+      async function nbmUpdateRecordFields(table, recId, fields) {
+        const res = await fetch(
+          `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ fields, typecast: true }),
+          },
+        );
+        const data = await res.json();
+        if (!res.ok)
+          throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
+
+      /* Ouverture / fermeture des modales .nbm-overlay */
+      function nbmOpen(id) {
+        document.getElementById(id).classList.add('open');
+      }
+      function nbmClose(id) {
+        document.getElementById(id).classList.remove('open');
+      }
+      document.querySelectorAll('[data-nbm-close]').forEach((btn) =>
+        btn.addEventListener('click', () => nbmClose(btn.dataset.nbmClose)),
+      );
+      ['nbm-maison-modal', 'nbm-fonc-modal', 'nbm-csv-modal'].forEach((id) => {
+        document.getElementById(id).addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) nbmClose(id);
+        });
+      });
+
+      /* Enregistre une nouvelle Maison dans les caches locaux (listes,
+         correspondances nom ↔ recId, filtre maison). */
+      function nbmRegisterMaisonLocally(rec) {
+        (db[TABLE_MAISON] || (db[TABLE_MAISON] = [])).push({
+          id: rec.id,
+          fields: rec.fields,
+        });
+        recordIdToTable[rec.id] = TABLE_MAISON;
+        const name = rec.fields.Livret_NomMaison || '';
+        if (name) {
+          recIdToHouseName[rec.id] = name;
+          houseNameToId[name] = rec.id;
+          idToHouseName[rec.id] = name;
+          const idm = rec.fields.ID_Maison || rec.fields.IdMaison || '';
+          const entry = { id: idm, name, label: `${idm} - ${name}` };
+          all_houses.push(entry);
+          all_houses.sort((a, b) => a.label.localeCompare(b.label, 'fr'));
+          window.labelToMaisonName = window.labelToMaisonName || {};
+          window.labelToMaisonName[entry.label] = name;
+        }
+      }
+
+      /* ── MODALE MAISON ─────────────────────────────────────────────── */
+      document.getElementById('nb-new-maison-btn').addEventListener('click', () => {
+        document.getElementById('nbm-maison-nom').value = '';
+        document.getElementById('nbm-maison-id').value = '';
+        document.getElementById('nbm-maison-equips').checked = true;
+        const prog = document.getElementById('nbm-maison-progress');
+        prog.hidden = true;
+        prog.textContent = '';
+        document.getElementById('nbm-equip-preview').innerHTML =
+          NBM_DEFAULT_EQUIPEMENTS.map((e) => `<span>${esc(e.nom)}</span>`).join('');
+        nbmOpen('nbm-maison-modal');
+        document.getElementById('nbm-maison-nom').focus();
+      });
+
+      document.getElementById('nbm-maison-save').addEventListener('click', async () => {
+        const nom = document.getElementById('nbm-maison-nom').value.trim();
+        const idMaison = document.getElementById('nbm-maison-id').value.trim();
+        const withEquips = document.getElementById('nbm-maison-equips').checked;
+        if (!nom) {
+          vtoast('Le nom de la maison est obligatoire', false);
+          document.getElementById('nbm-maison-nom').focus();
+          return;
+        }
+        const dup = (db[TABLE_MAISON] || []).find(
+          (r) => (r.fields.Livret_NomMaison || '').trim().toLowerCase() === nom.toLowerCase(),
+        );
+        if (dup && !confirm(`Une maison « ${nom} » existe déjà. Créer quand même ?`)) return;
+
+        const btn = document.getElementById('nbm-maison-save');
+        const prog = document.getElementById('nbm-maison-progress');
+        btn.disabled = true;
+        prog.hidden = false;
+        prog.textContent = 'Création de la maison…';
+        try {
+          const fields = { Livret_NomMaison: nom };
+          if (idMaison && nbmWritable(TABLE_MAISON, 'ID_Maison'))
+            fields['ID_Maison'] = idMaison;
+          const maisonRec = await createRecord(TABLE_MAISON, fields);
+          nbmRegisterMaisonLocally(maisonRec);
+
+          if (withEquips) {
+            await ensureTableLoaded(TABLE_EQUIPEMENT);
+            const descF = nbmDescField();
+            const list = NBM_DEFAULT_EQUIPEMENTS.map((e) => {
+              const f = {
+                NomEquipement: e.nom,
+                'Catégorie': NBM_EQUIP_CATEGORIE,
+                Link_Maison: [maisonRec.id],
+              };
+              if (e.desc) f[descF] = e.desc;
+              return f;
+            });
+            prog.textContent = `Création des équipements… 0/${list.length}`;
+            const created = await nbmCreateRecordsBatch(
+              TABLE_EQUIPEMENT,
+              list,
+              (done, total) => {
+                prog.textContent = `Création des équipements… ${done}/${total}`;
+              },
+            );
+            created.forEach((rec) => {
+              (db[TABLE_EQUIPEMENT] || (db[TABLE_EQUIPEMENT] = [])).push({
+                id: rec.id,
+                fields: rec.fields,
+              });
+              recordIdToTable[rec.id] = TABLE_EQUIPEMENT;
+            });
+            refreshAfterMutation(TABLE_EQUIPEMENT);
+            vtoast(`Maison « ${nom} » créée avec ${created.length} équipements ✔`);
+          } else {
+            vtoast(`Maison « ${nom} » créée ✔`);
+          }
+          refreshAfterMutation(TABLE_MAISON);
+          announce(`Maison ${nom} créée.`);
+          nbmClose('nbm-maison-modal');
+        } catch (err) {
+          prog.textContent = '';
+          prog.hidden = true;
+          vtoast('Création impossible — ' + friendlyError(err), false);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      /* ── MODALE FONCTIONNEMENT ─────────────────────────────────────── */
+      let nbmFoncEditId = null; // recId en cours d'édition (null = création)
+
+      function nbmFoncCategories() {
+        const m = fieldMeta(TABLE_EQUIPEMENT, 'Catégorie');
+        const fromSchema = (m && m.options && m.options.choices || [])
+          .map((c) => c.name)
+          .filter(Boolean);
+        const cats = fromSchema.length
+          ? fromSchema
+          : ['fonctionnement', 'wifi', 'extérieur', 'intérieur'];
+        return cats;
+      }
+
+      function nbmFoncMaisonRecId() {
+        return document.getElementById('nbm-fonc-maison').value || null;
+      }
+
+      /* Équipements liés à la maison choisie : union du lien direct
+         (fonctionnementMaison.Link_Maison) et du lien inverse porté par la
+         Maison (Link_FonctionnementMaison / Link_livret). */
+      function nbmFoncEquips(maisonRecId) {
+        const maison = (db[TABLE_MAISON] || []).find((r) => r.id === maisonRecId);
+        const reverse = new Set(
+          (maison &&
+            (maison.fields['Link_FonctionnementMaison'] ||
+              maison.fields['Link_livret'])) ||
+            [],
+        );
+        return (db[TABLE_EQUIPEMENT] || []).filter((r) => {
+          const links = r.fields.Link_Maison || r.fields.Link_maison || [];
+          return (Array.isArray(links) && links.includes(maisonRecId)) || reverse.has(r.id);
+        });
+      }
+
+      function nbmFoncHideForm() {
+        nbmFoncEditId = null;
+        const form = document.getElementById('nbm-fonc-form');
+        form.hidden = true;
+        form.style.display = 'none';
+        document.getElementById('nbm-fonc-save').disabled = true;
+      }
+
+      function nbmFoncShowForm(mode, rec) {
+        const form = document.getElementById('nbm-fonc-form');
+        form.hidden = false;
+        form.style.display = 'flex';
+        form.style.flexDirection = 'column';
+        form.style.gap = '0.55rem';
+        document.getElementById('nbm-fonc-mode').textContent =
+          mode === 'edit' ? 'Mise à jour : ' + (rec.fields.NomEquipement || '') : 'Création';
+        const catSel = document.getElementById('nbm-fonc-cat');
+        const cats = nbmFoncCategories();
+        const currentCat = rec ? flatV(rec.fields['Catégorie']) : NBM_EQUIP_CATEGORIE;
+        catSel.innerHTML =
+          '<option value="">—</option>' +
+          [...new Set(currentCat ? [...cats, currentCat] : cats)]
+            .map((c) => `<option value="${esc(c)}"${c === currentCat ? ' selected' : ''}>${esc(c)}</option>`)
+            .join('');
+        if (!rec) catSel.value = cats.includes(NBM_EQUIP_CATEGORIE) ? NBM_EQUIP_CATEGORIE : '';
+        const descF = nbmDescField();
+        document.getElementById('nbm-fonc-nom').value = rec
+          ? rec.fields.NomEquipement || ''
+          : '';
+        document.getElementById('nbm-fonc-desc').value = rec
+          ? rec.fields[descF] || rec.fields['Livret_description'] || ''
+          : '';
+        nbmFoncEditId = mode === 'edit' ? rec.id : null;
+        document.getElementById('nbm-fonc-save').disabled = false;
+        document.getElementById('nbm-fonc-nom').focus();
+      }
+
+      function nbmFoncRenderList() {
+        const host = document.getElementById('nbm-fonc-existing');
+        const maisonRecId = nbmFoncMaisonRecId();
+        document.getElementById('nbm-fonc-new').disabled = !maisonRecId;
+        if (!maisonRecId) {
+          host.innerHTML =
+            '<option value="">— Choisissez d\'abord une maison —</option>';
+          host.disabled = true;
+          return;
+        }
+        const equips = nbmFoncEquips(maisonRecId).slice().sort((a, b) =>
+          String(a.fields.NomEquipement || '').localeCompare(
+            String(b.fields.NomEquipement || ''), 'fr'),
+        );
+        if (!equips.length) {
+          host.innerHTML =
+            '<option value="">Aucun équipement pour cette maison — créez le premier !</option>';
+          host.disabled = true;
+          return;
+        }
+        host.disabled = false;
+        host.innerHTML =
+          '<option value="">— Sélectionner un équipement à compléter —</option>' +
+          equips
+            .map((r) => {
+              const cat = flatV(r.fields['Catégorie']);
+              const label =
+                (r.fields.NomEquipement || '(sans nom)') + (cat ? ` — ${cat}` : '');
+              return `<option value="${esc(r.id)}"${r.id === nbmFoncEditId ? ' selected' : ''}>${esc(label)}</option>`;
+            })
+            .join('');
+      }
+
+      document.getElementById('nb-new-fonc-btn').addEventListener('click', async () => {
+        nbmFoncHideForm();
+        const sel = document.getElementById('nbm-fonc-maison');
+        sel.innerHTML =
+          '<option value="">— Sélectionner une maison —</option>' +
+          all_houses
+            .map((h) => {
+              const recId = houseNameToId[h.name] || '';
+              return recId
+                ? `<option value="${esc(recId)}">${esc(h.label)}</option>`
+                : '';
+            })
+            .join('');
+        nbmFoncRenderList();
+        nbmOpen('nbm-fonc-modal');
+        try {
+          await ensureTableLoaded(TABLE_EQUIPEMENT);
+        } catch (_) {}
+        nbmFoncRenderList();
+      });
+
+      document.getElementById('nbm-fonc-maison').addEventListener('change', () => {
+        nbmFoncHideForm();
+        nbmFoncRenderList();
+      });
+
+      document.getElementById('nbm-fonc-existing').addEventListener('change', (e) => {
+        const recId = e.target.value;
+        if (!recId) {
+          nbmFoncHideForm();
+          return;
+        }
+        const rec = (db[TABLE_EQUIPEMENT] || []).find((r) => r.id === recId);
+        if (!rec) return;
+        nbmFoncShowForm('edit', rec);
+      });
+
+      document.getElementById('nbm-fonc-new').addEventListener('click', () => {
+        nbmFoncShowForm('create', null);
+        nbmFoncRenderList();
+      });
+
+      document.getElementById('nbm-fonc-save').addEventListener('click', async () => {
+        const maisonRecId = nbmFoncMaisonRecId();
+        if (!maisonRecId) {
+          vtoast('Choisissez une maison', false);
+          return;
+        }
+        const nom = document.getElementById('nbm-fonc-nom').value.trim();
+        if (!nom) {
+          vtoast("Le nom de l'équipement est obligatoire", false);
+          document.getElementById('nbm-fonc-nom').focus();
+          return;
+        }
+        const cat = document.getElementById('nbm-fonc-cat').value;
+        const desc = document.getElementById('nbm-fonc-desc').value;
+        const descF = nbmDescField();
+        const btn = document.getElementById('nbm-fonc-save');
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement…';
+        try {
+          if (nbmFoncEditId) {
+            const fields = { NomEquipement: nom, [descF]: desc };
+            if (cat) fields['Catégorie'] = cat;
+            const data = await nbmUpdateRecordFields(TABLE_EQUIPEMENT, nbmFoncEditId, fields);
+            const local = (db[TABLE_EQUIPEMENT] || []).find((r) => r.id === nbmFoncEditId);
+            if (local) local.fields = data.fields;
+            vtoast(`Fonctionnement « ${nom} » mis à jour ✔`);
+          } else {
+            const fields = {
+              NomEquipement: nom,
+              Link_Maison: [maisonRecId],
+            };
+            if (cat) fields['Catégorie'] = cat;
+            if (desc) fields[descF] = desc;
+            const data = (
+              await nbmCreateRecordsBatch(TABLE_EQUIPEMENT, [fields])
+            )[0];
+            (db[TABLE_EQUIPEMENT] || (db[TABLE_EQUIPEMENT] = [])).push({
+              id: data.id,
+              fields: data.fields,
+            });
+            recordIdToTable[data.id] = TABLE_EQUIPEMENT;
+            vtoast(`Fonctionnement « ${nom} » créé ✔`);
+          }
+          refreshAfterMutation(TABLE_EQUIPEMENT);
+          nbmFoncHideForm();
+          nbmFoncRenderList();
+        } catch (err) {
+          vtoast('Enregistrement impossible — ' + friendlyError(err), false);
+        } finally {
+          btn.disabled = nbmFoncEditId === null && document.getElementById('nbm-fonc-form').hidden;
+          btn.textContent = 'Enregistrer';
+        }
+      });
+
+      /* ── Téléversement direct de photos en mode création de fiche ──
+         Les fichiers choisis sont envoyés tout de suite sur l'hébergeur
+         d'images ; les URLs obtenues sont ajoutées au champ .att-new, que
+         recCollectForm transforme en pièces jointes Airtable à l'enregistrement. */
+      document.addEventListener('change', async (e) => {
+        const input = e.target;
+        if (!input.classList || !input.classList.contains('att-file-input')) return;
+        const group = input.closest('.form-group[data-type="attachment"]');
+        if (!group) return;
+        const files = [...input.files];
+        input.value = '';
+        if (!files.length) return;
+        const status = group.querySelector('.att-upload-status');
+        const thumbs = group.querySelector('.att-thumbs');
+        const ta = group.querySelector('.att-new');
+        status.hidden = false;
+        let ok = 0;
+        for (let i = 0; i < files.length; i++) {
+          const f = files[i];
+          status.textContent = `Téléversement de ${f.name}… (${i + 1}/${files.length})`;
+          try {
+            const up = await uploadPendingFileToHosting(f, f.name);
+            if (up && up.url) {
+              ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + up.url;
+              thumbs.insertAdjacentHTML(
+                'beforeend',
+                `<div class="rec-media-thumb"><img class="thumb" src="${esc(up.url)}" data-full="${esc(up.url)}" alt="${esc(f.name)}"></div>`,
+              );
+              ok++;
+              continue;
+            }
+          } catch (_) {
+            /* géré ci-dessous */
+          }
+          vtoast(`Téléversement impossible pour ${f.name} — collez une URL à la place`, false);
+        }
+        status.textContent = ok
+          ? `✔ ${ok} photo(s) téléversée(s) — elles seront jointes à l'enregistrement de la fiche.`
+          : 'Aucune photo téléversée.';
+        setTimeout(() => {
+          status.hidden = true;
+        }, 5000);
+      });
+
+      /* ═══════════════════════════════════════════════════════════════
+         EXPORT CSV — une ou plusieurs maisons, table au choix
+         ═══════════════════════════════════════════════════════════════ */
+      const nbmCsvSelected = new Set(); // recIds des Maisons cochées
+
+      function nbmCsvUpdateCount() {
+        const n = nbmCsvSelected.size;
+        document.getElementById('nbm-csv-count').textContent =
+          n <= 1 ? `${n} maison sélectionnée` : `${n} maisons sélectionnées`;
+      }
+
+      function nbmCsvRenderHouses() {
+        const q = (document.getElementById('nbm-csv-search').value || '')
+          .trim()
+          .toLowerCase();
+        const host = document.getElementById('nbm-csv-houses');
+        const items = all_houses.filter(
+          (h) => !q || h.label.toLowerCase().includes(q),
+        );
+        host.innerHTML = items.length
+          ? items
+              .map((h) => {
+                const recId = houseNameToId[h.name] || '';
+                if (!recId) return '';
+                return `<label class="nbm-house-item"><input type="checkbox" value="${esc(recId)}"${nbmCsvSelected.has(recId) ? ' checked' : ''}> <span>${esc(h.label)}</span></label>`;
+              })
+              .join('')
+          : '<span class="nbm-hint">Aucune maison ne correspond à ce filtre.</span>';
+        nbmCsvUpdateCount();
+      }
+
+      /* Une cellule CSV : entourée de guillemets si elle contient ; " ou saut
+         de ligne (séparateur ; pour Excel en français). */
+      function nbmCsvCell(v) {
+        const s = String(v ?? '');
+        return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }
+
+      document.getElementById('nb-export-csv-btn').addEventListener('click', () => {
+        const sel = document.getElementById('nbm-csv-table');
+        sel.innerHTML = VZ_TABLES.map(
+          (t) => `<option value="${esc(t.name)}">${esc(t.label)}</option>`,
+        ).join('');
+        if (VZ_TABLES.some((t) => t.name === currentTab)) sel.value = currentTab;
+        nbmCsvSelected.clear();
+        // Pré-coche la maison du filtre global si elle est active.
+        const house = getSelectedHouseName();
+        if (house && houseNameToId[house]) nbmCsvSelected.add(houseNameToId[house]);
+        document.getElementById('nbm-csv-search').value = '';
+        nbmCsvRenderHouses();
+        nbmOpen('nbm-csv-modal');
+      });
+
+      document
+        .getElementById('nbm-csv-search')
+        .addEventListener('input', debounce(nbmCsvRenderHouses, 150));
+      document.getElementById('nbm-csv-all').addEventListener('click', () => {
+        document
+          .querySelectorAll('#nbm-csv-houses input[type="checkbox"]')
+          .forEach((cb) => nbmCsvSelected.add(cb.value));
+        nbmCsvRenderHouses();
+      });
+      document.getElementById('nbm-csv-none').addEventListener('click', () => {
+        nbmCsvSelected.clear();
+        nbmCsvRenderHouses();
+      });
+      document.getElementById('nbm-csv-houses').addEventListener('change', (e) => {
+        const cb = e.target.closest('input[type="checkbox"]');
+        if (!cb) return;
+        if (cb.checked) nbmCsvSelected.add(cb.value);
+        else nbmCsvSelected.delete(cb.value);
+        nbmCsvUpdateCount();
+      });
+
+      document.getElementById('nbm-csv-export').addEventListener('click', async () => {
+        if (!nbmCsvSelected.size) {
+          vtoast('Sélectionnez au moins une maison', false);
+          return;
+        }
+        const table = document.getElementById('nbm-csv-table').value;
+        const btn = document.getElementById('nbm-csv-export');
+        btn.disabled = true;
+        btn.textContent = 'Préparation…';
+        try {
+          await ensureTableLoaded(table);
+          await ensureLinkedTablesLoaded(table);
+
+          // Lignes de la table appartenant aux maisons cochées. On teste TOUS
+          // les liens Link_Maison (une ligne peut concerner plusieurs maisons).
+          const recs = (db[table] || []).filter((r) => {
+            if (table === TABLE_MAISON) return nbmCsvSelected.has(r.id);
+            const links = r.fields.Link_Maison || r.fields.Link_maison;
+            if (
+              Array.isArray(links) &&
+              links.some((id) => nbmCsvSelected.has(String(id)))
+            )
+              return true;
+            const dm = detectMaison(r.fields, table);
+            return dm ? nbmCsvSelected.has(dm.maisonId) : false;
+          });
+          if (!recs.length) {
+            vtoast('Aucune donnée dans cette table pour les maisons choisies', false);
+            return;
+          }
+
+          // Colonnes dans l'ordre réel d'Airtable (repli : clés rencontrées).
+          const cols =
+            tableSchemas[table] && tableSchemas[table].length
+              ? tableSchemas[table]
+              : [...new Set(recs.flatMap((r) => Object.keys(r.fields)))];
+          const withMaisonCol = table !== TABLE_MAISON;
+          const header = (withMaisonCol ? ['Maison'] : []).concat(cols);
+          const lines = [header.map(nbmCsvCell).join(';')];
+          recs.forEach((r) => {
+            const dm = detectMaison(r.fields, table);
+            const row = (withMaisonCol ? [dm ? dm.maisonName : ''] : []).concat(
+              cols.map((c) => {
+                const v = r.fields[c];
+                // Pièces jointes → liste d'URLs
+                if (
+                  Array.isArray(v) &&
+                  v.length &&
+                  typeof v[0] === 'object' &&
+                  v[0] &&
+                  v[0].url
+                )
+                  return v.map((a) => a.url).join(' | ');
+                return displayFieldValue(table, c, r);
+              }),
+            );
+            lines.push(row.map(nbmCsvCell).join(';'));
+          });
+
+          // BOM pour qu'Excel ouvre le fichier en UTF-8 avec accents.
+          const csv = '\uFEFF' + lines.join('\r\n');
+          const names = [...nbmCsvSelected]
+            .map((id) => (recIdToHouseName[id] || '').replace(/[^\wÀ-ÿ-]+/g, '_'))
+            .filter(Boolean);
+          const suffix =
+            names.length === 1 ? names[0] : `${nbmCsvSelected.size}_maisons`;
+          const fname = `export_${tableLabel(table).replace(/[^\wÀ-ÿ-]+/g, '_')}_${suffix}_${new Date().toISOString().slice(0, 10)}.csv`;
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = fname;
+          a.click();
+          URL.revokeObjectURL(a.href);
+          vtoast(`${recs.length} ligne(s) exportée(s) — ${fname}`);
+        } catch (err) {
+          vtoast('Export impossible — ' + friendlyError(err), false);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '⬇ Exporter en CSV';
+        }
+      });
     </script>
   </body>
 </html>
