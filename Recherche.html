@@ -239,7 +239,7 @@
         flex-shrink: 0;
         min-width: 2.4rem;
         text-align: center;
-        font-size: 0.72rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: var(--primary-dark);
         background: var(--primary-light);
@@ -1076,127 +1076,6 @@
         text-align: center;
       }
 
-      /* ── CREATE MODAL ── */
-      #create-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-      }
-      #create-modal.open { display: flex; }
-
-      #create-card {
-        background: var(--card);
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        width: 100%;
-        max-width: 620px;
-        max-height: 80vh;
-        overflow-y: auto;
-        box-shadow: var(--shadow-lg);
-        animation: slideUp 0.2s ease;
-      }
-
-      #create-card-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-      }
-
-      #create-table-name {
-        font-family: 'SF Mono', 'Consolas', monospace;
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--primary);
-      }
-
-      .create-field-group { margin-bottom: 0.75rem; }
-      .create-field-group label {
-        display: block;
-        font-size: 0.72rem;
-        font-weight: 600;
-        color: var(--muted);
-        margin-bottom: 0.25rem;
-        font-family: 'SF Mono', 'Consolas', monospace;
-      }
-      .create-field-group input,
-      .create-field-group textarea {
-        width: 100%;
-        padding: 0.5rem 0.7rem;
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-sm);
-        font-size: 0.85rem;
-        font-family: 'Inter', sans-serif;
-        outline: none;
-        color: var(--text);
-        resize: vertical;
-        transition: all var(--transition);
-        background: var(--card);
-      }
-      .create-field-group input:focus,
-      .create-field-group textarea:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-glow);
-      }
-
-      #create-actions {
-        display: flex;
-        gap: 0.65rem;
-        justify-content: flex-end;
-        margin-top: 1.2rem;
-      }
-
-      #create-cancel-btn {
-        padding: 0.55rem 1.2rem;
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-md);
-        background: var(--card);
-        color: var(--muted);
-        font-size: 0.85rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all var(--transition);
-      }
-      #create-cancel-btn:hover {
-        border-color: var(--muted);
-        color: var(--text);
-        background: var(--bg);
-      }
-
-      #create-save-btn {
-        padding: 0.55rem 1.4rem;
-        border: none;
-        border-radius: var(--radius-md);
-        background: var(--primary);
-        color: white;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition);
-      }
-      #create-save-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(26, 107, 101, 0.3); }
-      #create-save-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-
-      #create-close-btn {
-        background: none;
-        border: none;
-        font-size: 1.1rem;
-        cursor: pointer;
-        color: var(--muted);
-        padding: 0.1rem 0.3rem;
-        border-radius: 6px;
-        line-height: 1;
-        transition: all var(--transition);
-      }
-      #create-close-btn:hover { color: var(--text); background: var(--bg); }
-
       /* ── PHOTO EDITOR MODAL ── */
       #photo-modal {
         display: none;
@@ -1956,7 +1835,6 @@
         transition: all var(--transition);
       }
       .vz-toggle button.active { background: var(--primary); color: white; }
-      .vz-toggle button.vmode-sep { border-left: 2px solid var(--border); }
       .vz-toggle button:disabled { opacity: 0.4; cursor: not-allowed; }
       .vz-toggle button:disabled:hover { background: transparent; color: var(--muted); }
       .vz-create-btn {
@@ -2248,7 +2126,7 @@
     table.vw-table thead th {
       background: var(--primary-light);
       color: var(--primary);
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       font-weight: 700;
       padding: 0.6rem 0.7rem;
       text-align: left;
@@ -2336,7 +2214,7 @@
       border-bottom: 1px solid var(--border);
     }
     #rec-title { font-family: monospace; font-weight: 700; color: var(--primary); font-size: 1rem; }
-    #rec-sub { font-size: 0.72rem; color: var(--muted); font-family: monospace; margin-top: 0.2rem; }
+    #rec-sub { font-size: 0.78rem; color: var(--muted); font-family: monospace; margin-top: 0.2rem; }
     #rec-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
     #rec-close:hover { color: var(--text); }
     #rec-toolbar {
@@ -2365,7 +2243,7 @@
     #rec-fields .form-group { margin-bottom: 0.85rem; }
     #rec-fields .form-group > label {
       display: block;
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--primary);
       opacity: 0.85;
@@ -2636,7 +2514,7 @@
       outline: none;
     }
     .livret-add-form .livret-add-name:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-    .livret-add-hint { font-size: 0.72rem; color: var(--muted); margin: 0.4rem 0 0.55rem; line-height: 1.35; }
+    .livret-add-hint { font-size: 0.78rem; color: var(--muted); margin: 0.4rem 0 0.55rem; line-height: 1.35; }
     .livret-add-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
     .livret-add-actions button {
       padding: 0.4rem 0.85rem;
@@ -2736,7 +2614,7 @@
       vertical-align: middle;
     }
     .livret-hint {
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       color: var(--muted);
       margin-bottom: 0.35rem;
       line-height: 1.35;
@@ -2898,7 +2776,7 @@
     }
     .fiche-head .fiche-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; }
     .fiche-head .fiche-meta-r { display: flex; align-items: center; gap: 0.6rem; }
-    .fiche-head .fiche-id { font-family: monospace; font-size: 0.72rem; color: var(--muted); cursor: pointer; }
+    .fiche-head .fiche-id { font-family: monospace; font-size: 0.78rem; color: var(--muted); cursor: pointer; }
     .fiche-head .fiche-id:hover { color: var(--primary); }
     .fiche-print {
       border: 1.5px solid var(--primary);
@@ -2950,10 +2828,108 @@
     }
     .fiche-field .v { font-size: 0.86rem; color: var(--text); white-space: pre-wrap; line-height: 1.5; word-break: break-word; }
     .fiche-empty-sec { color: var(--muted); font-style: italic; font-size: 0.85rem; }
+
+    /* ── Accessibilité ── */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ── Groupes de boutons de la meta-bar ── */
+    .vz-toggle button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .vz-toggle button svg { flex: 0 0 auto; }
+    .feature-toggle { margin-left: 0.5rem; }
+    .toggle-group-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-left: 1rem;
+      margin-right: 0.35rem;
+      white-space: nowrap;
+    }
+
+    /* Bouton « effacer la mise en forme » (remplace le style rouge inline) */
+    .btn-danger-fmt {
+      background: var(--danger) !important;
+      color: #fff !important;
+    }
+
+    /* Indications non bloquantes dans la fenêtre d'édition */
+    .edit-hint {
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.7rem;
+      background: var(--warning-light);
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .edit-hint[hidden] { display: none; }
+
+    /* Éditeurs typés (liste déroulante, case à cocher, nombre, date) */
+    #edit-typed { padding: 0.4rem 0; }
+    #edit-typed[hidden] { display: none; }
+    #edit-typed select,
+    #edit-typed input[type='number'],
+    #edit-typed input[type='date'],
+    #edit-typed input[type='datetime-local'] {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      background: var(--card);
+      color: var(--text);
+    }
+    #edit-typed label.edit-typed-check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    #edit-typed .edit-typed-multi {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: 40vh;
+      overflow: auto;
+    }
+    #edit-typed input[type='checkbox'] {
+      width: 1.05rem;
+      height: 1.05rem;
+      accent-color: var(--primary);
+    }
     </style>
   </head>
   <body id="body">
-
+    <div id="sr-announce" class="sr-only" aria-live="polite" role="status"></div>
 
     <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Connexion">
       <div id="login-card" role="document">
@@ -3004,6 +2980,7 @@
             type="text"
             id="search"
             placeholder="Rechercher dans cette section"
+            aria-label="Rechercher dans cette section"
             autocomplete="off"
           />
         </div>
@@ -3062,8 +3039,8 @@
     </header>
 
     <div class="main">
-      <div id="tabs-bar" role="tablist">
-                <button class="tab-btn" role="tab" data-tab="alltables">
+      <div id="tabs-bar" role="tablist" aria-label="Tables de données">
+        <button class="tab-btn" role="tab" data-tab="alltables">
           Toutes les données<span class="tab-count">0</span>
         </button>
 
@@ -3071,7 +3048,7 @@
           Maison<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="fonctionnementMaison">
-          fonctionnementMaison<span class="tab-count">0</span>
+          Fonctionnement<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="Piscine">
           Piscine<span class="tab-count">0</span>
@@ -3080,10 +3057,10 @@
           Disposition<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="WorkFlowBreezeway">
-          WorkFlow<span class="tab-count">0</span>
+          Workflow<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="ConditionLocation">
-          Condition Loc.<span class="tab-count">0</span>
+          Conditions de location<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="Proprietaire">
           Propriétaire<span class="tab-count">0</span>
@@ -3099,14 +3076,36 @@
       </div>
 
       <div class="meta-bar">
-        <div id="results-count"></div>
-        <div class="vz-toggle" id="view-toggle" style="margin-left:1rem">
-          <button data-mode="table" class="active">▤ Table</button>
-          <button data-mode="list">☰ Liste</button>
-          <button data-mode="gallery">▦ Galerie</button>
-          <button data-mode="fiche" class="vmode-sep" title="Fiche synthèse — toutes les colonnes FS_ regroupées par Maison">📋 Fiche</button>
-          <button data-mode="vues" title="Vues perso — colonnes combinées, jointes par Maison">🧩 Vues</button>
-          <button data-mode="livret" title="Livret — édition côte à côte de tous les champs et de l'aperçu du livret">📖 Livret</button>
+        <div id="results-count" aria-live="polite"></div>
+        <span class="toggle-group-label" id="view-toggle-label">Affichage</span>
+        <div class="vz-toggle" id="view-toggle" role="group" aria-labelledby="view-toggle-label">
+          <button data-mode="table" class="active" aria-pressed="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            Tableau
+          </button>
+          <button data-mode="list" aria-pressed="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+            Liste
+          </button>
+          <button data-mode="gallery" aria-pressed="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Galerie
+          </button>
+        </div>
+        <span class="toggle-group-label" id="feature-toggle-label">Outils</span>
+        <div class="vz-toggle feature-toggle" id="feature-toggle" role="group" aria-labelledby="feature-toggle-label">
+          <button data-mode="fiche" aria-pressed="false" title="Toutes les informations de synthèse regroupées par maison">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+            Fiche synthèse
+          </button>
+          <button data-mode="vues" aria-pressed="false" title="Vues personnalisées — combinez des colonnes de plusieurs tables">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+            Vues perso
+          </button>
+          <button data-mode="livret" aria-pressed="false" title="Édition du livret d'accueil avec aperçu en direct">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Livret
+          </button>
         </div>
         <div class="pagination-controls" id="pagination-controls">
           <button class="page-btn" id="page-prev" disabled aria-label="Page précédente">‹</button>
@@ -3150,11 +3149,10 @@
                 <td colspan="6">
                   <div class="state-box">
                     <div class="spinner"></div>
-                    Le chargement peut prendre un peu de temps veuillez
-                    patientez
+                    Chargement des maisons en cours…
                     <strong
-                      >S'il vous plait ne pas intéragir avant que le chargement
-                      soit terminé :)</strong
+                      >Les autres tables se chargent ensuite automatiquement en
+                      arrière-plan.</strong
                     >
                   </div>
                 </td>
@@ -3200,14 +3198,18 @@
         <div class="vz-toolbar">
           <button class="vz-create-btn" id="vw-new-btn">＋ Nouvelle vue</button>
           <button class="vz-create-btn" id="vw-master-btn" style="background:var(--second)" title="Une table avec toutes les données liées à chaque Maison">📊 Table complète par Maison</button>
+          <button class="vz-create-btn" id="vw-export-btn" style="background:var(--muted)" title="Télécharger vos vues dans un fichier pour les sauvegarder ou les partager">⬇ Exporter</button>
+          <button class="vz-create-btn" id="vw-import-btn" style="background:var(--muted)" title="Recharger des vues depuis un fichier exporté">⬆ Importer</button>
+          <input type="file" id="vw-import-input" accept="application/json,.json" style="display:none" aria-hidden="true" />
           <div class="vw-tabs" id="vw-tabs"></div>
         </div>
         <div id="vw-content">
           <div class="state-box">
             Aucune vue. Cliquez sur « ＋ Nouvelle vue » pour combiner des
-            colonnes de différentes tables (comme en SQL, mais manuellement). Les
-            vues et leurs données sont enregistrées dans votre navigateur
-            (cookies / localStorage).
+            colonnes de différentes tables dans un même tableau.
+            Attention : les vues sont enregistrées uniquement sur cet
+            ordinateur et ne sont pas partagées avec vos collègues — utilisez
+            les boutons « Exporter » / « Importer » pour les transférer.
           </div>
         </div>
       </div>
@@ -3231,7 +3233,7 @@
           <div class="livret-preview-col">
             <div class="livret-preview-bar">
               <span>Aperçu en direct</span>
-              <button id="livret-refresh-btn" title="Recharger l'aperçu">⟳</button>
+              <button id="livret-refresh-btn" title="Recharger l'aperçu" aria-label="Recharger l'aperçu du livret">⟳</button>
             </div>
             <div class="livret-frame-wrap">
               <iframe id="livret-edit-frame" title="Aperçu du livret"></iframe>
@@ -3262,16 +3264,18 @@
               <button type="button" id="fmt-size" title="Taille du texte">Taille</button>
               <button type="button" id="fmt-link" title="Insérer un lien">Hyperlien</button>
               <button type="button" id="fmt-title" title="Titre (majuscule + nouvelle ligne)">Titre</button>
-              <button type="button" id="fmt-suppr" title="Suppri" style="background-color: red; color: #fff;">X Suppr. mise en forme</button>
+              <button type="button" id="fmt-suppr" title="Retirer toute la mise en forme du texte sélectionné" class="btn-danger-fmt">Effacer la mise en forme</button>
             </div>
             <div id="edit-field-name"></div>
             <div id="edit-meta"></div>
+            <div id="edit-hint" class="edit-hint" hidden></div>
           </div>
-          <button id="edit-close-btn">✕</button>
+          <button id="edit-close-btn" aria-label="Fermer la fenêtre d'édition">✕</button>
         </div>
+        <div id="edit-typed" hidden></div>
         <div id="edit-editor">
           <div id="edit-highlight" aria-hidden="true"></div>
-          <textarea id="edit-textarea" spellcheck="false"></textarea>
+          <textarea id="edit-textarea" spellcheck="false" aria-label="Valeur du champ"></textarea>
         </div>
         <div id="edit-actions">
           <button id="edit-cancel-btn">Annuler</button>
@@ -3282,37 +3286,10 @@
       <div id="livret-preview-pane">
         <div id="livret-preview-head">
           <span>Aperçu du livret mise à jour en direct (Beta)</span>
-          <button id="livret-preview-close" title="Fermer l'aperçu">✕</button>
+          <button id="livret-preview-close" title="Fermer l'aperçu" aria-label="Fermer l'aperçu du livret">✕</button>
         </div>
         <div id="livret-preview-frame-wrap">
           <iframe id="livret-preview-frame" title="Aperçu livret"></iframe>
-        </div>
-      </div>
-    </div>
-
-    <div id="create-modal" role="dialog" aria-modal="true" aria-label="Création">
-      <div id="create-card" role="document">
-        <div id="create-card-header">
-          <div>
-            <div id="create-table-name"></div>
-            <div
-              style="
-                font-size: 0.72rem;
-                color: var(--muted);
-                font-family: monospace;
-                margin-top: 0.2rem;
-              "
-            >
-              Nouvel enregistrement
-            </div>
-          </div>
-          <button id="create-close-btn">✕</button>
-        </div>
-        <div id="create-form-fields">
-          </div>
-        <div id="create-actions">
-          <button id="create-cancel-btn">Annuler</button>
-          <button id="create-save-btn">Créer</button>
         </div>
       </div>
     </div>
@@ -3324,7 +3301,7 @@
             <span id="data-viewer-title">Données</span>
             <span class="dv-table-badge" id="data-viewer-table-badge"></span>
           </div>
-          <button id="data-viewer-close-btn">✕</button>
+          <button id="data-viewer-close-btn" aria-label="Fermer le visualiseur">✕</button>
         </div>
         <div id="data-viewer-search-wrap">
           <svg
@@ -3376,7 +3353,7 @@
             <div id="photo-field-name"></div>
             <div id="photo-meta"></div>
           </div>
-          <button id="photo-close-btn">✕</button>
+          <button id="photo-close-btn" aria-label="Fermer la gestion des photos">✕</button>
         </div>
 
         <div id="photo-grid-container">
@@ -3477,14 +3454,14 @@
     </div>
 
     <!-- ── RICH RECORD MODAL (create + edit, imported from visu_airtable) ── -->
-    <div id="rec-modal">
-      <div id="rec-card">
+    <div id="rec-modal" role="dialog" aria-modal="true" aria-label="Fiche de l'enregistrement">
+      <div id="rec-card" role="document">
         <div id="rec-head">
           <div>
             <div id="rec-title"></div>
             <div id="rec-sub"></div>
           </div>
-          <button id="rec-close" title="Fermer">✕</button>
+          <button id="rec-close" title="Fermer" aria-label="Fermer la fiche">✕</button>
         </div>
         <div id="rec-toolbar">
           <button type="button" id="rfmt-bold" title="Gras"><b>B</b></button>
@@ -3496,7 +3473,7 @@
           <input type="number" id="rfmt-size-input" value="19.2" step="0.1" min="1" style="width: 4.2rem" />
           <button type="button" id="rfmt-size" title="Taille">Taille</button>
           <button type="button" id="rfmt-link" title="Lien">Lien</button>
-          <button type="button" id="rfmt-suppr" title="Nettoyer" style="background:#dc2626;color:#fff">X mise en forme</button>
+          <button type="button" id="rfmt-suppr" title="Retirer toute la mise en forme du texte sélectionné" class="btn-danger-fmt">Effacer la mise en forme</button>
         </div>
         <div id="rec-fields"></div>
         <div id="rec-foot">
@@ -3509,11 +3486,11 @@
     </div>
 
     <!-- ── VIEW BUILDER MODAL (create custom view / add a column) ── -->
-    <div id="view-builder-modal">
-      <div id="vb-card">
+    <div id="view-builder-modal" role="dialog" aria-modal="true" aria-label="Création de vue">
+      <div id="vb-card" role="document">
         <div id="vb-header">
           <span id="vb-title">Nouvelle vue</span>
-          <button id="vb-close" title="Fermer">✕</button>
+          <button id="vb-close" title="Fermer" aria-label="Fermer la création de vue">✕</button>
         </div>
         <div id="vb-body">
           <div class="vb-group" id="vb-name-group">
@@ -3523,8 +3500,11 @@
           <div class="vb-group" id="vb-joined-group">
             <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-family:'Inter',sans-serif;text-transform:none;font-weight:600;color:var(--text)">
               <input type="checkbox" id="vb-joined" checked style="width:auto;accent-color:var(--primary)" />
-              Joindre automatiquement par Maison (comme un JOIN SQL — une ligne par Maison, les tables liées sont rapprochées)
+              Regrouper automatiquement par maison (une ligne par maison, avec les informations des autres tables rapprochées)
             </label>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.4rem">
+              Rappel : les vues sont enregistrées uniquement sur cet ordinateur.
+            </div>
           </div>
           <div class="vb-group">
             <label>Ajouter une colonne depuis une table</label>
@@ -3552,25 +3532,7 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-      //shortcut
-
-document.addEventListener('keydown', (event) => {
-  if (!event.repeat) {
-   if(event.key === "Delete"){
-     // Don't hijack Delete while the user is editing a field.
-     const el = document.activeElement;
-     const typing = el && (
-       el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
-     ) && el.id !== 'house-filter';
-     if (!typing && typeof window._clearHouseFilter === 'function') {
-       window._clearHouseFilter();
-     }
-   }
-  }
-});
-
       let TOKEN = '';
       const ENCRYPTED_TOKEN =
         '0b0145ca4c673cb45c786fba29d6219dfa4e824accc237dccc256f56b92d546a6f675907feeeb7bfa39250b84adc9a79210073cdd36a1117a64beb07c8a1b961f5ccce9f0fe7e7c3418f7c64d4e6e09db30e';
@@ -3585,6 +3547,56 @@ document.addEventListener('keydown', (event) => {
       const TABLE_CONDITION = 'ConditionLocation';
       const TABLE_PROPRIETAIRE = 'Proprietaire';
       const TABLE_RECOMMANDATION = 'Recommandation';
+
+      /* Noms lisibles des tables (les noms techniques restent les clés) */
+      const TABLE_LABELS = {
+        Maison: 'Maison',
+        fonctionnementMaison: 'Fonctionnement',
+        Piscine: 'Piscine',
+        ListeMaison: 'Liste des maisons',
+        DispositionMaison: 'Disposition',
+        WorkFlowBreezeway: 'Workflow',
+        ConditionLocation: 'Conditions de location',
+        Proprietaire: 'Propriétaire',
+        Recommandation: 'Recommandation',
+      };
+      const tableLabel = (t) => TABLE_LABELS[t] || t;
+
+      /* Traduit les erreurs techniques (Airtable / réseau) en message clair */
+      function friendlyError(err) {
+        const msg = (err && err.message) || String(err);
+        if (/failed to fetch|networkerror|load failed/i.test(msg))
+          return 'Connexion impossible — vérifiez votre accès internet puis réessayez. Rien n’a été enregistré.';
+        if (/INVALID_MULTIPLE_CHOICE|INVALID_VALUE_FOR_COLUMN|Cannot parse/i.test(msg))
+          return 'Valeur refusée : ce champ n’accepte pas ce type de contenu (vérifiez les choix autorisés).';
+        if (/NOT_FOUND|Record not found|MODEL_ID_NOT_FOUND/i.test(msg))
+          return 'Cet enregistrement n’existe plus — il a peut-être été supprimé par quelqu’un d’autre.';
+        if (/AUTHENTICATION_REQUIRED|INVALID_AUTHORIZATION|INVALID_PERMISSIONS|NOT_AUTHORIZED/i.test(msg))
+          return 'Accès refusé par Airtable — rechargez la page et reconnectez-vous.';
+        if (/RATE_LIMIT|too many requests/i.test(msg))
+          return 'Trop d’opérations d’un coup — patientez quelques secondes puis réessayez.';
+        if (/INVALID_ATTACHMENT|attachment/i.test(msg))
+          return 'Photo refusée — vérifiez que le lien pointe bien vers une image.';
+        return 'Erreur technique : ' + msg;
+      }
+
+      /* Annonce un message aux lecteurs d'écran (zone aria-live) */
+      function announce(text) {
+        const el = document.getElementById('sr-announce');
+        if (el) el.textContent = text;
+      }
+
+      /* Relit un enregistrement depuis Airtable (détection de conflits) */
+      async function fetchRecord(table, recId) {
+        const res = await fetch(
+          `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recId}`,
+          { headers: { Authorization: `Bearer ${TOKEN}` } },
+        );
+        const data = await res.json();
+        if (!res.ok)
+          throw new Error(data.error?.message || JSON.stringify(data));
+        return data;
+      }
 
       const db = {};
       let allRows = []; // Tout tab unified rows
@@ -3660,6 +3672,40 @@ document.addEventListener('keydown', (event) => {
             }, remaining);
           }
         };
+      }
+
+      /* ── Cœur commun des barres de mise en forme ────────────────────────
+         Enrobe la sélection courante d'un textarea avec before/after (et une
+         transformation optionnelle). `sel` = dernière sélection mémorisée,
+         utilisée si la sélection vive a été perdue (clic sur un bouton).
+         Retourne la nouvelle sélection à mémoriser. */
+      function fmtWrapSelection(el, sel, before, after, transform, opts) {
+        if (!el) return sel;
+        let start = el.selectionStart;
+        let end = el.selectionEnd;
+        if (start === end && sel && sel.start !== sel.end) {
+          start = sel.start;
+          end = sel.end;
+        }
+        const selected = el.value.slice(start, end);
+        const inner = transform ? transform(selected) : selected;
+        el.value = el.value.slice(0, start) + before + inner + after + el.value.slice(end);
+        el.focus();
+        el.selectionStart = start + before.length;
+        el.selectionEnd = el.selectionStart + inner.length;
+        if (opts && opts.input)
+          el.dispatchEvent(new Event('input', { bubbles: !!opts.bubbles }));
+        return { start: el.selectionStart, end: el.selectionEnd };
+      }
+
+      /* Retire les balises HTML et décode les entités usuelles */
+      function fmtStripHtml(s) {
+        return s
+          .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>');
       }
 
       /* ── Helper to resolve House selection cleanly ── */
@@ -3824,17 +3870,26 @@ document.addEventListener('keydown', (event) => {
       // Guarantees the WHOLE table is in db[table]. Single-table browse tabs may
       // have merged in only a few pages (#2/#3), so we gate on tableFullyLoaded
       // (not "db[table] === undefined") and do a full fetch when not complete.
+      const _tableLoadInFlight = {}; // table → promesse de chargement en cours
       async function ensureTableLoaded(table) {
         if (tableFullyLoaded[table]) return;
-        try {
-          db[table] = await fetchAll(table);
-          (db[table] || []).forEach((rec) => {
-            recordIdToTable[rec.id] = table;
-          });
-          tableFullyLoaded[table] = true;
-        } catch (e) {
-          if (db[table] === undefined) db[table] = [];
-        }
+        // Un seul téléchargement à la fois par table (chargement en arrière-plan
+        // + clic d'onglet simultanés → une seule requête).
+        if (_tableLoadInFlight[table]) return _tableLoadInFlight[table];
+        _tableLoadInFlight[table] = (async () => {
+          try {
+            db[table] = await fetchAll(table);
+            (db[table] || []).forEach((rec) => {
+              recordIdToTable[rec.id] = table;
+            });
+            tableFullyLoaded[table] = true;
+          } catch (e) {
+            if (db[table] === undefined) db[table] = [];
+          } finally {
+            delete _tableLoadInFlight[table];
+          }
+        })();
+        return _tableLoadInFlight[table];
       }
       async function ensureLinkedTablesLoaded(table) {
         const links = (tableFieldsMeta[table] || []).filter(
@@ -4485,8 +4540,10 @@ document.addEventListener('keydown', (event) => {
         dataViewerFields = mergedFields;
 
         document.getElementById('data-viewer-title').textContent =
-          `📋 ${tableName}`;
-        document.getElementById('data-viewer-table-badge').textContent = recId;
+          `📋 ${tableLabel(tableName)} — ${recordTitle(rec, tableName) || recId}`;
+        const dvBadge = document.getElementById('data-viewer-table-badge');
+        dvBadge.textContent = recId;
+        dvBadge.title = `${tableName} · ${recId}`;
         // Carry the page search into the viewer so the searched term is
         // highlighted — but in "highlight-only" mode below, every field still
         // shows (the term is not used to filter on open).
@@ -4635,11 +4692,12 @@ document.addEventListener('keydown', (event) => {
         // Switch to the target table tab
         currentTab = tableName;
         selectedCat = '';
-        document
-          .querySelectorAll('.tab-btn')
-          .forEach((b) =>
-            b.classList.toggle('active', b.dataset.tab === tableName),
-          );
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+          const active = b.dataset.tab === tableName;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+          b.tabIndex = active ? 0 : -1;
+        });
         if (tableName === 'all') {
           document.body.classList.remove('show-table');
         } else {
@@ -5273,11 +5331,15 @@ document.addEventListener('keydown', (event) => {
         const toggle = document.getElementById('view-toggle');
         toggle.style.display = 'inline-flex';
         const cardOk = CARD_TABLES.includes(currentTab) || currentTab === 'alltables';
-        toggle.querySelectorAll('button[data-mode]').forEach((b) => {
-          const m = b.dataset.mode;
-          b.classList.toggle('active', m === tableViewMode);
-          if (m === 'list' || m === 'gallery') b.disabled = !cardOk;
-        });
+        document
+          .querySelectorAll('#view-toggle button[data-mode], #feature-toggle button[data-mode]')
+          .forEach((b) => {
+            const m = b.dataset.mode;
+            const active = m === tableViewMode;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+            if (m === 'list' || m === 'gallery') b.disabled = !cardOk;
+          });
       }
 
       async function renderCurrentTableView() {
@@ -5313,12 +5375,14 @@ document.addEventListener('keydown', (event) => {
           vzView === 'gallery' ? vzGallery(recs) : vzListView(recs);
       }
 
-      document.getElementById('view-toggle').addEventListener('click', (e) => {
-        const b = e.target.closest('button[data-mode]');
-        if (!b || b.disabled) return;
-        tableViewMode = b.dataset.mode;
-        updateViewToggleUI();
-        applyFilter();
+      ['view-toggle', 'feature-toggle'].forEach((id) => {
+        document.getElementById(id).addEventListener('click', (e) => {
+          const b = e.target.closest('button[data-mode]');
+          if (!b || b.disabled) return;
+          tableViewMode = b.dataset.mode;
+          updateViewToggleUI();
+          applyFilter();
+        });
       });
 
       /* ── tab switching ── */
@@ -5328,8 +5392,12 @@ document.addEventListener('keydown', (event) => {
         tablePage = 1;
         allTablesPage = 1;
 
-        document.querySelectorAll('.tab-btn')
-          .forEach((b) => b.classList.toggle('active', b.dataset.tab === tabName));
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+          const active = b.dataset.tab === tabName;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+          b.tabIndex = active ? 0 : -1;
+        });
 
         if (tabName === 'all') {
           document.body.classList.remove('show-table');
@@ -5614,6 +5682,23 @@ document.addEventListener('keydown', (event) => {
         switchTab(btn.dataset.tab);
       });
 
+      // Navigation clavier des onglets (flèches, Début, Fin)
+      document.getElementById('tabs-bar').addEventListener('keydown', (e) => {
+        const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+        if (!keys.includes(e.key)) return;
+        const tabs = [...document.querySelectorAll('#tabs-bar .tab-btn')];
+        const current = tabs.indexOf(document.activeElement);
+        if (current === -1) return;
+        e.preventDefault();
+        let next = current;
+        if (e.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'ArrowRight') next = (current + 1) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        tabs[next].focus();
+        switchTab(tabs[next].dataset.tab);
+      });
+
       /* ── lightbox ── */
       document.addEventListener('click', (e) => {
         if (e.target.classList.contains('thumb')) {
@@ -5643,7 +5728,6 @@ document.addEventListener('keydown', (event) => {
           ['photo-modal', closePhotoEditor],
           ['edit-modal', closeEditModal],
           ['data-viewer-modal', closeDataViewer],
-          ['create-modal', closeCreateModal],
           ['view-builder-modal', closeViewBuilder],
           ['rec-modal', closeRecModal],
         ];
@@ -5655,6 +5739,96 @@ document.addEventListener('keydown', (event) => {
           }
         }
       });
+
+      /* ── Gestion du focus dans les fenêtres modales ─────────────────────
+         - À l'ouverture : mémorise l'élément qui avait le focus et place le
+           focus dans la fenêtre.
+         - Tab / Maj+Tab : le focus reste à l'intérieur de la fenêtre ouverte.
+         - À la fermeture : le focus revient à l'élément d'origine. */
+      (function modalFocusManager() {
+        // Ordre = priorité d'empilement (le premier ouvert de la liste est
+        // considéré comme la fenêtre du dessus), aligné sur le gestionnaire
+        // de la touche Échap.
+        const MODAL_IDS = [
+          'lightbox',
+          'photo-modal',
+          'edit-modal',
+          'data-viewer-modal',
+          'view-builder-modal',
+          'rec-modal',
+        ];
+        const openers = new Map();
+
+        const focusables = (root) =>
+          [
+            ...root.querySelectorAll(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            ),
+          ].filter((el) => !el.disabled && el.offsetParent !== null);
+
+        const topOpenModal = () =>
+          MODAL_IDS.map((id) => document.getElementById(id)).find(
+            (el) => el && el.classList.contains('open'),
+          );
+
+        MODAL_IDS.forEach((id) => {
+          const modal = document.getElementById(id);
+          if (!modal) return;
+          let wasOpen = modal.classList.contains('open');
+          new MutationObserver(() => {
+            const isOpen = modal.classList.contains('open');
+            if (isOpen === wasOpen) return;
+            wasOpen = isOpen;
+            if (isOpen) {
+              openers.set(id, document.activeElement);
+              // Laisse les gestionnaires existants placer le focus (ex. le
+              // textarea d'édition) ; sinon, prend le premier élément focusable.
+              setTimeout(() => {
+                if (!modal.contains(document.activeElement)) {
+                  const f = focusables(modal)[0];
+                  if (f) f.focus();
+                }
+              }, 80);
+            } else {
+              const opener = openers.get(id);
+              openers.delete(id);
+              // Ne restaure le focus que si aucune autre fenêtre n'est ouverte
+              // (fenêtres empilées : photo par-dessus fiche, etc.)
+              if (
+                opener &&
+                document.contains(opener) &&
+                !topOpenModal() &&
+                typeof opener.focus === 'function'
+              )
+                opener.focus();
+            }
+          }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Tab') return;
+          const modal = topOpenModal();
+          if (!modal) return;
+          const items = focusables(modal);
+          if (!items.length) {
+            e.preventDefault();
+            return;
+          }
+          const first = items[0];
+          const last = items[items.length - 1];
+          const active = document.activeElement;
+          if (!modal.contains(active)) {
+            e.preventDefault();
+            first.focus();
+          } else if (e.shiftKey && active === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        });
+      })();
 
       /* ── update record ── */
       async function updateRecord(table, recId, fieldName, newValue) {
@@ -5694,31 +5868,116 @@ document.addEventListener('keydown', (event) => {
         // Use the actual stored value (not DOM text, which shows "—" for empties)
         const storedVal = fieldVal != null && !Array.isArray(fieldVal) ? String(fieldVal) : '';
         const rawValue = storedVal || (valueEl ? (valueEl.innerText === '—' ? '' : valueEl.innerText) : '');
-        editCtx = { table, recId, field, valueEl };
+
+        const meta = fieldMeta(table, field);
+        const fType = meta && meta.type;
+        const COMPUTED_TYPES = [
+          'formula', 'rollup', 'multipleLookupValues', 'lookup',
+          'createdTime', 'lastModifiedTime', 'autoNumber', 'count',
+          'createdBy', 'lastModifiedBy',
+        ];
+        const isComputed = COMPUTED_TYPES.includes(fType);
+
+        // Pick the editor: dropdown / checkboxes / number / date when the
+        // schema tells us the type, plain text otherwise.
+        let editorKind = 'text';
+        if (isComputed) editorKind = 'computed';
+        else if (fType === 'singleSelect') editorKind = 'select';
+        else if (fType === 'multipleSelects') editorKind = 'multiselect';
+        else if (fType === 'checkbox') editorKind = 'checkbox';
+        else if (['number', 'currency', 'percent', 'rating', 'duration'].includes(fType))
+          editorKind = 'number';
+        else if (fType === 'date') editorKind = 'date';
+        else if (fType === 'dateTime') editorKind = 'datetime';
+
+        editCtx = {
+          table, recId, field, valueEl,
+          editorKind,
+          // Snapshot of the stored value, to detect concurrent edits at save time.
+          originalRaw: fieldVal === undefined ? null : fieldVal,
+        };
+
         document.getElementById('edit-field-name').textContent = field;
-        if(field.includes("Link") || field.includes("link")){
-          alert("Les link représentent les liens entre les tables, Soyez extrêmement prudent avant de les modifier")
+        const metaEl = document.getElementById('edit-meta');
+        metaEl.textContent =
+          `${tableLabel(table)}  ·  ${rec ? recordTitle(rec, table) : recId}`;
+        metaEl.title = `${table} · ${recId}`;
+
+        // Non-blocking guidance (replaces the old alert() popups)
+        const hints = [];
+        if (/link/i.test(field))
+          hints.push('⚠️ Ce champ relie des tables entre elles. Ne le modifiez que si vous êtes sûr(e) de vous.');
+        if (isComputed)
+          hints.push('Ce champ est calculé automatiquement — il ne peut pas être modifié ici.');
+        if (editorKind === 'text') {
+          if (field.includes('Livret_Reco_Categorie'))
+            hints.push('Valeurs attendues : Restaurant, Commerce, Visite, Autre.');
+          else if (field.includes('Catégorie'))
+            hints.push('Valeurs attendues pour un fonctionnement : fonctionnement, wifi, extérieur, intérieur.');
+          if (field.includes('FS_Chauffage'))
+            hints.push('Valeurs attendues : Chauffé, Non Chauffé, Pompe à chaleur, Non renseigné.');
+          if (field.includes('FS_Desinfectant'))
+            hints.push('Valeurs attendues : Chlore, Sel, Autre.');
         }
-        if(field.includes("Catégorie")){
-          alert("Si c'est une catégorie d'un fonctionnement le choix est entre: fonctionnement, wifi, extérieur, intérieur");
+        const hintEl = document.getElementById('edit-hint');
+        hintEl.textContent = hints.join(' ');
+        hintEl.hidden = hints.length === 0;
+
+        // Build the typed editor (or fall back to the free-text editor)
+        const typedEl = document.getElementById('edit-typed');
+        const editorEl = document.getElementById('edit-editor');
+        const toolbarEl = document.querySelector('#edit-card .edit-buttons');
+        const previewBtn = document.getElementById('edit-preview-btn');
+        typedEl.innerHTML = '';
+        const useText = editorKind === 'text';
+        typedEl.hidden = useText;
+        editorEl.style.display = useText ? '' : 'none';
+        if (toolbarEl) toolbarEl.style.display = useText ? '' : 'none';
+        if (previewBtn) previewBtn.style.display = useText ? '' : 'none';
+
+        if (editorKind === 'select') {
+          const choices = (meta.options && meta.options.choices) || [];
+          typedEl.innerHTML =
+            `<select id="edit-typed-input" aria-label="${esc(field)}">
+              <option value="">— (vide)</option>
+              ${choices.map((c) => `<option value="${esc(c.name)}" ${c.name === storedVal ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
+            </select>`;
+        } else if (editorKind === 'multiselect') {
+          const choices = (meta.options && meta.options.choices) || [];
+          const current = Array.isArray(fieldVal) ? fieldVal : [];
+          typedEl.innerHTML =
+            `<div class="edit-typed-multi" role="group" aria-label="${esc(field)}">
+              ${choices.map((c) => `<label class="edit-typed-check"><input type="checkbox" value="${esc(c.name)}" ${current.includes(c.name) ? 'checked' : ''}> ${esc(c.name)}</label>`).join('')}
+            </div>`;
+        } else if (editorKind === 'checkbox') {
+          typedEl.innerHTML =
+            `<label class="edit-typed-check"><input type="checkbox" id="edit-typed-input" ${fieldVal ? 'checked' : ''}> Coché (oui)</label>`;
+        } else if (editorKind === 'number') {
+          typedEl.innerHTML =
+            `<input type="number" id="edit-typed-input" step="any" value="${fieldVal != null ? esc(String(fieldVal)) : ''}" aria-label="${esc(field)}">`;
+        } else if (editorKind === 'date' || editorKind === 'datetime') {
+          const inputType = editorKind === 'date' ? 'date' : 'datetime-local';
+          let v = storedVal;
+          if (editorKind === 'datetime' && v) v = v.slice(0, 16);
+          typedEl.innerHTML =
+            `<input type="${inputType}" id="edit-typed-input" value="${esc(v)}" aria-label="${esc(field)}">`;
+        } else if (editorKind === 'computed') {
+          typedEl.innerHTML =
+            `<div style="padding:0.6rem 0.2rem;color:var(--muted);white-space:pre-wrap">${esc(flatV(fieldVal))}</div>`;
         }
-        if(field.includes("Livret_Reco_Categorie")){
-          alert("Si c'est une catégorie de reco le choix est entre: Restaurant, Commerce, Visite, Autre");
-        }
-        if(field.includes("FS_Chauffage")){
-          alert("Si c'est un chauffage le choix est entre: Chauffé, Non Chauffé, Pompe à chaleur, Non renseingé");
-        }
-        if(field.includes("FS_Desinfectant")){
-          alert("Si c'est un désinfectant le choix est entre: Chlore, Sel, Autre");
-        }
-        document.getElementById('edit-meta').textContent =
-          `${table}  ·  ${recId}`;
-        document.getElementById('edit-textarea').value = rawValue;
+
+        document.getElementById('edit-textarea').value = useText ? rawValue : '';
         updateEditHighlight();
-        document.getElementById('edit-save-btn').disabled = false;
-        document.getElementById('edit-save-btn').textContent = 'Sauvegarder';
+        const saveBtn = document.getElementById('edit-save-btn');
+        saveBtn.disabled = editorKind === 'computed';
+        saveBtn.textContent = 'Sauvegarder';
         document.getElementById('edit-modal').classList.add('open');
-        setTimeout(() => document.getElementById('edit-textarea').focus(), 50);
+        setTimeout(() => {
+          const target = useText
+            ? document.getElementById('edit-textarea')
+            : typedEl.querySelector('select, input');
+          if (target) target.focus();
+        }, 50);
       }
 
       function closeEditModal() {
@@ -5770,26 +6029,10 @@ document.addEventListener('keydown', (event) => {
         }
 
         function applyWrap(before, after, transform) {
-          const el = getTa();
-          if (!el) return;
-          // Prefer the live selection; fall back to the remembered one.
-          let start = el.selectionStart;
-          let end = el.selectionEnd;
-          if (start === end && lastSel.start !== lastSel.end) {
-            start = lastSel.start;
-            end = lastSel.end;
-          }
-          const selected = el.value.slice(start, end);
-          const inner = transform ? transform(selected) : selected;
-          const insert = before + inner + after;
-          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
-          // Re-select the formatted text so multiple styles can be stacked.
-          el.focus();
-          el.selectionStart = start + before.length;
-          el.selectionEnd = el.selectionStart + inner.length;
-          lastSel = { start: el.selectionStart, end: el.selectionEnd };
-          // refresh the grey tint after a programmatic edit
-          el.dispatchEvent(new Event('input'));
+          // Cœur commun + rafraîchit la teinte grise via l'événement input.
+          lastSel = fmtWrapSelection(getTa(), lastSel, before, after, transform, {
+            input: true,
+          });
         }
 
         const on = (id, fn) => {
@@ -5836,14 +6079,7 @@ document.addEventListener('keydown', (event) => {
 
         // Clean up text: strip HTML tags and de-capitalise CAPS-LOCK words.
         const cleanText = (s) => {
-          let out = s
-            // remove HTML tags
-            .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
-            // decode the few entities our editor produces
-            .replace(/&nbsp;/g, ' ')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>');
+          let out = fmtStripHtml(s);
           // Detect "caps lock" words: runs of 2+ letters that are all uppercase
           // (accents included) and convert them to lowercase.
           out = out.replace(
@@ -5910,11 +6146,62 @@ document.addEventListener('keydown', (event) => {
         .getElementById('edit-save-btn')
         .addEventListener('click', async () => {
           if (!editCtx) return;
-          const newVal = document.getElementById('edit-textarea').value;
+          const kind = editCtx.editorKind || 'text';
+          if (kind === 'computed') return;
+
+          // Collect the value from whichever editor is active, with its real type.
+          const typedEl = document.getElementById('edit-typed');
+          let newVal;
+          if (kind === 'text') {
+            newVal = document.getElementById('edit-textarea').value;
+          } else if (kind === 'select') {
+            newVal = typedEl.querySelector('select').value || null;
+          } else if (kind === 'multiselect') {
+            newVal = [
+              ...typedEl.querySelectorAll('input[type="checkbox"]:checked'),
+            ].map((c) => c.value);
+          } else if (kind === 'checkbox') {
+            newVal = typedEl.querySelector('input').checked;
+          } else if (kind === 'number') {
+            const raw = typedEl.querySelector('input').value;
+            newVal = raw === '' ? null : Number(raw);
+          } else {
+            newVal = typedEl.querySelector('input').value || null;
+          }
+          const displayVal = Array.isArray(newVal)
+            ? newVal.join(', ')
+            : newVal == null
+              ? ''
+              : String(newVal);
+
           const saveBtn = document.getElementById('edit-save-btn');
           saveBtn.disabled = true;
           saveBtn.textContent = 'Sauvegarde…';
           try {
+            // Detect a concurrent edit: has the field changed on Airtable
+            // since this window was opened?
+            try {
+              const remote = await fetchRecord(editCtx.table, editCtx.recId);
+              const remoteVal =
+                remote.fields[editCtx.field] === undefined
+                  ? null
+                  : remote.fields[editCtx.field];
+              if (
+                JSON.stringify(remoteVal) !==
+                JSON.stringify(editCtx.originalRaw)
+              ) {
+                const overwrite = confirm(
+                  'Attention : ce champ a été modifié par quelqu’un d’autre pendant que cette fenêtre était ouverte.\n\nEnregistrer maintenant écrasera sa modification. Continuer ?',
+                );
+                if (!overwrite) {
+                  saveBtn.disabled = false;
+                  saveBtn.textContent = 'Sauvegarder';
+                  return;
+                }
+              }
+            } catch (_) {
+              /* vérification impossible (hors-ligne ?) → on tente l'enregistrement normal */
+            }
             await updateRecord(
               editCtx.table,
               editCtx.recId,
@@ -5922,7 +6209,7 @@ document.addEventListener('keydown', (event) => {
               newVal,
             );
             if (editCtx.valueEl)
-              editCtx.valueEl.innerHTML = esc(newVal).replace(/\n/g, '<br>');
+              editCtx.valueEl.innerHTML = esc(displayVal).replace(/\n/g, '<br>');
             // Update db record in memory (single source of truth)
             const savedRec = (db[editCtx.table] || []).find(
               (r) => r.id === editCtx.recId,
@@ -5932,12 +6219,12 @@ document.addEventListener('keydown', (event) => {
             allRows.forEach((row) => {
               if (row.recId !== editCtx.recId || row.recTable !== editCtx.table)
                 return;
-              if (row.nomField === editCtx.field) row.nom = newVal;
+              if (row.nomField === editCtx.field) row.nom = displayVal;
               const part = row.descParts?.find(
                 (p) => p.field === editCtx.field,
               );
               if (part) {
-                part.value = newVal;
+                part.value = displayVal;
                 row.description = row.descParts.map((p) => p.value).join(' ');
               }
             });
@@ -5961,13 +6248,16 @@ document.addEventListener('keydown', (event) => {
               duration: 2500,
               style: { background: '#1F6D67' },
             }).showToast();
+            announce('Modification enregistrée');
             closeEditModal();
           } catch (err) {
+            const msg = friendlyError(err);
             Toastify({
-              text: `Erreur : ${err.message}`,
+              text: msg,
               duration: 4000,
               style: { background: '#dc2626' },
             }).showToast();
+            announce(msg);
             saveBtn.disabled = false;
             saveBtn.textContent = 'Sauvegarder';
           }
@@ -6111,8 +6401,6 @@ document.addEventListener('keydown', (event) => {
         .addEventListener('input', throttle(sendPreviewUpdate, 180));
 
       /* ── CREATE RECORD ── */
-      let createCtx = null; // { table }
-
       async function createRecord(table, fields) {
         const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`;
         const res = await fetch(url, {
@@ -6129,39 +6417,6 @@ document.addEventListener('keydown', (event) => {
         return data;
       }
 
-      function openCreateModal(tableName) {
-        createCtx = { table: tableName };
-        document.getElementById('create-table-name').textContent = tableName;
-
-        const records = db[tableName] || [];
-        const fieldKeys = new Set();
-        records.forEach((r) => {
-          Object.keys(r.fields).forEach((k) => {
-            if (!k.startsWith('_')) fieldKeys.add(k);
-          });
-        });
-        const sortedKeys = Array.from(fieldKeys).sort();
-
-        const container = document.getElementById('create-form-fields');
-        container.innerHTML = sortedKeys
-          .map((key) => {
-            return `<div class="create-field-group">
-            <label for="cf-${esc(key)}">${esc(key)}</label>
-            <textarea id="cf-${esc(key)}" rows="2" placeholder="${esc(key)}"></textarea>
-          </div>`;
-          })
-          .join('');
-
-        document.getElementById('create-save-btn').disabled = false;
-        document.getElementById('create-save-btn').textContent = 'Créer';
-        document.getElementById('create-modal').classList.add('open');
-      }
-
-      function closeCreateModal() {
-        document.getElementById('create-modal').classList.remove('open');
-        createCtx = null;
-      }
-
       document.getElementById('create-btn').addEventListener('click', () => {
         if (
           currentTab &&
@@ -6169,16 +6424,6 @@ document.addEventListener('keydown', (event) => {
         ) {
           openRecModal('create', currentTab);
         }
-      });
-
-      document
-        .getElementById('create-close-btn')
-        .addEventListener('click', closeCreateModal);
-      document
-        .getElementById('create-cancel-btn')
-        .addEventListener('click', closeCreateModal);
-      document.getElementById('create-modal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeCreateModal();
       });
 
       /* ── PHOTO EDITOR EVENTS ── */
@@ -6234,73 +6479,15 @@ document.addEventListener('keydown', (event) => {
             e = e || window.event;
 
             if (e) {
-                e.returnValue = 'Etes vous sur de ne plus avoir besoin de cette fenêtre?';
+                e.returnValue = 'Êtes-vous sûr(e) de ne plus avoir besoin de cette fenêtre ?';
             }
 
-            return 'Etes vous sur de ne plus avoir besoin de cette fenêtre?';
+            return 'Êtes-vous sûr(e) de ne plus avoir besoin de cette fenêtre ?';
         };
 
       document
         .getElementById('photo-save-btn')
         .addEventListener('click', savePhotoChanges);
-
-      document
-        .getElementById('create-save-btn')
-        .addEventListener('click', async () => {
-          if (!createCtx) return;
-          const saveBtn = document.getElementById('create-save-btn');
-          saveBtn.disabled = true;
-          saveBtn.textContent = 'Création…';
-
-          // Collect all field values
-          const container = document.getElementById('create-form-fields');
-          const inputs = container.querySelectorAll('textarea');
-          const fields = {};
-          inputs.forEach((input) => {
-            const val = input.value.trim();
-            if (val) {
-              const fieldName = input.id.replace(/^cf-/, '');
-              fields[fieldName] = val;
-            }
-          });
-
-          try {
-            const result = await createRecord(createCtx.table, fields);
-            // Add to local db
-            if (!db[createCtx.table]) db[createCtx.table] = [];
-            db[createCtx.table].push(result);
-            recordIdToTable[result.id] = createCtx.table;
-            // Rebuild Tout data if needed
-            if (
-              createCtx.table === TABLE_MAISON ||
-              createCtx.table === TABLE_EQUIPEMENT ||
-              createCtx.table === TABLE_PISCINE ||
-              createCtx.table === TABLE_LISTE_MAISON ||
-              createCtx.table === TABLE_RECOMMANDATION
-            ) {
-              const { rows, houses } = buildData();
-              allRows = rows;
-            }
-            // Rebuild all-tables data & refresh
-            window._allTablesData = build_all_tables();
-            updateTabCounts();
-            applyFilter();
-            Toastify({
-              text: 'Créé avec succès !',
-              duration: 2500,
-              style: { background: '#1F6D67' },
-            }).showToast();
-            closeCreateModal();
-          } catch (err) {
-            Toastify({
-              text: `Erreur : ${err.message}`,
-              duration: 4000,
-              style: { background: '#dc2626' },
-            }).showToast();
-            saveBtn.disabled = false;
-            saveBtn.textContent = 'Créer';
-          }
-        });
 
       /* ── PHOTO EDITOR ── */
       function resetPhotoEditorState() {
@@ -6575,8 +6762,10 @@ document.addEventListener('keydown', (event) => {
           }).showToast();
           closePhotoEditor();
         } catch (err) {
+          const msg = friendlyError(err);
+          announce(msg);
           Toastify({
-            text: `Erreur : ${err.message}`,
+            text: msg,
             duration: 4000,
             style: { background: '#dc2626' },
           }).showToast();
@@ -6675,28 +6864,17 @@ document.addEventListener('keydown', (event) => {
 
       async function init() {
         try {
-          /* Pull the full table schemas in parallel (every column, in order) */
+          /* Chargement progressif : la table Maison + les schémas d'abord
+             (l'interface devient utilisable tout de suite), puis les autres
+             tables en arrière-plan. */
           const schemaPromise = fetchSchemas();
-
-          /* Now fetch Recommandation synchronously along with the essential ones */
-          const [maisonRecs, equipRecs, piscineRecs, listRecs, recoRecs] = await Promise.all([
-            fetchAll(TABLE_MAISON),
-            fetchAll(TABLE_EQUIPEMENT),
-            fetchAll(TABLE_PISCINE),
-            fetchAll(TABLE_LISTE_MAISON),
-            fetchAll(TABLE_RECOMMANDATION),
-          ]);
-
-          await schemaPromise;
+          const maisonRecs = await fetchAll(TABLE_MAISON);
 
           db[TABLE_MAISON] = maisonRecs;
-          db[TABLE_EQUIPEMENT] = equipRecs;
-          db[TABLE_PISCINE] = piscineRecs;
-          db[TABLE_LISTE_MAISON] = listRecs;
-          db[TABLE_RECOMMANDATION] = recoRecs;
-          // These were pulled in full → client-side renderer can serve them.
-          [TABLE_MAISON, TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON, TABLE_RECOMMANDATION]
-            .forEach((t) => { tableFullyLoaded[t] = true; });
+          tableFullyLoaded[TABLE_MAISON] = true;
+          maisonRecs.forEach((rec) => {
+            recordIdToTable[rec.id] = TABLE_MAISON;
+          });
 
           // Build lookup maps: Maison.Livret_NomMaison is the canonical house name.
           // Key: Maison recId  →  name (used by Link_Maison / Link_maison in every other table)
@@ -6708,31 +6886,6 @@ document.addEventListener('keydown', (event) => {
               idToHouseName[r.id] = name;
             }
           });
-
-          // Store all-tables data
-          window._allTablesData = build_all_tables();
-
-          // Build reverse index: recId → tableName
-          const allTables = [
-            TABLE_MAISON,
-            TABLE_EQUIPEMENT,
-            TABLE_PISCINE,
-            TABLE_LISTE_MAISON,
-            TABLE_DISPOSITION,
-            TABLE_WORKFLOW,
-            TABLE_CONDITION,
-            TABLE_PROPRIETAIRE,
-            TABLE_RECOMMANDATION,
-          ];
-          allTables.forEach((t) => {
-            (db[t] || []).forEach((rec) => {
-              recordIdToTable[rec.id] = t;
-            });
-          });
-
-          // Build Tout data
-          const { rows } = buildData();
-          allRows = rows;
 
           // Populate datalist from all Maison records using Livret_NomMaison
           // Build unified labels: "ID - HouseName"
@@ -6746,6 +6899,27 @@ document.addEventListener('keydown', (event) => {
 
           window.labelToMaisonName = {};
           maisonList.forEach(m => window.labelToMaisonName[m.label] = m.name);
+
+          await schemaPromise;
+
+          // L'onglet Maison est consultable immédiatement.
+          window._allTablesData = build_all_tables();
+          updateTabCounts();
+          switchTab('Maison');
+          announce('Les maisons sont chargées. Les autres tables se chargent en arrière-plan.');
+
+          /* ── Suite du chargement en arrière-plan ── */
+          await Promise.all(
+            [TABLE_EQUIPEMENT, TABLE_PISCINE, TABLE_LISTE_MAISON, TABLE_RECOMMANDATION]
+              .map((t) => ensureTableLoaded(t)),
+          );
+
+          // Store all-tables data
+          window._allTablesData = build_all_tables();
+
+          // Build Tout data
+          const { rows } = buildData();
+          allRows = rows;
 
           // Category chips
           const cats = [
@@ -6777,12 +6951,12 @@ document.addEventListener('keydown', (event) => {
               .getElementById('body')
               .insertAdjacentHTML('beforeend', guideHtml);
           }
-          // Au démarrage : ouvrir directement l'onglet Maison.
-          switchTab('Maison');
+          // Rafraîchit la vue courante maintenant que tout est disponible.
+          applyFilter();
         } catch (err) {
           console.error(err);
           document.getElementById('tbody').innerHTML =
-            `<tr><td colspan="6"><div class="state-box">Erreur : ${esc(err.message)}</div></td></tr>`;
+            `<tr><td colspan="6"><div class="state-box">${esc(friendlyError(err))}</div></td></tr>`;
         }
       }
 
@@ -6790,6 +6964,7 @@ document.addEventListener('keydown', (event) => {
          VISUALISER + VUES PERSO + RICH RECORD FORM (merged from visu_airtable)
          ═══════════════════════════════════════════════════════════════════ */
       function vtoast(text, ok = true) {
+        announce(text);
         Toastify({
           text,
           duration: 2400,
@@ -7146,7 +7321,7 @@ document.addEventListener('keydown', (event) => {
           vtoast(`${added.length} photo(s) ajoutée(s)`);
           refreshAfterMutation(table);
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
         }
       }
 
@@ -7165,7 +7340,7 @@ document.addEventListener('keydown', (event) => {
           vtoast('Photo supprimée');
           refreshAfterMutation(table);
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
         }
       }
 
@@ -7178,7 +7353,7 @@ document.addEventListener('keydown', (event) => {
           vtoast('Supprimé');
           refreshAfterMutation(table);
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
         }
       }
 
@@ -7286,9 +7461,11 @@ document.addEventListener('keydown', (event) => {
 
       async function openRecModal(mode, table, recId) {
         recCtx = { mode, table, recId: recId || null };
-        document.getElementById('rec-title').textContent = table;
-        document.getElementById('rec-sub').textContent =
-          mode === 'edit' ? recId : 'Nouvel enregistrement';
+        document.getElementById('rec-title').textContent =
+          (mode === 'edit' ? 'Modifier — ' : 'Créer — ') + tableLabel(table);
+        const subEl = document.getElementById('rec-sub');
+        subEl.textContent = mode === 'edit' ? recId : 'Nouvel enregistrement';
+        subEl.title = mode === 'edit' ? `${table} · ${recId}` : table;
         document.getElementById('rec-delete').style.display =
           mode === 'edit' ? '' : 'none';
         document.getElementById('rec-save').textContent =
@@ -7306,6 +7483,10 @@ document.addEventListener('keydown', (event) => {
           mode === 'edit'
             ? (db[table] || []).find((r) => r.id === recId)
             : null;
+        if (rec) {
+          const title = recordTitle(rec, table);
+          if (title) subEl.textContent = title;
+        }
         document.getElementById('rec-fields').innerHTML = fieldsFor(table)
           .map((f) => recFieldInputHtml(table, f, rec))
           .join('');
@@ -7487,6 +7668,34 @@ document.addEventListener('keydown', (event) => {
         saveBtn.textContent =
           recCtx.mode === 'create' ? 'Création…' : 'Enregistrement…';
         try {
+          // Détection d'une modification concurrente : les champs modifiés
+          // ici ont-ils changé sur Airtable depuis l'ouverture de la fiche ?
+          if (recCtx.mode === 'edit' && rec) {
+            try {
+              const remote = await fetchRecord(recCtx.table, recCtx.recId);
+              const conflicts = Object.keys(fields).filter(
+                (f) =>
+                  JSON.stringify(
+                    remote.fields[f] === undefined ? null : remote.fields[f],
+                  ) !==
+                  JSON.stringify(
+                    rec.fields[f] === undefined ? null : rec.fields[f],
+                  ),
+              );
+              if (conflicts.length) {
+                const overwrite = confirm(
+                  `Attention : ${conflicts.length === 1 ? 'le champ' : 'les champs'} « ${conflicts.join(' », « ')} » ${conflicts.length === 1 ? 'a' : 'ont'} été modifié(s) par quelqu’un d’autre pendant que cette fiche était ouverte.\n\nEnregistrer maintenant écrasera ces modifications. Continuer ?`,
+                );
+                if (!overwrite) {
+                  saveBtn.disabled = false;
+                  saveBtn.textContent = 'Enregistrer';
+                  return;
+                }
+              }
+            } catch (_) {
+              /* vérification impossible → on tente l'enregistrement normal */
+            }
+          }
           if (recCtx.mode === 'create') {
             const result = await createRecord(recCtx.table, fields);
             if (!db[recCtx.table]) db[recCtx.table] = [];
@@ -7508,7 +7717,7 @@ document.addEventListener('keydown', (event) => {
           closeRecModal();
           refreshAfterMutation(t);
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
           saveBtn.disabled = false;
           saveBtn.textContent =
             recCtx.mode === 'create' ? 'Créer' : 'Enregistrer';
@@ -7536,7 +7745,7 @@ document.addEventListener('keydown', (event) => {
           closeRecModal();
           refreshAfterMutation(t);
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
         } finally {
           btn.disabled = false;
           btn.textContent = 'Supprimer';
@@ -7577,21 +7786,8 @@ document.addEventListener('keydown', (event) => {
         function applyWrap(before, after, transform) {
           const el = getTa();
           if (!el) return;
-          let start = el.selectionStart;
-          let end = el.selectionEnd;
-          if (start === end && lastSel.start !== lastSel.end) {
-            start = lastSel.start;
-            end = lastSel.end;
-          }
-          const selected = el.value.slice(start, end);
-          const inner = transform ? transform(selected) : selected;
-          const insert = before + inner + after;
-          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
-          el.focus();
-          el.selectionStart = start + before.length;
-          el.selectionEnd = el.selectionStart + inner.length;
+          lastSel = fmtWrapSelection(el, lastSel, before, after, transform);
           activeTa = el;
-          lastSel = { start: el.selectionStart, end: el.selectionEnd };
         }
         const on = (id, fn) => {
           const b = document.getElementById(id);
@@ -7639,13 +7835,7 @@ document.addEventListener('keydown', (event) => {
             start = 0;
             end = el.value.length;
           }
-          const cleaned = el.value
-            .slice(start, end)
-            .replace(/<\/?[a-zA-Z][\s\S]*?>/g, '')
-            .replace(/&nbsp;/g, ' ')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>');
+          const cleaned = fmtStripHtml(el.value.slice(start, end));
           el.value = el.value.slice(0, start) + cleaned + el.value.slice(end);
           el.focus();
           el.selectionStart = start;
@@ -8730,7 +8920,7 @@ document.addEventListener('keydown', (event) => {
           livretSendInit();
           btn.textContent = '💾 Tout enregistrer';
         } catch (err) {
-          vtoast('Erreur : ' + err.message, false);
+          vtoast(friendlyError(err), false);
           btn.disabled = false;
           btn.textContent = '💾 Tout enregistrer';
         }
@@ -8900,7 +9090,7 @@ document.addEventListener('keydown', (event) => {
             vtoast('Équipement créé : ' + name);
             revealCard(data.id, cfg.cat || '', name);
           } catch (err) {
-            vtoast('Erreur création : ' + err.message, false);
+            vtoast('Création impossible — ' + friendlyError(err), false);
           } finally {
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'Ajouter';
@@ -8943,21 +9133,10 @@ document.addEventListener('keydown', (event) => {
               ? activeTa
               : root.querySelector('.livret-textarea');
           if (!el) return;
-          let start = el.selectionStart;
-          let end = el.selectionEnd;
-          if (start === end && lastSel.start !== lastSel.end) {
-            start = lastSel.start;
-            end = lastSel.end;
-          }
-          const selected = el.value.slice(start, end);
-          const inner = transform ? transform(selected) : selected;
-          const insert = before + inner + after;
-          el.value = el.value.slice(0, start) + insert + el.value.slice(end);
-          el.focus();
-          el.selectionStart = start + before.length;
-          el.selectionEnd = el.selectionStart + inner.length;
-          lastSel = { start: el.selectionStart, end: el.selectionEnd };
-          el.dispatchEvent(new Event('input', { bubbles: true }));
+          lastSel = fmtWrapSelection(el, lastSel, before, after, transform, {
+            input: true,
+            bubbles: true,
+          });
         }
         root.addEventListener('mousedown', (e) => {
           const b = e.target.closest('#livret-fmt-bar button[data-lf]');
@@ -8976,7 +9155,7 @@ document.addEventListener('keydown', (event) => {
             const url = prompt('URL du lien :', 'https://');
             if (url) applyWrap(`<a href="${url}" target="_blank">`, '</a>');
           } else if (kind === 'title') applyWrap('\n', '\n', (s) => s.toUpperCase());
-          else if (kind === 'clear') applyWrap('', '', (s) => s.replace(/<\/?[^>]+>/g, ''));
+          else if (kind === 'clear') applyWrap('', '', fmtStripHtml);
         });
       })();
 
@@ -9170,6 +9349,60 @@ document.addEventListener('keydown', (event) => {
       document
         .getElementById('vw-master-btn')
         .addEventListener('click', createMasterView);
+
+      /* ── Export / import des vues (elles ne vivent que dans ce navigateur) ── */
+      document.getElementById('vw-export-btn').addEventListener('click', () => {
+        const views = loadViews();
+        if (!views.length) {
+          vtoast('Aucune vue à exporter', false);
+          return;
+        }
+        const blob = new Blob([JSON.stringify(views, null, 2)], {
+          type: 'application/json',
+        });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'vues-idylliq.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        vtoast(`${views.length} vue(s) exportée(s)`);
+      });
+      document.getElementById('vw-import-btn').addEventListener('click', () => {
+        document.getElementById('vw-import-input').click();
+      });
+      document
+        .getElementById('vw-import-input')
+        .addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          e.target.value = '';
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const imported = JSON.parse(reader.result);
+              if (!Array.isArray(imported)) throw new Error('format');
+              const views = loadViews();
+              let added = 0;
+              imported.forEach((v) => {
+                if (v && v.id && !views.some((x) => x.id === v.id)) {
+                  views.push(v);
+                  added++;
+                }
+              });
+              saveViews(views);
+              updateTabCounts();
+              renderVuesPane();
+              vtoast(
+                added
+                  ? `${added} vue(s) importée(s)`
+                  : 'Ces vues existent déjà sur cet ordinateur',
+              );
+            } catch (_) {
+              vtoast('Fichier de vues invalide — utilisez un fichier créé par « Exporter »', false);
+            }
+          };
+          reader.readAsText(file);
+        });
       document.getElementById('vb-close').addEventListener('click', closeViewBuilder);
       document.getElementById('vb-cancel').addEventListener('click', closeViewBuilder);
       document.getElementById('view-builder-modal').addEventListener('click', (e) => {

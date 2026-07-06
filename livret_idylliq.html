@@ -1094,33 +1094,20 @@ function renderEquipCard(item, forceTemplate) {
 
   let descText = (item.Description || '');
 
-  // --- NOUVELLE LOGIQUE ---
-  // On vérifie si la description contient explicitement des balises $i0, $i1, etc.
-  const hasExplicitBeacons = /\$i\d+/.test(descText);
-
-  if (hasExplicitBeacons) {
-    // S'il y a des balises, on ajoute les images restantes (non appelées) à la fin du texte pour ne rien perdre
-    const usedIIdxs = new Set([...descText.matchAll(/\$i(\d+)/g)].map(m => +m[1]));
-    const freeIIdxs = photos.map((_, i) => i).filter(i => !usedIIdxs.has(i));
-    if (freeIIdxs.length) {
-      descText += '\n\n' + freeIIdxs.map(i => '$i' + i).join(' ');
-    }
-  }
-
-  // Si l'utilisateur a positionné une balise, on ignore le placement auto de pickTemplate et on force en 'text-only'
-  const template = forceTemplate || (hasExplicitBeacons ? 'text-only' : pickTemplate(photos));
-  // -------------------------
+  // --- MÉDIAS UNIQUEMENT SUR BALISE ---
+  // Une image / vidéo n'est affichée QUE si sa balise ($iX / $vX) est présente
+  // dans la description. Une photo (ou vidéo) sans balise n'est PAS ajoutée
+  // (même comportement que la piscine). On force donc toujours le rendu
+  // 'text-only' et on laisse parseDescriptionWithInline placer les médias aux
+  // emplacements des balises ; les médias non balisés sont ignorés.
+  const template = forceTemplate || 'text-only';
+  // ------------------------------------
 
   const cardId   = slugify(item.Item);
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
   const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
-  if (videos.length > 0) {
-    const usedVIdxs = new Set([...descText.matchAll(/\$v(\d+)/g)].map(m => +m[1]));
-    const freeVIdxs = videos.map((_, i) => i).filter(i => !usedVIdxs.has(i));
-    if (freeVIdxs.length) descText += '\n\n' + freeVIdxs.map(i => '$v' + i).join('\n');
-  }
 
   // CORRECTION ICI : On passe "photos" à la place de "[]"
   const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, photos, videos)}</div>`;
@@ -1395,20 +1382,29 @@ function renderIconsSection(equipItems) {
   }
 
   equipItems.forEach(item => {
+    // 1) Uniquement un vrai équipement : il doit générer une carte, donc avoir une
+    //    Description (cf. renderThemePage => renderEquipCard). Sinon l'ancre "#slug"
+    //    serait morte ("icône sans équipement").
+    if (!item.Description || !item.Description.trim()) return;
+
+    // 2) Uniquement s'il possède une icône dédiée dans ICON_MAP (pas de fallback
+    //    générique / coche).
     const entry = getEquipmentIconEntry(item.Item);
-    if (entry && !seen.has(entry.label)) {
-      const cat = (item.Categorie || '').toLowerCase().trim();
-      if (cat.includes('extérieur') || cat.includes('exterieur')) {
-        extChips.push({ icon: entry, item: item });
-      } else {
-        // Catégorie inconnue/vide (ex. "Général") → on affiche quand même
-        // le chip côté intérieur au lieu de le perdre silencieusement.
-        intChips.push({ icon: entry, item: item });
-      }
-      // On ne marque le label comme "vu" qu'après l'avoir réellement ajouté,
-      // pour ne pas bloquer un autre item du même type ajouté ensuite.
-      seen.add(entry.label);
-    }
+    if (!entry || seen.has(entry.label)) return;
+
+    // 3) Uniquement s'il est classé Intérieur ou Extérieur. Toute autre catégorie
+    //    (Général, vide, inconnue…) n'apparaît pas dans la liste des icônes.
+    const cat = (item.Categorie || '').toLowerCase().trim();
+    const isExt = cat.includes('extérieur') || cat.includes('exterieur');
+    const isInt = cat.includes('intérieur') || cat.includes('interieur');
+    if (!isExt && !isInt) return;
+
+    if (isExt) extChips.push({ icon: entry, item: item });
+    else       intChips.push({ icon: entry, item: item });
+
+    // On ne marque le label comme "vu" qu'après l'avoir réellement ajouté,
+    // pour ne pas bloquer un autre item du même type ajouté ensuite.
+    seen.add(entry.label);
   });
 
   if (!intChips.length && !extChips.length) return '';
