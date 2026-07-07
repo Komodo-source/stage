@@ -757,6 +757,7 @@ const ICON_MAP = [
   { keys: ['billard'], icon: 'https://img.icons8.com/?size=100&id=40278&format=png&color=1F6D67', label: 'Billard' },
   { keys: ['tennis'], icon: 'https://img.icons8.com/?size=100&id=66955&format=png&color=1F6D67', label: 'Tennis' },
   { keys: ['trampoline','jeux extérieur','jeux exterieurs','jeux extérieurs','toboggan','balançoire','balancoire','poney'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux extérieurs' },
+  { keys: ['jeux enfant','jeux enfants','Jeux enfants'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux enfants' },
   { keys: ['jeux pour enfants'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux pour enfants' },
   { keys: ['badminton'], icon: 'https://img.icons8.com/?size=100&id=24308&format=png&color=1F6D67', label: 'Badminton' },
   { keys: ['barbecue','bbq'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Barbecue' },
@@ -765,7 +766,7 @@ const ICON_MAP = [
   { keys: ['plancha'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Plancha' },
   { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=8421&format=png&color=1F6D67', label: 'Friteuse' },
   { keys: ['machine à café','café','nespresso','café à grain','cafetière','expresso'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
-  { keys: ['bar','tireuse à bière','bière','cave à vin','cave à vins','cave'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar / Cave à vin' },
+  { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
   { keys: ['piscine'], icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: 'Piscine' },
   { keys: ['lave','lave-vaisselle','lave linge','lave-linge'], icon: 'https://img.icons8.com/?size=100&id=8472&format=png&color=1F6D67', label: 'Machine à Laver' },
   { keys: ['transat'], icon: 'https://img.icons8.com/?size=100&id=31795&format=png&color=1F6D67', label: 'Transat' },
@@ -779,8 +780,14 @@ const ICON_MAP = [
   { keys: ['piano'], icon: 'https://img.icons8.com/?size=100&id=9398&format=png&color=1F6D67', label: 'Piano' },
   { keys: ['jeux de société','jeux de societe'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux de société' },
   { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=tHzZ9ys48oBP&format=png&color=1F6D67', label: 'Fléchettes' },
-  { keys: ['mobilier extérieur','salon de jardin','terrasse','table extérieure','mobilier exterieur'], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse / Mobilier' },
+  { keys: ['repas en plein air','repas'], icon: 'https://img.icons8.com/?size=100&id=267&format=png&color=1F6D67', label: 'Repas' },
+  { keys: ['mobilier extérieur','salon de jardin','terrasse','table extérieure','mobilier exterieur', 'mobilier d\'extérieur'], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse / Mobilier' },
   { keys: ['parasol'], icon: 'https://img.icons8.com/?size=100&id=s7nP5hAh4fJM&format=png&color=1F6D67', label: 'Parasol' },
+
+
+  { keys: ['vin', 'vins', 'Cave à vin', 'cave à vin','cave à vins','cave'], icon: 'https://img.icons8.com/?size=100&id=35909&format=png&color=1F6D67', label: 'Vin' },
+  { keys: ['poney', 'cheval', 'chevaux'], icon: 'https://img.icons8.com/?size=100&id=3461&format=png&color=1F6D67', label: 'Poney/Cheval' },
+  { keys: ['petanque', 'pétanque', 'petanques'], icon: 'https://img.icons8.com/?size=100&id=114513&format=png&color=1F6D67', label: 'Pétanque' },
   { keys: ['potager'], icon: 'https://img.icons8.com/?size=100&id=5I9mgW1o2sOm&format=png&color=1F6D67', label: 'Potager' },
   { keys: ['wifi','wi-fi'], icon: 'https://img.icons8.com/?size=100&id=16619&format=png&color=1F6D67', label: 'Wi-Fi' },
   { keys: ['musculation','gym','haltères','poids'], icon: 'https://img.icons8.com/?size=100&id=9784&format=png&color=1F6D67', label: 'Musculation' },
@@ -794,7 +801,7 @@ const ICON_MAP = [
   { keys: ['ventilateur','climatisation','clim'], icon: 'https://img.icons8.com/?size=100&id=551&format=png&color=1F6D67', label: 'Ventilateur / Clim' },
   { keys: ['ps4','switch','nintendo','ps5','console','playstation','xbox'], icon: 'https://img.icons8.com/?size=100&id=7314&format=png&color=1F6D67', label: 'Console de jeux' },
   { keys: ['hamac'], icon: 'https://img.icons8.com/?size=100&id=58233&format=png&color=1F6D67', label: 'Hamac' },
-  { keys: ['éclairage extérieur','éclairage exterieur','lumière extérieure','lumiere exterieur','lumière exterieure','eclairage exterieur'], icon: 'https://img.icons8.com/?size=100&id=1091&format=png&color=1F6D67', label: 'Éclairage extérieur' },
+  { keys: ['éclairage extérieur','éclairage exterieur','lumière extérieure','lumiere exterieur','lumière exterieure','eclairage exterieur', 'lumières extérieures'], icon: 'https://img.icons8.com/?size=100&id=19167&format=png&color=1F6D67', label: 'Éclairage extérieur' },
 ];
 
 window.addEventListener('scroll', () => {
