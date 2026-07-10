@@ -1114,9 +1114,8 @@ function renderEquipCard(item, forceTemplate) {
 
   const cardId   = slugify(item.Item);
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
-  let item_name =item.item
-
-  const title = `<h3 class="card-item-title">${escapeHtml(item.item)}</h3>`;
+  console.log(item.item);
+  const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
 
@@ -1423,7 +1422,7 @@ function renderIconsSection(equipItems) {
 
   let chipsHtml = "";
   if (intChips.length > 0) {
-    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Intérieurs</h2>";
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipements Intérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
     intChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
@@ -1434,7 +1433,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += `</div>`;
   }
   if (extChips.length > 0) {
-    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Extérieurs</h2>";
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipements Extérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
     extChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
@@ -2167,7 +2166,7 @@ async function buildLivret(IdMaison) {
         <aside class="attention-box reveal" style="margin-top: 0;">
           <div class="attention-icon">💡</div>
           <div class="attention-content">
-            <div class="attention-label">Points d'attention</div>
+            <div class="attention-label">Points d'attentions</div>
             ${pointsAttentionHtml}
           </div>
         </aside>
