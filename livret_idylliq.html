@@ -1114,7 +1114,9 @@ function renderEquipCard(item, forceTemplate) {
 
   const cardId   = slugify(item.Item);
   const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
-  const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
+  let item_name =item.item
+
+  const title = `<h3 class="card-item-title">${escapeHtml(item.item)}</h3>`;
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
 
@@ -1310,10 +1312,12 @@ function parseDescription(text, attachments, hideInlineImages) {
 function renderOwnerMessage(text) {
   if (!text || !text.trim()) return '';
   // Force a line break right after the opening greeting "Chers invités"
-  // (handles an optional trailing comma / ! / . and collapses any following whitespace).
-  let normalized = text.replace(/^(\s*Chers invités\s*[,!.]?)\s*/i, '$1\n');
-  // Keep all the text in a single <p>; every line return becomes a <br>.
-  const paragraphs = `<p>${escapeHtml(normalized.trim()).replace(/\n+/g, '<br>')}</p>`;
+  // (handles an optional trailing comma / ! / .) without eating blank lines
+  // the owner typed after it.
+  let normalized = text.replace(/^(\s*Chers invités\s*[,!.]?)[ \t]*\n?/i, '$1\n');
+  // Keep all the text in a single <p>; every line return becomes a <br>,
+  // so consecutive newlines (blank lines) are preserved as-is.
+  const paragraphs = `<p>${escapeHtml(normalized.trim()).replace(/\n/g, '<br>')}</p>`;
   return `
     <div class="owner-message-card reveal">
       <div class="owner-message-label">✦ Message des propriétaires</div>
@@ -1419,7 +1423,7 @@ function renderIconsSection(equipItems) {
 
   let chipsHtml = "";
   if (intChips.length > 0) {
-    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Intérieur</h2>";
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Intérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
     intChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
@@ -1430,7 +1434,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += `</div>`;
   }
   if (extChips.length > 0) {
-    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Extérieur</h2>";
+    chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipement Extérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
     extChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
@@ -1504,7 +1508,7 @@ function renderThemePage(theme, items, index) {
       <section id="${escapeHtml(theme)}" class="theme-page reveal">
         <div class="theme-header">
           <div class="theme-label">Équipements</div>
-          <div class="theme-title">${escapeHtml(theme)}</div>
+          <div class="theme-title">${escapeHtml(theme)}s</div>
         </div>
         ${cardsHtml}
       </section>`;
@@ -1526,7 +1530,7 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
         <div class="cover-overlay"></div>
       </div>
       <div class="cover-content reveal visible">
-        <h1 class="cover-title">${escapeHtml(nomMaison)}</h1>
+        <h1 class="cover-title" translate="no">${escapeHtml(nomMaison)}</h1>
         <nav class="cover-chapters">
           <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
           <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
@@ -1639,12 +1643,17 @@ function renderPiscinePage(rec) {
     .map(a => a.url);
   const videos = [...youtubeVids, ...attachedVids];
 
-  const rawSections = [
-    { label: "Instructions d'ouverture", text: f.Livret_InstructionOuverture || f.InstructionOuverture, extraMedia: [] },
-    { label: "Instructions de fermeture", text: f.Livret_InstructionFermeture || f.InstructionFermeture, extraMedia: [] },
-    { label: "Instructions Préliminaire", text: f.Livret_InstructionPréliminaire || f.Livret_InstructionPreliminaire, extraMedia: [] },
-    ...(f.InstructionAcces ? [{ label: "Accès piscine", text: f.InstructionAcces, extraMedia: (f.mediaAcces || []).filter(a => is_file_image(a)) }] : [])
-  ].filter(s => s.text && s.text.trim());
+const rawSections = [
+  { label: "Instructions d'ouverture", text: f.Livret_InstructionOuverture || f.InstructionOuverture, extraMedia: [] },
+  { label: "Instructions de fermeture", text: f.Livret_InstructionFermeture || f.InstructionFermeture, extraMedia: [] },
+  { label: "Instructions Préliminaire", text: f.Livret_InstructionPréliminaire || f.Livret_InstructionPreliminaire, extraMedia: [] },
+  ...(f.InstructionAcces ? [{ label: "Accès piscine", text: f.InstructionAcces, extraMedia: (f.mediaAcces || []).filter(a => is_file_image(a)) }] : [])
+].filter(s => s.text && s.text.trim());
+
+// Use forEach for side-effects instead of map
+rawSections.forEach(s => {
+  s.text = s.text.replace(/ouverture|fermeture/gi, "");
+});
 
   if (!rawSections.length) return '';
 
@@ -1752,7 +1761,7 @@ function getRecommandation(data, maisonId) {
     if (catKey) categories.set(catKey, catRaw);
     return `<article class="reco-card reveal" data-category="${escapeAttr(catKey)}">
       <div class="reco-body">
-        <h3 class="reco-name">${escapeHtml(nom || '–')}</h3>
+        <h3 class="reco-name" translate="no">${escapeHtml(nom || '–')}</h3>
         ${catRaw ? `<div class="reco-score" style="background:var(--green-mid);">${escapeHtml(catRaw)}</div>` : ''}
         ${score ? `<div class="reco-score">${score} ★</div>` : ''}
         ${adress ? `<div class="card-desc" style="font-size:.85rem;margin-bottom:1rem;opacity:.8;">📍 ${escapeHtml(adress)}</div>` : ''}
@@ -1898,6 +1907,7 @@ function get_instruction_depart(deptText) {
                   ${introHtml}
                   ${out}
                   ${outroHtml}
+                  <p style="margin-top:3rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--green-dark);font-size:1.15rem;line-height:1.8;text-align:center;">Nous espérons que vous avez passé un bon séjour et espérons vous revoir bientôt dans une propriété Idylliq !</p>
                 </div>
               </div>
             </div>
