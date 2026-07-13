@@ -125,7 +125,10 @@
     .card { margin-bottom: 5rem; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-soft); transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(0,0,0,0.02); overflow: hidden; position: relative; }
     .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
     .card-body { padding: 4.5rem; min-width: 0; }
-    .card-item-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 2.2rem; margin-bottom: 1.5rem; font-weight: 400; letter-spacing: -0.5px; line-height: 1.0; }
+    .card-item-title { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 2.2rem; margin-bottom: 0; font-weight: 400; letter-spacing: -0.5px; line-height: 1.0; }
+    .card-title-wrap { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.5rem; }
+    .equip-card-icon { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; border-radius: 12px; background: var(--green-pale); padding: 8px; transition: var(--transition); }
+    .card:hover .equip-card-icon { transform: scale(1.08) rotate(-2deg); background: var(--green-light); }
 
     .tpl-text-only .card-body { padding: 4.5rem; }
 
@@ -200,52 +203,6 @@
 
     .section-label { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--green-dark); margin: 3rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
     .section-label:first-child { margin-top: 0; }
-
-     /* ── LIGHTBOX ── */
-      #lightbox {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.82);
-        z-index: 999;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-      }
-      #lightbox.open {
-        display: flex;
-      }
-
-      #lightbox-img {
-        max-width: 90vw;
-        max-height: 88vh;
-        border-radius: 12px;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-        object-fit: contain;
-      }
-
-      #lightbox-close {
-        position: absolute;
-        top: 1.2rem;
-        right: 1.4rem;
-        background: white;
-        border: none;
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #111;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        transition: transform 0.15s;
-      }
-      #lightbox-close:hover {
-        transform: scale(1.1);
-      }
-
 
     /* ── OWNER MESSAGE ── */
     .owner-message-card {
@@ -422,8 +379,8 @@
     .icon-chip span { font-family: 'League Spartan', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid); text-align: center; line-height: 1.3; }
 
     /* ── WIFI BUTTON ── */
-    #copymdp { padding: 1.2rem 2.5rem; border-radius: 40px; transition: var(--transition); cursor: pointer; border: none; font-weight: 600; font-family: 'League Spartan', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; background-color: var(--green); color: #fff; display: inline-block; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(31,109,103,0.2); }
-    #copymdp:hover { background-color: var(--green-dark); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(31,109,103,0.3); }
+    .copymdp { padding: 1.2rem 2.5rem; border-radius: 40px; transition: var(--transition); cursor: pointer; border: none; font-weight: 600; font-family: 'League Spartan', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; background-color: var(--green); color: #fff; display: inline-block; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(31,109,103,0.2); }
+    .copymdp:hover { background-color: var(--green-dark); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(31,109,103,0.3); }
 
     /* ── FOOTER ── */
     .presentation-end { padding: 8rem 5vw; background: var(--warm-mid); text-align: center; border-top: 1px solid rgba(0,0,0,0.03); }
@@ -645,8 +602,25 @@
     }
     #info-conciergerie { color: var(--warm);}
 
-    /* Gallery images are not zoomable */
-    #livret-container img { cursor: default !important; }
+    /* All gallery/livret images are clickable to open the lightbox */
+    #livret-container .cover-hero img,
+    #livret-container .tpl-hero img,
+    #livret-container .tpl-side-left img,
+    #livret-container .tpl-side-right img,
+    #livret-container .tpl-portrait-left img,
+    #livret-container .tpl-portrait-right img,
+    #livret-container .tpl-duo img,
+    #livret-container .tpl-trio img,
+    #livret-container .tpl-quad img,
+    #livret-container .tpl-mosaic img,
+    #livret-container .tpl-banner img,
+    #livret-container .photos-hero img,
+    #livret-container .room-grid-img,
+    #livret-container .inline-img-landscape,
+    #livret-container .inline-img-square,
+    #livret-container .inline-img-portrait,
+    #livret-container .inline-img-banner,
+    #livret-container .inline-media-stack > img { cursor: zoom-in; }
 
     /* Masquer la barre/bandeau injecté par Google Traduction */
     .goog-te-banner-frame.skiptranslate,
@@ -672,11 +646,6 @@
 
 
 
-    <div id="lightbox">
-      <button id="lightbox-close">✕</button>
-      <img id="lightbox-img" src="" alt="" />
-    </div>
-
 <div class="floating-menu" id="floating-menu">
 
   <div class="floating-items">
@@ -701,39 +670,13 @@
   <div class="lightbox-content">
     <span class="lightbox-close" onclick="closeLightbox()">✕</span>
     <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
-    <img onclick="toggleZoom(this)" id="lightbox-img" src="" alt="" onclick="toggleZoom(this)">
+    <img id="lightbox-img" src="" alt="" onclick="toggleZoom(this)">
     <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
     <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 </div>
 <!-- <script src="https://cdn.staticfile.net/translate.js/3.18.66/translate.js"></script> -->
 <script>
-
-  /* ── lightbox ── */
-      document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('card-desc')) {
-          document.getElementById('lightbox-img').src = e.target.dataset.full;
-          document.getElementById('lightbox').classList.add('open');
-        }
-      });
-      document.getElementById('lightbox').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget)
-          document.getElementById('lightbox').classList.remove('open');
-      });
-      document
-        .getElementById('lightbox-close')
-        .addEventListener('click', () => {
-          document.getElementById('lightbox').classList.remove('open');
-        });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          document.getElementById('lightbox').classList.remove('open');
-          closeEditModal();
-          closeCreateModal();
-          closePhotoEditor();
-          closeDataViewer();
-        }
-      });
 
 const TOKEN   = 'patYI6cIMmXu0OLsn.d36bdefc63925bf68ade486880a8b0829a0362436b35a8822eed725147f6b373';
 const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
@@ -780,10 +723,10 @@ const ICON_MAP = [
   { keys: ['jeux de société','jeux de societe'], icon: 'https://img.icons8.com/?size=100&id=569&format=png&color=1F6D67', label: 'Jeux de société' },
   { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=tHzZ9ys48oBP&format=png&color=1F6D67', label: 'Fléchettes' },
   { keys: ['repas en plein air','repas'], icon: 'https://img.icons8.com/?size=100&id=267&format=png&color=1F6D67', label: 'Repas' },
-  { keys: ['mobilier extérieur','salon de jardin','terrasse','table extérieure','mobilier exterieur', 'mobilier d\'extérieur'], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse / Mobilier' },
+  { keys: ['mobilier extérieur','terrasse','table extérieure','mobilier exterieur', 'mobilier d\'extérieur', "Mobilier d'exterieur"], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse / Mobilier' },
+
   { keys: ['parasol'], icon: 'https://img.icons8.com/?size=100&id=s7nP5hAh4fJM&format=png&color=1F6D67', label: 'Parasol' },
-
-
+  { keys: ['jardin', 'salon de jardin'], icon: 'https://img.icons8.com/?size=100&id=BxJhP3wnILUt&format=png&color=1F6D67', label: 'Jardin' },
   { keys: ['vin', 'vins', 'Cave à vin', 'cave à vin','cave à vins','cave'], icon: 'https://img.icons8.com/?size=100&id=35909&format=png&color=1F6D67', label: 'Vin' },
   { keys: ['poney', 'cheval', 'chevaux'], icon: 'https://img.icons8.com/?size=100&id=3461&format=png&color=1F6D67', label: 'Poney/Cheval' },
   { keys: ['petanque', 'pétanque', 'petanques'], icon: 'https://img.icons8.com/?size=100&id=114513&format=png&color=1F6D67', label: 'Pétanque' },
@@ -1115,7 +1058,11 @@ function renderEquipCard(item, forceTemplate) {
   //const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
   const badge = "";
   console.log(item.item);
-  const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
+  const iconEntry = getEquipmentIconEntry(item.Item);
+  const iconHtml = iconEntry
+    ? `<img src="${escapeAttr(iconEntry.icon)}" class="equip-card-icon" alt="${escapeAttr(iconEntry.label)}" loading="lazy">`
+    : '';
+  const title = `<div class="card-title-wrap">${iconHtml}<h3 class="card-item-title">${escapeHtml(item.Item)}</h3></div>`;
 
   const videos = Array.isArray(item._videos) ? item._videos : [];
 
@@ -1124,7 +1071,7 @@ function renderEquipCard(item, forceTemplate) {
 
 function imgClick(url, idx) {
     const safe = url.replace(/'/g, "\\'");
-    return `onclick="openLightbox('${safe}', ${JSON.stringify(allUrls).replace(/"/g, '"')}, ${idx})"`;
+    return `onclick="openLightbox('${safe}', ${JSON.stringify(allUrls).replace(/"/g, "'")}, ${idx})"`;
   }
 
   switch (template) {
@@ -1133,41 +1080,41 @@ function imgClick(url, idx) {
 
     case 'hero': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-hero reveal"><div class="card-body">${badge}${title}</div><div class="img-overlay-wrap"><img onclick="toggleZoom(this)" class="card-hero-img" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="card-body">${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-hero reveal"><div class="card-body">${badge}${title}</div><div class="img-overlay-wrap"><img class="card-hero-img" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'side-left': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-side-left reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap left"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-side-left reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap left"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
     }
 
     case 'side-right': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-side-right reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap right"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-side-right reveal"><div class="card-body" style="width:100%;padding-bottom:0;">${badge}${title}</div><div class="card-body"><div class="side-img-wrap right"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div>${desc}</div></article>`;
     }
 
     case 'portrait-left': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-portrait-left reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
+      return `<article id="${cardId}" class="card tpl-portrait-left reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
     }
 
     case 'portrait-right': {
       const p = photos[0];
-      return `<article id="${cardId}" class="card tpl-portrait-right reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
+      return `<article id="${cardId}" class="card tpl-portrait-right reveal"><div class="card-body">${badge}${title}<div class="tpl-portrait-content-wrap"><div class="portrait-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="${escapeAttr(item.Item)}" ${imgClick(p.url, 0)}></div><div class="portrait-text">${desc}</div></div></div></article>`;
     }
 
     case 'duo': {
-      const strip = photos.slice(0, 2).map((p, i) => `<div class="duo-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 2).map((p, i) => `<div class="duo-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-duo reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="duo-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'trio': {
-      const strip = photos.slice(0, 3).map((p, i) => `<div class="trio-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 3).map((p, i) => `<div class="trio-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-trio reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="trio-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
     case 'quad': {
-      const strip = photos.slice(0, 4).map((p, i) => `<div class="quad-img-wrap"><img onclick="toggleZoom(this)" src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
+      const strip = photos.slice(0, 4).map((p, i) => `<div class="quad-img-wrap"><img src="${escapeAttr(p.url)}" loading="lazy" alt="" ${imgClick(p.url, i)}></div>`).join('');
       return `<article id="${cardId}" class="card tpl-quad reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="quad-strip">${strip}</div><div class="card-body">${desc}</div></article>`;
     }
 
@@ -1175,7 +1122,7 @@ function imgClick(url, idx) {
       const [p0, p1, p2] = photos;
       const extra = photos.length > 3 ? photos.length - 3 : 0;
       const moreLabel = extra ? `<div style="position:absolute;inset:0;background:rgba(21,84,80,0.65);display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-size:1.8rem;font-weight:700;color:#fff;cursor:zoom-in;" ${imgClick(p0.url, 0)}>+${extra}</div>` : '';
-      return `<article id="${cardId}" class="card tpl-mosaic reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="mosaic-grid"><div class="mosaic-main"><img onclick="toggleZoom(this)" src="${escapeAttr(p0.url)}" loading="lazy" alt="" ${imgClick(p0.url, 0)}></div><div class="mosaic-side"><div class="mosaic-side-top"><img onclick="toggleZoom(this)" src="${escapeAttr(p1?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p1?.url || p0.url, 1)}></div><div class="mosaic-side-bot"><img onclick="toggleZoom(this)" src="${escapeAttr(p2?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p2?.url || p0.url, 2)}>${moreLabel}</div></div></div><div class="card-body">${desc}</div></article>`;
+      return `<article id="${cardId}" class="card tpl-mosaic reveal"><div class="card-body" style="padding-bottom:0;">${badge}${title}</div><div class="mosaic-grid"><div class="mosaic-main"><img src="${escapeAttr(p0.url)}" loading="lazy" alt="" ${imgClick(p0.url, 0)}></div><div class="mosaic-side"><div class="mosaic-side-top"><img src="${escapeAttr(p1?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p1?.url || p0.url, 1)}></div><div class="mosaic-side-bot"><img src="${escapeAttr(p2?.url || p0.url)}" loading="lazy" alt="" ${imgClick(p2?.url || p0.url, 2)}>${moreLabel}</div></div></div><div class="card-body">${desc}</div></article>`;
     }
 
     default:
@@ -1185,38 +1132,45 @@ function imgClick(url, idx) {
 
 
 function groupConsecutiveImages(html) {
-  html = html.replace(/<img onclick="toggleZoom(this)"\b([^>]*)>/g, (m, attrs) => {
+  // Add onerror to hide broken images
+  html = html.replace(/<img\b([^>]*)>/g, (m, attrs) => {
     if (/onerror=/i.test(attrs)) return m;
-    return `<img onclick="toggleZoom(this)"${attrs} onerror="this.style.display='none'">`;
+    return `<img${attrs} onerror="this.style.display='none'">`;
   });
+  // Group consecutive images into media stacks
   return html.replace(
-    /(?:<img onclick="toggleZoom(this)"\b[^>]*>\s*(?:<br\s*\/?>\s*)*){2,}/g,
+    /(?:<img\b[^>]*>\s*(?:<br\s*\/?>\s*)*){2,}/g,
     (block) => {
-      const imgs = block.match(/<img onclick="toggleZoom(this)"\b[^>]*>/g) || [];
+      const imgs = block.match(/<img\b[^>]*>/g) || [];
       const count = Math.min(imgs.length, 6);
       return `<div class="inline-media-stack" data-count="${count}">${imgs.join('')}</div>`;
     }
   );
 }
 
-function linkifyUrls(text) {
+function linkifyUrls(text, is_instruction_acces=false) {
   if (!text) return '';
   return text.replace(/(<[^>]+>)|((?:https?:\/\/|www\.)[^\s<"'\)\]]+)/g, (match, tag, url) => {
     if (tag) return tag;
     if (!url) return match;
     if (url.includes('airtableusercontent.com')) return '';
     const href = url.startsWith('www.') ? 'https://' + url : url;
-    return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien</a>`;
+    if (is_instruction_acces){
+      return  `<br><img src="carte.png" style="
+    width: 40px;
+    margin-right: 10px;"><a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien</a>`;
+    }
+    return  `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">lien</a>`;
   });
 }
 
-function parseDescriptionWithInline(text, attachments, videos) {
+function parseDescriptionWithInline(text, attachments, videos, is_instruction_acces=false) {
   if (!text) return '';
 
   const photos = Array.isArray(attachments) ? attachments.filter(a => is_file_image(a)) : [];
   const allUrls = photos.map(p => typeof p === 'string' ? p : p.url);
 
-  let out = linkifyUrls(text);
+  let out = linkifyUrls(text, is_instruction_acces);
 
   for (let i = 0; i < photos.length; i++) {
     const photo = photos[i];
@@ -1228,7 +1182,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
     const cls = getInlineImgClass(width, height);
     const safeUrl = url.replace(/'/g, "\\'");
 
-    const imgTag = `<img onclick="toggleZoom(this)" src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, '"')}, ${i})" alt="">`;
+    const imgTag = `<img src="${escapeAttr(url)}" class="${cls}" loading="lazy" onclick="openLightbox('${safeUrl}', ${JSON.stringify(allUrls).replace(/"/g, "'")}, ${i})" alt="">`;
     out = out.replace(new RegExp('\\$i' + i + '(?!\\d)', 'g'), imgTag);
   }
 
@@ -1259,7 +1213,7 @@ function parseDescriptionWithInline(text, attachments, videos) {
   const flushText = () => { if (textBuf.length) { rendered.push(`<p>${textBuf.join('<br>')}</p>`); textBuf = []; } };
 
   for (const line of lines) {
-    if (/^(?:<img onclick="toggleZoom(this)"\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
+    if (/^(?:<img\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
       flushText();
       closeList();
       rendered.push(line);
@@ -1277,14 +1231,41 @@ function parseDescriptionWithInline(text, attachments, videos) {
       continue;
     }
 
-    const bulletMatch = line.match(/^(?:[-•*]\s+|N[O°]\.?\s*\d+\s*[-:.)]?\s*|\d+\s*[.)]\s+)/i);
-    if (bulletMatch) {
-      flushText();
-      const clean = line.slice(bulletMatch[0].length).trim();
-      if (!inList) { rendered.push('<ul class="desc-list">'); inList = true; }
-      rendered.push(`<li>${clean}</li>`);
-      continue;
-    }
+// Added a capture group for the "NO. x" format as well,
+// and made the punctuation [.\/)] optional (?) just in case.
+const bulletMatch = line.match(/^(?:[-•*]\s+|N[O°]\.?\s*(\d+)\s*[-:.)]?\s*|(\d+)\s*[.\/)]?\s+)/i);
+
+if (bulletMatch) {
+  flushText();
+
+  const clean = line.slice(bulletMatch[0].length).trim();
+
+  if (!inList) {
+    rendered.push('<ul class="desc-list">');
+    inList = true;
+  }
+
+  // bulletMatch[1] captures from "NO. 1"
+  // bulletMatch[2] captures from "1.", "1/", "1)", or just "1"
+  let rawNumber = bulletMatch[1] || bulletMatch[2];
+
+  if (rawNumber) {
+    const number = rawNumber.replace(/\D/g, '');
+
+    const chipStyle = "display: inline-block; width: 24px; height: 24px; background-color: #1a5c56; color: white; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 8px; font-size: 14px; flex-shrink: 0;";
+
+    rendered.push(`<li2 style="list-style-type: none; display: flex; align-items: flex-start; margin-bottom: 8px;">
+      <span style="${chipStyle}">${number}</span>
+      <span>${clean}</span>
+    </li2>`);
+  } else {
+    // Standard unordered bullets
+    rendered.push(`<li2>${clean}</li2>`);
+  }
+
+  continue;
+}
+
 
     closeList();
 
@@ -1324,8 +1305,8 @@ function renderOwnerMessage(text) {
     </div>`;
 }
 
-function renderAccesSection(text, media) {
-  if ((!text || !text.trim()) && (!Array.isArray(media) || media.length === 0)) return '';
+function renderAccesSection(text, media, address) {
+  if ((!text || !text.trim()) && (!Array.isArray(media) || media.length === 0) && !address) return '';
   const allMedia = media || [];
 
   const photos = [];
@@ -1362,7 +1343,11 @@ function renderAccesSection(text, media) {
   if (freeVIdxs.length) {
     enrichedText += (enrichedText ? '\n\n' : '') + freeVIdxs.map(i => '$v' + i).join('\n');
   }
-  const descHtml = parseDescriptionWithInline(enrichedText, photos, videoUrls);
+  const descHtml = parseDescriptionWithInline(enrichedText, photos, videoUrls, true);
+
+  const mapsIframe = address
+    ? `<div style="margin-top:1.5rem;"><iframe src="https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed" width="100%" height="300" style="border:0;border-radius:var(--radius-sm);" allowfullscreen="" loading="lazy"></iframe></div>`
+    : '';
 
   return `
     <div class="acces-card reveal">
@@ -1374,7 +1359,7 @@ function renderAccesSection(text, media) {
         </div>
       </div>
       <div class="acces-card-body">
-        <div class="card-desc">${descHtml}</div>
+        <div class="card-desc">${descHtml}${mapsIframe}</div>
       </div>
     </div>`;
 }
@@ -1420,13 +1405,14 @@ function renderIconsSection(equipItems) {
 
   if (!intChips.length && !extChips.length) return '';
 
+
   let chipsHtml = "";
   if (intChips.length > 0) {
     chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipements Intérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
     intChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
-        <img onclick="toggleZoom(this)" src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
     });
@@ -1437,7 +1423,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
     extChips.forEach(c => {
       chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
-        <img onclick="toggleZoom(this)" src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
+        <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
     });
@@ -1454,31 +1440,76 @@ function renderIconsSection(equipItems) {
     </section>`;
 }
 
+// Détecte plusieurs réseaux dans un même champ Description, chacun sous la
+// forme "Réseau<label optionnel>: SSID Mot de passe : MDP" (une ligne par
+// réseau). Ne matche que ce format explicite pour ne pas casser les
+// descriptions à un seul réseau (gérées par parseWifiCredentials).
+function parseWifiNetworks(description) {
+  const re = /Réseau[^:\n]*:\s*([^\n]+?)\s*Mot de passe\s*:\s*([^\n]+)/gi;
+  const nets = [];
+  let match;
+  while ((match = re.exec(description || '')) !== null) {
+    const ssid = match[1].trim();
+    const mdp = match[2].trim();
+    if (ssid && mdp) nets.push({ ssid, mdp });
+  }
+  return nets;
+}
+
+// Échappe les caractères réservés du format QR "WIFI:" (spec de facto
+// reprise par Zxing et la plupart des scanners) : un SSID/mot de passe
+// contenant ; , " ou \ casserait sinon le parsing du payload.
+function wifiFieldEscape(v) {
+  return String(v || '').replace(/([\\;,"])/g, '\\$1');
+}
+
+// La lib qrcodejs (davidshimjs) écrit un octet par caractère via
+// charCodeAt(), sans conversion UTF-8 : "é"/"è" (et tout non-ASCII) sortent
+// donc en un seul octet invalide au lieu de leur séquence UTF-8, ce que les
+// lecteurs de QR affichent en mojibake. On pré-encode le payload en une
+// "chaîne d'octets" UTF-8 avant de le passer à la lib pour que chaque
+// charCodeAt() lise le bon octet.
+function toQrByteString(s) {
+  return unescape(encodeURIComponent(s));
+}
+
 function renderWifiSection(items, index) {
-  const { ssid, mdp } = parseWifiCredentials(items[0]?.Description || '');
-  const safeId = `qr_wifi_${index}`;
-  setTimeout(() => {
-    const el = document.getElementById(safeId);
-    if (el && ssid) {
-      try { new QRCode(el, { text: `WIFI:T:WPA;S:${ssid};P:${mdp};;`, width: 160, height: 160, colorDark: "#155450", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H }); }
-      catch(e) { console.warn('QRCode error', e); }
-    }
-  }, 200);
+  const description = items[0]?.Description || '';
+  // Le motif "Réseau…: SSID Mot de passe : MDP" est utilisé dès qu'il matche
+  // (même une seule fois) car il est plus fiable que le fallback ligne 1 /
+  // ligne 2 ; ce fallback ne sert que quand ce motif est absent.
+  const multi = parseWifiNetworks(description);
+  const networks = multi.length ? multi : [parseWifiCredentials(description)];
+
+  const cardsHtml = networks.map(({ ssid, mdp }, i) => {
+    const safeId = `qr_wifi_${index}_${i}`;
+    setTimeout(() => {
+      const el = document.getElementById(safeId);
+      if (el && ssid) {
+        const wifiUri = `WIFI:T:WPA;S:${wifiFieldEscape(ssid)};P:${wifiFieldEscape(mdp)};;`;
+        try { new QRCode(el, { text: toQrByteString(wifiUri), width: 160, height: 160, colorDark: "#155450", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H }); }
+        catch(e) { console.warn('QRCode error', e); }
+      }
+    }, 200);
+    return `
+      <div class="card reveal" style="max-width:550px;margin:0 auto 1.5rem;text-align:center;">
+        <div class="card-body">
+          <h3 class="card-item-title" style="margin-bottom:0.35rem;">Réseau Wi-Fi${networks.length > 1 ? ` ${i + 1}` : ''}</h3>
+          <p style="color:var(--ink-mid);font-size:0.9rem;letter-spacing:1px;margin-bottom:1.5rem;">${escapeHtml(ssid)}</p>
+          <p style="color:var(--ink-mid);font-size:1.15rem;margin-bottom:2.5rem;">Mot de passe : <strong>${escapeHtml(mdp)}</strong></p>
+          <div id="${safeId}" style="display:flex;justify-content:center;margin-bottom:2rem;"></div>
+          <button class="copymdp" onclick="copy('${escapeAttr(mdp)}')">Copier la clé</button>
+        </div>
+      </div>`;
+  }).join('');
+
   return `
     <section id="section-equipements-${index}" class="theme-page reveal">
       <div class="theme-header" id="section-wifi">
         <div class="theme-label">Connectivité</div>
         <div class="theme-title">Réseau Wi-Fi</div>
       </div>
-      <div class="card reveal" style="max-width:550px;margin:0 auto;text-align:center;">
-        <div class="card-body">
-          <h3 class="card-item-title" style="margin-bottom:0.35rem;">Réseau Wi-Fi</h3>
-          <p style="color:var(--ink-mid);font-size:0.9rem;letter-spacing:1px;margin-bottom:1.5rem;">${escapeHtml(ssid)}</p>
-          <p style="color:var(--ink-mid);font-size:1.15rem;margin-bottom:2.5rem;">Mot de passe : <strong>${escapeHtml(mdp)}</strong></p>
-          <div id="${safeId}" style="display:flex;justify-content:center;margin-bottom:2rem;"></div>
-          <button id="copymdp" onclick="copy('${escapeAttr(mdp)}')">Copier la clé</button>
-        </div>
-      </div>
+      ${cardsHtml}
     </section>`;
 }
 
@@ -1524,7 +1555,7 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
   return `
     <div class="cover-page">
       <div class="cover-hero">
-        <img onclick="toggleZoom(this)" fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}">
+        <img fetchpriority="high" loading="eager" src="${escapeAttr(coverUrl || fallback)}" alt="${escapeAttr(nomMaison)}" onclick="openLightbox('${escapeAttr(coverUrl || fallback).replace(/'/g, "\\'")}', ['${escapeAttr(coverUrl || fallback).replace(/'/g, "\\'")}'], 0)">
         <div class="cover-overlay"></div>
       </div>
       <div class="cover-content reveal visible">
@@ -1555,8 +1586,8 @@ function get_global_info_maison(rec) {
   const descHtml = descText ? renderOwnerMessage(descText) : '';
   const accesText  = f.Livret_InstructionAccess || f.InstructionAccesLivret;
   const accesMedia = f.InstructionAccess_media  || f.mediaAcces;
-  const accesHtml = (accesText || (accesMedia && accesMedia.length > 0))
-    ? renderAccesSection(accesText, accesMedia)
+  const accesHtml = (accesText || (accesMedia && accesMedia.length > 0) || f.FS_Adresse)
+    ? renderAccesSection(accesText, accesMedia, f.FS_Adresse)
     : '';
 
   let reglesHtml = '';

@@ -100,6 +100,33 @@
         flex: 1;
       }
 
+      .sheet-links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .sheet-link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.85rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .sheet-link-btn:hover {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+      }
+
       .search-wrap {
         position: relative;
         flex: 1;
@@ -278,6 +305,7 @@
       @media (max-width: 720px) {
         .controls { flex-wrap: wrap; }
         .house-filter-wrap { flex: 1 1 100%; }
+        .sheet-links { display: none; }
       }
 
       #back {
@@ -2760,6 +2788,26 @@
       .livret-preview-col { height: 70vh; }
     }
 
+    /* ── IFRAME PANE (Master + Guide résa) ── */
+    #master-reservation-pane {
+      padding: 0 2rem 1.5rem;
+    }
+    #master-reservation-pane .iframe-pane {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      height: calc(100vh - 210px);
+      min-height: 500px;
+    }
+    #master-reservation-pane .iframe-pane iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
     /* ════════════════ FICHE SYNTHÈSE ════════════════ */
     .fiche-card {
       background: var(--card);
@@ -2929,6 +2977,139 @@
       width: 1.05rem;
       height: 1.05rem;
       accent-color: var(--primary);
+    }
+
+    /* ── MASTER : réplique Excel ─────────────────────────────────────── */
+    #master-pane { padding: 0 2rem 1.5rem; }
+    .xl-wrap {
+      background: #fff;
+      border: 1px solid #c6c6c6;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 210px);
+    }
+    .xl-titlebar {
+      background: #217346;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+    }
+    .xl-file-icon { display: inline-flex; background: #fff; border-radius: 3px; padding: 1px 2px; }
+    .xl-readonly {
+      margin-left: auto;
+      font-weight: 400;
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 0.1rem 0.5rem;
+      border-radius: 3px;
+    }
+    .xl-scroll { overflow: auto; flex: 1 1 auto; background: #fff; }
+    .xl-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      color: #212121;
+      table-layout: auto;
+    }
+    .xl-table th, .xl-table td {
+      border-right: 1px solid #d4d4d4;
+      border-bottom: 1px solid #d4d4d4;
+      padding: 2px 6px;
+      height: 21px;
+      box-sizing: border-box;
+      background-clip: padding-box;
+    }
+    /* col letters + row numbers (gris Excel) */
+    .xl-colhead, .xl-rowhead, .xl-corner {
+      background: #e6e6e6;
+      color: #444;
+      font-weight: 400;
+      font-size: 12px;
+      text-align: center;
+      min-width: 34px;
+      user-select: none;
+      border-right: 1px solid #bfbfbf;
+      border-bottom: 1px solid #bfbfbf;
+    }
+    .xl-rowhead { position: sticky; left: 0; z-index: 3; }
+    .xl-corner { position: sticky; left: 0; top: 0; z-index: 6; }
+    /* 3 lignes gelées : lettres, ligne 1 (numérotation), ligne 2 (en-têtes) */
+    .xl-table thead tr:nth-child(1) th,
+    .xl-table thead tr:nth-child(1) td { position: sticky; top: 0; z-index: 5; }
+    .xl-table thead tr:nth-child(2) th,
+    .xl-table thead tr:nth-child(2) td { position: sticky; top: 21px; z-index: 5; }
+    .xl-table thead tr:nth-child(3) th,
+    .xl-table thead tr:nth-child(3) td { position: sticky; top: 42px; z-index: 5; }
+    .xl-table thead tr:nth-child(2) .xl-rowhead,
+    .xl-table thead tr:nth-child(3) .xl-rowhead { z-index: 6; }
+    .xl-num {
+      background: #fff;
+      color: #666;
+      text-align: center;
+      font-size: 12px;
+    }
+    .xl-header {
+      background: #fff;
+      font-weight: 700;
+      white-space: pre-wrap;
+      max-width: 190px;
+      min-width: 90px;
+      vertical-align: bottom;
+      border-bottom: 2px solid #217346;
+    }
+    .xl-cell {
+      background: #fff;
+      white-space: nowrap;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .xl-cell.xl-numval { text-align: right; }
+    .xl-table tbody tr:hover td { background: #f2f8f5; }
+    .xl-cell:hover {
+      outline: 2px solid #217346;
+      outline-offset: -2px;
+    }
+    .xl-empty { padding: 1.2rem; color: var(--muted); text-align: center; }
+    .xl-sheetbar {
+      background: #f3f2f1;
+      border-top: 1px solid #c6c6c6;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.15rem;
+      padding: 0 0.6rem;
+      height: 30px;
+      flex: 0 0 auto;
+      font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+    }
+    .xl-sheetnav { font-size: 0.65rem; color: #666; margin-right: 0.5rem; align-self: center; user-select: none; }
+    .xl-sheettab {
+      background: #fff;
+      border: 1px solid #c6c6c6;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      font-size: 0.75rem;
+      padding: 0.25rem 1rem;
+      color: #217346;
+      font-weight: 700;
+      border-top: 2px solid #217346;
+      user-select: none;
+    }
+    .xl-sheettab-ghost {
+      background: transparent;
+      border: none;
+      color: #666;
+      font-weight: 400;
+      padding: 0.25rem 0.4rem;
     }
     </style>
     <style id="nbm-components">
@@ -3313,6 +3494,9 @@
           ></div>
         </div>
       </div>
+      <div class="sheet-links" role="group" aria-label="Liens Google Sheets">
+
+      </div>
     </header>
 
     <div class="main">
@@ -3344,6 +3528,12 @@
         </button>
         <button class="tab-btn" role="tab" data-tab="Recommandation">
           Recommandation<span class="tab-count">0</span>
+        </button>
+        <button class="tab-btn" role="tab" data-tab="master">
+          Master<span class="tab-count">0</span>
+        </button>
+        <button class="tab-btn" role="tab" data-tab="livretcols">
+          📖 Livret<span class="tab-count">0</span>
         </button>
 
       </div>
@@ -3491,6 +3681,13 @@
         </div>
       </div>
 
+      <!-- ── MASTER + GUIDE RÉSERVATION SHEET (Google Sheets iframe) ── -->
+      <div id="master-reservation" style="display: none">
+        <div class="iframe-pane">
+          <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTf4B_08H_KFGu1QOqNSxAXsd-zCOvVIbREsKy7Ve-stMasvLglFlnAlUxO-b-SkMG6JbJQLDAa7Aw2/pubhtml?widget=true&amp;headers=false"></iframe>
+        </div>
+      </div>
+
       <!-- ── VUES PERSO PANE (custom SQL-like views, localStorage) ── -->
       <div id="vues-pane" style="display: none">
         <div class="vz-toolbar">
@@ -3538,6 +3735,38 @@
               <div class="livret-frame-empty" id="livret-frame-empty">L'aperçu s'affichera ici.</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── MASTER PANE (réplique Excel de l'onglet Master, cf. recreate_master.gs) ── -->
+      <div id="master-pane" style="display: none">
+        <div class="xl-wrap">
+          <div class="xl-titlebar">
+            <span class="xl-file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#217346"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><text x="7.5" y="17" font-size="9" font-weight="bold" fill="#fff" font-family="Calibri, sans-serif">X</text></svg>
+            </span>
+            Master — Gestion_des_demandes.xlsx
+            <span class="xl-readonly">Lecture seule</span>
+          </div>
+          <div class="xl-scroll" id="master-grid">
+            <div class="state-box">Ouvrez l'onglet pour charger les données…</div>
+          </div>
+          <div class="xl-sheetbar">
+            <span class="xl-sheetnav">◀ ▶</span>
+            <span class="xl-sheettab active">Master</span>
+            <span class="xl-sheettab xl-sheettab-ghost">+</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LIVRET COLS PANE (colonnes Maison + Équipement utilisées par livret_idylliq.html) ── -->
+      <div id="livretcols-pane" style="display: none">
+        <div class="vz-toolbar">
+          <span style="font-weight: 700; color: var(--primary)">📖 Colonnes Livret</span>
+          <span style="font-size: 0.8rem; color: var(--muted)">Toutes les colonnes de Maison et d'Équipement (fonctionnementMaison) utilisées par le livret. Une ligne par équipement ; filtrez par Maison ci-dessus.</span>
+        </div>
+        <div id="livretcols-grid">
+          <div class="state-box">Ouvrez l'onglet pour charger les données…</div>
         </div>
       </div>
     </div>
@@ -3932,6 +4161,21 @@
       const TABLE_CONDITION = 'ConditionLocation';
       const TABLE_PROPRIETAIRE = 'Proprietaire';
       const TABLE_RECOMMANDATION = 'Recommandation';
+
+      /* Google Sheet « Gestion des demandes » — boutons du header.
+         Pour changer d'onglet cible : ouvrir l'onglet dans Google Sheets
+         et copier le nombre après « gid= » dans l'URL. */
+      const GESTION_SHEET_ID = '1j0z8Lbse31H1FH0grl2gj5GlD9T8xTfzYN_CqDIy17g';
+      const GESTION_SHEET_TABS = {
+        master: '1640147051', /* onglet « Master » */
+        guideResa: '370098019', /* onglet « Guidelines résas » */
+      };
+      function openGestionSheet(tab) {
+        const gid = GESTION_SHEET_TABS[tab];
+        let url = `https://docs.google.com/spreadsheets/d/${GESTION_SHEET_ID}/edit`;
+        if (gid) url += `?gid=${gid}#gid=${gid}`;
+        window.open(url, '_blank', 'noopener');
+      }
 
       /* Noms lisibles des tables (les noms techniques restent les clés) */
       const TABLE_LABELS = {
@@ -5671,7 +5915,16 @@
             setActivePanes('table');
             renderAllTables(currentQuery);
           }
-        } else {
+        }
+        // else if (currentTab === 'master') {
+        //   setActivePanes('master');
+        //   renderMasterSheet(currentQuery);
+        // }
+        else if (currentTab === 'livretcols') {
+          setActivePanes('livretcols');
+          renderLivretColsTable(currentQuery);
+        }
+        else {
           renderCurrentTableView();
         }
       }
@@ -5697,15 +5950,26 @@
         const cards = document.getElementById('visualise-pane');
         const fiche = document.getElementById('fiche-pane');
         const vues = document.getElementById('vues-pane');
+        const master_resa = document.getElementById('master-reservation');
         const livret = document.getElementById('livret-pane');
+        const master = document.getElementById('master-pane');
+        const livretcols = document.getElementById('livretcols-pane');
         const pag = document.getElementById('pagination-controls');
         const metaBar = document.querySelector('.meta-bar');
         metaBar.style.display = 'flex';
         tableWrap.style.display = mode === 'table' ? '' : 'none';
         cards.style.display = mode === 'list' || mode === 'gallery' ? 'block' : 'none';
-        fiche.style.display = mode === 'fiche' ? 'block' : 'none';
+        if(fiche.style.display === mode  &&mode === 'fiche'){
+          fiche.style.display = 'block';
+          alert("Cette fonctionnalité est encore en cours de test elle peut comporter des bugs")
+        } else{fiche.style.display = 'none';}
         vues.style.display = mode === 'vues' ? 'block' : 'none';
+        master_resa.style.display = mode === 'vues' ? 'block' : 'none';
         if (livret) livret.style.display = mode === 'livret' ? 'block' : 'none';
+        if (master) master.style.display = mode === 'master' ? 'block' : 'none';
+        if (livretcols) livretcols.style.display = mode === 'livretcols' ? 'block' : 'none';
+        const masterReservation = document.getElementById('master-reservation');
+        if (masterReservation) masterReservation.style.display = mode === 'master-reservation' ? 'block' : 'none';
         // Pagination only applies to the paged table view (not Tout, cards, fiche, vues).
         pag.style.display = mode === 'table' && currentTab !== 'all' ? '' : 'none';
       }
@@ -5770,6 +6034,340 @@
         });
       });
 
+      /* ════════ MASTER : réplique Excel de l'onglet Master ════════
+         Mêmes colonnes, mêmes jointures et même ordre que recreate_master.gs
+         (Maison + ConditionLocation via Link_maison + Proprietaire bidirectionnel). */
+      const MASTER_HEADERS = [
+        'id',
+        'Airbnb property ID',
+        'BW ID',
+        'Nom Maison AirBnB',
+        'Numéro + nom',
+        'Nom Propriétaire',
+        'Nom Facturation',
+        'Adresse',
+        'Groupe WA propriétaires',
+        'ID du groupe WA propriétaires',
+        'Frais de ménage à afficher (TTC)',
+        'Frais réels (TTC)',
+        'Frais Ménage (TTC)',
+        'Frais blanchisserie (TTC)',
+        'Forait linge (TTC)',
+        'Frais autre (TTC)',
+        'Ménage',
+        'Blanchisserie',
+        'Groupe WA ménage',
+        'ID du groupe WA ménage',
+        'Notes',
+        'Caution',
+        'Plateformes',
+        'Comm plateforme',
+        'Comm direct',
+        'Exception',
+        'Calcul',
+        'Équipe centrale',
+        'Equipe \nSlack ID',
+        'Responsable',
+        'Responsable\nSlack ID',
+        'Bucket',
+        'CA annuel estimé',
+        'CA > 0 en 2026',
+        'Proprio absent ?',
+        'Code postal',
+      ];
+      const MASTER_HEADER_NUMBERS = [
+        '','2','3','4','','5','6','7','','','8','9','10','11','','12','13','14',
+        '','','','15','16','17','18','19','20','21','22','23','24','25','26',
+        '27','28','29',
+      ];
+
+      function masterS_(v) {
+        if (v === null || v === undefined) return '';
+        if (Array.isArray(v)) return v.join(', ');
+        // nettoie les artefacts float des anciens imports : "28300.0" -> "28300"
+        if (typeof v === 'string' && /^-?\d+\.0$/.test(v)) return v.slice(0, -2);
+        return v;
+      }
+
+      /* Tri M1, M2, ..., M41, "M41/42", ... par premier numéro croissant. */
+      function maisonSortKeyM_(id) {
+        const m = String(id).match(/^M(\d+)/);
+        return m ? parseInt(m[1], 10) : 999999;
+      }
+
+      function buildMasterRows() {
+        const maisons = (db[TABLE_MAISON] || []).slice();
+        const conditions = db[TABLE_CONDITION] || [];
+        const proprios = db[TABLE_PROPRIETAIRE] || [];
+
+        const condByMaison = {};
+        conditions.forEach((rec) => {
+          (rec.fields['Link_maison'] || []).forEach((mid) => {
+            if (!condByMaison[mid]) condByMaison[mid] = rec.fields;
+          });
+        });
+
+        const proprioById = {};
+        proprios.forEach((rec) => { proprioById[rec.id] = rec.fields; });
+
+        // jointure inverse : certains Proprietaire ne sont liés que via leur
+        // propre champ Link_maison (et pas depuis Maison.Link_Proprietaire)
+        const proprioIdsByMaison = {};
+        proprios.forEach((rec) => {
+          (rec.fields['Link_maison'] || []).forEach((mid) => {
+            (proprioIdsByMaison[mid] = proprioIdsByMaison[mid] || []).push(rec.id);
+          });
+        });
+
+        maisons.sort((a, b) =>
+          maisonSortKeyM_(a.fields['ID_Maison']) - maisonSortKeyM_(b.fields['ID_Maison']));
+
+        return maisons.map((rec) => {
+          const m = rec.fields;
+          const cond = condByMaison[rec.id] || {};
+
+          const noms = [];
+          let groupeWA = '';
+          const seen = {};
+          (m['Link_Proprietaire'] || [])
+            .concat(proprioIdsByMaison[rec.id] || [])
+            .filter((pid) => (seen[pid] ? false : (seen[pid] = true)))
+            .forEach((pid) => {
+              const p = proprioById[pid];
+              if (!p) return;
+              const nom = [p['FS_PrenomPropriétaire'], p['FS_NomPropriétaire']]
+                .filter(Boolean).join(' ');
+              if (nom) noms.push(nom);
+              if (!groupeWA && p['FS_GroupeWhatsappPropriétaire']) {
+                groupeWA = p['FS_GroupeWhatsappPropriétaire'];
+              }
+            });
+
+          const id = masterS_(m['ID_Maison']);
+          const nom = masterS_(m['Livret_NomMaison']);
+
+          return [
+            id,                                       // id
+            masterS_(m['FS_AirbnbPropertyID']),       // Airbnb property ID
+            masterS_(m['FS_BreezeWayID']),            // BW ID
+            nom,                                      // Nom Maison AirBnB
+            id && nom ? id + ' - ' + nom : '',        // Numéro + nom (recomposé)
+            noms.join(', '),                          // Nom Propriétaire
+            masterS_(cond['NomFacturation']),         // Nom Facturation
+            masterS_(m['FS_Adresse']),                // Adresse
+            groupeWA,                                 // Groupe WA propriétaires
+            '',                                       // ID du groupe WA propriétaires (non migré)
+            masterS_(cond['FS_FraisMenageAfficher']), // Frais de ménage à afficher (TTC)
+            masterS_(cond['FS_FraisReel']),           // Frais réels (TTC)
+            masterS_(cond['FS_FraisMenage']),         // Frais Ménage (TTC)
+            masterS_(cond['FS_FraisBlanchisserie']),  // Frais blanchisserie (TTC)
+            '',                                       // Forait linge (TTC) (non migré)
+            masterS_(cond['FS_FraisAutre']),          // Frais autre (TTC)
+            masterS_(cond['FS_Menage']),              // Ménage
+            masterS_(cond['FS_Blanchisserie']),       // Blanchisserie
+            masterS_(cond['GroupeWhatsappMenage']),   // Groupe WA ménage
+            '',                                       // ID du groupe WA ménage (non migré)
+            masterS_(cond['FS_Notes']),               // Notes
+            masterS_(cond['FS_Caution']),             // Caution
+            masterS_(cond['FS_Plateforme']),          // Plateformes
+            masterS_(cond['commissionPlateforme']),   // Comm plateforme
+            masterS_(cond['FS_CommisionDirect']),     // Comm direct
+            masterS_(cond['FS_Exception']),           // Exception
+            masterS_(cond['FS_Calcul']),              // Calcul
+            masterS_(m['FS_ResponsableCentrale']),    // Équipe centrale
+            masterS_(m['FS_EquipeSlackID']),          // Equipe Slack ID
+            masterS_(m['FS_ResponsableZone']),        // Responsable
+            masterS_(m['FS_ResponsableSlackID']),     // Responsable Slack ID
+            '',                                       // Bucket (non migré)
+            masterS_(m['FS_CA_Estimee']),             // CA annuel estimé
+            masterS_(m['FS_CA_SUP_0']),               // CA > 0 en 2026
+            m['ProprioAbsent'] ? 'Oui' : '',          // Proprio absent ?
+            masterS_(m['FS_CodePostal']),             // Code postal
+          ];
+        });
+      }
+
+      function colLetterM_(i) {
+        let s = '';
+        i += 1;
+        while (i > 0) {
+          const r = (i - 1) % 26;
+          s = String.fromCharCode(65 + r) + s;
+          i = Math.floor((i - 1) / 26);
+        }
+        return s;
+      }
+
+      function renderMasterSheet(query) {
+        const host = document.getElementById('master-grid');
+        const rows = window._masterRows || [];
+        const house = getSelectedHouseName();
+        const q = (query || '').toLowerCase();
+
+        // filtre recherche + maison ; comme dans Excel, les numéros de ligne
+        // d'origine sont conservés (les données commencent ligne 3)
+        const visible = [];
+        rows.forEach((r, i) => {
+          if (house && String(r[3]) !== house) return;
+          if (q && q.length >= 2 && !r.join(' ').toLowerCase().includes(q)) return;
+          visible.push([i + 3, r]);
+        });
+
+        document.getElementById('results-count').textContent =
+          `${visible.length} résultat${visible.length !== 1 ? 's' : ''}`;
+
+        let html = '<table class="xl-table"><thead>';
+        html += '<tr><th class="xl-corner"></th>' +
+          MASTER_HEADERS.map((_, c) => `<th class="xl-colhead">${colLetterM_(c)}</th>`).join('') +
+          '</tr>';
+        html += '<tr><th class="xl-rowhead">1</th>' +
+          MASTER_HEADER_NUMBERS.map((n) => `<td class="xl-num">${n}</td>`).join('') +
+          '</tr>';
+        html += '<tr><th class="xl-rowhead">2</th>' +
+          MASTER_HEADERS.map((h) => `<td class="xl-header">${esc(h)}</td>`).join('') +
+          '</tr>';
+        html += '</thead><tbody>';
+
+        if (!visible.length) {
+          html += `<tr><td class="xl-empty" colspan="${MASTER_HEADERS.length + 1}">Aucun résultat${q ? ' pour cette recherche' : ''}.</td></tr>`;
+        } else {
+          visible.forEach(([rowNum, r]) => {
+            html += `<tr><th class="xl-rowhead">${rowNum}</th>` +
+              r.map((v, c) => {
+                const s = v === null || v === undefined ? '' : String(v);
+                // l'ID Airbnb (col B) reste du texte, comme dans le Sheet
+                const isNum = s !== '' && c !== 1 && /^-?\d+([.,]\d+)?$/.test(s);
+                const content = q && q.length >= 2 ? highlightText(s, q) : esc(s);
+                return `<td class="xl-cell${isNum ? ' xl-numval' : ''}"${s.length > 30 ? ` title="${esc(s)}"` : ''}>${content}</td>`;
+              }).join('') +
+              '</tr>';
+          });
+        }
+        html += '</tbody></table>';
+        host.innerHTML = html;
+      }
+
+      /* ──────────────── LIVRET COLS TAB ────────────────
+         Colonnes exactement lues par livret_idylliq.html (buildLivret) :
+         12 champs sur Maison + les champs de fonctionnementMaison affichés
+         par carte d'équipement (voir LIVRET_FIELD_CONFIG plus haut). Une
+         ligne par équipement, colonnes Maison répétées ; les maisons sans
+         équipement affichent quand même une ligne. */
+      const LIVRET_COLS_MAISON = [
+        { field: 'ID_Maison', label: 'ID Maison' },
+        { field: 'Livret_live', label: 'Livret en ligne' },
+        { field: 'Livret_NomMaison', label: 'Nom (couverture)' },
+        { field: 'Livret_Photo_Maison', label: 'Photo de couverture' },
+        { field: 'FS_Adresse', label: 'Adresse' },
+        { field: 'Livret_Mot_propriétaire', label: 'Mot du propriétaire' },
+        { field: 'Livret_InstructionAccess', label: "Instructions d'accès" },
+        { field: 'InstructionAccess_media', label: 'Médias accès' },
+        { field: 'Livret_regle', label: 'Règles de la maison' },
+        { field: 'Link_Piscine', label: 'Piscine liée' },
+      ];
+      const LIVRET_COLS_EQUIP = [
+        { field: 'NomEquipement', label: 'Équipement' },
+        { field: 'Catégorie', label: 'Catégorie' },
+        { field: 'Livret_ordre', label: 'Ordre' },
+        { field: 'Livret_description', label: 'Description' },
+        { field: 'Livret_PointAttention', label: "Point d'attention" },
+        { field: 'Livret_InstructionDepart', label: 'Instruction départ' },
+        { field: 'Photos', label: 'Photos' },
+      ];
+
+      function livretColsFormatVal(table, field, rec) {
+        const raw = rec.fields[field];
+        if (Array.isArray(raw) && raw[0] && typeof raw[0] === 'object' && raw[0].url)
+          return `📎 ${raw.length} fichier(s)`;
+        if (typeof raw === 'boolean') return raw ? 'Oui' : '';
+        if (isLinkField(table, field)) {
+          const ids = Array.isArray(raw) ? raw : raw ? [raw] : [];
+          return ids.length ? 'Oui' : '';
+        }
+        return flatV(raw);
+      }
+
+      function buildLivretColsRows() {
+        const maisons = (db[TABLE_MAISON] || []).slice();
+        const equipRecs = db[TABLE_EQUIPEMENT] || [];
+        maisons.sort((a, b) =>
+          maisonSortKeyM_(a.fields['ID_Maison']) - maisonSortKeyM_(b.fields['ID_Maison']));
+
+        const rows = [];
+        maisons.forEach((m) => {
+          const equipIds = new Set(m.fields['Link_FonctionnementMaison'] || m.fields['Link_livret'] || []);
+          const equips = equipRecs
+            .filter((r) => equipIds.has(r.id) || (r.fields.Link_Maison || []).includes(m.id))
+            .sort((a, b) =>
+              (parseFloat(a.fields.Livret_ordre) || 0) - (parseFloat(b.fields.Livret_ordre) || 0));
+
+          const maisonId = m.fields['ID_Maison'] || m.id;
+          const maisonName = m.fields.Livret_NomMaison || maisonId;
+          const maisonCells = LIVRET_COLS_MAISON.map((c) => livretColsFormatVal(TABLE_MAISON, c.field, m));
+
+          const pushRow = (equipCells) => {
+            const row = { recId: m.id, maisonName, maisonCells, equipCells };
+            row.searchText = [maisonId, maisonName, ...maisonCells, ...equipCells]
+              .join(' ').toLowerCase();
+            rows.push(row);
+          };
+
+          if (!equips.length) {
+            pushRow(LIVRET_COLS_EQUIP.map(() => ''));
+          } else {
+            equips.forEach((eq) => {
+              pushRow(LIVRET_COLS_EQUIP.map((c) => livretColsFormatVal(TABLE_EQUIPEMENT, c.field, eq)));
+            });
+          }
+        });
+        return rows;
+      }
+
+      function renderLivretColsTable(query) {
+        const host = document.getElementById('livretcols-grid');
+        const rows = window._livretColsRows || [];
+        const house = getSelectedHouseName();
+        const q = (query || '').trim().toLowerCase();
+
+        let filtered = rows;
+        if (house) filtered = filtered.filter((r) => r.maisonName === house);
+        if (q && q.length >= 2) filtered = filtered.filter((r) => r.searchText.includes(q));
+
+        const countEl = document.getElementById('results-count');
+        if (countEl) countEl.textContent = `${filtered.length} ligne${filtered.length !== 1 ? 's' : ''}`;
+
+        if (!filtered.length) {
+          host.innerHTML = `<div class="state-box">Aucune ligne${q || house ? ' pour ce filtre' : ''}.</div>`;
+          return;
+        }
+
+        const maisonHeads = LIVRET_COLS_MAISON
+          .map((c) => `<th>${esc(c.label)}<span class="col-src">Maison.${esc(c.field)}</span></th>`)
+          .join('');
+        const equipHeads = LIVRET_COLS_EQUIP
+          .map((c) => `<th>${esc(c.label)}<span class="col-src">${esc(TABLE_EQUIPEMENT)}.${esc(c.field)}</span></th>`)
+          .join('');
+        const thead = `<tr>
+            <th rowspan="2">Maison</th>
+            <th colspan="${LIVRET_COLS_MAISON.length}">🏠 Colonnes Maison</th>
+            <th colspan="${LIVRET_COLS_EQUIP.length}">🔧 Colonnes Équipement (fonctionnementMaison)</th>
+          </tr>
+          <tr>${maisonHeads}${equipHeads}</tr>`;
+
+        const cellHtml = (v) => {
+          const s = esc(v || '');
+          return `<td style="padding:.5rem .7rem;white-space:pre-wrap;max-width:320px;font-size:.82rem">${s || '<span style="color:var(--border)">—</span>'}</td>`;
+        };
+        const trs = filtered
+          .map((r) => {
+            const cells = r.maisonCells.map(cellHtml).join('') + r.equipCells.map(cellHtml).join('');
+            return `<tr><td style="padding:.5rem .7rem"><span class="dv-table-badge">🏠 ${esc(r.maisonName)}</span></td>${cells}</tr>`;
+          })
+          .join('');
+
+        host.innerHTML = `<div class="vw-table-wrap"><table class="vw-table"><thead>${thead}</thead><tbody>${trs}</tbody></table></div>`;
+      }
+
       /* ── tab switching ── */
       async function switchTab(tabName) {
         currentTab = tabName;
@@ -5824,6 +6422,34 @@
           }
         }
 
+        /* 'master' joint Maison + ConditionLocation + Proprietaire : il lui
+           faut les 3 tables complètes, puis les lignes sont (re)construites
+           pour refléter les éditions faites depuis les autres onglets. */
+        if (tabName === 'master') {
+          const need = [TABLE_MAISON, TABLE_CONDITION, TABLE_PROPRIETAIRE]
+            .filter((t) => !tableFullyLoaded[t]);
+          if (need.length > 0) {
+            document.getElementById('master-grid').innerHTML =
+              '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+            await Promise.all(need.map((t) => ensureTableLoaded(t)));
+          }
+          window._masterRows = buildMasterRows();
+          updateTabCounts();
+        }
+
+        /* 'livretcols' : colonnes Maison + Équipement utilisées par le livret,
+           une ligne par équipement (Maison + fonctionnementMaison complètes). */
+        if (tabName === 'livretcols') {
+          const need = [TABLE_MAISON, TABLE_EQUIPEMENT].filter((t) => !tableFullyLoaded[t]);
+          if (need.length > 0) {
+            document.getElementById('livretcols-grid').innerHTML =
+              '<div class="state-box"><div class="spinner"></div>Chargement…</div>';
+            await Promise.all(need.map((t) => ensureTableLoaded(t)));
+          }
+          window._livretColsRows = buildLivretColsRows();
+          updateTabCounts();
+        }
+
         applyFilter();
       }
 
@@ -5834,6 +6460,8 @@
           counts[t] = (db[t] || []).length;
         });
         counts.vues = loadViews().length;
+        counts.master = (window._masterRows || []).length;
+        counts.livretcols = (window._livretColsRows || []).length;
         document.querySelectorAll('.tab-btn').forEach((btn) => {
           const t = btn.dataset.tab;
           const span = btn.querySelector('.tab-count');
@@ -8354,7 +8982,12 @@
             }
             if (!cache[c.table]) cache[c.table] = joinLinkedRecords(c.table, m);
             const vals = cache[c.table]
-              .map((r) => displayFieldValue(c.table, c.field, r))
+              .map((r) => {
+                const raw = r.fields[c.field];
+                if (Array.isArray(raw) && raw[0] && typeof raw[0] === 'object' && raw[0].url)
+                  return `📎 ${raw.length} fichier(s)`;
+                return displayFieldValue(c.table, c.field, r);
+              })
               .filter((x) => x !== '' && x != null);
             cells[c.id] = [...new Set(vals)].join('  |  ');
           });
