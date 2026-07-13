@@ -304,7 +304,6 @@
       font-size: 1.25rem;
       line-height: 1.9;
       color: var(--ink);
-      font-style: italic;
       font-weight: 400;
     }
     .owner-message-text p { margin-bottom: 1.2rem; }
@@ -664,7 +663,7 @@
 <div id="progress-bar"></div>
 <nav class="sticky-nav" id="sticky-nav">
   <a class="nav-link" href="#section-info">arrivée</a>
-  <a class="nav-link" href="#point-attention">Point d'attention</a>
+  <a class="nav-link" href="#point-attention">Points d'attentions</a>
   <a class="nav-link" href="#intérieur">Equipements intérieurs</a>
   <a class="nav-link" href="#extérieur">Equipements extérieurs</a>
   <a class="nav-link" href="#section-reco">Recommandations</a>
@@ -1113,7 +1112,8 @@ function renderEquipCard(item, forceTemplate) {
   // ------------------------------------
 
   const cardId   = slugify(item.Item);
-  const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
+  //const badge = item.Categorie ? `<span class="category-badge">${escapeHtml(item.Categorie)}</span>` : '';
+  const badge = "";
   console.log(item.item);
   const title = `<h3 class="card-item-title">${escapeHtml(item.Item)}</h3>`;
 
@@ -1472,7 +1472,6 @@ function renderWifiSection(items, index) {
       </div>
       <div class="card reveal" style="max-width:550px;margin:0 auto;text-align:center;">
         <div class="card-body">
-          <div class="category-badge">Wi-Fi · Réseau</div>
           <h3 class="card-item-title" style="margin-bottom:0.35rem;">Réseau Wi-Fi</h3>
           <p style="color:var(--ink-mid);font-size:0.9rem;letter-spacing:1px;margin-bottom:1.5rem;">${escapeHtml(ssid)}</p>
           <p style="color:var(--ink-mid);font-size:1.15rem;margin-bottom:2.5rem;">Mot de passe : <strong>${escapeHtml(mdp)}</strong></p>
@@ -1532,7 +1531,7 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
         <h1 class="cover-title" translate="no">${escapeHtml(nomMaison)}</h1>
         <nav class="cover-chapters">
           <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
-          <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Point d'attention</span></a>
+          <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Points d'attentions</span></a>
           <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieurs</span></a>
           <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieurs</span></a>
           ${has_piscine ? `<a href="#section-piscine"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Piscine</span></a>` : ''}
@@ -1769,11 +1768,28 @@ function getRecommandation(data, maisonId) {
     </article>`;
   }).join('');
 
+  let ordered_categories = new Map();
+  console.log("categories", categories);
+
+  //manually ordering categories
+  if(categories.get("visites") === "Visites"){
+    ordered_categories.set("visites", "Visites");
+  }
+  if(categories.get("commerces") === "Commerces"){
+    ordered_categories.set("commerces", "Commerces");
+  }
+  if(categories.get("restaurants") === "Restaurants"){
+    ordered_categories.set("restaurants", "Restaurants");
+  }
+  if(categories.get("autres") === "Autres"){
+    ordered_categories.set("autres", "Autres");
+  }
+
   // Only show filter tabs when at least one recommendation has a category
-  const filtersHtml = categories.size
+  const filtersHtml = ordered_categories.size
     ? `<div class="mood-filters reveal">
         <button class="mood-filter active" data-filter="">Tout</button>
-        ${[...categories.values()].map(label => `<button class="mood-filter" data-filter="${escapeAttr(label.toLowerCase())}">${escapeHtml(label)}</button>`).join('')}
+        ${[...ordered_categories.values()].map(label => `<button class="mood-filter" data-filter="${escapeAttr(label.toLowerCase())}">${escapeHtml(label)}</button>`).join('')}
       </div>`
     : '';
 
@@ -1887,9 +1903,7 @@ function get_instruction_depart(deptText) {
   }
   if (inList) out += '</ul>';
 
-  const introHtml = introText
-    ? `<p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem; font-size:1.05rem; line-height:1.8;">${escapeHtml(introText)}</p>`
-    : `<p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>`;
+  const introHtml = `<p style="font-style: italic; color: var(--ink-mid); margin-bottom: 2rem;">Cliquez sur les tâches une fois accomplies pour préparer votre départ en toute sérénité.</p>`;
 
   const outroHtml = outroText
     ? `<div style="margin-top:2rem;padding:2rem;background:var(--green-pale);border-radius:var(--radius-sm);border-left:4px solid var(--green-mid);">
