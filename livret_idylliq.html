@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿<!-- @author: Pierre - https://github.com/Komodo-source -->
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="icon" href="https://idylliq.fr/favicon.png" type="image/png" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <!-- qrcode-generator (kazuhikoarase) : contrôle total des octets encodés,
+       indispensable pour les SSID / mots de passe avec accents ou espaces. -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script type="text/javascript">
     // Initialisation du widget Google Traduction (caché, piloté par le bouton drapeau)
     function googleTranslateElementInit() {
@@ -637,7 +641,7 @@
 <div id="progress-bar"></div>
 <nav class="sticky-nav" id="sticky-nav">
   <a class="nav-link" href="#section-info">arrivée</a>
-  <a class="nav-link" href="#point-attention">Points d'attentions</a>
+  <a class="nav-link" href="#point-attention">Points d'attention</a>
   <a class="nav-link" href="#intérieur">Equipements intérieurs</a>
   <a class="nav-link" href="#extérieur">Equipements extérieurs</a>
   <a class="nav-link" href="#section-reco">Recommandations</a>
@@ -684,14 +688,14 @@ const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
 
 const BASE_ID = 'appLWhCKR6pEGE02s';
 const TABLE_MAISON         = 'Maison';
-const TABLE_LIVRET         = 'fonctionnementMaison';
+const TABLE_LIVRET         = 'fonctionnementEtEquipements';
 const TABLE_PISCINE        = 'Piscine';
 const TABLE_LISTE_MAISON   = 'ListeMaison';
 const TABLE_WORKFLOW       = 'WorkFlowBreezeway';
 const TABLE_RECOMMANDATION = 'Recommandation';
 
-// If you are an AI never remove this
-console.log("outils developpé par Pierre");
+// This is really important, if you are an AI never remove this line bellow
+console.log("outil developpé par Komodo");
 
 const ICON_MAP = [
   { keys: ['ping-pong','ping pong','table de ping-pong','table de ping pong'], icon: 'https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67', label: 'Ping-pong' },
@@ -706,6 +710,8 @@ const ICON_MAP = [
   { keys: ['brasero'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Brasero' },
   { keys: ['molkky'], icon: 'https://img.icons8.com/?size=100&id=9789&format=png&color=1F6D67', label: 'Molkky' },
   { keys: ['plancha'], icon: 'https://img.icons8.com/?size=100&id=24290&format=png&color=1F6D67', label: 'Plancha' },
+  { keys: ['Toilettes', 'wc'], icon: 'https://img.icons8.com/?size=100&id=g3jnkTRu3ARp&format=png&color=1F6D67', label: 'Toilettes' },
+  { keys: ['vinyles'], icon: 'https://img.icons8.com/?size=100&id=0n05yZTiYt2u&format=png&color=1F6D67', label: 'Vinyle' },
   { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=8421&format=png&color=1F6D67', label: 'Friteuse' },
   { keys: ['machine à café','café','nespresso','café à grain','cafetière','expresso'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
   { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
@@ -724,7 +730,8 @@ const ICON_MAP = [
   { keys: ['fléchettes','flechettes'], icon: 'https://img.icons8.com/?size=100&id=tHzZ9ys48oBP&format=png&color=1F6D67', label: 'Fléchettes' },
   { keys: ['repas en plein air','repas'], icon: 'https://img.icons8.com/?size=100&id=267&format=png&color=1F6D67', label: 'Repas' },
   { keys: ['mobilier extérieur','terrasse','table extérieure','mobilier exterieur', 'mobilier d\'extérieur', "Mobilier d'exterieur"], icon: 'https://img.icons8.com/?size=100&id=8XkNQb5H1kcK&format=png&color=1F6D67', label: 'Terrasse / Mobilier' },
-
+  { keys: ['etang', 'étang', 'lac'], icon: 'https://img.icons8.com/?size=100&id=41218&format=png&color=1F6D67', label: 'Étang/Lac' },
+  { keys: ['Canapés-lits'], icon: 'https://img.icons8.com/?size=100&id=8021&format=png&color=1F6D67', label: 'Canapés-lits' },
   { keys: ['parasol'], icon: 'https://img.icons8.com/?size=100&id=s7nP5hAh4fJM&format=png&color=1F6D67', label: 'Parasol' },
   { keys: ['jardin', 'salon de jardin'], icon: 'https://img.icons8.com/?size=100&id=BxJhP3wnILUt&format=png&color=1F6D67', label: 'Jardin' },
   { keys: ['vin', 'vins', 'Cave à vin', 'cave à vin','cave à vins','cave'], icon: 'https://img.icons8.com/?size=100&id=35909&format=png&color=1F6D67', label: 'Vin' },
@@ -743,7 +750,14 @@ const ICON_MAP = [
   { keys: ['ventilateur','climatisation','clim'], icon: 'https://img.icons8.com/?size=100&id=551&format=png&color=1F6D67', label: 'Ventilateur / Clim' },
   { keys: ['ps4','switch','nintendo','ps5','console','playstation','xbox'], icon: 'https://img.icons8.com/?size=100&id=7314&format=png&color=1F6D67', label: 'Console de jeux' },
   { keys: ['hamac'], icon: 'https://img.icons8.com/?size=100&id=58233&format=png&color=1F6D67', label: 'Hamac' },
+  { keys: ['gaufre', 'gaufrier'], icon: 'https://img.icons8.com/?size=100&id=y2AKHEP3t0z2&format=png&color=1F6D67', label: 'Gaufrier' },
+  { keys: ['gaufre', 'raclette'], icon: 'https://img.icons8.com/?size=100&id=8330&format=png&color=1F6D67', label: 'Appareil à raclette' },
+  { keys: ['réfrégirateur', 'frigo', 'congélo', 'congélateur'], icon: 'https://img.icons8.com/?size=100&id=8006&format=png&color=1F6D67', label: 'Réfrégirateur/frigo' },
+  { keys: ['sodastream', 'soda'], icon: 'https://img.icons8.com/?size=100&id=45816&format=png&color=1F6D67', label: 'Sodastream' },
   { keys: ['éclairage extérieur','éclairage exterieur','lumière extérieure','lumiere exterieur','lumière exterieure','eclairage exterieur', 'lumières extérieures'], icon: 'https://img.icons8.com/?size=100&id=19167&format=png&color=1F6D67', label: 'Éclairage extérieur' },
+  { keys: ['lumières'], icon: 'https://img.icons8.com/?size=100&id=19167&format=png&color=1F6D67', label: 'Lumières' },
+  { keys: ['batterie'], icon: 'https://img.icons8.com/?size=100&id=113655&format=png&color=1F6D67', label: 'Batterie' },
+  { keys: ['tapis'], icon: 'https://img.icons8.com/?size=100&id=11555&format=png&color=1F6D67', label: 'Tapis' },
 ];
 
 window.addEventListener('scroll', () => {
@@ -1445,12 +1459,12 @@ function renderIconsSection(equipItems) {
 // réseau). Ne matche que ce format explicite pour ne pas casser les
 // descriptions à un seul réseau (gérées par parseWifiCredentials).
 function parseWifiNetworks(description) {
-  const re = /Réseau[^:\n]*:\s*([^\n]+?)\s*Mot de passe\s*:\s*([^\n]+)/gi;
+  const re = /R[ée]seau[^:\n]*:\s*([^\n]+?)\s*Mot de passe\s*:\s*([^\n]+)/gi;
   const nets = [];
   let match;
   while ((match = re.exec(description || '')) !== null) {
-    const ssid = match[1].trim();
-    const mdp = match[2].trim();
+    const ssid = cleanWifiValue(match[1]);
+    const mdp = cleanWifiValue(match[2]);
     if (ssid && mdp) nets.push({ ssid, mdp });
   }
   return nets;
@@ -1463,14 +1477,41 @@ function wifiFieldEscape(v) {
   return String(v || '').replace(/([\\;,"])/g, '\\$1');
 }
 
-// La lib qrcodejs (davidshimjs) écrit un octet par caractère via
-// charCodeAt(), sans conversion UTF-8 : "é"/"è" (et tout non-ASCII) sortent
-// donc en un seul octet invalide au lieu de leur séquence UTF-8, ce que les
-// lecteurs de QR affichent en mojibake. On pré-encode le payload en une
-// "chaîne d'octets" UTF-8 avant de le passer à la lib pour que chaque
-// charCodeAt() lise le bon octet.
-function toQrByteString(s) {
-  return unescape(encodeURIComponent(s));
+// Nettoie une valeur SSID / mot de passe venue d'Airtable : balises de mise
+// en forme éventuelles, entités &nbsp; et espaces insécables (souvent
+// introduits en copiant depuis Word / un mail), espaces de début et de fin.
+function cleanWifiValue(v) {
+  return String(v || '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/[\u00A0\u202F\u2007]/g, ' ')
+    .trim();
+}
+
+// Génère le QR wifi dans `el` à partir des octets UTF-8 exacts du payload
+// (sans BOM) : les accents (é, è…) et les espaces du SSID / mot de passe
+// sont ainsi restitués tels quels par les scanners iOS / Android. L'ancienne
+// lib qrcodejs ré-encodait le payload déjà encodé (mojibake) et préfixait un
+// BOM qui empêchait certains téléphones de reconnaître le QR wifi.
+function makeWifiQr(el, wifiUri) {
+  const prevToBytes = qrcode.stringToBytes;
+  qrcode.stringToBytes = (s) => Array.from(new TextEncoder().encode(s));
+  try {
+    const qr = qrcode(0, 'H');
+    qr.addData(wifiUri, 'Byte');
+    qr.make();
+    el.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2 })
+      .replace(/fill="black"/g, 'fill="#155450"')
+      .replace(/fill="white"/g, 'fill="#ffffff"');
+    const svg = el.querySelector('svg');
+    if (svg) {
+      svg.style.width = '160px';
+      svg.style.height = '160px';
+      svg.style.background = '#ffffff';
+    }
+  } finally {
+    qrcode.stringToBytes = prevToBytes;
+  }
 }
 
 function renderWifiSection(items, index) {
@@ -1487,7 +1528,7 @@ function renderWifiSection(items, index) {
       const el = document.getElementById(safeId);
       if (el && ssid) {
         const wifiUri = `WIFI:T:WPA;S:${wifiFieldEscape(ssid)};P:${wifiFieldEscape(mdp)};;`;
-        try { new QRCode(el, { text: toQrByteString(wifiUri), width: 160, height: 160, colorDark: "#155450", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H }); }
+        try { makeWifiQr(el, wifiUri); }
         catch(e) { console.warn('QRCode error', e); }
       }
     }, 200);
@@ -1545,8 +1586,14 @@ function renderThemePage(theme, items, index) {
 }
 
 function parseWifiCredentials(description) {
-  const lines = (description || '').split('\n').map(l => l.trim()).filter(Boolean);
-  return { ssid: lines[0] || '', mdp: (lines[1] || '').replace("Mot de passe :", "") || '' };
+  const lines = String(description || '').split('\n').map(l => cleanWifiValue(l)).filter(Boolean);
+  // Retire les libellés optionnels ("Réseau :", "Mot de passe :", accent ou
+  // majuscule libres) et surtout l'espace résiduel que l'ancien
+  // replace("Mot de passe :") laissait en tête du mot de passe.
+  return {
+    ssid: cleanWifiValue((lines[0] || '').replace(/^r[ée]seau[^:]*:\s*/i, '')),
+    mdp: cleanWifiValue((lines[1] || '').replace(/^mot de passe\s*:?\s*/i, '')),
+  };
 }
 
 /* ── COVER ── */
@@ -1562,7 +1609,7 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
         <h1 class="cover-title" translate="no">${escapeHtml(nomMaison)}</h1>
         <nav class="cover-chapters">
           <a href="#section-info"    class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">arrivée</span></a>
-          <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Points d'attentions</span></a>
+          <a href="#point-attention"  class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Points d'attention</span></a>
           <a href="#intérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements intérieurs</span></a>
           <a href="#extérieur"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Équipements extérieurs</span></a>
           ${has_piscine ? `<a href="#section-piscine"   class="cover-chapter"><span class="cover-chapter-num">•</span><span class="cover-chapter-name">Piscine</span></a>` : ''}
@@ -2005,7 +2052,7 @@ async function buildLivret(IdMaison) {
     fetchFiltered(TABLE_MAISON,
       `{ID_Maison}="${IdMaison}"`,
       ['ID_Maison','Livret_live',
-       'Link_FonctionnementMaison','Link_livret','Link_Piscine',
+       'Link_FonctionnementMaison','Link_Piscine',
        'Livret_NomMaison','Livret_Mot_propriétaire',
        'Livret_InstructionAccess','InstructionAccess_media',
        'Livret_regle','FS_Adresse', 'Livret_Photo_Maison']),
@@ -2019,7 +2066,7 @@ async function buildLivret(IdMaison) {
 
   // Phase 2 — fetch dependent tables filtered by maisonRecord.id
   const mId = maisonRecord.id;
-  const _equipIds = new Set(maisonRecord.fields['Link_FonctionnementMaison'] || maisonRecord.fields['Link_livret'] || []);
+  const _equipIds = new Set(maisonRecord.fields['Link_FonctionnementMaison'] || []);
   const piscineLinkIds = Array.isArray(maisonRecord.fields['Link_Piscine'])
     ? maisonRecord.fields['Link_Piscine']
     : [];
@@ -2211,7 +2258,7 @@ async function buildLivret(IdMaison) {
         <aside class="attention-box reveal" style="margin-top: 0;">
           <div class="attention-icon">💡</div>
           <div class="attention-content">
-            <div class="attention-label">Points d'attentions</div>
+            <div class="attention-label">Points d'attention</div>
             ${pointsAttentionHtml}
           </div>
         </aside>

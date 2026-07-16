@@ -1168,6 +1168,17 @@
 
       .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+      /* Fichier vidéo présent dans un champ d'attachments (pas d'aperçu image) */
+      .photo-grid-item .photo-video-file {
+        display: flex; flex-direction: column;
+        width: 100%; height: 100%;
+        align-items: center; justify-content: center; gap: 0.25rem;
+        background: #111; color: #fff;
+        font-size: 0.68rem; padding: 0.3rem;
+        text-align: center; word-break: break-all;
+      }
+      .photo-grid-item .photo-video-file .pvf-icon { font-size: 1.4rem; }
+
       .photo-delete-btn {
         position: absolute;
         top: 4px;
@@ -2710,6 +2721,68 @@
     #livret-editor .rec-media-empty { font-size: 0.76rem; color: var(--muted); font-style: italic; }
     #livret-editor .rec-media-btn { width: 100%; justify-content: center; color: var(--primary); border-color: var(--primary); padding: 0.45rem; }
     #livret-editor .rec-media-btn:hover { background: var(--primary); color: #fff; }
+    /* ── Barre médias (photos & vidéos) des blocs équipement / piscine ── */
+    #livret-editor .lmb-box {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem;
+      background: var(--card);
+    }
+    #livret-editor .livret-field.dirty .lmb-box { border-color: var(--warning); background: var(--warning-light); }
+    #livret-editor .lmb-items { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 0.55rem; min-height: 8px; }
+    #livret-editor .lmb-vid-file a {
+      display: flex; width: 100%; height: 100%;
+      align-items: center; justify-content: center;
+      font-size: 1.15rem; text-decoration: none;
+      background: #111; color: #fff;
+    }
+    #livret-editor .lmb-video-chip {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      max-width: 100%;
+      padding: 0.25rem 0.55rem;
+      border: 1.5px solid var(--border); border-radius: 999px;
+      background: var(--surface-2); font-size: 0.76rem;
+    }
+    #livret-editor .lmb-video-chip a {
+      color: var(--primary); text-decoration: none; font-weight: 600;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;
+    }
+    #livret-editor .lmb-video-chip button { border: none; background: none; cursor: pointer; font-size: 0.72rem; padding: 0 0.1rem; color: var(--muted); }
+    #livret-editor .lmb-video-chip button:hover { color: var(--text); }
+    #livret-editor .lmb-video-chip .lmb-video-del:hover { color: #dc2626; }
+    #livret-editor .lmb-actions { position: relative; }
+    #livret-editor .lmb-add-btn {
+      width: 100%; padding: 0.45rem 0.7rem;
+      border: 1.5px dashed var(--primary); border-radius: 8px;
+      background: var(--primary-light); color: var(--primary);
+      font-size: 0.8rem; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer;
+    }
+    #livret-editor .lmb-add-btn:hover { background: var(--primary); color: #fff; }
+    #livret-editor .lmb-menu {
+      position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 6;
+      display: flex; flex-direction: column;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--card); box-shadow: var(--shadow-sm); overflow: hidden;
+    }
+    #livret-editor .lmb-menu button {
+      text-align: left; padding: 0.5rem 0.7rem; border: none; background: none;
+      font-size: 0.8rem; font-family: 'Inter', sans-serif; color: var(--text); cursor: pointer;
+    }
+    #livret-editor .lmb-menu button:hover { background: var(--primary-light); color: var(--primary); }
+    #livret-editor .lmb-video-form { display: flex; gap: 0.4rem; margin-top: 0.45rem; }
+    #livret-editor .lmb-video-form input {
+      flex: 1; min-width: 0; padding: 0.45rem 0.6rem;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.8rem; font-family: 'Inter', sans-serif;
+      color: var(--text); background: var(--card); outline: none;
+    }
+    #livret-editor .lmb-video-form input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    #livret-editor .lmb-video-form button {
+      padding: 0.4rem 0.7rem; border-radius: 8px; font-size: 0.76rem; font-weight: 700;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--card); color: var(--text);
+    }
+    #livret-editor .lmb-video-form .lmb-video-confirm { background: var(--primary); border-color: var(--primary); color: #fff; }
     /* sticky formatting toolbar at the top of the editor column */
     #livret-fmt-bar {
       position: sticky;
@@ -3508,7 +3581,7 @@
         <button class="tab-btn" role="tab" data-tab="Maison">
           Maison<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" role="tab" data-tab="fonctionnementMaison">
+        <button class="tab-btn" role="tab" data-tab="fonctionnementEtEquipements">
           Fonctionnement<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="Piscine">
@@ -3763,7 +3836,7 @@
       <div id="livretcols-pane" style="display: none">
         <div class="vz-toolbar">
           <span style="font-weight: 700; color: var(--primary)">📖 Colonnes Livret</span>
-          <span style="font-size: 0.8rem; color: var(--muted)">Toutes les colonnes de Maison et d'Équipement (fonctionnementMaison) utilisées par le livret. Une ligne par équipement ; filtrez par Maison ci-dessus.</span>
+          <span style="font-size: 0.8rem; color: var(--muted)">Toutes les colonnes de Maison et d'Équipement (fonctionnementEtEquipements) utilisées par le livret. Une ligne par équipement ; filtrez par Maison ci-dessus.</span>
         </div>
         <div id="livretcols-grid">
           <div class="state-box">Ouvrez l'onglet pour charger les données…</div>
@@ -3934,7 +4007,7 @@
             <input
               type="text"
               id="photo-url-input"
-              placeholder="Coller une URL d'image…"
+              placeholder="Coller une URL d'image ou de vidéo (.mp4, .webm…)"
             />
             <button class="photo-add-btn" id="photo-add-url-btn">
               Ajouter
@@ -4154,7 +4227,7 @@
 
       const TABLE_MAISON = 'Maison';
       const TABLE_PISCINE = 'Piscine';
-      const TABLE_EQUIPEMENT = 'fonctionnementMaison';
+      const TABLE_EQUIPEMENT = 'fonctionnementEtEquipements';
       const TABLE_LISTE_MAISON = 'ListeMaison';
       const TABLE_DISPOSITION = 'DispositionMaison';
       const TABLE_WORKFLOW = 'WorkFlowBreezeway';
@@ -4251,7 +4324,7 @@
       /* ── Visualiser / Vues perso state ── */
       const VZ_TABLES = [
         { name: 'Maison', label: 'Maison' },
-        { name: 'fonctionnementMaison', label: 'Fonctionnement' },
+        { name: 'fonctionnementEtEquipements', label: 'Fonctionnement' },
         { name: 'Piscine', label: 'Piscine' },
         { name: 'DispositionMaison', label: 'Disposition' },
         { name: 'WorkFlowBreezeway', label: 'WorkFlow' },
@@ -5933,7 +6006,7 @@
       let tableViewMode = 'table'; // 'table' | 'list' | 'gallery' | 'fiche' | 'vues'
       const CARD_TABLES = [
         'Maison',
-        'fonctionnementMaison',
+        'fonctionnementEtEquipements',
         'Piscine',
         'DispositionMaison',
         'WorkFlowBreezeway',
@@ -6350,7 +6423,7 @@
         const thead = `<tr>
             <th rowspan="2">Maison</th>
             <th colspan="${LIVRET_COLS_MAISON.length}">🏠 Colonnes Maison</th>
-            <th colspan="${LIVRET_COLS_EQUIP.length}">🔧 Colonnes Équipement (fonctionnementMaison)</th>
+            <th colspan="${LIVRET_COLS_EQUIP.length}">🔧 Colonnes Équipement (fonctionnementEtEquipements)</th>
           </tr>
           <tr>${maisonHeads}${equipHeads}</tr>`;
 
@@ -7529,15 +7602,13 @@
         const records = db[table] || [];
         const rec = records.find((r) => r.id === recId);
         const attachments = rec?.fields?.[field] || [];
-        photoExisting = (attachments || [])
-          .filter(
-            (a) => !/\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
-          )
-          .map((a) => ({
-            id: a.id,
-            url: a.url,
-            filename: a.filename || 'photo',
-          }));
+        // Video files are kept (and shown as tiles) so saving never drops them.
+        photoExisting = (attachments || []).map((a) => ({
+          id: a.id,
+          url: a.url,
+          filename: a.filename || 'photo',
+          isVideo: /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(a.filename || ''),
+        }));
         photoOriginalCount = photoExisting.length;
 
         document.getElementById('photo-field-name').textContent = field;
@@ -7564,7 +7635,11 @@
           .map(
             (p) => `
           <div class="photo-grid-item">
-            <img src="${esc(p.url)}" alt="${esc(p.filename)}" />
+            ${
+              p.isVideo
+                ? `<a class="photo-video-file" href="${esc(p.url)}" target="_blank" rel="noopener" title="Ouvrir la vidéo"><span class="pvf-icon">🎬</span>${esc(p.filename)}</a>`
+                : `<img src="${esc(p.url)}" alt="${esc(p.filename)}" />`
+            }
             <button class="photo-delete-btn" data-photo-id="${esc(p.id)}" title="Supprimer">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
@@ -9347,6 +9422,124 @@
         return LIVRET_FIELD_CONFIG[TABLE_EQUIPEMENT];
       }
 
+      /* ── Barre médias (photos & vidéos) ──
+         Tables where the booklet mixes an attachments column (photos + fichiers
+         vidéo) with a lienYoutube column (URLs séparées par « ; »). Every block
+         of these tables gets one combined "Photos & vidéos" bar with an
+         "Ajouter un média" menu, in place of the two raw columns. */
+      const LIVRET_MEDIA_BAR = {
+        [TABLE_EQUIPEMENT]: { photos: 'Photos', videos: 'lienYoutube' },
+        [TABLE_PISCINE]: { photos: 'Photo', videos: 'lienYoutube' },
+      };
+      const LIVRET_VIDEO_FILE_RE = /\.(mp4|webm|ogg|mov|m4v|avi)$/i;
+
+      // Current video list for a record: pending (unsaved) edit wins over db.
+      function livretVideoList(table, recId) {
+        const cfg = LIVRET_MEDIA_BAR[table];
+        if (!cfg) return [];
+        const dirty = livretDirty[table + '::' + recId];
+        let raw;
+        if (dirty && dirty.fields[cfg.videos] !== undefined) {
+          raw = dirty.fields[cfg.videos];
+        } else {
+          const rec = (db[table] || []).find((r) => r.id === recId);
+          raw = rec ? rec.fields[cfg.videos] : '';
+        }
+        return String(raw || '')
+          .split(';')
+          .map((v) => v.trim())
+          .filter(Boolean);
+      }
+
+      // Short readable label for a video chip (YouTube id when detectable).
+      function livretVideoLabel(url) {
+        const m = String(url).match(/(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{5,})/);
+        if (m) return 'YouTube · ' + m[1];
+        return url.length > 28 ? url.slice(0, 25) + '…' : url;
+      }
+
+      // Thumbnails (photos + fichiers vidéo) and video chips of one record.
+      function livretMediaBarItems(table, recId) {
+        const cfg = LIVRET_MEDIA_BAR[table];
+        const rec = (db[table] || []).find((r) => r.id === recId);
+        const atts = rec ? attachmentsOf(rec, cfg.photos) : [];
+        const attHtml = atts
+          .map((a) =>
+            LIVRET_VIDEO_FILE_RE.test(a.filename || '')
+              ? `<div class="rec-media-thumb lmb-vid-file" title="${esc(a.filename || 'vidéo')}"><a href="${esc(a.url)}" target="_blank" rel="noopener">▶</a></div>`
+              : `<div class="rec-media-thumb"><img class="thumb" src="${esc(a.url)}" data-full="${esc(a.url)}" alt=""></div>`,
+          )
+          .join('');
+        const vidHtml = livretVideoList(table, recId)
+          .map(
+            (v, i) => `<span class="lmb-video-chip" title="${esc(v)}">
+              <a href="${esc(v)}" target="_blank" rel="noopener">🎬 ${esc(livretVideoLabel(v))}</a>
+              <button type="button" class="lmb-video-edit" data-vidx="${i}" title="Modifier le lien">✏️</button>
+              <button type="button" class="lmb-video-del" data-vidx="${i}" title="Supprimer la vidéo">✕</button>
+            </span>`,
+          )
+          .join('');
+        return (
+          attHtml + vidHtml ||
+          '<span class="rec-media-empty">Aucun média pour le moment</span>'
+        );
+      }
+
+      // The combined "Photos & vidéos" control of one block.
+      function livretMediaBarHtml(table, recId) {
+        const cfg = LIVRET_MEDIA_BAR[table];
+        if (!cfg) return '';
+        return `<div class="livret-field" data-ctl="mediabar" data-table="${esc(table)}" data-recid="${esc(recId)}" data-field="${esc(cfg.videos)}">
+          <label>Photos &amp; vidéos <span class="lf-kind">médias</span></label>
+          <div class="livret-hint">Illustrations du bloc dans le livret : photos, fichiers vidéo et liens YouTube.</div>
+          <div class="lmb-box">
+            <div class="lmb-items">${livretMediaBarItems(table, recId)}</div>
+            <div class="lmb-actions">
+              <div class="lmb-menu-wrap">
+                <button type="button" class="lmb-add-btn">➕ Ajouter un média ▾</button>
+                <div class="lmb-menu" hidden>
+                  <button type="button" data-lmb="photos">📷 Photos — ajouter / gérer (téléversement ou URL)</button>
+                  <button type="button" data-lmb="video">🎬 Vidéo — lien YouTube</button>
+                </div>
+              </div>
+              <div class="lmb-video-form" hidden>
+                <input type="url" class="lmb-video-input" placeholder="https://youtu.be/…" autocomplete="off">
+                <button type="button" class="lmb-video-confirm">Ajouter</button>
+                <button type="button" class="lmb-video-cancel">Annuler</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      // Re-render every media bar of a record (it can appear in several
+      // sections: équipement, point d'attention, instructions de départ).
+      function livretRefreshMediaBars(table, recId, markDirty) {
+        const editor = document.getElementById('livret-editor');
+        if (!editor) return;
+        editor
+          .querySelectorAll('.livret-field[data-ctl="mediabar"]')
+          .forEach((el) => {
+            if (el.dataset.table !== table || el.dataset.recid !== recId) return;
+            el.querySelector('.lmb-items').innerHTML = livretMediaBarItems(table, recId);
+            if (markDirty) {
+              el.classList.add('dirty');
+              const card = el.closest('.livret-rec-card');
+              if (card) card.classList.add('has-dirty');
+            }
+          });
+      }
+
+      // Persist-later a new video list: dirty flag + live preview + re-render.
+      function livretApplyVideos(table, recId, vids) {
+        const cfg = LIVRET_MEDIA_BAR[table];
+        if (!cfg) return;
+        const value = vids.join(';');
+        livretMarkDirty(table, recId, cfg.videos, value);
+        livretSendUpdate(table, recId, cfg.videos, value);
+        livretRefreshMediaBars(table, recId, true);
+      }
+
       // Icon + label for each left-column section.
       const LIVRET_SECTION_META = {
         maison: { icon: '🏠', label: 'Maison' },
@@ -9419,9 +9612,14 @@
       // HTML for one block (card). Carries data-section / data-recid so a freshly
       // added block can be located and de-duplicated.
       function livretCardHtml(g) {
-        const fieldsHtml = g.fields
-          .map((f) => livretFieldControl(g.table, g.recId, f))
-          .join('');
+        // Photos + lienYoutube are folded into one "Photos & vidéos" bar shown
+        // on every block of the table (even single-column attention/départ).
+        const barCfg = LIVRET_MEDIA_BAR[g.table];
+        const fieldsHtml =
+          g.fields
+            .filter((f) => !barCfg || (f !== barCfg.photos && f !== barCfg.videos))
+            .map((f) => livretFieldControl(g.table, g.recId, f))
+            .join('') + (barCfg ? livretMediaBarHtml(g.table, g.recId) : '');
         return `<div class="livret-rec-card collapsed" data-section="${esc(g.type)}" data-recid="${esc(g.recId)}">
           <div class="livret-rec-head" role="button" tabindex="0" title="Cliquer pour replier / déplier">
             <span class="lr-chev" aria-hidden="true">▾</span>
@@ -9773,7 +9971,7 @@
         // Toolbar (help + formatting) is always present so the user can add even
         // when a maison has no livret content yet.
         let html = `<div class="livret-help">
-            <span>✏️ <b>Cliquez sur le titre d'un bloc</b> pour l'ouvrir · écrivez dans les champs · ajoutez des éléments avec <b>➕ Ajouter</b> · pensez à <b>💾 Tout enregistrer</b>.</span>
+            <span>✏️ <b>Cliquez sur le titre d'un bloc</b> pour l'ouvrir · écrivez dans les champs · photos &amp; vidéos via <b>➕ Ajouter un média</b> · ajoutez des éléments avec <b>➕ Ajouter</b> · pensez à <b>💾 Tout enregistrer</b>.</span>
           </div>
           <div id="livret-fmt-bar">
             <button type="button" data-lf="bold" title="Gras"><b>B</b></button>
@@ -9881,6 +10079,8 @@
         if (tableViewMode !== 'livret') return;
         const editor = document.getElementById('livret-editor');
         if (!editor) return;
+        // Combined "Photos & vidéos" bars (équipements / piscine).
+        livretRefreshMediaBars(table, recId, false);
         const fieldEl = [
           ...editor.querySelectorAll('.livret-field[data-ctl="media"]'),
         ].find(
@@ -9976,6 +10176,80 @@
           livretOnFieldChange(fieldEl);
       });
       livretEditorEl.addEventListener('click', (e) => {
+        // Any click outside an "Ajouter un média" menu closes the open menus.
+        if (!e.target.closest('.lmb-menu-wrap')) {
+          livretEditorEl
+            .querySelectorAll('.lmb-menu:not([hidden])')
+            .forEach((m) => (m.hidden = true));
+        }
+        // ── Barre médias : menu + actions vidéos ──
+        const lmbAdd = e.target.closest('.lmb-add-btn');
+        if (lmbAdd) {
+          const menu = lmbAdd.parentElement.querySelector('.lmb-menu');
+          menu.hidden = !menu.hidden;
+          return;
+        }
+        const lmbAction = e.target.closest('.lmb-menu button[data-lmb]');
+        if (lmbAction) {
+          const bar = lmbAction.closest('.livret-field');
+          lmbAction.closest('.lmb-menu').hidden = true;
+          if (lmbAction.dataset.lmb === 'photos') {
+            openPhotoEditor(
+              bar.dataset.table,
+              bar.dataset.recid,
+              LIVRET_MEDIA_BAR[bar.dataset.table].photos,
+            );
+          } else {
+            const form = bar.querySelector('.lmb-video-form');
+            form.hidden = false;
+            form.querySelector('.lmb-video-input').focus();
+          }
+          return;
+        }
+        const lmbVidConfirm = e.target.closest('.lmb-video-confirm');
+        if (lmbVidConfirm) {
+          const bar = lmbVidConfirm.closest('.livret-field');
+          const form = bar.querySelector('.lmb-video-form');
+          const input = form.querySelector('.lmb-video-input');
+          const url = (input.value || '').trim();
+          if (!url) {
+            input.focus();
+            return;
+          }
+          const vids = livretVideoList(bar.dataset.table, bar.dataset.recid);
+          vids.push(url);
+          livretApplyVideos(bar.dataset.table, bar.dataset.recid, vids);
+          input.value = '';
+          form.hidden = true;
+          return;
+        }
+        const lmbVidCancel = e.target.closest('.lmb-video-cancel');
+        if (lmbVidCancel) {
+          const form = lmbVidCancel.closest('.lmb-video-form');
+          form.querySelector('.lmb-video-input').value = '';
+          form.hidden = true;
+          return;
+        }
+        const lmbVidDel = e.target.closest('.lmb-video-del');
+        if (lmbVidDel) {
+          const bar = lmbVidDel.closest('.livret-field');
+          const vids = livretVideoList(bar.dataset.table, bar.dataset.recid);
+          vids.splice(+lmbVidDel.dataset.vidx, 1);
+          livretApplyVideos(bar.dataset.table, bar.dataset.recid, vids);
+          return;
+        }
+        const lmbVidEdit = e.target.closest('.lmb-video-edit');
+        if (lmbVidEdit) {
+          const bar = lmbVidEdit.closest('.livret-field');
+          const vids = livretVideoList(bar.dataset.table, bar.dataset.recid);
+          const idx = +lmbVidEdit.dataset.vidx;
+          const nv = prompt('Modifier le lien vidéo :', vids[idx] || '');
+          if (nv === null) return;
+          if (nv.trim()) vids[idx] = nv.trim();
+          else vids.splice(idx, 1);
+          livretApplyVideos(bar.dataset.table, bar.dataset.recid, vids);
+          return;
+        }
         // Fold / unfold every block at once.
         const toggleAll = e.target.closest('#livret-toggle-all');
         if (toggleAll) {
@@ -10021,6 +10295,12 @@
         if (head) head.closest('.livret-rec-card').classList.toggle('collapsed');
       });
       livretEditorEl.addEventListener('keydown', (e) => {
+        // Enter in the video URL field confirms the add.
+        if (e.key === 'Enter' && e.target.classList.contains('lmb-video-input')) {
+          e.preventDefault();
+          e.target.closest('.lmb-video-form').querySelector('.lmb-video-confirm').click();
+          return;
+        }
         // Enter in an "Ajouter" name field confirms the add.
         if (e.key === 'Enter' && e.target.classList.contains('livret-add-name')) {
           e.preventDefault();
@@ -10712,7 +10992,7 @@ Mot de passe :`,
         },
         { nom: 'Espaces privés', desc: '' },
       ];
-      const NBM_EQUIP_CATEGORIE = 'fonctionnement';
+      const NBM_EQUIP_CATEGORIE = 'technique';
 
       /* Champ description des fonctionnements : FS_description si la colonne
          existe dans Airtable ET est modifiable (pas une formule), sinon repli
@@ -10919,7 +11199,7 @@ Mot de passe :`,
           .filter(Boolean);
         const cats = fromSchema.length
           ? fromSchema
-          : ['fonctionnement', 'wifi', 'extérieur', 'intérieur'];
+          : ['technique', 'wifi', 'extérieur', 'intérieur'];
         return cats;
       }
 
