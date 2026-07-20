@@ -687,7 +687,7 @@ const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
 
 const BASE_ID = 'appLWhCKR6pEGE02s';
-const TABLE_MAISON         = 'Maison';
+const TABLE_MAISON         = 'Master';
 const TABLE_LIVRET         = 'fonctionnementEtEquipements';
 const TABLE_PISCINE        = 'Piscine';
 const TABLE_LISTE_MAISON   = 'ListeMaison';
@@ -1303,7 +1303,7 @@ function parseDescription(text, attachments, hideInlineImages) {
   );
 }
 
-function renderOwnerMessage(text) {
+function renderOwnerMessage(text, photos) {
   if (!text || !text.trim()) return '';
   // Force a line break right after the opening greeting "Chers invités"
   // (handles an optional trailing comma / ! / .) without eating blank lines
@@ -1312,10 +1312,15 @@ function renderOwnerMessage(text) {
   // Keep all the text in a single <p>; every line return becomes a <br>,
   // so consecutive newlines (blank lines) are preserved as-is.
   const paragraphs = `<p>${escapeHtml(normalized.trim()).replace(/\n/g, '<br>')}</p>`;
+  const imgs = (photos || []).filter(a => is_file_image(a));
+  const photosHtml = imgs.length
+    ? `<div class="card-desc" style="margin-top:1rem;">${parseDescriptionWithInline(imgs.map((_, i) => '$i' + i).join(' '), imgs, [])}</div>`
+    : '';
   return `
     <div class="owner-message-card reveal">
       <div class="owner-message-label">✦ Message des propriétaires</div>
       <div class="owner-message-text">${paragraphs}</div>
+      ${photosHtml}
     </div>`;
 }
 
@@ -1625,20 +1630,28 @@ function renderCover(nomMaison, numero, coverUrl, has_piscine) {
     </div>`;
 }
 
-function get_global_info_maison(rec) {
+function get_global_info_maison(rec, blocks = {}) {
   if (!rec) return '';
   const f = rec.fields;
+  // Blocs venant de fonctionnementEtEquipements (Catégorie instructions /
+  // Mot_Proprietaire / Regle) : texte dans Livret_description, images dans
+  // Photos. Les champs Maison historiques servent de repli.
+  const motF   = blocks.mot    || {};
+  const accesF = blocks.acces  || {};
+  const regleF = blocks.regles || {};
 
-  const descText = f.Livret_Mot_propriétaire || f.Description;
-  const descHtml = descText ? renderOwnerMessage(descText) : '';
-  const accesText  = f.Livret_InstructionAccess || f.InstructionAccesLivret;
-  const accesMedia = f.InstructionAccess_media  || f.mediaAcces;
+  const descText = motF.Livret_description || f.Livret_Mot_propriétaire || f.Description;
+  const descHtml = descText ? renderOwnerMessage(descText, motF.Photos) : '';
+  const accesText  = accesF.Livret_description || f.Livret_InstructionAccess || f.InstructionAccesLivret;
+  const accesMedia = (accesF.Photos && accesF.Photos.length > 0)
+    ? accesF.Photos
+    : (f.InstructionAccess_media || f.mediaAcces);
   const accesHtml = (accesText || (accesMedia && accesMedia.length > 0) || f.FS_Adresse)
     ? renderAccesSection(accesText, accesMedia, f.FS_Adresse)
     : '';
 
   let reglesHtml = '';
-  const regleField = f.Livret_regle || f.regle || f.Regle || f.Regles || f.regles;
+  const regleField = regleF.Livret_description || f.Livret_regle || f.regle || f.Regle || f.Regles || f.regles;
   if (regleField) {
     const regles = parseRegles(regleField);
     if (regles.length) {
@@ -1647,11 +1660,16 @@ function get_global_info_maison(rec) {
           <span class="rule-num">${String(i + 1).padStart(2, '0')}</span>
           <span class="rule-text">${escapeHtml(r)}</span>
         </div>`).join('');
+      const reglePhotos = (regleF.Photos || []).filter(a => is_file_image(a));
+      const reglePhotosHtml = reglePhotos.length
+        ? `<div class="card-desc" style="margin-top:1rem;">${parseDescriptionWithInline(reglePhotos.map((_, i) => '$i' + i).join(' '), reglePhotos, [])}</div>`
+        : '';
       reglesHtml = `
         <details class="elegant-accordion reveal" style="margin-top: 3rem;">
           <summary>Règles de la maison</summary>
           <div class="accordion-content">
             <div class="rules-grid">${reglesItems}</div>
+            ${reglePhotosHtml}
           </div>
         </details>`;
     }
@@ -1690,15 +1708,11 @@ function parseRegles(text) {
   return lines;
 }
 
-function getCICO(workflowRecords, maisonId) {
-  const related = workflowRecords.filter(r => ((r.fields.Link_maison || r.fields.Maison) || []).includes(maisonId));
-  if (!related.length) return '';
-  const cicoRec = related.find(r => r.fields.CI_CO_hours || r.fields.CICO);
-  if (!cicoRec) return '';
-  const parts    = (cicoRec.fields.CI_CO_hours || cicoRec.fields.CICO || '').split(';');
-  let checkin  = (parts[0] || '').trim().replace(/:\d\d$/, '') || "Non défini";
-  const checkout = (parts[1] || '').trim().replace(/:\d\d$/, '') || "Non défini";
-  checkin = checkin.split("-")[1] +" - " +  checkin.split("-")[0]
+function getCICO(maisonRecord, maisonId) {
+  const cicoRec = maisonRecord.fields.CI_CO_hours;
+  let checkin = cicoRec || "Non défini";
+  checkin = checkin.split("-")[1] +" - " +  checkin.split("-")[0];
+  console.log(checkin)
   return `
     <section id="section-sejour" class="theme-page reveal" style="background:var(--white);">
       <div class="theme-header"><div class="theme-label">Organisation</div><div class="theme-title">Votre Séjour</div></div>
@@ -2034,7 +2048,7 @@ async function fetchWeather(address) {
     else if (temp < 10) suggestion = "Il fait frais dehors, une bonne journée pour le jacuzzi ou le sauna.";
     document.getElementById('weather-widget-container').innerHTML = `
       <div class="weather-widget">
-        <img onclick="toggleZoom(this)" src="${iconUrl}" alt="Weather Icon" class="weather-icon" style="width: 80px; height: 80px; object-fit: cover;">
+        <img src="${iconUrl}" alt="Weather Icon" class="weather-icon" style="width: 80px; height: 80px; object-fit: cover;">
         <div>
           <div class="weather-temp">${temp}°C</div>
           <div class="weather-desc">${desc}</div>
@@ -2055,7 +2069,7 @@ async function buildLivret(IdMaison) {
        'Link_FonctionnementMaison','Link_Piscine',
        'Livret_NomMaison','Livret_Mot_propriétaire',
        'Livret_InstructionAccess','InstructionAccess_media',
-       'Livret_regle','FS_Adresse', 'Livret_Photo_Maison']),
+       'Livret_regle','FS_Adresse', 'Livret_Photo_Maison', 'CI_CO_hours']),
     fetchFiltered(TABLE_LISTE_MAISON, null, null)
   ]);
 
@@ -2119,10 +2133,25 @@ async function buildLivret(IdMaison) {
     return orderA - orderB;
   });
 
+  // Catégories réservées de fonctionnementEtEquipements : ces enregistrements
+  // alimentent la section "La Maison" (texte dans Livret_description, images
+  // dans Photos) au lieu de produire une carte équipement.
+  const INFO_CAT_MAP = { 'instructions': 'acces', 'instruction_acces': 'acces', 'mot_proprietaire': 'mot', 'regle': 'regles', 'regles': 'regles' };
+  const normalizeInfoCat = c => String(c || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().trim().replace(/[\s_]+/g, '_');
+  const infoBlocks = {}; // { acces?, mot?, regles? } → fields du record
+
   validEquipRecs.forEach(rec => {
     const f = rec.fields;
     const catArr = f['Catégorie'];
     const cats   = Array.isArray(catArr) ? catArr : [catArr || 'Général'];
+
+    const infoKey = cats.map(normalizeInfoCat).find(k => INFO_CAT_MAP[k]);
+    if (infoKey) {
+      infoBlocks[INFO_CAT_MAP[infoKey]] = f;
+      return;
+    }
     const allPhotos = (f.Photos || []);
     const youtubeVids = (f.LienYoutube || f.lienYoutube)
       ? (f.LienYoutube || f.lienYoutube).split(';').map(v => v.trim()).filter(Boolean) : [];
@@ -2293,9 +2322,9 @@ async function buildLivret(IdMaison) {
 
   const html =
     renderCover(nomMaison, IdMaison, coverImg, has_piscine) +
-    get_global_info_maison(maisonRecord) +
+    get_global_info_maison(maisonRecord, infoBlocks) +
     finalAttentionHtml +
-    getCICO(wfRecs, maisonRecord.id) +
+    getCICO(maisonRecord, maisonRecord.id) +
     wifiSectionHtml +
     renderIconsSection(allEquipItems) +
     Object.keys(un).map((th, idx) => renderThemePage(th, un[th], idx) || '').join('') +
@@ -2304,7 +2333,7 @@ async function buildLivret(IdMaison) {
     get_instruction_depart(combinedDepartText) +
     `
     <section class="presentation-idylliq">
-      <img onclick="toggleZoom(this)" src="end.png" id="img_end_presentation">
+      <img onclick="openLightbox('end.png', ['end.png'], 0)" src="end.png" id="img_end_presentation" style="cursor:zoom-in;">
     </section>
     <section class="presentation-end reveal">
        <h1>La Collection Idylliq</h1>
@@ -2315,14 +2344,8 @@ async function buildLivret(IdMaison) {
        <p onclick="window.open('https://idylliq.fr/')" style="cursor:pointer">idylliq.fr</p>
      </footer>`;
 
-  // Gallery images are not zoomable — strip lightbox/zoom handlers (reco cards carry no images)
-  const htmlNoZoom = html
-    .replace(/\s*onclick="toggleZoom\(this\)"/g, '')
-    .replace(/\s*onclick="openLightbox\([^"]*\)"/g, '')
-    .replace(/cursor:\s*zoom-in;?/g, '');
-
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('livret-container').innerHTML = htmlNoZoom;
+  document.getElementById('livret-container').innerHTML = html;
 
   initScrollSpy();
 

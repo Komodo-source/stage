@@ -4225,7 +4225,7 @@
         '0b0145ca4c673cb45c786fba29d6219dfa4e824accc237dccc256f56b92d546a6f675907feeeb7bfa39250b84adc9a79210073cdd36a1117a64beb07c8a1b961f5ccce9f0fe7e7c3418f7c64d4e6e09db30e';
       const BASE_ID = 'appLWhCKR6pEGE02s';
 
-      const TABLE_MAISON = 'Maison';
+      const TABLE_MAISON = 'Master';
       const TABLE_PISCINE = 'Piscine';
       const TABLE_EQUIPEMENT = 'fonctionnementEtEquipements';
       const TABLE_LISTE_MAISON = 'ListeMaison';
@@ -4306,6 +4306,11 @@
       let currentTab = 'all'; // 'all' or a table name
       let currentQuery = '';
       let all_houses = [];
+      // True once the user has explicitly picked either a specific house or
+      // "Toutes les maisons" from the house-filter dropdown. Until then, the
+      // "Toutes les données" tab stays empty (avoids dumping every table's
+      // full content by default).
+      let houseFilterChosen = false;
       let tablePage = 1;
       let allTablesPage = 1;
       const PAGE_SIZE = 50;
@@ -4716,7 +4721,9 @@
       function buildSearchText(fields) {
         return Object.entries(fields || {})
           .filter(([k, v]) => isSearchableField(k) && !isLinkValue(v))
-          .map(([, v]) => flattenValue(v))
+          // Include the column/field name itself so a search matches e.g.
+          // "wifi" even when it's the field label rather than its value.
+          .map(([k, v]) => k + ' ' + flattenValue(v))
           .join(' ')
           .toLowerCase();
       }
@@ -5933,6 +5940,24 @@
             : '');
       }
 
+      // "Toutes les données" starts empty: the user must explicitly pick a
+      // house, or "Toutes les maisons", before any rows are dumped on screen.
+      function renderAllTablesHousePrompt() {
+        const mode = tableViewMode === 'list' || tableViewMode === 'gallery' ? tableViewMode : 'table';
+        setActivePanes(mode);
+        document.getElementById('results-count').textContent = '';
+        const msg =
+          'Choisissez une maison, ou « 🏘️ Toutes les maisons », dans le filtre en haut pour afficher les données.';
+        if (mode === 'table') {
+          document.getElementById('thead').innerHTML = '';
+          document.getElementById('tbody').innerHTML =
+            `<tr><td colspan="4"><div class="state-box">${msg}</div></td></tr>`;
+          renderPagination(0, 1, PAGE_SIZE);
+        } else {
+          document.getElementById('vz-content').innerHTML = `<div class="state-box">${msg}</div>`;
+        }
+      }
+
       function applyFilter() {
         currentQuery = document
           .getElementById('search')
@@ -5981,7 +6006,9 @@
           });
           renderToutRows(filtered);
         } else if (currentTab === 'alltables') {
-          if (tableViewMode === 'list' || tableViewMode === 'gallery') {
+          if (!houseFilterChosen) {
+            renderAllTablesHousePrompt();
+          } else if (tableViewMode === 'list' || tableViewMode === 'gallery') {
             setActivePanes(tableViewMode);
             renderAllTablesCards(tableViewMode);
           } else {
@@ -6674,6 +6701,7 @@
           close();
           tablePage = 1;
           allTablesPage = 1;
+          houseFilterChosen = true; // specific house OR explicit "Toutes les maisons" (label === '')
           applyFilter();
           input.blur();
         }
@@ -6685,6 +6713,7 @@
           close();
           tablePage = 1;
           allTablesPage = 1;
+          houseFilterChosen = false; // back to "nothing chosen yet"
           applyFilter();
         }
 
@@ -7990,10 +8019,11 @@
 
           await schemaPromise;
 
-          // L'onglet Maison est consultable immédiatement.
+          // Atterrissage par défaut : "Toutes les données". Elle reste vide
+          // tant qu'aucune maison (ou "Toutes les maisons") n'est choisie.
           window._allTablesData = build_all_tables();
           updateTabCounts();
-          switchTab('Maison');
+          switchTab('alltables');
           announce('Les maisons sont chargées. Les autres tables se chargent en arrière-plan.');
 
           /* ── Suite du chargement en arrière-plan ── */
