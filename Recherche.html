@@ -3578,36 +3578,37 @@
           Toutes les données<span class="tab-count">0</span>
         </button>
 
-        <button class="tab-btn" role="tab" data-tab="Maison">
-          Maison<span class="tab-count">0</span>
+        <button class="tab-btn" role="tab" data-tab="master">
+          Master<span class="tab-count">0</span>
         </button>
+
+        <button class="tab-btn" role="tab" data-tab="Proprietaire">
+          Propriétaire<span class="tab-count">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" data-tab="ConditionLocation">
+          Conditions de location<span class="tab-count">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" data-tab="WorkFlowBreezeway">
+          Workflow<span class="tab-count">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" data-tab="DispositionMaison">
+          Disposition<span class="tab-count">0</span>
+        </button>
+
         <button class="tab-btn" role="tab" data-tab="fonctionnementEtEquipements">
           Fonctionnement<span class="tab-count">0</span>
         </button>
         <button class="tab-btn" role="tab" data-tab="Piscine">
           Piscine<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" role="tab" data-tab="DispositionMaison">
-          Disposition<span class="tab-count">0</span>
-        </button>
-        <button class="tab-btn" role="tab" data-tab="WorkFlowBreezeway">
-          Workflow<span class="tab-count">0</span>
-        </button>
-        <button class="tab-btn" role="tab" data-tab="ConditionLocation">
-          Conditions de location<span class="tab-count">0</span>
-        </button>
-        <button class="tab-btn" role="tab" data-tab="Proprietaire">
-          Propriétaire<span class="tab-count">0</span>
-        </button>
+
         <button class="tab-btn" role="tab" data-tab="Recommandation">
           Recommandation<span class="tab-count">0</span>
         </button>
-        <button class="tab-btn" role="tab" data-tab="master">
-          Master<span class="tab-count">0</span>
-        </button>
-        <button class="tab-btn" role="tab" data-tab="livretcols">
-          📖 Livret<span class="tab-count">0</span>
-        </button>
+
 
       </div>
 
@@ -4262,6 +4263,8 @@
         Proprietaire: 'Propriétaire',
         Recommandation: 'Recommandation',
       };
+
+
       const tableLabel = (t) => TABLE_LABELS[t] || t;
 
       /* Traduit les erreurs techniques (Airtable / réseau) en message clair */
