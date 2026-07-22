@@ -5456,13 +5456,29 @@
             />
             <label class="nbm-label" for="nbm-fonc-cat">Catégorie</label>
             <select id="nbm-fonc-cat" class="nbm-input"></select>
-            <label class="nbm-label" for="nbm-fonc-desc"
+            <!-- <label class="nbm-label" for="nbm-fonc-desc"
               >Description du fonctionnement</label
             >
             <textarea
               id="nbm-fonc-desc"
               class="nbm-input"
               placeholder="Expliquez le fonctionnement de cet équipement…"
+            ></textarea> -->
+            <label class="nbm-label" for="nbm-fonc-fsdesc"
+              >Description interne</label
+            >
+            <textarea
+              id="nbm-fonc-fsdesc"
+              class="nbm-input"
+              placeholder="Description interne (FS_description)…"
+            ></textarea>
+            <label class="nbm-label" for="nbm-fonc-livretdesc"
+              >Description livret</label
+            >
+            <textarea
+              id="nbm-fonc-livretdesc"
+              class="nbm-input"
+              placeholder="Description livret (Livret_description)…"
             ></textarea>
           </div>
         </div>
@@ -5549,7 +5565,7 @@
 
       /* Noms lisibles des tables (les noms techniques restent les clés) */
       const TABLE_LABELS = {
-        [TABLE_MAISON]: 'Maison',
+        [TABLE_MAISON]: 'Master',
         fonctionnementMaison: 'Fonctionnement',
         Piscine: 'Piscine',
         ListeMaison: 'Liste des maisons',
@@ -8063,8 +8079,9 @@
       const LIVRET_COLS_EQUIP = [
         { field: 'NomEquipement', label: 'Équipement' },
         { field: 'Catégorie', label: 'Catégorie' },
+        { field: 'FS_description', label: 'Desc. interne' },
         { field: 'Livret_ordre', label: 'Ordre' },
-        { field: 'Livret_description', label: 'Description' },
+        { field: 'Livret_description', label: 'Description publique' },
         { field: 'Livret_PointAttention', label: "Point d'attention" },
         { field: 'Livret_InstructionDepart', label: 'Instruction départ' },
         { field: 'Photos', label: 'Photos' }
@@ -11195,6 +11212,7 @@
         [TABLE_EQUIPEMENT]: [
           'NomEquipement',
           'Catégorie',
+          'FS_description',
           'Livret_ordre',
           'Livret_description',
           'Photos',
@@ -11600,14 +11618,19 @@
           label: 'Catégorie',
           hint: 'Sert à regrouper les équipements.'
         },
+        FS_description: {
+          label: 'Description interne',
+          hint: 'Description pour le field service (interne).',
+          ph: 'Notes internes…'
+        },
         Livret_ordre: {
           label: "Ordre d'affichage",
           hint: 'Plus le nombre est petit, plus le bloc apparaît tôt.',
           ph: '1, 2, 3…'
         },
         Livret_description: {
-          label: "Description / mode d'emploi",
-          hint: 'Comment utiliser cet équipement.',
+          label: 'Description publique',
+          hint: 'Description visible dans le livret client.',
           ph: 'Expliquez le fonctionnement…'
         },
         Livret_PointAttention: {
@@ -13390,10 +13413,16 @@
         document.getElementById('nbm-fonc-nom').value = rec
           ? rec.fields.NomEquipement || ''
           : '';
-        document.getElementById('nbm-fonc-desc').value = rec
-          ? rec.fields[descF] || rec.fields['Livret_description'] || ''
-          : '';
-        nbmFoncEditId = mode === 'edit' ? rec.id : null;
+  document.getElementById('nbm-fonc-desc').value = rec
+    ? rec.fields[descF] || rec.fields['Livret_description'] || ''
+    : '';
+  document.getElementById('nbm-fonc-fsdesc').value = rec
+    ? rec.fields['FS_description'] || ''
+    : '';
+  document.getElementById('nbm-fonc-livretdesc').value = rec
+    ? rec.fields['Livret_description'] || ''
+    : '';
+  nbmFoncEditId = mode === 'edit' ? rec.id : null;
         document.getElementById('nbm-fonc-save').disabled = false;
         document.getElementById('nbm-fonc-nom').focus();
       }
@@ -13500,13 +13529,20 @@
           }
           const cat = document.getElementById('nbm-fonc-cat').value;
           const desc = document.getElementById('nbm-fonc-desc').value;
+          const fsdesc = document.getElementById('nbm-fonc-fsdesc').value;
+          const livretdesc = document.getElementById('nbm-fonc-livretdesc').value;
           const descF = nbmDescField();
           const btn = document.getElementById('nbm-fonc-save');
           btn.disabled = true;
           btn.textContent = 'Enregistrement…';
           try {
             if (nbmFoncEditId) {
-              const fields = { NomEquipement: nom, [descF]: desc };
+              const fields = {
+                NomEquipement: nom,
+                [descF]: desc,
+                FS_description: fsdesc,
+                Livret_description: livretdesc
+              };
               if (cat) fields['Catégorie'] = cat;
               const data = await nbmUpdateRecordFields(
                 TABLE_EQUIPEMENT,
@@ -13525,6 +13561,8 @@
               };
               if (cat) fields['Catégorie'] = cat;
               if (desc) fields[descF] = desc;
+              if (fsdesc) fields['FS_description'] = fsdesc;
+              if (livretdesc) fields['Livret_description'] = livretdesc;
               const data = (
                 await nbmCreateRecordsBatch(TABLE_EQUIPEMENT, [fields])
               )[0];
