@@ -1,4 +1,15 @@
-﻿<!-- @author: Pierre - https://github.com/Komodo-source -->
+﻿<!-- ============================================================
+  Fichier : livret_idylliq.html
+  Auteur  : Pierre (https://github.com/Komodo-source)
+  Description : Générateur de livret numérique Idylliq.
+                Page HTML complète générée dynamiquement via JS
+                à partir des données Airtable (Master, Équipements,
+                Piscine, ListeMaison…).
+                Affiche : couverture, infos maison, équipements,
+                photos par pièce, WiFi, accès, règles, recommandations.
+  Utilisation : Chargée dans un iframe depuis Recherche.html pour
+                prévisualisation / export PDF.
+============================================================ -->
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -6,8 +17,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Livret Idylliq</title>
+  <!-- Polices Google Fonts pour la charte graphique Idylliq -->
   <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=League+Spartan:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="icon" href="https://idylliq.fr/favicon.png" type="image/png" />
+  <!-- Bibliothèque html2pdf pour l'export PDF du livret -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- qrcode-generator (kazuhikoarase) : contrôle total des octets encodés,
        indispensable pour les SSID / mots de passe avec accents ou espaces. -->
@@ -23,6 +36,17 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+  <!-- ============================================================
+       STYLES CSS DU LIVRET
+       Design system complet avec :
+       - Variables CSS (couleurs, ombres, rayons)
+       - Mise en page : couverture, cartes d'équipements,
+         galerie photos, lightbox, widget météo
+       - Templates : hero, side-left/right, portrait, duo, trio,
+         mosaic, quad, banner
+       - Éléments : accès, WiFi, règles, recommandations
+       - Responsive : 1024px, 900px, 768px, 640px, 480px
+  ============================================================ -->
   <style>
     iframe {
     display: none;
@@ -479,11 +503,14 @@
     html { scroll-padding-top: 120px; }
 
     .card-desc img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
-    .card-desc .inline-media-stack { display: grid; gap: 12px; margin: 1.75rem 0; grid-auto-flow: dense; }
+    .card-desc .inline-media-stack { display: grid; gap: 12px; margin: 1.75rem 0; grid-auto-flow: dense;max-height: 520px; }
     .card-desc .inline-media-stack > img { width: 100%; height: 100%; min-height: 200px; object-fit: cover; border-radius: var(--radius-sm); cursor: zoom-in; box-shadow: var(--shadow-soft); transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease; margin: 0 !important; float: none !important; max-height: none !important; display: block; }
     .card-desc .inline-media-stack > img:hover { transform: translateY(-2px) scale(1.015); box-shadow: var(--shadow-hover); z-index: 2; position: relative; }
     .card-desc .inline-media-stack[data-count="1"] { grid-template-columns: 1fr; }
     .card-desc .inline-media-stack[data-count="1"] > img { height: auto; max-height: 520px; object-fit: contain; background: var(--warm); min-height: 0; }
+
+    /* Permet un affichage en gallies un peu plus beau que des images en lignes */
+
     .card-desc .inline-media-stack[data-count="2"] { grid-template-columns: 1fr 1fr; grid-auto-rows: 280px; }
     .card-desc .inline-media-stack[data-count="3"] { grid-template-columns: 2fr 1fr; grid-template-rows: 180px 180px; }
     .card-desc .inline-media-stack[data-count="3"] > img:nth-child(1) { grid-row: 1 / span 2; }
@@ -491,6 +518,7 @@
     .card-desc .inline-media-stack[data-count="5"] { grid-template-columns: repeat(4, 1fr); grid-template-rows: 180px 180px; }
     .card-desc .inline-media-stack[data-count="5"] > img:nth-child(1) { grid-column: 1 / span 2; grid-row: 1 / span 2; }
     .card-desc .inline-media-stack[data-count="6"],
+
     .card-desc .inline-media-stack:not([data-count="1"]):not([data-count="2"]):not([data-count="3"]):not([data-count="4"]):not([data-count="5"]) {
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       grid-auto-rows: 180px;
@@ -626,6 +654,27 @@
     #livret-container .inline-img-banner,
     #livret-container .inline-media-stack > img { cursor: zoom-in; }
 
+    .drive_url{
+    display: flex;
+    border-radius: 7px;
+    border: 2px solid #247a73;
+    transition: 0.7s;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  .drive_url:hover{
+    color: #fff;
+    transform: translateY(5px);
+    background-color: #247a73;
+  }
+  .drive_url > img {
+    width: 50px;
+    height: 50px;
+  }
+
     /* Masquer la barre/bandeau injecté par Google Traduction */
     .goog-te-banner-frame.skiptranslate,
     .goog-te-gadget-icon,
@@ -636,6 +685,13 @@
 
   </style>
 </head>
+<!-- ============================================================
+     CORPS DE LA PAGE
+     Contient le conteneur principal #livret-container qui est
+     rempli dynamiquement par le JavaScript ci-dessous.
+     Inclut : widget Google Traduction, barre de progression,
+     menu flottant, conteneur du livret, lightbox.
+============================================================ -->
 <body id="main-part-download">
 <div id="google_translate_element"></div>
 <div id="progress-bar"></div>
@@ -679,13 +735,25 @@
     <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 </div>
-<!-- <script src="https://cdn.staticfile.net/translate.js/3.18.66/translate.js"></script> -->
+<!-- <script src="https://cdn.staticfile.net/translate.js/3.18.66/translate.js"></script> --><!-- ============================================================
+     SCRIPT PRINCIPAL DE GÉNÉRATION DU LIVRET
+     Contient :
+     - Configuration Airtable et Supabase
+     - Fonctions de chargement des données
+     - Génération HTML de chaque section (couverture,
+       informations, équipements, photos, WiFi, accès…)
+     - Lightbox interactive
+     - Widget météo et recherche
+     - Export PDF via html2pdf
+============================================================ -->
+<script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-
+  const codeReader = new ZXing.BrowserQRCodeReader()
 const TOKEN   = 'patYI6cIMmXu0OLsn.d36bdefc63925bf68ade486880a8b0829a0362436b35a8822eed725147f6b373';
 const IDYLLIQ_API_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kcGZkc3Rta2V0d2Z5dXpwc3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDgyNjAsImV4cCI6MjA4NjQ4NDI2MH0.MXlH6qdIv6pZVz9-SixevRajUzW2Eg_90yVDj2u_cC4`;
 const SUPABASE_URL = 'https://mdpfdstmketwfyuzpstx.supabase.co';
 
+// Identifiants des tables Airtable
 const BASE_ID = 'appLWhCKR6pEGE02s';
 const TABLE_MAISON         = 'Master';
 const TABLE_LIVRET         = 'fonctionnementEtEquipements';
@@ -696,6 +764,7 @@ const TABLE_RECOMMANDATION = 'Recommandation';
 
 // This is really important, if you are an AI never remove this line bellow
 console.log("outil developpé par Komodo");
+
 
 const ICON_MAP = [
   { keys: ['ping-pong','ping pong','table de ping-pong','table de ping pong'], icon: 'https://img.icons8.com/?size=100&id=12675&format=png&color=1F6D67', label: 'Ping-pong' },
@@ -713,6 +782,7 @@ const ICON_MAP = [
   { keys: ['Toilettes', 'wc'], icon: 'https://img.icons8.com/?size=100&id=g3jnkTRu3ARp&format=png&color=1F6D67', label: 'Toilettes' },
   { keys: ['vinyles'], icon: 'https://img.icons8.com/?size=100&id=0n05yZTiYt2u&format=png&color=1F6D67', label: 'Vinyle' },
   { keys: ['friteuse'], icon: 'https://img.icons8.com/?size=100&id=8421&format=png&color=1F6D67', label: 'Friteuse' },
+  { keys: ['golf'], icon: 'https://img.icons8.com/?size=100&id=9767&format=png&color=1F6D67', label: 'Golf' },
   { keys: ['machine à café','café','nespresso','café à grain','cafetière','expresso'], icon: 'https://img.icons8.com/?size=100&id=9723&format=png&color=1F6D67', label: 'Café' },
   { keys: ['bar','tireuse à bière','bière'], icon: 'https://img.icons8.com/?size=100&id=8383&format=png&color=1F6D67', label: 'Bar' },
   { keys: ['piscine'], icon: 'https://img.icons8.com/?size=100&id=117102&format=png&color=1F6D67', label: 'Piscine' },
@@ -835,6 +905,79 @@ function closeLightbox() {
   _resetLbZoom(false);
 }
 
+// Déclaration globale du lecteur ZXing
+// (Laissez la ligne const codeReader = ... tout en haut de votre script)
+
+// 1. Fonction pour lire le QR Code en évitant les erreurs CORS
+function readQRCode(imgSrc) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Indispensable pour éviter l'erreur "Tainted Canvas"
+    img.onload = () => {
+      codeReader.decodeFromImage(img)
+        .then(result => resolve(result.text))
+        .catch(() => resolve(null));
+    };
+    img.onerror = () => resolve(null);
+    img.src = imgSrc;
+  });
+}
+
+// 2. Fonction qui scanne les images, retire la lightbox et affiche l'URL
+async function replaceQRcode() {
+  // On récupère toutes les images du livret
+  const images = Array.from(document.getElementsByTagName("img"));
+
+  for (let img of images) {
+    // On ignore les icônes pour économiser des ressources
+    if (img.classList.contains('equip-card-icon') || img.classList.contains('weather-icon')) {
+      continue;
+    }
+
+    try {
+      // On tente de lire le QR code
+      const decoded = await readQRCode(img.src);
+
+      if (decoded) {
+        // SUCCÈS : C'est un QR Code !
+
+        // A. On empêche l'ouverture de la Lightbox
+        img.removeAttribute("onclick");
+
+        // B. On change le curseur
+        img.style.cursor = "pointer";
+        img.title = "Cliquez pour ouvrir le lien";
+
+        // C. On ajoute l'événement de redirection (ouvre dans un nouvel onglet)
+        img.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open(decoded, '_blank');
+        });
+
+        // D. On affiche l'URL JUSTE SOUS L'IMAGE
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "qr-result";
+        infoDiv.style.marginTop = "0.75rem";
+        infoDiv.style.padding = "0.5rem";
+        infoDiv.style.backgroundColor = "var(--green-pale)";
+        infoDiv.style.borderRadius = "8px";
+        infoDiv.style.fontSize = "0.9rem";
+        infoDiv.style.wordBreak = "break-all";
+        infoDiv.style.color = "var(--green-dark)";
+        infoDiv.style.textAlign = "center";
+
+        // On rend le texte cliquable également
+        infoDiv.innerHTML = `🔗 <strong>Lien QR Code :</strong> <br><a href="${decoded}" target="_blank" style="color:var(--green-mid); text-decoration:underline;">${decoded}</a>`;
+
+        // Insertion du bloc texte juste après l'image
+        img.parentNode.insertBefore(infoDiv, img.nextSibling);
+      }
+    } catch (e) {
+      console.warn("Erreur de lecture de l'image", e);
+    }
+  }
+}
+
 /* ── Lightbox events ── */
 const _lb = document.getElementById('lightbox');
 
@@ -947,6 +1090,245 @@ function initScrollSpy() {
     }
     if (targetSection) observer.observe(targetSection);
   });
+}
+
+/* ── DEEPLINKS ──────────────────────────────────────────────────────────────
+   Ouvre le livret directement sur une section :
+     https://idylliq.fr/livrets-static/livret_idylliq.html?maison=M7#instruction-depart
+
+   Le contenu est construit après le fetch Airtable : au chargement, l'ancre
+   native du navigateur ne trouve encore aucun élément et le saut est perdu.
+   On rejoue donc l'ancre une fois le livret injecté, puis on recale la
+   position pendant quelques secondes, le temps que les images finissent de
+   décaler la mise en page.
+
+   Les ancres sont tolérantes : casse, accents et séparateurs sont ignorés
+   (#interieur == #Intérieur == #int%C3%A9rieur) et des alias lisibles sont
+   acceptés (voir ANCHOR_ALIASES : #depart, #wifi, #piscine, #regles…).
+
+   Ancres canoniques :
+     #section-info            La Maison (bloc d'accueil)
+     #section-mot-proprietaire  Message des propriétaires
+     #section-acces           Comment accéder / instructions d'arrivée
+     #section-regles          Règles de la maison
+     #point-attention         Points d'attention
+     #section-sejour          Horaires d'arrivée / de départ
+     #section-wifi            Réseau Wi-Fi
+     #section-icons           Vue d'ensemble des équipements
+     #intérieur / #extérieur  Pages d'équipements
+     #section-piscine         Piscine
+     #section-reco            Nos adresses
+     #instruction-depart      Instructions de départ
+     #<slug-équipement>       N'importe quelle carte équipement (ex. #barbecue)
+   ------------------------------------------------------------------------ */
+
+// alias normalisé -> ancres candidates, dans l'ordre de préférence.
+const ANCHOR_ALIASES = {
+  'maison': ['section-info'], 'la-maison': ['section-info'],
+  'infos': ['section-info'], 'informations': ['section-info'],
+  'proprietaire': ['section-mot-proprietaire', 'section-info'],
+  'mot-du-proprietaire': ['section-mot-proprietaire', 'section-info'],
+  'owner': ['section-mot-proprietaire', 'section-info'],
+  'acces': ['section-acces', 'section-info'],
+  'access': ['section-acces', 'section-info'],
+  'arrivee': ['section-acces', 'section-info'],
+  'arrival': ['section-acces', 'section-info'],
+  'comment-acceder': ['section-acces', 'section-info'],
+  'regles': ['section-regles', 'section-info'],
+  'regles-de-la-maison': ['section-regles', 'section-info'],
+  'rules': ['section-regles', 'section-info'],
+  'attention': ['point-attention'],
+  'points-attention': ['point-attention'],
+  'points-d-attention': ['point-attention'],
+  'sejour': ['section-sejour'], 'horaires': ['section-sejour'],
+  'cico': ['section-sejour'], 'check-in': ['section-sejour'],
+  'checkin': ['section-sejour'], 'arrivee-depart': ['section-sejour'],
+  'wifi': ['section-wifi'], 'wi-fi': ['section-wifi'], 'internet': ['section-wifi'],
+  'connexion': ['section-wifi'], 'code-wifi': ['section-wifi'],
+  'mot-de-passe-wifi': ['section-wifi'],
+  'equipements': ['section-icons'], 'icones': ['section-icons'],
+  'interieur': ['intérieur', 'Intérieur', 'section-icons'],
+  'equipements-interieurs': ['intérieur', 'Intérieur', 'section-icons'],
+  'exterieur': ['extérieur', 'Extérieur', 'section-icons'],
+  'equipements-exterieurs': ['extérieur', 'Extérieur', 'section-icons'],
+  'piscine': ['section-piscine'], 'pool': ['section-piscine'],
+  'reco': ['section-reco'], 'recommandations': ['section-reco'],
+  'adresses': ['section-reco'], 'restaurants': ['section-reco'],
+  'depart': ['instruction-depart'], 'instructions-depart': ['instruction-depart'],
+  'instruction-de-depart': ['instruction-depart'],
+  'checkout': ['instruction-depart'], 'check-out': ['instruction-depart'],
+  'sortie': ['instruction-depart']
+};
+
+// Décode puis réduit une ancre à sa forme comparable : minuscules, sans
+// accent, séparateurs uniformisés. Même logique que slugify(), appliquée aux
+// deux côtés de la comparaison pour que #Intérieur trouve id="intérieur".
+function normalizeAnchor(raw) {
+  let s = String(raw || '').replace(/^#/, '');
+  try { s = decodeURIComponent(s); } catch (e) {}
+  return slugify(s);
+}
+
+// Retrouve l'élément visé par une ancre : id exact, puis id normalisé, puis
+// alias, puis correspondance partielle (#wifi -> #section-wifi).
+function resolveAnchorTarget(raw) {
+  let hash = String(raw || '').replace(/^#/, '');
+  if (!hash) return null;
+  try { hash = decodeURIComponent(hash); } catch (e) {}
+
+  const direct = document.getElementById(hash);
+  if (direct) return direct;
+
+  const key = normalizeAnchor(hash);
+  if (!key) return null;
+
+  const els = Array.from(document.querySelectorAll('[id]'));
+  const byKey = k => els.find(el => normalizeAnchor(el.id) === k) || null;
+
+  const exact = byKey(key);
+  if (exact) return exact;
+
+  const aliases = ANCHOR_ALIASES[key];
+  if (aliases) {
+    for (const cand of aliases) {
+      const el = document.getElementById(cand) || byKey(normalizeAnchor(cand));
+      if (el) return el;
+    }
+  }
+
+  return els.find(el => {
+    const n = normalizeAnchor(el.id);
+    return n && (n.endsWith('-' + key) || n.startsWith(key + '-'));
+  }) || null;
+}
+
+// Une cible encore animée (.reveal, opacité 0) ou repliée (<details>) serait
+// invisible à l'arrivée : on la révèle, elle et ses parents, avant de scroller.
+function revealAnchorTarget(el) {
+  let node = el;
+  while (node && node !== document.body) {
+    if (node.classList && node.classList.contains('reveal')) node.classList.add('visible');
+    if (node.tagName === 'DETAILS') node.open = true;
+    node = node.parentElement;
+  }
+  // Le contenu de la cible doit être lisible tout de suite, sans attendre que
+  // l'observateur d'apparition le déclenche. En revanche on n'ouvre que les
+  // <details> qui portent ou contiennent l'ancre (boucle ci-dessus), pas ceux
+  // qui se trouvent simplement à l'intérieur de la section visée.
+  if (el.querySelectorAll) el.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+}
+
+// Hauteur à réserver sous la barre fixe (masquée en mobile, cf. media query).
+function anchorScrollOffset() {
+  const nav = document.getElementById('sticky-nav');
+  if (nav && getComputedStyle(nav).display !== 'none') return nav.offsetHeight + 20;
+  return 16;
+}
+
+// Les images arrivent après coup et décalent la page : on rejoue le
+// positionnement quelques fois, sauf si l'utilisateur a repris la main.
+let _anchorTimers = [];
+function _cancelAnchorRetries() {
+  _anchorTimers.forEach(clearTimeout);
+  _anchorTimers = [];
+}
+['wheel', 'touchstart', 'keydown'].forEach(ev =>
+  window.addEventListener(ev, _cancelAnchorRetries, { passive: true })
+);
+
+function scrollToAnchor(raw, opts) {
+  opts = opts || {};
+  const el = resolveAnchorTarget(raw);
+  if (!el) return false;
+
+  revealAnchorTarget(el);
+  _cancelAnchorRetries();
+
+  const jump = behavior => {
+    const top = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - anchorScrollOffset());
+    if (Math.abs(top - window.pageYOffset) < 4) return;
+    window.scrollTo({ top, behavior: behavior || 'auto' });
+  };
+
+  jump(opts.smooth === false ? 'auto' : 'smooth');
+
+  // Uniquement à l'ouverture d'un deeplink : la mise en page bouge encore
+  // pendant que les images se chargent. Sur un clic interne elle est déjà
+  // stabilisée, et recaler pendant l'animation la couperait net.
+  if (opts.retry) {
+    [120, 350, 700, 1200, 2000].forEach(d => _anchorTimers.push(setTimeout(() => jump('auto'), d)));
+  }
+
+  // Petit halo de repérage sur les cibles ponctuelles (carte, accordéon) ;
+  // inutile — et disgracieux — sur une section pleine page.
+  if (opts.highlight !== false && el.tagName !== 'SECTION') {
+    el.style.transition = 'box-shadow 0.4s ease';
+    el.style.boxShadow = '0 0 0 4px var(--accent)';
+    setTimeout(() => { el.style.boxShadow = ''; }, 2500);
+  }
+  return true;
+}
+
+// Point d'entrée public : utilisable depuis un onclick, la console ou le
+// parent (éditeur). goToAnchor('#instruction-depart').
+function goToAnchor(hash, opts) {
+  opts = opts || {};
+  const ok = scrollToAnchor(hash, opts);
+  if (ok && opts.updateHash !== false) {
+    const clean = '#' + String(hash).replace(/^#/, '');
+    try {
+      const url = location.pathname + location.search + clean;
+      if (opts.push) history.pushState(null, '', url);
+      else history.replaceState(null, '', url);
+    } catch (e) { }
+  }
+  return ok;
+}
+window.goToAnchor = goToAnchor;
+
+// Liste les ancres réellement présentes dans le livret rendu (debug / partage).
+window.livretAnchors = function () {
+  return Array.from(document.querySelectorAll('#livret-container [id]')).map(el => '#' + el.id);
+};
+
+let _deepLinkApplied = false;
+function initDeepLinks() {
+  if (!document.__deepLinksBound) {
+    // Les liens internes (barre fixe, sommaire de couverture, puces
+    // d'équipement) passent par le même chemin : accordéons ouverts, décalage
+    // de la barre fixe compensé, pas de saut brutal.
+    document.addEventListener('click', e => {
+      const a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || href === '#') return;
+      if (!resolveAnchorTarget(href)) return; // ancre inconnue : on laisse le navigateur
+      e.preventDefault();
+      goToAnchor(href, { push: true });
+    });
+
+    // Ancre modifiée après coup (partage, bouton précédent, location.hash).
+    window.addEventListener('hashchange', () => {
+      if (location.hash) scrollToAnchor(location.hash);
+    });
+
+    document.__deepLinksBound = true;
+  }
+
+  // Ancre présente dans l'URL au chargement : une seule fois, pour ne pas
+  // ramener l'utilisateur en arrière à chaque reconstruction (mode preview).
+  if (_deepLinkApplied || window.__PREVIEW_MODE__ || !location.hash) return;
+  _deepLinkApplied = true;
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  const target = location.hash;
+  const opts = { smooth: false, retry: true, updateHash: false };
+  // Deux passes : dès l'injection du DOM, puis après le premier rendu.
+  scrollToAnchor(target, opts);
+  requestAnimationFrame(() => scrollToAnchor(target, opts));
+  // Dernière passe une fois toutes les images chargées (le build peut se
+  // terminer après l'évènement load : on rejoue alors directement).
+  if (document.readyState === 'complete') setTimeout(() => scrollToAnchor(target, opts), 60);
+  else window.addEventListener('load', () => scrollToAnchor(target, opts), { once: true });
 }
 
 /* ── AIRTABLE FETCH ── */
@@ -1083,6 +1465,7 @@ function renderEquipCard(item, forceTemplate) {
   const desc  = `<div class="card-desc">${parseDescriptionWithInline(descText, photos, videos)}</div>`;
   if (!desc){return "";}
 
+
 function imgClick(url, idx) {
     const safe = url.replace(/'/g, "\\'");
     return `onclick="openLightbox('${safe}', ${JSON.stringify(allUrls).replace(/"/g, "'")}, ${idx})"`;
@@ -1169,6 +1552,14 @@ function linkifyUrls(text, is_instruction_acces=false) {
     if (!url) return match;
     if (url.includes('airtableusercontent.com')) return '';
     const href = url.startsWith('www.') ? 'https://' + url : url;
+    if(href.includes("drive") || href.includes("google")){
+      return `
+        <div class="drive_url" onclick="window.open('${escapeAttr(href)}')">
+          <img src="https://img.icons8.com/?size=100&id=eKDChMKt75eu&format=png">
+          <p>Ouvrir le média sur drive</p>
+        </div
+      `
+    }
     if (is_instruction_acces){
       return  `<br><img src="carte.png" style="
     width: 40px;
@@ -1217,16 +1608,25 @@ function parseDescriptionWithInline(text, attachments, videos, is_instruction_ac
     return groupConsecutiveImages(out);
   }
 
-  const lines = out.split('\n').map(l => l.trim()).filter(Boolean);
+  // Keep blank lines (only trim each line's own edges) instead of filtering
+  // them out, so paragraph spacing typed by the user survives into the <br> output.
+  const lines = out.split('\n').map(l => l.trim());
   const rendered = [];
   let inList = false;
   const closeList = () => { if (inList) { rendered.push('</ul>'); inList = false; } };
   // Accumulate consecutive plain-text lines so a text with line returns stays
   // in a single <p> (line breaks become <br>) instead of one <p> per line.
   let textBuf = [];
-  const flushText = () => { if (textBuf.length) { rendered.push(`<p>${textBuf.join('<br>')}</p>`); textBuf = []; } };
+  const flushText = () => {
+    while (textBuf.length && textBuf[textBuf.length - 1] === '') textBuf.pop();
+    if (textBuf.length) rendered.push(`<p>${textBuf.join('<br>')}</p>`);
+    textBuf = [];
+  };
 
   for (const line of lines) {
+    // Drop blank lines before any real content (nothing to add spacing after yet).
+    if (line === '' && !textBuf.length && !rendered.length) continue;
+
     if (/^(?:<img\b[^>]*>\s*)+$/.test(line) || /^<(iframe|video|div|p|h[1-6]|ul|ol|li)/.test(line)) {
       flushText();
       closeList();
@@ -1317,7 +1717,7 @@ function renderOwnerMessage(text, photos) {
     ? `<div class="card-desc" style="margin-top:1rem;">${parseDescriptionWithInline(imgs.map((_, i) => '$i' + i).join(' '), imgs, [])}</div>`
     : '';
   return `
-    <div class="owner-message-card reveal">
+    <div class="owner-message-card reveal" id="section-mot-proprietaire">
       <div class="owner-message-label">✦ Message des propriétaires</div>
       <div class="owner-message-text">${paragraphs}</div>
       ${photosHtml}
@@ -1369,7 +1769,7 @@ function renderAccesSection(text, media, address) {
     : '';
 
   return `
-    <div class="acces-card reveal">
+    <div class="acces-card reveal" id="section-acces">
       <div class="acces-card-header">
         <div class="acces-card-header-icon">🗝️</div>
         <div>
@@ -1430,7 +1830,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipements Intérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;margin-bottom:2rem;">`;
     intChips.forEach(c => {
-      chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
+      chipsHtml += `<div class="icon-chip reveal" onclick="goToAnchor('#${slugify(c.item.Item)}', { push: true })">
         <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
@@ -1441,7 +1841,7 @@ function renderIconsSection(equipItems) {
     chipsHtml += "<h2 style='width: 100%; text-align: center; margin-top: 2rem; font-family: Playfair Display, serif; font-style: italic; color: var(--green-dark);'>Équipements Extérieurs</h2>";
     chipsHtml += `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;width:100%;">`;
     extChips.forEach(c => {
-      chipsHtml += `<div class="icon-chip reveal" onclick="window.location.href='#${slugify(c.item.Item)}'">
+      chipsHtml += `<div class="icon-chip reveal" onclick="goToAnchor('#${slugify(c.item.Item)}', { push: true })">
         <img src="${escapeAttr(c.icon.icon)}" alt="${escapeAttr(c.icon.label)}" loading="lazy">
         <span>${escapeHtml(c.icon.label)}</span>
       </div>`;
@@ -1665,7 +2065,7 @@ function get_global_info_maison(rec, blocks = {}) {
         ? `<div class="card-desc" style="margin-top:1rem;">${parseDescriptionWithInline(reglePhotos.map((_, i) => '$i' + i).join(' '), reglePhotos, [])}</div>`
         : '';
       reglesHtml = `
-        <details class="elegant-accordion reveal" style="margin-top: 3rem;">
+        <details class="elegant-accordion reveal" id="section-regles" style="margin-top: 3rem;">
           <summary>Règles de la maison</summary>
           <div class="accordion-content">
             <div class="rules-grid">${reglesItems}</div>
@@ -2104,12 +2504,7 @@ async function buildLivret(IdMaison) {
     fetchFiltered(TABLE_RECOMMANDATION, null, null)
   ]);
 
-  console.log("maisonRecs", maisonRecs);
-  // console.log("maisonRecs?.fields", maisonRecs?.fields);
-  // console.log("maisonRecs.fields", maisonRecs.fields);
-  // console.log("maisonRecs.fields.Livret_Photo_Maison[0]?.url", maisonRecs.fields.Livret_Photo_Maison[0]?.url);
-  console.log("listData", listData);
-  const coverImg  =  maisonRecs?.[0]?.fields?.Livret_Photo_Maison?.[0]?.url || '';
+  const coverImg  =  maisonRecord?.fields?.Livret_Photo_Maison?.[0]?.url || '';
 
   const themeMap = {};
   const allEquipItems = [];
@@ -2353,6 +2748,10 @@ async function buildLivret(IdMaison) {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Les ancres n'existent qu'à partir d'ici : c'est le moment de rejouer le
+  // #hash de l'URL et de brancher les liens internes.
+  initDeepLinks();
 
   const addr = maisonRecord.fields.FS_Adresse || maisonRecord.fields.Adresse || maisonRecord.fields.adresse || '';
   if (addr) fetchWeather(addr);
@@ -2603,7 +3002,7 @@ if (PREVIEW_MODE) {
   // Tell the parent we are ready to receive data.
   try { window.parent.postMessage({ type: 'PREVIEW_READY' }, '*'); } catch (e) {}
 } else if (!idMaison) {
-  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison (?maison=M7)";
+  document.getElementById('loading').innerText = "Veuillez indiquer l'identifiant de la maison exemple: idylliq.fr/livret/M7";
 } else {
   buildLivret(idMaison).then(() => {
     _initRecoFilters();
@@ -2614,9 +3013,9 @@ if (PREVIEW_MODE) {
     //     translate.execute();
     //     translate.listener.start();
 
+    replaceQRcode();
   }).catch(err => {
-    console.error(err);
-    document.getElementById('loading').innerText = 'Erreur : ' + err.message;
+    document.getElementById('loading').innerText = 'Oops! Il y a eu une erreur de chargement du livret, si cela persiste contactez guests@idylliq.fr'
   });
 }
 
